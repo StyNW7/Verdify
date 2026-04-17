@@ -17,11 +17,13 @@ import CustomCursor from "./utility/CustomCursor";
 import ScrollToTopFunction from "./utility/ScrollToTopFunction";
 import NotFoundPage from "./pages/Utility/NotFound404";
 import LoadingScreen from "./pages/Utility/LoadingScreen";
+import RegisterPage from "./pages/Auth/register";
 
 // Pages
 
 import LandingPage from "@/pages/Landing/page";
-import AboutPage from "./pages/About/page";
+import LoginPage from "./pages/Auth/login";
+import AuthLayout from "./pages/Auth/layout";
 
 function App() {
 
@@ -49,11 +51,22 @@ function App() {
             <Route path="/" element={<Layout />}>
               
                 <Route index element={<LandingPage/>} />
-                <Route path="/about" element={<AboutPage/>} />
 
                 <Route path="*" element={<NotFoundPage />} />
 
             </Route>
+
+            <Route path="/auth/login" element={
+              <AuthLayout>
+                <LoginPage />
+              </AuthLayout>
+            } />
+
+            <Route path="/auth/register" element={
+              <AuthLayout>
+                <RegisterPage />
+              </AuthLayout>
+            } />
 
           </Routes>
 

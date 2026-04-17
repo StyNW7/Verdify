@@ -13,7 +13,7 @@ export default function NotFoundPage() {
   if (!mounted) return null
 
   return (
-    <div className="container flex flex-col items-center justify-center min-h-[calc(100vh-200px)] px-4 text-center">
+    <div className="container flex flex-col items-center justify-center min-h-screen px-4 text-center">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -32,7 +32,7 @@ export default function NotFoundPage() {
           className="relative mx-auto"
         >
           <div className="text-[150px] font-bold leading-none tracking-tighter">
-            <span className="text-primary">4</span>
+            <span className="text-[#2dae67]">4</span>
             <motion.span
               animate={{
                 rotate: [0, 10, -10, 10, -10, 0],
@@ -46,7 +46,7 @@ export default function NotFoundPage() {
             >
               0
             </motion.span>
-            <span className="text-primary">4</span>
+            <span className="text-[#2dae67]">4</span>
           </div>
           <motion.div
             initial={{ opacity: 0, scale: 0 }}
@@ -73,9 +73,9 @@ export default function NotFoundPage() {
           transition={{ delay: 0.9, duration: 0.5 }}
           className="relative"
         >
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-500 to-violet-500 rounded-full opacity-75 blur-sm animate-pulse" />
-          <a href="/" className="relative block">
-            <Button size="lg" className="rounded-full">
+          <div className="absolute -inset-0.5 rounded-full opacity-75 blur-sm animate-pulse" />
+          <a href="/" className="relative block green">
+            <Button size="lg" className="rounded-full bg-green-600">
               <Home className="mr-2 h-4 w-4" />
               Back to Home
             </Button>
