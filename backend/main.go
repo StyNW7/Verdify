@@ -1,18 +1,27 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
-	"os"
+
+	"github.com/verdify/backend/config"
+	"github.com/verdify/backend/handlers"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/health", healthHandler)
+	_ = godotenv.Load()
+	cfg := config.Load()
+	app := handlers.New(cfg)
+	mux := app.Routes()
+	port := cfg.Port
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
+	if app.Ranker.Enabled {
+		if _, err := app.Ranker.Ping(context.Background()); err != nil {
+			log.Printf("genkit ping failed, fallback mode active: %v", err)
+		}
 	}
 
 	log.Printf("verdify backend listening on :%s", port)
