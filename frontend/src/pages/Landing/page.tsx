@@ -22,8 +22,6 @@ import {
   Cpu,
   Network,
 } from 'lucide-react';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 
 // Custom hook for scroll animations
 const useScrollAnimation = () => {
@@ -47,7 +45,6 @@ export default function Home() {
 
   return (
     <div className="bg-white overflow-x-hidden">
-      <Navbar />
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
@@ -586,7 +583,6 @@ export default function Home() {
         </div>
       </section>
 
-      <Footer />
     </div>
   );
 }

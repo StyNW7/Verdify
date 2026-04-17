@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Leaf, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router';
 
 const navLinks = [
   { name: 'Home', href: '#' },
@@ -13,6 +14,8 @@ const navLinks = [
 ];
 
 export default function Navbar() {
+
+  const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -42,6 +45,7 @@ export default function Navbar() {
             <motion.div
               whileHover={{ scale: 1.05 }}
               className="flex items-center gap-2 cursor-pointer group"
+              onClick={() => navigate("/")}
             >
               <div className="bg-gradient-to-br from-emerald-500 to-green-600 p-1.5 rounded-xl">
                 <Leaf className="w-5 h-5 text-white" />

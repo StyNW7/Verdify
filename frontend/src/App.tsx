@@ -24,6 +24,7 @@ import RegisterPage from "./pages/Auth/register";
 import LandingPage from "@/pages/Landing/page";
 import LoginPage from "./pages/Auth/login";
 import AuthLayout from "./pages/Auth/layout";
+import RoutePlannerPage from "./pages/Route/page";
 
 function App() {
 
@@ -53,6 +54,8 @@ function App() {
                 <Route index element={<LandingPage/>} />
 
                 <Route path="*" element={<NotFoundPage />} />
+
+                <Route path="/route" element={<RoutePlannerPage />} />
 
             </Route>
 
