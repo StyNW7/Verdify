@@ -4,23 +4,23 @@ import { ArrowUpRight } from "lucide-react"
 
 const notes = [
   {
-    label: "Position",
-    value: "Verdify treats sustainable travel as an editorial decision, never a compliance dashboard.",
+    label: "Problem fit",
+    value: "Verdify is designed for severe mobility congestion, transport emissions, and the April 2026 energy crunch in the Johor-Singapore corridor.",
   },
   {
-    label: "Primary use",
-    value: "Guide travelers toward lower-impact routes while keeping the trade-offs legible.",
+    label: "AI foundation",
+    value: "The project is built on Gemini, Firebase Genkit, Vertex AI Search RAG, and Google Cloud Run as its core stack.",
   },
   {
-    label: "Tone",
-    value: "Calm, factual, specific enough to trust without needing decoration.",
+    label: "Primary users",
+    value: "Cross-border workers, Iskandar residents, JS-SEZ companies, and public-sector stakeholders who need greener mobility decisions.",
   },
 ]
 
 const methodology = [
-  "Read the corridor first — the page starts from place, timing, and friction rather than abstract efficiency.",
-  "Keep the recommendation explainable — every choice should survive a quick review by a traveler, a lead, or an operator.",
-  "Let the record remain reusable — the outcome works as booking cue, trip note, and reporting artifact.",
+  "Start from the corridor problem first — congestion, carbon emissions, and everyday mobility pressure shape the product from the beginning.",
+  "Move from chat to action — Verdify is not only advisory, it is designed to calculate, book, reward, and report through agentic flows.",
+  "Keep the output usable for more than one audience — the same journey should make sense to commuters, teams, and official reviewers.",
 ]
 
 const reveal = {
@@ -42,13 +42,14 @@ export default function AboutPage() {
 
           <div className="space-y-10">
             <h1 className="display-xl text-[clamp(2.8rem,7.5vw,6.6rem)]">
-              A field report on better <em>travel decisions.</em>
+              An agentic AI for greener <em>corridor mobility.</em>
             </h1>
 
             <p className="max-w-3xl text-[1.1rem] leading-8 text-muted-foreground sm:text-[1.2rem]">
-              The page is intentionally spare. It explains what Verdify does, why the
-              product is framed as a corridor-level brief, and how the interface keeps
-              environmental context attached to the decision itself.
+              Verdify is an Agentic AI Personal Green Navigator built for the
+              Johor-Singapore Innovation Corridor. It helps users plan, calculate,
+              book, and report greener journeys while contributing to Net Zero
+              Emissions Malaysia 2050.
             </p>
 
             <div className="grid gap-6 border-t border-border/60 pt-8 sm:grid-cols-3">
@@ -72,7 +73,7 @@ export default function AboutPage() {
           <div className="space-y-4">
             <p className="label-mono">§ Method</p>
             <h2 className="max-w-sm text-[clamp(1.8rem,3.6vw,3rem)] leading-[1.04] tracking-[-0.025em]">
-              The interface reads like an <em>annotated brief,</em> not a founder profile.
+              The product behaves like an <em>autonomous mobility brief,</em> not a static route finder.
             </h2>
           </div>
           <div className="grid gap-8 text-[1rem] leading-8 text-muted-foreground sm:grid-cols-3">
@@ -99,34 +100,37 @@ export default function AboutPage() {
               />
             </div>
             <figcaption className="flex items-start justify-between gap-3 border-t border-border/60 pt-4">
-              <p className="landing-note">Fig. 04 — Visual anchor</p>
+              <p className="landing-note">Fig. 04 — Corridor anchor</p>
               <p className="max-w-md text-right font-italic text-[0.95rem] leading-7 text-muted-foreground">
-                place-specific imagery over generic SaaS language
+                corridor specificity over generic smart-city positioning
               </p>
             </figcaption>
           </figure>
 
           <div className="space-y-8">
-            <p className="label-mono">What this page leaves out</p>
+            <p className="label-mono">Why this matters</p>
             <div className="space-y-5 text-[1rem] leading-8 text-muted-foreground">
               <p>
-                No creator biography. No template confession. No social links
-                competing with the product story.
+                Verdify aligns directly with Track 4: Green Horizon by addressing
+                mobility optimization, corridor infrastructure pressure, and lower-carbon
+                transport behavior in a strategic Malaysian region.
               </p>
               <p>
-                The only claim here is that Verdify helps people choose the lower-impact
-                option without making them work through a dashboard first.
+                It also supports the handbook’s technical mandate by integrating the
+                Google AI ecosystem stack and demonstrating a shift from conversational
+                interface to autonomous execution.
               </p>
             </div>
 
             <div className="border border-border/70 bg-[hsl(var(--secondary))/0.6] p-8">
-              <p className="landing-note">Use case</p>
+              <p className="landing-note">Project promise</p>
               <p className="mt-4 font-italic text-[1.45rem] leading-[1.35] text-foreground">
-                For travelers, teams, and reviewers who need the reason for a route
-                to stay attached to the route itself.
+                A Malaysian-built personal green navigator that helps users become
+                active contributors to cleaner mobility, lower emissions, and better
+                corridor planning.
               </p>
               <Link to="/" className="btn-ink mt-8">
-                Return to the field report <ArrowUpRight className="h-4 w-4" />
+                Return to the landing page <ArrowUpRight className="h-4 w-4" />
               </Link>
             </div>
           </div>

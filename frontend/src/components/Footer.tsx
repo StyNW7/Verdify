@@ -1,5 +1,6 @@
 'use client';
 
+import { forwardRef } from 'react';
 import { Link } from 'react-router';
 
 const footerLinks = [
@@ -10,22 +11,26 @@ const footerLinks = [
   { name: 'Evidence', href: '/#proof', n: '04' },
 ];
 
-export default function Footer() {
+const Footer = forwardRef<HTMLElement>(function Footer(_, ref) {
   const year = new Date().getFullYear();
+
   return (
-    <footer className="relative border-t border-border/60 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]">
+    <footer
+      ref={ref}
+      className="fixed inset-x-0 bottom-0 z-0 border-t border-border/60 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]"
+    >
       <div className="mx-auto max-w-[1400px] px-4 py-20 sm:px-6 lg:px-10 lg:py-28">
         <div className="grid gap-16 lg:grid-cols-[1.2fr_0.8fr]">
           <div>
             <p className="font-mono-tight text-[0.68rem] uppercase tracking-[0.26em] text-[hsl(var(--primary-foreground))/0.55]">
-              Correspondence
+              Project brief
             </p>
             <h3 className="mt-6 max-w-3xl text-[clamp(2.4rem,5.2vw,4.6rem)] leading-[0.98] tracking-[-0.035em]">
-              Written from one corridor — <em>Johor to Singapore.</em>
+              Built for one corridor — <em>Johor to Singapore.</em>
             </h3>
             <p className="mt-8 max-w-lg text-[1rem] leading-7 text-[hsl(var(--primary-foreground))/0.75]">
-              Personal green navigation, kept quietly readable for travelers, teams,
-              and anyone who still wants proof the route mattered.
+              Agentic green navigation for commuters, companies, and public-sector
+              reviewers who need mobility decisions to end in measurable action.
             </p>
           </div>
 
@@ -49,10 +54,10 @@ export default function Footer() {
 
             <div className="space-y-2">
               <p className="font-mono-tight text-[0.64rem] uppercase tracking-[0.26em] text-[hsl(var(--primary-foreground))/0.5]">
-                Pilot journey
+                Current brief
               </p>
               <p className="font-italic text-xl text-[hsl(var(--primary-foreground))/0.95]">
-                June 5 – 7, 2026
+                April 2026
               </p>
             </div>
           </div>
@@ -64,10 +69,12 @@ export default function Footer() {
           </p>
           <div className="flex flex-col items-end gap-2 font-mono-tight text-[0.64rem] uppercase tracking-[0.26em] text-[hsl(var(--primary-foreground))/0.55]">
             <span>© {year} · Verdify Editorial</span>
-            <span>Field-report system · v2026.04</span>
+            <span>Track 4 · Green Horizon</span>
           </div>
         </div>
       </div>
     </footer>
   );
-}
+});
+
+export default Footer;

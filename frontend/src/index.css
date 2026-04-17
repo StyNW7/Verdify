@@ -66,6 +66,7 @@
     font-family: var(--font-italic);
     font-style: italic;
     font-weight: 400;
+    font-size: 0.94em;
     letter-spacing: 0.005em;
   }
 }
@@ -108,7 +109,11 @@ body::after {
 
 @layer utilities {
   .font-display { font-family: var(--font-display); }
-  .font-italic { font-family: var(--font-italic); font-style: italic; }
+  .font-italic {
+    font-family: var(--font-italic);
+    font-style: italic;
+    font-size: 0.94em;
+  }
   .font-mono-tight { font-family: var(--font-mono); letter-spacing: 0.02em; }
 
   .display-xl {
