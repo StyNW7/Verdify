@@ -1,15 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Leaf, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router';
 
 const navLinks = [
-  { name: 'Home', href: '#' },
-  { name: 'How It Works', href: '#how-it-works' },
-  { name: 'Features', href: '#features' },
-  { name: 'Technology', href: '#technology' },
-  { name: 'FAQ', href: '#faq' },
+  { name: 'Premise', href: '/#premise', n: '01' },
+  { name: 'Sequence', href: '/#how-it-works', n: '02' },
+  { name: 'Capabilities', href: '/#capabilities', n: '03' },
+  { name: 'Evidence', href: '/#proof', n: '04' },
+  { name: 'About', href: '/about', n: '05' },
 ];
 
 export default function Navbar() {
@@ -17,95 +18,104 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setIsScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
     <>
       <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
-        className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+        initial={{ y: -40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: [0.2, 0.7, 0.2, 1] }}
+        style={{
+          backgroundColor: isScrolled
+            ? 'hsl(var(--background) / 0.78)'
+            : 'hsl(var(--background) / 0.55)',
+          WebkitBackdropFilter: 'blur(18px) saturate(160%)',
+          backdropFilter: 'blur(18px) saturate(160%)',
+        }}
+        className={`fixed inset-x-0 top-0 z-50 border-b transition-colors duration-500 ${
           isScrolled
-            ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100'
-            : 'bg-transparent'
+            ? 'border-foreground/15 shadow-[0_1px_0_0_hsl(var(--border)/0.4)]'
+            : 'border-foreground/10'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16 md:h-20">
-            {/* Logo */}
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="flex items-center gap-2 cursor-pointer group"
-            >
-              <div className="bg-gradient-to-br from-emerald-500 to-green-600 p-1.5 rounded-xl">
-                <Leaf className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
-                Verdify
-              </span>
-            </motion.div>
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(to bottom, hsl(var(--background) / 0.45), hsl(var(--background) / 0) 85%)',
+          }}
+        />
+        <div className="relative mx-auto flex h-16 max-w-[1400px] items-center justify-between px-4 sm:px-6 lg:h-20 lg:px-10" style={{ textShadow: '0 1px 0 hsl(var(--background) / 0.6)' }}>
+          <Link to="/" className="group flex items-baseline gap-3">
+            <span className="font-display text-[1.6rem] leading-none tracking-[-0.035em] text-foreground">
+              Verdify
+            </span>
+            <span className="hidden font-mono-tight text-[0.65rem] uppercase tracking-[0.28em] text-muted-foreground sm:block">
+              — field report
+            </span>
+          </Link>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-8">
-              {navLinks.map((link) => (
-                <motion.a
-                  key={link.name}
-                  href={link.href}
-                  whileHover={{ y: -2 }}
-                  className="text-gray-600 hover:text-emerald-600 transition-colors duration-200 font-medium"
-                >
-                  {link.name}
-                </motion.a>
-              ))}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-gradient-to-r from-emerald-600 to-green-600 text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transition-shadow duration-300"
+          <div className="hidden items-center gap-8 lg:flex">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                to={link.href}
+                className="link-sweep text-[0.82rem] uppercase tracking-[0.18em] text-foreground/75 transition-colors hover:text-foreground"
               >
-                Get Started
-              </motion.button>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                <span className="font-mono-tight text-[0.64rem] text-[hsl(var(--accent))]">
+                  {link.n}
+                </span>
+                {link.name}
+              </Link>
+            ))}
+            <Link
+              to="/#how-it-works"
+              className="inline-flex h-10 items-center rounded-full border border-foreground/80 px-5 text-[0.72rem] uppercase tracking-[0.2em] text-foreground transition-colors hover:bg-foreground hover:text-background"
             >
-              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+              Read the sequence
+            </Link>
           </div>
+
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:bg-secondary lg:hidden"
+            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+          >
+            {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
         </div>
       </motion.nav>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-40 bg-white pt-20 px-4 md:hidden"
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-x-0 top-16 z-40 border-b border-border bg-background/96 px-4 py-4 backdrop-blur-md lg:top-20 lg:hidden"
           >
-            <div className="flex flex-col gap-4">
+            <div className="mx-auto flex max-w-[1400px] flex-col gap-1">
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.name}
-                  href={link.href}
+                  to={link.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-gray-600 hover:text-emerald-600 transition-colors py-3 border-b border-gray-100 font-medium"
+                  className="flex items-baseline justify-between border-b border-border/60 py-4 text-base text-foreground hover:text-[hsl(var(--accent))]"
                 >
-                  {link.name}
-                </a>
+                  <span className="font-display text-lg tracking-[-0.02em]">
+                    {link.name}
+                  </span>
+                  <span className="font-mono-tight text-[0.64rem] uppercase tracking-[0.28em] text-muted-foreground">
+                    {link.n}
+                  </span>
+                </Link>
               ))}
-              <button className="bg-gradient-to-r from-emerald-600 to-green-600 text-white px-6 py-3 rounded-full font-semibold mt-4">
-                Get Started
-              </button>
             </div>
           </motion.div>
         )}

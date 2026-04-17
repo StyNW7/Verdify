@@ -1,186 +1,137 @@
-import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Github, Instagram, Linkedin, Mail } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Link } from "react-router"
+import { ArrowUpRight } from "lucide-react"
+
+const notes = [
+  {
+    label: "Position",
+    value: "Verdify treats sustainable travel as an editorial decision, never a compliance dashboard.",
+  },
+  {
+    label: "Primary use",
+    value: "Guide travelers toward lower-impact routes while keeping the trade-offs legible.",
+  },
+  {
+    label: "Tone",
+    value: "Calm, factual, specific enough to trust without needing decoration.",
+  },
+]
+
+const methodology = [
+  "Read the corridor first — the page starts from place, timing, and friction rather than abstract efficiency.",
+  "Keep the recommendation explainable — every choice should survive a quick review by a traveler, a lead, or an operator.",
+  "Let the record remain reusable — the outcome works as booking cue, trip note, and reporting artifact.",
+]
+
+const reveal = {
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.25 },
+  transition: { duration: 0.7, ease: [0.2, 0.7, 0.2, 1] as [number, number, number, number] },
+}
 
 export default function AboutPage() {
-
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) return null
-
   return (
-    <div className="container max-w-4xl mx-auto px-4 py-12 md:py-24">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="flex flex-col items-center"
-      >
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="relative mb-8"
-        >
-          <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-pink-500 to-violet-500 opacity-75 blur-xl" />
-          <div className="relative rounded-full overflow-hidden border-4 border-background">
-            <img
-              src="/Images/stanley.png"
-              alt="Profile"
-              width={200}
-              height={200}
-              className="rounded-full object-cover"
-            />
+    <main className="aged-paper text-foreground">
+      <section className="mx-auto max-w-[1400px] px-4 pt-24 pb-16 sm:px-6 md:pt-32 md:pb-20 lg:px-10 lg:pt-36 lg:pb-28">
+        <motion.div {...reveal} className="grid gap-14 lg:grid-cols-[0.4fr_0.6fr]">
+          <div className="space-y-4">
+            <p className="label-mono">Project context</p>
+            <div className="landing-rule" />
           </div>
-        </motion.div>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-          className="text-4xl md:text-5xl font-bold text-center mb-4"
-        >
-          About the Creator
-        </motion.h1>
+          <div className="space-y-10">
+            <h1 className="display-xl text-[clamp(2.8rem,7.5vw,6.6rem)]">
+              A field report on better <em>travel decisions.</em>
+            </h1>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-          className="text-center mb-8"
-        >
-          <p className="text-xl text-muted-foreground mb-6">
-            Hi there! I'm a passionate web developer who loves creating beautiful, accessible, and performant web
-            applications. This template is my way of sharing my knowledge and experience with the community.
-          </p>
-          <p className="text-xl text-muted-foreground">
-            With over 5 years of experience in frontend development, I've worked with various technologies and
-            frameworks. My goal is to make web development more accessible and enjoyable for everyone.
-          </p>
-        </motion.div>
+            <p className="max-w-3xl text-[1.1rem] leading-8 text-muted-foreground sm:text-[1.2rem]">
+              The page is intentionally spare. It explains what Verdify does, why the
+              product is framed as a corridor-level brief, and how the interface keeps
+              environmental context attached to the decision itself.
+            </p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
-          className="flex space-x-4 mb-12"
-        >
-          {socialLinks.map((link, index) => (
-            <motion.a
-              key={link.name}
-              href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 + index * 0.1, duration: 0.5 }}
-              className="p-3 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors"
-            >
-              {link.icon}
-              <span className="sr-only">{link.name}</span>
-            </motion.a>
-          ))}
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8, duration: 0.5 }}
-          className="w-full space-y-8"
-        >
-
-          <div className="bg-card rounded-xl p-8 shadow-lg">
-            <h2 className="text-2xl font-semibold mb-4">My Journey</h2>
-            <div className="space-y-6">
-              {journey.map((item, index) => (
-                <motion.div
-                  key={item.year}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.9 + index * 0.1, duration: 0.5 }}
-                  className="flex"
-                >
-                  <div className="mr-4">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                      <span className="font-bold">{item.year}</span>
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="font-medium">{item.title}</h3>
-                    <p className="text-muted-foreground">{item.description}</p>
-                  </div>
-                </motion.div>
+            <div className="grid gap-6 border-t border-border/60 pt-8 sm:grid-cols-3">
+              {notes.map((note) => (
+                <div key={note.label} className="space-y-3">
+                  <p className="landing-note">{note.label}</p>
+                  <p className="text-[0.95rem] leading-7 text-foreground/85">
+                    {note.value}
+                  </p>
+                </div>
               ))}
             </div>
           </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.2, duration: 0.5 }}
-            className="bg-card rounded-xl p-8 shadow-lg"
-          >
-            <h2 className="text-2xl font-semibold mb-4">Get in Touch</h2>
-            <p className="text-muted-foreground mb-6">
-              Have questions about this template or want to collaborate on a project? Feel free to reach out!
-            </p>
-            <a href="https://www.linkedin.com/in/stanley-nathanael-wijaya" target="_blank">
-              <Button className="w-full sm:w-auto rounded-full">
-                <Mail className="mr-2 h-4 w-4" />
-                Contact Me
-              </Button>
-            </a>
-          </motion.div>
-
         </motion.div>
 
-      </motion.div>
+        <motion.div
+          {...reveal}
+          transition={{ ...reveal.transition, delay: 0.08 }}
+          className="mt-24 grid gap-12 border-y border-border/60 py-16 lg:grid-cols-[0.4fr_0.6fr]"
+        >
+          <div className="space-y-4">
+            <p className="label-mono">§ Method</p>
+            <h2 className="max-w-sm text-[clamp(1.8rem,3.6vw,3rem)] leading-[1.04] tracking-[-0.025em]">
+              The interface reads like an <em>annotated brief,</em> not a founder profile.
+            </h2>
+          </div>
+          <div className="grid gap-8 text-[1rem] leading-8 text-muted-foreground sm:grid-cols-3">
+            {methodology.map((item, index) => (
+              <article key={item} className="space-y-4">
+                <p className="numeral-huge text-[clamp(3rem,5vw,4rem)]">0{index + 1}</p>
+                <p>{item}</p>
+              </article>
+            ))}
+          </div>
+        </motion.div>
 
-    </div>
+        <motion.section
+          {...reveal}
+          transition={{ ...reveal.transition, delay: 0.12 }}
+          className="mt-24 grid gap-12 lg:grid-cols-[1.1fr_0.9fr]"
+        >
+          <figure className="space-y-4">
+            <div className="overflow-hidden rounded-sm border border-border/60">
+              <img
+                src="/Images/Johor-Singapore.jpg"
+                alt="A corridor photograph used as visual anchor for Verdify's editorial framing."
+                className="h-80 w-full object-cover object-center sm:h-[34rem]"
+              />
+            </div>
+            <figcaption className="flex items-start justify-between gap-3 border-t border-border/60 pt-4">
+              <p className="landing-note">Fig. 04 — Visual anchor</p>
+              <p className="max-w-md text-right font-italic text-[0.95rem] leading-7 text-muted-foreground">
+                place-specific imagery over generic SaaS language
+              </p>
+            </figcaption>
+          </figure>
 
+          <div className="space-y-8">
+            <p className="label-mono">What this page leaves out</p>
+            <div className="space-y-5 text-[1rem] leading-8 text-muted-foreground">
+              <p>
+                No creator biography. No template confession. No social links
+                competing with the product story.
+              </p>
+              <p>
+                The only claim here is that Verdify helps people choose the lower-impact
+                option without making them work through a dashboard first.
+              </p>
+            </div>
+
+            <div className="border border-border/70 bg-[hsl(var(--secondary))/0.6] p-8">
+              <p className="landing-note">Use case</p>
+              <p className="mt-4 font-italic text-[1.45rem] leading-[1.35] text-foreground">
+                For travelers, teams, and reviewers who need the reason for a route
+                to stay attached to the route itself.
+              </p>
+              <Link to="/" className="btn-ink mt-8">
+                Return to the field report <ArrowUpRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </motion.section>
+      </section>
+    </main>
   )
-
 }
-
-const socialLinks = [
-  {
-    name: "GitHub",
-    href: "https://github.com/StyNW7",
-    icon: <Github className="h-5 w-5" />,
-  },
-  {
-    name: "Twitter",
-    href: "https://instagram.com/snw.77",
-    icon: <Instagram className="h-5 w-5" />,
-  },
-  {
-    name: "LinkedIn",
-    href: "https://www.linkedin.com/in/stanley-nathanael-wijaya",
-    icon: <Linkedin className="h-5 w-5" />,
-  },
-]
-
-const journey = [
-  {
-    year: "2018",
-    title: "Started Web Development",
-    description: "Began my journey into web development with HTML, CSS, and JavaScript.",
-  },
-  {
-    year: "2019",
-    title: "Discovered React",
-    description: "Fell in love with React and started building single-page applications.",
-  },
-  {
-    year: "2025",
-    title: "Tailwind Update to v4.1",
-    description: "I don't like that much then I make this template :)",
-  },
-]

@@ -7,7 +7,7 @@ module.exports = {
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
     './*.{js,ts,jsx,tsx,mdx}',
-    './src/components/ui/**/*.{ts,tsx}', // Added for shadcn/ui components
+    './src/components/ui/**/*.{ts,tsx}',
     './src/lib/utils.{ts,tsx}' 
   ],
   prefix: "",
