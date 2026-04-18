@@ -8,9 +8,6 @@ import ScrollToTop from "./utility/ScrollToTop";
 import ScrollToTopFunction from "./utility/ScrollToTopFunction";
 import NotFoundPage from "./pages/Utility/NotFound404";
 import RegisterPage from "./pages/Auth/register";
-
-// Pages
-
 import LandingPage from "@/pages/Landing/page";
 import LoginPage from "./pages/Auth/login";
 import AuthLayout from "./pages/Auth/layout";

@@ -115,7 +115,6 @@ export default function RegisterPage() {
 
     setIsLoading(true);
     
-    // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
       localStorage.setItem('isLoggedIn', 'true');
@@ -125,7 +124,6 @@ export default function RegisterPage() {
     }, 1500);
   };
 
-  // Password strength indicator
   const getPasswordStrength = () => {
     const password = formData.password;
     if (!password) return 0;
@@ -150,7 +148,6 @@ export default function RegisterPage() {
 
   return (
     <div>
-      {/* Header */}
       <div className="text-center mb-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
         <p className="text-gray-500">
@@ -158,9 +155,7 @@ export default function RegisterPage() {
         </p>
       </div>
 
-      {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Full Name */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Full Name
@@ -185,7 +180,6 @@ export default function RegisterPage() {
           )}
         </div>
 
-        {/* Email */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Email Address
@@ -210,7 +204,6 @@ export default function RegisterPage() {
           )}
         </div>
 
-        {/* City and Address - Two columns */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -261,7 +254,6 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        {/* Address - Full width */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Address
@@ -286,7 +278,6 @@ export default function RegisterPage() {
           )}
         </div>
 
-        {/* Password */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Password
@@ -314,7 +305,6 @@ export default function RegisterPage() {
             </button>
           </div>
           
-          {/* Password Strength Indicator */}
           {formData.password && (
             <div className="mt-2">
               <div className="flex gap-1">
@@ -337,7 +327,6 @@ export default function RegisterPage() {
           )}
         </div>
 
-        {/* Confirm Password */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Confirm Password
@@ -369,7 +358,6 @@ export default function RegisterPage() {
           )}
         </div>
 
-        {/* Terms and Conditions */}
         <div className="flex items-start gap-3">
           <input
             type="checkbox"
@@ -389,7 +377,6 @@ export default function RegisterPage() {
           </label>
         </div>
 
-        {/* Submit Button */}
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
@@ -408,7 +395,6 @@ export default function RegisterPage() {
         </motion.button>
       </form>
 
-      {/* Divider */}
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-gray-200" />
@@ -418,7 +404,6 @@ export default function RegisterPage() {
         </div>
       </div>
 
-      {/* Sign In Link */}
       <p className="text-center">
         <a
           href="/auth/login"

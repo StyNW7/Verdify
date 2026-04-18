@@ -126,7 +126,6 @@ body::after {
   background: radial-gradient(140% 100% at 50% 0%, transparent 45%, hsl(var(--ink) / 0.06) 100%);
 }
 
-/* Suppress the paper body overlays when the landing theme is mounted, and in dark mode. */
 body:has(.landing-theme)::before,
 body:has(.landing-theme)::after,
 html.dark body::before,
@@ -336,10 +335,6 @@ html.dark {
   }
 }
 
-/* ============================================
-   Landing Theme
-   Default = Light. html.dark overrides.
-   ============================================ */
 .landing-theme {
   --landing-bg: #F4F5F0;
   --landing-bg-soft: #ECEEE6;

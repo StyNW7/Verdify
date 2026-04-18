@@ -55,10 +55,8 @@ export default function LoginPage() {
 
     setIsLoading(true);
     
-    // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
-      // Store dummy session
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('userEmail', formData.email);
       navigate('/dashboard');
@@ -67,7 +65,6 @@ export default function LoginPage() {
 
   return (
     <div>
-      {/* Header */}
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
         <p className="text-gray-500">
@@ -75,9 +72,7 @@ export default function LoginPage() {
         </p>
       </div>
 
-      {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Email Field */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Email Address
@@ -102,7 +97,6 @@ export default function LoginPage() {
           )}
         </div>
 
-        {/* Password Field */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Password
@@ -134,7 +128,6 @@ export default function LoginPage() {
           )}
         </div>
 
-        {/* Forgot Password */}
         <div className="flex justify-end">
           <a
             href="/auth/forgot-password"
@@ -144,7 +137,6 @@ export default function LoginPage() {
           </a>
         </div>
 
-        {/* Submit Button */}
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
@@ -163,7 +155,6 @@ export default function LoginPage() {
         </motion.button>
       </form>
 
-      {/* Divider */}
       <div className="relative my-8">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-gray-200" />
@@ -173,14 +164,12 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Demo Account */}
       <div className="bg-emerald-50 rounded-xl p-4 mb-6">
         <p className="text-sm text-emerald-800 text-center">
           🎉 Demo Account: demo@verdify.com / demo123
         </p>
       </div>
 
-      {/* Sign Up Link */}
       <p className="text-center text-gray-600">
         Don't have an account?{' '}
         <a

@@ -1,0 +1,927 @@
+'use client';
+
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  ArrowUpRight,
+  Leaf,
+  X,
+  Eye,
+  EyeOff,
+  Loader2,
+} from 'lucide-react';
+import { useNavigate } from 'react-router';
+
+type AuthMode = 'login' | 'register';
+
+type AuthModalContextValue = {
+  open: (mode?: AuthMode) => void;
+  close: () => void;
+};
+
+const AuthModalContext = createContext<AuthModalContextValue | null>(null);
+
+export function useAuthModal() {
+  const ctx = useContext(AuthModalContext);
+  if (!ctx) throw new Error('useAuthModal must be used within AuthModalProvider');
+  return ctx;
+}
+
+export function AuthModalProvider({ children }: { children: ReactNode }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [mode, setMode] = useState<AuthMode>('login');
+
+  const open = useCallback((next: AuthMode = 'login') => {
+    setMode(next);
+    setIsOpen(true);
+  }, []);
+  const close = useCallback(() => setIsOpen(false), []);
+
+  const value = useMemo(() => ({ open, close }), [open, close]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [isOpen]);
+
+  return (
+    <AuthModalContext.Provider value={value}>
+      {children}
+      <AnimatePresence>
+        {isOpen ? (
+          <AuthModal
+            key="auth-modal"
+            mode={mode}
+            setMode={setMode}
+            onClose={close}
+          />
+        ) : null}
+      </AnimatePresence>
+    </AuthModalContext.Provider>
+  );
+}
+
+const EASE = [0.2, 0.7, 0.2, 1] as const;
+
+function AuthModal({
+  mode,
+  setMode,
+  onClose,
+}: {
+  mode: AuthMode;
+  setMode: (m: AuthMode) => void;
+  onClose: () => void;
+}) {
+  return (
+    <motion.div
+      role="dialog"
+      aria-modal="true"
+      aria-label={mode === 'login' ? 'Sign in' : 'Create account'}
+      className="landing-theme fixed inset-0 z-[100] flex items-center justify-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.35, ease: EASE }}
+    >
+      <motion.button
+        aria-label="Close"
+        onClick={onClose}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.35 }}
+        className="absolute inset-0 cursor-default"
+        style={{
+          background: 'color-mix(in srgb, var(--landing-bg) 55%, transparent)',
+          backdropFilter: 'blur(14px) saturate(140%)',
+          WebkitBackdropFilter: 'blur(14px) saturate(140%)',
+        }}
+      />
+
+      <motion.div
+        initial={{ opacity: 0, y: 28, scale: 0.98, filter: 'blur(10px)' }}
+        animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+        exit={{ opacity: 0, y: 16, scale: 0.98, filter: 'blur(6px)' }}
+        transition={{ duration: 0.55, ease: EASE }}
+        className="relative z-[1] mx-4 flex w-full max-w-[1120px] overflow-hidden rounded-[20px]"
+        style={{
+          border: '1px solid var(--landing-border-strong)',
+          background: 'var(--landing-bg)',
+          boxShadow:
+            '0 60px 120px -48px rgba(10,14,12,0.42), 0 0 0 1px var(--landing-border)',
+        }}
+      >
+        <div
+          aria-hidden
+          className="landing-grain pointer-events-none absolute inset-0"
+          style={{ position: 'absolute', zIndex: 1 }}
+        />
+
+        <BrandPane mode={mode} />
+
+        <div
+          className="relative z-[2] flex w-full flex-col md:w-[56%]"
+          style={{ background: 'var(--landing-bg)' }}
+        >
+          <div className="flex items-center justify-between px-7 pt-6 md:px-10 md:pt-8">
+            <ModeTabs mode={mode} setMode={setMode} />
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors"
+              style={{
+                border: '1px solid var(--landing-border)',
+                color: 'var(--landing-text-muted)',
+              }}
+            >
+              <X size={16} strokeWidth={1.6} />
+            </button>
+          </div>
+
+          <div className="relative flex-1 px-7 pb-8 pt-6 md:px-10 md:pb-10 md:pt-8">
+            <AnimatePresence mode="wait">
+              {mode === 'login' ? (
+                <motion.div
+                  key="login"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.35, ease: EASE }}
+                >
+                  <LoginForm onDone={onClose} onSwitch={() => setMode('register')} />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="register"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.35, ease: EASE }}
+                >
+                  <RegisterForm onDone={onClose} onSwitch={() => setMode('login')} />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function BrandPane({ mode }: { mode: AuthMode }) {
+  const headline =
+    mode === 'login' ? (
+      <>
+        Welcome <span className="landing-italic">back</span> to the
+        <br />
+        quiet <span className="landing-italic">corridor</span>.
+      </>
+    ) : (
+      <>
+        Begin a <span className="landing-italic">lighter</span>
+        <br />
+        way to <span className="landing-italic">move</span>.
+      </>
+    );
+
+  return (
+    <div
+      className="relative z-[2] hidden overflow-hidden md:flex md:w-[44%] md:flex-col"
+      style={{
+        background: 'var(--landing-bg-soft)',
+        borderRight: '1px solid var(--landing-border)',
+      }}
+    >
+      <div aria-hidden className="landing-mesh absolute inset-[-10%]" style={{ opacity: 0.55 }} />
+
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-6 -left-2 select-none landing-display"
+        style={{
+          fontSize: 'clamp(6rem, 11vw, 10.5rem)',
+          letterSpacing: '-0.06em',
+          lineHeight: 0.82,
+          color: 'var(--landing-text)',
+          opacity: 0.06,
+        }}
+      >
+        Verdify.
+      </div>
+
+      <div className="relative flex flex-1 flex-col justify-between p-9 lg:p-11">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span
+              className="flex h-7 w-7 items-center justify-center rounded-[7px]"
+              style={{ background: 'var(--landing-accent)' }}
+            >
+              <Leaf
+                className="h-3.5 w-3.5"
+                style={{ color: 'var(--landing-button-foreground)' }}
+                strokeWidth={2.4}
+              />
+            </span>
+            <span
+              className="landing-display tracking-[-0.03em]"
+              style={{ color: 'var(--landing-text)', fontSize: '1.2rem' }}
+            >
+              Verdify
+            </span>
+          </div>
+
+          <span
+            className="landing-mono-sm"
+            style={{ color: 'var(--landing-text-dim)' }}
+          >
+            {mode === 'login' ? '§ Access — 01' : '§ Access — 02'}
+          </span>
+        </div>
+
+        <div className="mt-10 space-y-6">
+          <div className="flex items-center gap-3">
+            <span className="landing-rule block" />
+            <span
+              className="landing-mono-sm"
+              style={{ color: 'var(--landing-text-dim)' }}
+            >
+              {mode === 'login' ? 'Return to session' : 'Open a new session'}
+            </span>
+          </div>
+
+          <AnimatePresence mode="wait">
+            <motion.h2
+              key={mode}
+              initial={{ opacity: 0, y: 8, filter: 'blur(6px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0)' }}
+              exit={{ opacity: 0, y: -6, filter: 'blur(4px)' }}
+              transition={{ duration: 0.5, ease: EASE }}
+              className="landing-display"
+              style={{
+                color: 'var(--landing-text)',
+                fontSize: 'clamp(2rem, 3.2vw, 2.75rem)',
+                letterSpacing: '-0.04em',
+                lineHeight: 0.96,
+              }}
+            >
+              {headline}
+            </motion.h2>
+          </AnimatePresence>
+
+          <p
+            className="max-w-[34ch] text-[0.92rem] leading-[1.55]"
+            style={{ color: 'var(--landing-text-muted)' }}
+          >
+            {mode === 'login'
+              ? 'Sign in to pick up routes, carbon ledgers, and reports where you left off.'
+              : 'Plan sustainable journeys, track your footprint, and receive weekly reports on your impact.'}
+          </p>
+        </div>
+
+        <div className="relative mt-10 space-y-5">
+          <div className="flex items-center gap-3">
+            <span className="landing-accent-dot" />
+            <span
+              className="landing-mono"
+              style={{ color: 'var(--landing-text-muted)' }}
+            >
+              Corridor live · JB → SG
+            </span>
+          </div>
+
+          <div
+            className="grid grid-cols-3 gap-4 border-t pt-5"
+            style={{ borderColor: 'var(--landing-border)' }}
+          >
+            <StatCell label="Routes indexed" value="1,284" />
+            <StatCell label="Live corridors" value="06" />
+            <StatCell label="CO₂ saved" value="4.2t" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StatCell({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex flex-col gap-2">
+      <span className="landing-number" style={{ fontSize: 'clamp(1.4rem, 2vw, 1.85rem)' }}>
+        {value}
+      </span>
+      <span
+        className="landing-mono-sm"
+        style={{ color: 'var(--landing-text-dim)' }}
+      >
+        {label}
+      </span>
+    </div>
+  );
+}
+
+function ModeTabs({
+  mode,
+  setMode,
+}: {
+  mode: AuthMode;
+  setMode: (m: AuthMode) => void;
+}) {
+  const tabs: { id: AuthMode; num: string; label: string }[] = [
+    { id: 'login', num: '01', label: 'Sign in' },
+    { id: 'register', num: '02', label: 'Create account' },
+  ];
+
+  return (
+    <div className="flex items-center gap-1">
+      {tabs.map((t) => {
+        const active = mode === t.id;
+        return (
+          <button
+            key={t.id}
+            type="button"
+            onClick={() => setMode(t.id)}
+            className="relative inline-flex items-baseline gap-2 px-3 py-2 transition-colors"
+            style={{
+              color: active ? 'var(--landing-text)' : 'var(--landing-text-dim)',
+            }}
+          >
+            <span className="landing-mono-sm" style={{ opacity: 0.7 }}>
+              §{t.num}
+            </span>
+            <span
+              className="text-[0.9rem]"
+              style={{ letterSpacing: '-0.01em' }}
+            >
+              {t.label}
+            </span>
+            {active ? (
+              <motion.span
+                layoutId="auth-tab-underline"
+                className="absolute inset-x-2 -bottom-0.5 h-px"
+                style={{ background: 'var(--landing-accent)' }}
+                transition={{ duration: 0.4, ease: EASE }}
+              />
+            ) : null}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function Field({
+  id,
+  label,
+  type = 'text',
+  placeholder,
+  value,
+  onChange,
+  error,
+  autoComplete,
+  rightSlot,
+  required,
+}: {
+  id: string;
+  label: string;
+  type?: string;
+  placeholder?: string;
+  value: string;
+  onChange: (v: string) => void;
+  error?: string;
+  autoComplete?: string;
+  rightSlot?: ReactNode;
+  required?: boolean;
+}) {
+  const [focused, setFocused] = useState(false);
+  const hasValue = value.length > 0;
+  const borderColor = error
+    ? 'var(--landing-accent-warm)'
+    : focused
+    ? 'var(--landing-accent)'
+    : 'var(--landing-border-strong)';
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label
+        htmlFor={id}
+        className="landing-mono-sm flex items-center justify-between"
+        style={{ color: 'var(--landing-text-dim)' }}
+      >
+        <span>{label}</span>
+        {error ? (
+          <span style={{ color: 'var(--landing-accent-warm)' }}>{error}</span>
+        ) : null}
+      </label>
+      <div className="relative flex items-center">
+        <input
+          id={id}
+          name={id}
+          type={type}
+          value={value}
+          placeholder={placeholder}
+          autoComplete={autoComplete}
+          required={required}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full bg-transparent py-2.5 pr-10 text-[0.98rem] outline-none transition-colors"
+          style={{
+            color: 'var(--landing-text)',
+            fontFamily: 'var(--landing-font-body)',
+            letterSpacing: '-0.005em',
+          }}
+        />
+        {rightSlot ? (
+          <div
+            className="absolute right-0 flex items-center"
+            style={{ color: 'var(--landing-text-muted)' }}
+          >
+            {rightSlot}
+          </div>
+        ) : null}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-px"
+          style={{ background: 'var(--landing-border)' }}
+        />
+        <motion.span
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-px origin-left"
+          initial={false}
+          animate={{ scaleX: focused || hasValue ? 1 : 0 }}
+          transition={{ duration: 0.45, ease: EASE }}
+          style={{ background: borderColor }}
+        />
+      </div>
+    </div>
+  );
+}
+
+function SocialRow() {
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      <SocialButton label="Google" glyph={<GoogleGlyph />} />
+      <SocialButton label="GitHub" glyph={<GithubGlyph />} />
+    </div>
+  );
+}
+
+function SocialButton({ label, glyph }: { label: string; glyph: ReactNode }) {
+  return (
+    <button
+      type="button"
+      className="group inline-flex h-11 items-center justify-center gap-2.5 rounded-full transition-all"
+      style={{
+        border: '1px solid var(--landing-border-strong)',
+        color: 'var(--landing-text)',
+        fontFamily: 'var(--landing-font-body)',
+        fontSize: '0.82rem',
+        letterSpacing: '0.01em',
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLButtonElement).style.background =
+          'var(--landing-accent-soft)';
+        (e.currentTarget as HTMLButtonElement).style.borderColor =
+          'var(--landing-accent-muted)';
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
+        (e.currentTarget as HTMLButtonElement).style.borderColor =
+          'var(--landing-border-strong)';
+      }}
+    >
+      <span
+        className="flex h-4 w-4 items-center justify-center"
+        style={{ color: 'var(--landing-text)' }}
+      >
+        {glyph}
+      </span>
+      <span>Continue with {label}</span>
+    </button>
+  );
+}
+
+function GoogleGlyph() {
+  return (
+    <svg viewBox="0 0 18 18" width="14" height="14" aria-hidden>
+      <path
+        fill="#4285F4"
+        d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615Z"
+      />
+      <path
+        fill="#34A853"
+        d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A9 9 0 0 0 9 18Z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A9 9 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332Z"
+      />
+      <path
+        fill="#EA4335"
+        d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A9 9 0 0 0 .957 4.958l3.007 2.332C4.672 5.163 6.656 3.58 9 3.58Z"
+      />
+    </svg>
+  );
+}
+
+function GithubGlyph() {
+  return (
+    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden fill="currentColor">
+      <path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.07c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
+    </svg>
+  );
+}
+
+function useSubmittable() {
+  const [loading, setLoading] = useState(false);
+  return { loading, setLoading };
+}
+
+function LoginForm({
+  onDone,
+  onSwitch,
+}: {
+  onDone: () => void;
+  onSwitch: () => void;
+}) {
+  const navigate = useNavigate();
+  const firstFieldRef = useRef<HTMLInputElement | null>(null);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [show, setShow] = useState(false);
+  const [remember, setRemember] = useState(true);
+  const [errs, setErrs] = useState<{ email?: string; password?: string }>({});
+  const { loading, setLoading } = useSubmittable();
+
+  useEffect(() => {
+    requestAnimationFrame(() => firstFieldRef.current?.focus());
+  }, []);
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const next: typeof errs = {};
+    if (!email) next.email = 'required';
+    else if (!/\S+@\S+\.\S+/.test(email)) next.email = 'invalid';
+    if (!password) next.password = 'required';
+    else if (password.length < 6) next.password = 'min 6';
+    setErrs(next);
+    if (Object.keys(next).length) return;
+    setLoading(true);
+    setTimeout(() => {
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userEmail', email);
+      setLoading(false);
+      onDone();
+      navigate('/route');
+    }, 900);
+  };
+
+  return (
+    <form onSubmit={submit} className="flex flex-col gap-6">
+      <div className="flex flex-col gap-5">
+        <div ref={(el) => { firstFieldRef.current = el?.querySelector('input') ?? null; }}>
+          <Field
+            id="email"
+            label="Email or username"
+            type="email"
+            autoComplete="email"
+            placeholder="you@domain.com"
+            value={email}
+            onChange={setEmail}
+            error={errs.email}
+            required
+          />
+        </div>
+        <Field
+          id="password"
+          label="Password"
+          type={show ? 'text' : 'password'}
+          autoComplete="current-password"
+          placeholder="••••••••"
+          value={password}
+          onChange={setPassword}
+          error={errs.password}
+          required
+          rightSlot={
+            <button
+              type="button"
+              onClick={() => setShow((s) => !s)}
+              aria-label={show ? 'Hide password' : 'Show password'}
+              className="p-1 transition-colors hover:text-[var(--landing-text)]"
+            >
+              {show ? <EyeOff size={16} strokeWidth={1.6} /> : <Eye size={16} strokeWidth={1.6} />}
+            </button>
+          }
+        />
+      </div>
+
+      <div className="flex items-center justify-between">
+        <label
+          className="flex cursor-pointer items-center gap-2 text-[0.8rem]"
+          style={{ color: 'var(--landing-text-muted)' }}
+        >
+          <input
+            type="checkbox"
+            checked={remember}
+            onChange={(e) => setRemember(e.target.checked)}
+            className="h-3.5 w-3.5 accent-[var(--landing-accent)]"
+          />
+          Keep me signed in
+        </label>
+        <button
+          type="button"
+          className="landing-link-underline text-[0.8rem]"
+          style={{ color: 'var(--landing-text-muted)' }}
+        >
+          Forgot password?
+        </button>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <button
+          type="submit"
+          disabled={loading}
+          className="landing-btn-primary w-full justify-center disabled:cursor-not-allowed disabled:opacity-70"
+        >
+          {loading ? (
+            <Loader2 size={16} className="animate-spin" strokeWidth={1.8} />
+          ) : (
+            <>
+              Sign in
+              <ArrowUpRight size={15} strokeWidth={1.8} />
+            </>
+          )}
+        </button>
+
+        <Divider label="or" />
+
+        <SocialRow />
+      </div>
+
+      <p
+        className="text-center text-[0.82rem]"
+        style={{ color: 'var(--landing-text-muted)' }}
+      >
+        New to Verdify?{' '}
+        <button
+          type="button"
+          onClick={onSwitch}
+          className="landing-link-underline font-medium"
+          style={{ color: 'var(--landing-text)' }}
+        >
+          Create an account
+        </button>
+      </p>
+    </form>
+  );
+}
+
+function RegisterForm({
+  onDone,
+  onSwitch,
+}: {
+  onDone: () => void;
+  onSwitch: () => void;
+}) {
+  const navigate = useNavigate();
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [show, setShow] = useState(false);
+  const [agreed, setAgreed] = useState(false);
+  const [errs, setErrs] = useState<{
+    fullName?: string;
+    email?: string;
+    password?: string;
+    agreed?: string;
+  }>({});
+  const { loading, setLoading } = useSubmittable();
+
+  const strength = useMemo(() => {
+    if (!password) return 0;
+    let s = 0;
+    if (password.length >= 6) s++;
+    if (password.length >= 10) s++;
+    if (/[A-Z]/.test(password)) s++;
+    if (/[0-9]/.test(password)) s++;
+    if (/[^A-Za-z0-9]/.test(password)) s++;
+    return Math.min(s, 4);
+  }, [password]);
+
+  const strengthLabel = ['—', 'weak', 'fair', 'good', 'strong'][strength];
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const next: typeof errs = {};
+    if (!fullName.trim()) next.fullName = 'required';
+    else if (fullName.trim().length < 3) next.fullName = 'min 3';
+    if (!email) next.email = 'required';
+    else if (!/\S+@\S+\.\S+/.test(email)) next.email = 'invalid';
+    if (!password) next.password = 'required';
+    else if (password.length < 6) next.password = 'min 6';
+    if (!agreed) next.agreed = 'required';
+    setErrs(next);
+    if (Object.keys(next).length) return;
+    setLoading(true);
+    setTimeout(() => {
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userEmail', email);
+      localStorage.setItem('userName', fullName);
+      setLoading(false);
+      onDone();
+      navigate('/route');
+    }, 900);
+  };
+
+  return (
+    <form onSubmit={submit} className="flex flex-col gap-5">
+      <div className="flex flex-col gap-5">
+        <Field
+          id="fullName"
+          label="Full name"
+          autoComplete="name"
+          placeholder="Ada Lovelace"
+          value={fullName}
+          onChange={setFullName}
+          error={errs.fullName}
+          required
+        />
+        <Field
+          id="email"
+          label="Email"
+          type="email"
+          autoComplete="email"
+          placeholder="you@domain.com"
+          value={email}
+          onChange={setEmail}
+          error={errs.email}
+          required
+        />
+        <div className="flex flex-col gap-2">
+          <Field
+            id="password"
+            label="Password"
+            type={show ? 'text' : 'password'}
+            autoComplete="new-password"
+            placeholder="At least 6 characters"
+            value={password}
+            onChange={setPassword}
+            error={errs.password}
+            required
+            rightSlot={
+              <button
+                type="button"
+                onClick={() => setShow((s) => !s)}
+                aria-label={show ? 'Hide password' : 'Show password'}
+                className="p-1 transition-colors hover:text-[var(--landing-text)]"
+              >
+                {show ? <EyeOff size={16} strokeWidth={1.6} /> : <Eye size={16} strokeWidth={1.6} />}
+              </button>
+            }
+          />
+          {password ? (
+            <div className="mt-1 flex items-center gap-3">
+              <div className="flex flex-1 gap-1">
+                {[1, 2, 3, 4].map((lvl) => (
+                  <span
+                    key={lvl}
+                    className="h-0.5 flex-1 rounded-full transition-colors"
+                    style={{
+                      background:
+                        lvl <= strength
+                          ? strength >= 3
+                            ? 'var(--landing-accent)'
+                            : 'var(--landing-accent-warm)'
+                          : 'var(--landing-border)',
+                    }}
+                  />
+                ))}
+              </div>
+              <span
+                className="landing-mono-sm"
+                style={{ color: 'var(--landing-text-dim)' }}
+              >
+                {strengthLabel}
+              </span>
+            </div>
+          ) : null}
+        </div>
+      </div>
+
+      <label
+        className="flex cursor-pointer items-start gap-3 text-[0.8rem]"
+        style={{ color: 'var(--landing-text-muted)' }}
+      >
+        <input
+          type="checkbox"
+          checked={agreed}
+          onChange={(e) => setAgreed(e.target.checked)}
+          className="mt-0.5 h-3.5 w-3.5 accent-[var(--landing-accent)]"
+        />
+        <span style={{ lineHeight: 1.5 }}>
+          I agree to the{' '}
+          <a
+            href="#"
+            className="landing-link-underline"
+            style={{ color: 'var(--landing-text)' }}
+          >
+            Terms
+          </a>{' '}
+          &amp;{' '}
+          <a
+            href="#"
+            className="landing-link-underline"
+            style={{ color: 'var(--landing-text)' }}
+          >
+            Privacy
+          </a>
+          .
+          {errs.agreed ? (
+            <span
+              className="landing-mono-sm ml-2"
+              style={{ color: 'var(--landing-accent-warm)' }}
+            >
+              required
+            </span>
+          ) : null}
+        </span>
+      </label>
+
+      <div className="flex flex-col gap-3">
+        <button
+          type="submit"
+          disabled={loading}
+          className="landing-btn-primary w-full justify-center disabled:cursor-not-allowed disabled:opacity-70"
+        >
+          {loading ? (
+            <Loader2 size={16} className="animate-spin" strokeWidth={1.8} />
+          ) : (
+            <>
+              Create account
+              <ArrowUpRight size={15} strokeWidth={1.8} />
+            </>
+          )}
+        </button>
+
+        <Divider label="or" />
+
+        <SocialRow />
+      </div>
+
+      <p
+        className="text-center text-[0.82rem]"
+        style={{ color: 'var(--landing-text-muted)' }}
+      >
+        Already have an account?{' '}
+        <button
+          type="button"
+          onClick={onSwitch}
+          className="landing-link-underline font-medium"
+          style={{ color: 'var(--landing-text)' }}
+        >
+          Sign in
+        </button>
+      </p>
+    </form>
+  );
+}
+
+function Divider({ label }: { label: string }) {
+  return (
+    <div className="relative flex items-center justify-center py-1">
+      <span
+        aria-hidden
+        className="absolute inset-x-0 top-1/2 h-px"
+        style={{ background: 'var(--landing-border)' }}
+      />
+      <span
+        className="landing-mono-sm relative px-3"
+        style={{
+          color: 'var(--landing-text-dim)',
+          background: 'var(--landing-bg)',
+        }}
+      >
+        {label}
+      </span>
+    </div>
+  );
+}

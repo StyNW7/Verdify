@@ -7,6 +7,7 @@ import { ArrowUpRight, Leaf, Menu, Search, X } from 'lucide-react';
 import { Link, useLocation } from 'react-router';
 
 import AnimatedThemeToggler from '@/components/AnimatedThemeToggler';
+import { useAuthModal } from '@/components/auth-modal';
 
 type FlyoutColumn = {
   title: string;
@@ -192,6 +193,40 @@ function FlyoutLink({
   item: { label: string; to: string; prominent?: boolean };
   onClick?: () => void;
 }) {
+  const { open: openAuth } = useAuthModal();
+  const authMode =
+    item.to === '/auth/login'
+      ? ('login' as const)
+      : item.to === '/auth/register'
+      ? ('register' as const)
+      : null;
+
+  if (authMode) {
+    return (
+      <button
+        type="button"
+        onClick={() => {
+          onClick?.();
+          openAuth(authMode);
+        }}
+        className={
+          item.prominent
+            ? 'group inline-flex items-baseline gap-2 landing-display tracking-[-0.035em] text-[clamp(1.25rem,1.6vw,1.65rem)] text-[var(--landing-text)] transition-colors duration-300'
+            : 'inline-flex text-left text-[0.88rem] font-normal text-[var(--landing-text-muted)] transition-colors duration-300 hover:text-[var(--landing-text)]'
+        }
+      >
+        <span>{item.label}</span>
+        {item.prominent ? (
+          <ArrowUpRight
+            className="h-3.5 w-3.5 -translate-y-px opacity-0 transition-all duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:opacity-100"
+            style={{ color: 'var(--landing-accent)' }}
+            strokeWidth={1.8}
+          />
+        ) : null}
+      </button>
+    );
+  }
+
   const combined = (e: ReactMouseEvent<HTMLAnchorElement>) => {
     handleHashLink(item.to, onClick)(e);
     if (!e.defaultPrevented) onClick?.();
@@ -254,6 +289,8 @@ export default function Navbar() {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
+
+  const { open: openAuth } = useAuthModal();
 
   const activeItem = useMemo(
     () => navItems.find((item) => item.id === activeMenu) ?? null,
@@ -370,6 +407,34 @@ export default function Navbar() {
               <AnimatedThemeToggler
                 className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-300 hover:bg-[var(--landing-surface-alt)]"
               />
+              <span
+                aria-hidden
+                className="mx-2 h-4 w-px"
+                style={{ background: 'var(--landing-border)' }}
+              />
+              <button
+                type="button"
+                onClick={() => openAuth('login')}
+                onMouseEnter={() => setActiveMenu(null)}
+                className="landing-link-underline text-[0.82rem] transition-colors duration-300"
+                style={{ color: 'var(--landing-text-muted)' }}
+              >
+                Sign in
+              </button>
+              <button
+                type="button"
+                onClick={() => openAuth('register')}
+                onMouseEnter={() => setActiveMenu(null)}
+                className="ml-2 inline-flex h-8 items-center gap-1.5 rounded-full px-3.5 text-[0.78rem] font-medium transition-all duration-300"
+                style={{
+                  background: 'var(--landing-accent)',
+                  color: 'var(--landing-button-foreground)',
+                  letterSpacing: '0.015em',
+                }}
+              >
+                Get started
+                <ArrowUpRight size={13} strokeWidth={1.8} />
+              </button>
             </div>
 
             <button
@@ -477,21 +542,34 @@ export default function Navbar() {
                 </Link>
               ))}
 
-              <div className="mt-6 flex items-center justify-between">
-                <AnimatedThemeToggler
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full"
-                />
-                <Link
-                  to="/#how"
-                  onClick={(e) => {
-                    handleHashLink('/#how', () => setIsMobileMenuOpen(false))(e);
+              <div className="mt-6 flex flex-col gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
                     setIsMobileMenuOpen(false);
+                    openAuth('register');
                   }}
-                  className="text-[0.82rem]"
-                  style={{ color: 'var(--landing-text-muted)' }}
+                  className="landing-btn-primary w-full justify-center"
                 >
-                  Plan a trip →
-                </Link>
+                  Get started
+                  <ArrowUpRight size={14} strokeWidth={1.8} />
+                </button>
+                <div className="flex items-center justify-between">
+                  <AnimatedThemeToggler
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-full"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      openAuth('login');
+                    }}
+                    className="landing-link-underline text-[0.82rem]"
+                    style={{ color: 'var(--landing-text-muted)' }}
+                  >
+                    Sign in →
+                  </button>
+                </div>
               </div>
             </div>
           </motion.div>

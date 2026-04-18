@@ -1,231 +1,432 @@
-# Landing Theme — Design System Reference
+# Verdify Design Guide
 
-> This guide describes the design of the landing page (`frontend/src/pages/Landing/page.tsx`), served at the root route `/`. Use it as the canonical styling reference when adding new sections or components.
+> This guide reflects the current design system implemented across the root experience: the landing page at `/`, the shared shell in `frontend/src/layouts/root-layout.tsx`, the navbar/footer, and the auth modal. Treat this as the canonical reference for extending the existing visual language.
 
 ---
 
-## Color Palette
+## Scope
 
-### Light Mode (default)
+The current UI is not a generic product dashboard. It is an editorial, campaign-style product surface built around the Johor-Singapore corridor story.
 
-| Token | Value | Usage |
-|---|---|---|
-| `--landing-bg` | `#F4F5F0` | Page background |
-| `--landing-bg-soft` | `#ECEEE6` | Alternate section background |
-| `--landing-surface` | `rgba(255,255,255, 0.55)` | Glassmorphic surface layer 1 |
-| `--landing-surface-alt` | `rgba(255,255,255, 0.42)` | Glassmorphic surface layer 2 (chips) |
-| `--landing-border` | `rgba(10,14,12, 0.10)` | Subtle border |
-| `--landing-border-strong` | `rgba(10,14,12, 0.22)` | Emphasized border |
-| `--landing-text` | `#0A0E0C` | Primary text |
-| `--landing-text-muted` | `rgba(10,14,12, 0.62)` | Body copy, descriptions |
-| `--landing-text-dim` | `rgba(10,14,12, 0.42)` | Labels, metadata |
-| `--landing-accent` | `#1F7A3D` | Primary brand accent (forest green) |
-| `--landing-accent-soft` | `rgba(31,122,61, 0.10)` | Accent-tinted fills |
-| `--landing-accent-muted` | `rgba(31,122,61, 0.32)` | Accent borders and midtones |
-| `--landing-accent-warm` | `#C85A2E` | Secondary accent (terracotta orange) |
-| `--landing-button-foreground` | `#FFFFFF` | Text on accent buttons |
+The design language is shared across:
 
-### Dark Mode (`html.dark`)
+- `frontend/src/pages/Landing/page.tsx`
+- `frontend/src/components/Navbar.tsx`
+- `frontend/src/components/Footer.tsx`
+- `frontend/src/components/auth-modal.tsx`
+- `frontend/src/components/RouteMap.tsx`
+- `frontend/src/index.css`
 
-| Token | Value | Usage |
-|---|---|---|
-| `--landing-bg` | `#0A0E0C` | Near-black green-tinted background |
-| `--landing-bg-soft` | `#0F1513` | Alternate section background |
-| `--landing-text` | `#ECEFE9` | Primary text |
-| `--landing-text-muted` | `rgba(236,239,233, 0.58)` | Body copy |
-| `--landing-text-dim` | `rgba(236,239,233, 0.38)` | Labels, metadata |
-| `--landing-accent` | `#A6F754` | Primary accent shifts to neon lime-green |
-| `--landing-accent-soft` | `rgba(166,247,84, 0.12)` | Accent-tinted fills |
-| `--landing-accent-muted` | `rgba(166,247,84, 0.35)` | Accent borders |
-| `--landing-accent-warm` | `#FF8C5A` | Secondary accent shifts to bright orange |
-| `--landing-button-foreground` | `#0A0E0C` | Dark text on lime buttons |
+The route planner page is a separate, older visual treatment and should not be used as the source of truth for this guide.
+
+---
+
+## Design Direction
+
+The live design is best described as:
+
+- Editorial product storytelling
+- Calm environmental branding
+- Glassmorphic overlays on top of paper-like backgrounds
+- Tight typography with deliberate contrast between sans display and serif italics
+- Motion used as reveal and state feedback, not decoration
+
+The tone is restrained and premium, not playful. Surfaces are soft, spacing is generous, and the accent color is used with discipline.
+
+---
+
+## Color System
+
+### Core landing tokens
+
+| Token | Light | Dark | Role |
+|---|---|---|---|
+| `--landing-bg` | `#F4F5F0` | `#0A0E0C` | Main page background |
+| `--landing-bg-soft` | `#ECEEE6` | `#0F1513` | Alternate section background |
+| `--landing-surface` | `rgba(255,255,255,0.55)` | `#141A17` | Elevated surface fill |
+| `--landing-surface-alt` | `rgba(255,255,255,0.42)` | `#1A221F` | Secondary elevated fill |
+| `--landing-border` | `rgba(10,14,12,0.10)` | `rgba(236,239,233,0.10)` | Standard border |
+| `--landing-border-strong` | `rgba(10,14,12,0.22)` | `rgba(236,239,233,0.22)` | Emphasized border |
+| `--landing-text` | `#0A0E0C` | `#ECEFE9` | Primary text |
+| `--landing-text-muted` | `rgba(10,14,12,0.62)` | `rgba(236,239,233,0.58)` | Paragraph and support copy |
+| `--landing-text-dim` | `rgba(10,14,12,0.42)` | `rgba(236,239,233,0.38)` | Metadata and section labels |
+| `--landing-accent` | `#1F7A3D` | `#A6F754` | Main action color |
+| `--landing-accent-soft` | `rgba(31,122,61,0.10)` | `rgba(166,247,84,0.12)` | Accent wash |
+| `--landing-accent-muted` | `rgba(31,122,61,0.32)` | `rgba(166,247,84,0.35)` | Accent border and hover state |
+| `--landing-accent-warm` | `#C85A2E` | `#FF8C5A` | Secondary warm accent |
+| `--landing-button-foreground` | `#FFFFFF` | `#0A0E0C` | Text on primary accent buttons |
+
+### Extended surface tokens
+
+These are already implemented and should be reused instead of inventing new ones:
+
+- `--landing-cta-bg`
+- `--landing-cta-shadow`
+- `--landing-card-bg`
+- `--landing-card-border-glow`
+- `--landing-card-inner-highlight`
+- `--landing-map-surface`
+- `--landing-map-shadow`
+- `--landing-accent-glow`
+- `--landing-mesh-a`
+- `--landing-mesh-b`
+- `--landing-mesh-c`
+
+### Usage rules
+
+- Accent green is the primary action and status color.
+- Warm terracotta is for contrast, stress, or emphasis inside messaging.
+- Borders are low-contrast and should stay soft.
+- Large surfaces should derive from existing landing tokens rather than hardcoded grays.
 
 ---
 
 ## Typography
 
-Four distinct font roles. Never substitute or mix these with other font variables.
+### Font roles
 
-| Role | CSS class / var | Font stack | Use case |
+| Role | Token / class | Stack | Usage |
 |---|---|---|---|
-| Display | `.landing-display`, `var(--landing-font-display)` | `Geist`, `Inter Tight`, system-ui | All headings, logo, stat numbers |
-| Body | `var(--landing-font-body)` | Same as display (`Geist`) | Body paragraphs, button labels |
-| Italic accent | `.landing-italic`, `var(--landing-font-italic)` | `Instrument Serif` italic | Accent phrases inside headings |
-| Mono | `.landing-mono-sm`, `.landing-mono`, `var(--landing-font-mono)` | `Geist Mono`, `JetBrains Mono` | Section labels, chips, metadata |
+| Landing display | `--landing-font-display`, `.landing-display`, `.landing-hero` | `Geist`, `Inter Tight`, system-ui | Headlines, logo, emphasis |
+| Landing body | `--landing-font-body` | `Geist`, `Inter Tight`, system-ui | Paragraphs, buttons, body copy |
+| Landing italic | `--landing-font-italic`, `.landing-italic` | `Instrument Serif`, Georgia | Short accent phrases inside headlines |
+| Landing mono | `--landing-font-mono`, `.landing-mono`, `.landing-mono-sm` | `Geist Mono`, `JetBrains Mono` | Labels, chips, metadata |
 
-### Display Scale
+### Current type behavior
 
-- **`.landing-hero`** (Hero H1): weight 400, `letter-spacing: -0.055em`, `line-height: 0.88`, fluid `clamp(3.2rem, 10.5vw, 10.5rem)`
-- **`.landing-display`**: weight 400, `letter-spacing: -0.045em`, `line-height: 0.92`
-- **Section H2s**: `clamp(2rem–2.4rem, 4.4–5.5vw, 3.6–4.8rem)`, tracking `-0.035em` to `-0.04em`
-- **`.landing-italic`**: `Instrument Serif` italic, weight 400 — renders slightly smaller (~94% size) and with slight positive tracking
-- **`.landing-mono-sm`**: `0.62rem`, uppercase, `letter-spacing: 0.14em`
-- **`.landing-number`** (stats): display font, weight 300, fluid `clamp(2.2rem, 3.4vw, 3.4rem)`, gradient text clip (solid → 40% opacity)
+- Headlines use strong negative tracking and compact line-height.
+- `.landing-hero` is the dominant display style for the top hero only.
+- `.landing-display` is reused for section headings, card titles, logo lockups, and major footer statements.
+- `.landing-italic` should be used sparingly inside sans headlines, usually one or two words.
+- `.landing-mono-sm` is the default label style for section markers like `§ Premise — 01`.
+- `.landing-mono` is used for short utility labels like live corridor indicators.
 
-### Global Rules
+### Important constraint
 
-- `-webkit-font-smoothing: antialiased` on body
-- `font-feature-settings: "ss01", "ss02", "cv11"` on `.landing-theme` root
-- All section labels are prefixed with `§` and include a sequential number: `§ Premise — 01`, `§ Sequence — 02`, etc.
+Do not mix the older global serif display stack (`Fraunces`) into landing-specific work. The current landing system explicitly overrides that with `Geist` for the live page aesthetic.
 
 ---
 
-## Layout
+## Layout System
 
-- **Max-width**: `1440px`, centered with `mx-auto`
-- **Horizontal padding**: `px-4` (mobile) → `sm:px-6` → `lg:px-10`
-- **Section vertical padding**: `py-24 lg:py-32`
-- **Section header grid**: asymmetric `lg:grid-cols-[0.32fr_0.68fr]` — narrow left column holds the `§` label + rule line; wide right column holds the heading
-- **Content grids**: `md:grid-cols-2`, `lg:grid-cols-3`, `lg:grid-cols-4`
-- **Hero grid**: `lg:grid-cols-[1.02fr_0.98fr]` (near 50/50, copy left, map right)
-- **Card gap**: `gap-5`
-- **Layout column gap**: `gap-8 lg:gap-14`
+### Shared shell
 
-Sections alternate between `var(--landing-bg)` and `var(--landing-bg-soft)` backgrounds, separated by `border-y` using `var(--landing-border)`.
+- Root layout uses `min-h-svh`
+- Header is fixed at the top
+- Footer is shared across the root layout
+- Page transitions use a blur-and-slide motion between routes
+
+### Width and spacing
+
+- Main landing content: `max-w-[1440px]`
+- Navbar content: `max-w-[1024px]`
+- Horizontal padding: `px-4`, `sm:px-6`, `lg:px-10`
+- Navbar padding: `px-4`, `sm:px-6`, `lg:px-8`
+- Major section padding: `py-24 lg:py-32`
+- Card grid gap: `gap-5`
+- Large hero split: `lg:grid-cols-[1.02fr_0.98fr]`
+- Section intro split: `lg:grid-cols-[0.32fr_0.68fr]`
+
+### Section rhythm
+
+The landing page alternates between:
+
+- Clean background sections using `var(--landing-bg)`
+- Bordered soft-background sections using `var(--landing-bg-soft)`
+
+This alternating rhythm is one of the main compositional devices. Preserve it when adding sections.
 
 ---
 
 ## Navigation
 
-- Fixed, `inset-x-0 top-0`, `z-50`
-- Height: `72px`
-- Glassmorphic: `backdrop-filter: blur(22px) saturate(160%)`
-- Background transitions from near-transparent on load → `color-mix(in srgb, var(--landing-bg) 78%, transparent)` on scroll
-- Bottom border appears only on scroll
-- **Logo**: 28×28px square with `border-radius: 7px`, `var(--landing-accent)` fill, `Leaf` icon; brand name in `.landing-display` at `1.35rem`, tracking `-0.03em`
-- **Nav links**: `.landing-link-underline` — accent underline sweeps left→right on hover (`0.5s cubic-bezier(0.65,0,0.35,1)`)
-- **CTA button**: pill (999px radius), height `40px`, accent fill, with `ArrowUpRight` icon
+The navbar is no longer a simple top bar. It is part of the brand expression.
+
+### Structure
+
+- Fixed top nav with `z-50`
+- Effective nav height: `64px`
+- Transparent at rest
+- Gains border, background tint, and blur after light scroll or when a flyout is open
+- Desktop centers a four-item navigation
+- Right side holds search, theme toggle, sign-in link, and accent CTA
+- Mobile uses a full-width blurred drawer below the nav bar
+
+### Desktop flyouts
+
+Each top-level item opens a three-column flyout:
+
+- Column 1: prominent editorial links
+- Column 2: page-local wayfinding
+- Column 3: action links into the product
+
+The flyout uses:
+
+- `color-mix` with `var(--landing-bg)`
+- strong blur and saturation
+- soft drop shadow
+- large display links for prominent items
+
+### Logo
+
+- Icon block: 24x24
+- Rounded square
+- Accent fill
+- Leaf icon in `landing-button-foreground`
+- Wordmark in `.landing-display`
 
 ---
 
-## Cards (`.landing-card`)
+## Buttons and Interactive Elements
 
-- `border-radius: 14px`
-- Background: glassmorphic gradient (light-to-transparent white in light / dark-to-transparent in dark)
-- `backdrop-filter: blur(22px) saturate(170%)`
-- 1px border: `var(--landing-border)`
-- Inner highlight: `inset 0 1px 0 rgba(255,255,255,0.8)` light / `rgba(255,255,255,0.06)` dark
-- **Hover state**: lifts `translateY(-4px)`, border strengthens to `var(--landing-border-strong)`, `::before` pseudo-element fades in a diagonal gradient border-glow (accent green → warm terracotta)
-- Internal padding: `p-7`
-- Internal layout: `flex flex-col gap-5`
+### Primary buttons
 
----
+Implemented as `.landing-btn-primary`:
 
-## Buttons
+- Full pill shape
+- Accent background
+- Medium body weight
+- Small uppercase-adjacent feel via letter spacing, not actual uppercase
+- Hover lifts upward and gains glow
 
-### Primary (`.landing-btn-primary`)
+### Ghost buttons
 
-- Pill shape (`border-radius: 999px`)
-- Height: `3rem`, padding: `0 1.6rem`
-- Fill: `var(--landing-accent)`, text: `var(--landing-button-foreground)`
-- Font: body, weight 500, `0.82rem`, `letter-spacing: 0.02em`
-- Hover: `translateY(-2px)` + accent glow shadow `0 18px 45px -15px var(--landing-accent)`
+Implemented as `.landing-btn-ghost`:
 
-### Ghost (`.landing-btn-ghost`)
+- Transparent surface
+- Stronger border than default cards
+- Accent-tinted hover fill
 
-- Same dimensions as primary
-- Background: transparent
-- Border: `1px solid var(--landing-border-strong)`
-- Text: `var(--landing-text)`
-- Hover: border turns accent green, background fills with `var(--landing-accent-soft)`
+### Text links
+
+The shared inline link treatment is `.landing-link-underline`:
+
+- underline animates from hidden to full width
+- underline uses the accent color
+- used for nav text actions and editorial inline CTAs
 
 ---
 
-## Background Effects
+## Cards and Surfaces
 
-### 1. Grain Overlay (`.landing-grain`)
+### `landing-card`
 
-Fixed, full-screen, `z-50`, SVG fractalNoise pattern:
-- Light: `4%` opacity, blend-mode `multiply`
-- Dark: `6%` opacity, blend-mode `overlay`
+This is the main reusable elevated surface style.
 
-### 2. Mesh Gradient (`.landing-mesh`)
+- Soft gradient background
+- Backdrop blur and saturation
+- Thin border
+- Inner highlight
+- Hidden border-glow overlay that fades in on hover
+- Slight upward movement on hover
+- Rounded corners at `14px`
 
-Absolute, `inset: -10%`, three overlapping radial gradients in accent green and warm terracotta, blurred `40px`. Used in hero and alternate sections (at `opacity: 0.6` in the "How it works" section).
+Use this for:
 
-### 3. Section Background Rhythm
+- sequence cards
+- capability cards
+- future elevated content blocks in the landing system
 
-Sections alternate between:
-- `var(--landing-bg)` — default page color
-- `var(--landing-bg-soft)` — slightly darker/more saturated
+### CTA panel
 
-Separated by `border-y` (`var(--landing-border)`).
+The final CTA section is a larger special-case surface:
+
+- `rounded-[20px]`
+- stronger blur
+- richer gradient background via `--landing-cta-bg`
+- soft radial accent bloom in the corner
+
+### Auth modal shell
+
+The auth modal uses the same language but tighter and more editorial:
+
+- fullscreen blurred backdrop
+- large central shell with border and shadow
+- left brand panel with mesh and faded wordmark
+- right form panel with minimal field styling
 
 ---
 
-## Section-Specific Patterns
+## Background Treatments
+
+### Grain
+
+Two different grain systems exist:
+
+- global body paper grain for non-landing surfaces
+- landing-specific grain overlay via `.landing-grain`
+
+When `.landing-theme` is mounted, the body pseudo-element overlays are disabled so the landing page controls its own atmosphere.
+
+### Mesh
+
+`.landing-mesh` is a recurring atmospheric layer built from three blurred radial gradients. It appears:
+
+- behind the hero
+- behind the sequence section
+- inside the auth modal brand panel
+
+### Glass blur
+
+Blur is used consistently for:
+
+- navbar on scroll/open
+- flyout menus
+- landing cards
+- route map shell
+- ticker strip
+- auth modal backdrop and shell
+
+This is not decorative frosting. It is a core part of the interface depth model.
+
+---
+
+## Landing Page Composition
 
 ### Hero
 
-- Status row: pulsing `.landing-accent-dot` (8px circle, animated expanding ring) + mono label
-- Chips (`.landing-chip`): pill, glassmorphic, monospaced uppercase, `0.64rem`, `letter-spacing: 0.16em`
-- Stat block: 3-column grid below `border-t`, values in `.landing-number` (gradient clipped display text)
-- Map card: `aspect-[5/5]` desktop, `rounded-[18px]`, floating mono labels, live indicator dot with accent glow (`box-shadow: 0 0 10px var(--landing-accent)`)
+The hero currently includes:
 
-### Ticker
+- live status row with accent dot
+- corridor/date chips on desktop
+- three-line animated headline
+- body paragraph with italic emphasis
+- primary and ghost CTAs
+- three compact stats under a top border
+- live route map on the right
+- ticker strip beneath the hero
 
-- Horizontal auto-scrolling marquee, 42s loop
-- Items in `.landing-italic` at `1.35rem`
-- Separated by 4px accent bullet dots
-- Semi-transparent glassmorphic background
+### Premise section
 
-### Section Headers (all sections)
+- section label on the left
+- oversized editorial headline on the right
+- two-column explanatory copy
+- warm accent used specifically inside the phrase `energy crunch`
 
-Always follow the `[0.32fr | 0.68fr]` asymmetric grid:
-1. Left col: `§ Label — NN` in `.landing-mono-sm` dim color + `.landing-rule` (3.5rem gradient line, accent → transparent)
-2. Right col: large display heading with an italic accent phrase
+### Sequence section
 
-### Stack Section Rows
+- soft background
+- mesh overlay
+- four-card process flow
+- visible horizontal guide line behind cards on desktop
 
-Full-width bordered rows (`border-b`), grid `md:grid-cols-[1fr_2fr_0.3fr]`:
-- Left: icon badge + large display stack name (`clamp(2rem, 3.8vw, 3.2rem)`)
-- Center: heading + description
-- Right: `ArrowUpRight` icon animates `(-1px, +1px)` on hover
+### Capabilities section
+
+- six-card grid
+- each card labeled `Line 01` style
+- icon on top right
+- hover-only `learn more` affordance
+
+### Evidence section
+
+- soft background with border rhythm
+- three full-width rows
+- each row uses a left icon badge, central explanation, and right arrow affordance
+
+### Closing CTA
+
+- oversized display statement
+- accent italic finishing word
+- supporting paragraph
+- two-button action row
 
 ### Footer
 
-- Giant `Verdify.` wordmark at `clamp(3rem, 10vw, 9rem)`, accent period
-- Top section: brief copy + tech metadata grid
-- Copyright in `.landing-mono-sm` bottom-right
+The footer continues the landing aesthetic rather than switching to utility UI:
+
+- editorial headline and brief
+- compact metadata grid
+- large `Verdify.` wordmark
+- mono copyright
 
 ---
 
-## Icon Badges
+## Route Map Visual Language
 
-Lucide icons throughout:
-- **strokeWidth**: `1.4` decorative / `1.6` badges / `2.4` logo
-- **Badge container**: 40–44px circle or rounded square (`border-radius: 10px`)
-- Fill: `var(--landing-accent-soft)`, border: `var(--landing-accent-muted)`, icon color: `var(--landing-accent)`
-- Hover: `scale(1.1)` transition on stack section icons
+`RouteMap.tsx` is a bespoke illustration component, not a generic map embed.
 
----
+### Characteristics
 
-## Animations
+- abstracted corridor map, not literal cartography
+- animated eco path and secondary standard path
+- mono labels for origin/destination and scale
+- pulsing nodes and moving route indicators
+- palette variants for `light`, `warm`, and `dark`
 
-| Element | Animation | Details |
-|---|---|---|
-| Hero H1 characters (`.landing-char`) | Blur + slide in | `translateY(0.3em) blur(10px)` → clear, staggered 24ms/char, starts at 80ms |
-| Scroll-reveal sections | Fade + slide | `opacity:0, y:28` → `opacity:1, y:0`, 0.9s, easing `[0.2,0.7,0.2,1]`, once at 20% viewport |
-| Card stagger | Delayed reveal | 0.06–0.1s per card |
-| Accent dot (`.landing-accent-dot`) | Pulse ring | Ring scales `0.6→1.8`, fades, 2s infinite |
-| Nav underline | Sweep | Left→right, 0.5s `cubic-bezier(0.65,0,0.35,1)` |
-| Primary button hover | Lift + glow | `translateY(-2px)` + accent shadow |
-| Card hover | Lift + border glow | `translateY(-4px)`, border-glow pseudo fades in |
-| Theme toggle | Circle reveal | View transition API, cross-fade disabled; custom circle-reveal animation owns the frame |
+### Guidance
+
+- Keep the map schematic and ambient
+- Avoid introducing realistic map tiles
+- Preserve the signal hierarchy: eco route first, standard route second, labels third
 
 ---
 
-## Rules & Design Vocabulary
+## Auth Modal
 
-The design is a **modern editorial tech** aesthetic — editorial magazine structure meets developer tooling precision. Follow these rules strictly:
+The auth modal is part of the current design system and should be referenced when building account-related UI.
 
-- **Tight negative tracking** on all headings — never use default or positive tracking on display text
-- **Serif italic as accent only** — `.landing-italic` is used for 2–3 words max inside sans-serif headlines, never for full paragraphs
-- **Glassmorphism** on all surfaces that float above the background (cards, nav, chips, map, ticker)
-- **Accent green is the single dominant accent** — use for CTAs, highlights, active states, and section rules
-- **Warm terracotta is a stress/warning accent** — used sparingly for tension (e.g. "energy crunch" callout)
-- **Section numbering** with `§` signals editorial rigor — every new section needs its label
-- **No decorative imagery** — all visuals are functional (route map, icon badges, gradient meshes)
-- **Micro-animations are polish, not decoration** — every animation has a clear reveal or feedback purpose
-- **Alternate section backgrounds** to create visual rhythm without adding dividers
-- **Max-width 1440px** on all content — never full-bleed text
+### Structure
+
+- `AuthModalProvider` mounted at the root layout
+- modal opens from navbar actions and flyout links
+- left pane is brand/editorial
+- right pane is form-driven
+
+### Visual rules
+
+- brand pane uses faded oversized wordmark, stats, and mesh
+- tabs use understated mono numbering with animated underline
+- fields are underlined rather than boxed
+- borders animate from hidden to active on focus/value
+- errors switch to `--landing-accent-warm`
+- social buttons stay pill-shaped and understated
+
+This modal should remain visually aligned with the landing experience, not with the older auth pages.
+
+---
+
+## Motion Principles
+
+The current motion system uses `framer-motion` with a consistent easing family around `[0.2, 0.7, 0.2, 1]`.
+
+### Current patterns
+
+- route/page transitions: fade, vertical motion, blur
+- hero text: per-character reveal
+- section reveals: upward fade on scroll into view
+- cards: staggered entrance on scroll
+- nav: slide down on first paint
+- flyouts and modal content: short opacity and y-axis transitions
+- buttons/cards: restrained hover lift, not bounce
+- accent dot: pulse animation
+- ticker: constant marquee movement
+
+### View transitions
+
+The theme switcher suppresses the browser’s default root cross-fade so the custom reveal animation owns the frame. Do not reintroduce the default transition behavior.
+
+---
+
+## Design Rules
+
+- Keep display typography tight and intentional.
+- Use serif italics only as contrast accents inside bigger statements.
+- Reuse landing tokens before inventing new colors.
+- Favor glass, blur, and border layering over heavy shadows or flat boxes.
+- Preserve the editorial section-label pattern with `§` markers where the page structure calls for it.
+- Keep surfaces calm and premium; avoid loud gradients outside the established token set.
+- Use motion to clarify hierarchy and interaction, not to add novelty.
+- Maintain the contrast between wide cinematic sections and tight mono metadata.
+- Treat the landing page, navbar, footer, and auth modal as one system.
+
+---
+
+## When Extending The Design
+
+If you add a new section or component inside this visual system:
+
+1. Start with existing landing tokens and utility classes.
+2. Reuse `.landing-display`, `.landing-italic`, `.landing-mono-sm`, `.landing-card`, `.landing-btn-primary`, or `.landing-btn-ghost` where applicable.
+3. Match the current section rhythm: generous spacing, tight headline, restrained body width.
+4. Prefer editorial composition over dashboard composition.
+5. Check the result in both light and dark themes.

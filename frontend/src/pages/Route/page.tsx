@@ -28,7 +28,6 @@ import {
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
-// Types
 interface RouteOption {
   id: string;
   name: string;
@@ -47,7 +46,6 @@ interface RouteOption {
 }
 
 export default function RoutePlannerPage() {
-  // Form State
   const [origin, setOrigin] = useState('');
   const [destination, setDestination] = useState('');
   const [departureTime, setDepartureTime] = useState('');
@@ -66,7 +64,6 @@ export default function RoutePlannerPage() {
     lrt: true,
   });
 
-  // Results State
   const [routes, setRoutes] = useState<RouteOption[]>([]);
   const [carbonImpact, setCarbonImpact] = useState({
     totalSaved: 0,
@@ -75,7 +72,6 @@ export default function RoutePlannerPage() {
     percentage: 0,
   });
 
-  // Mock data for routes (will be replaced by API call)
   const mockRoutes: RouteOption[] = [
     {
       id: '1',
@@ -142,7 +138,6 @@ export default function RoutePlannerPage() {
     },
   ];
 
-  // Mock carbon impact
   const mockCarbonImpact = {
     totalSaved: 2.5,
     treesEquivalent: 0.1,
@@ -150,9 +145,7 @@ export default function RoutePlannerPage() {
     percentage: 85,
   };
 
-  // Handle form submission
   const handlePlanRoute = async () => {
-    // Validation
     if (!origin.trim()) {
       alert('Please enter your origin location');
       return;
@@ -168,27 +161,23 @@ export default function RoutePlannerPage() {
 
     setIsLoading(true);
 
-    // Simulate API call to AI
     setTimeout(() => {
       setRoutes(mockRoutes);
       setCarbonImpact(mockCarbonImpact);
       setShowResults(true);
-      setSelectedRoute('1'); // Auto-select recommended route
+      setSelectedRoute('1');
       setIsLoading(false);
     }, 2000);
   };
 
-  // Handle route selection
   const handleSelectRoute = (routeId: string) => {
     setSelectedRoute(routeId);
   };
 
-  // Get selected route data
   const getSelectedRouteData = () => {
     return routes.find(route => route.id === selectedRoute);
   };
 
-  // Reset form
   const handleReset = () => {
     setOrigin('');
     setDestination('');
@@ -198,7 +187,6 @@ export default function RoutePlannerPage() {
     setRoutes([]);
   };
 
-  // Toggle transport mode
   const toggleMode = (mode: keyof typeof allowedModes) => {
     setAllowedModes(prev => ({ ...prev, [mode]: !prev[mode] }));
   };
@@ -216,7 +204,6 @@ export default function RoutePlannerPage() {
 
       <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          {/* Page Title */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -233,7 +220,6 @@ export default function RoutePlannerPage() {
             </p>
           </motion.div>
 
-          {/* Input Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -241,9 +227,7 @@ export default function RoutePlannerPage() {
             className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden mb-8"
           >
             <div className="p-6 md:p-8">
-              {/* Main Input Row */}
               <div className="grid md:grid-cols-3 gap-4 mb-6">
-                {/* Origin */}
                 <div className="relative">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     From
@@ -261,7 +245,6 @@ export default function RoutePlannerPage() {
                   </div>
                 </div>
 
-                {/* Destination */}
                 <div className="relative">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     To
@@ -279,7 +262,6 @@ export default function RoutePlannerPage() {
                   </div>
                 </div>
 
-                {/* Departure Time */}
                 <div className="relative">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Departure Time
@@ -298,7 +280,6 @@ export default function RoutePlannerPage() {
                 </div>
               </div>
 
-              {/* Preference Row */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   Travel Preference
@@ -340,7 +321,6 @@ export default function RoutePlannerPage() {
                 </div>
               </div>
 
-              {/* Advanced Options Toggle */}
               <button
                 onClick={() => setShowAdvanced(!showAdvanced)}
                 className="flex items-center gap-2 text-sm text-gray-500 hover:text-emerald-600 transition-colors mb-4"
@@ -350,7 +330,6 @@ export default function RoutePlannerPage() {
                 {showAdvanced ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
               </button>
 
-              {/* Advanced Options Panel */}
               <AnimatePresence>
                 {showAdvanced && (
                   <motion.div
@@ -360,7 +339,6 @@ export default function RoutePlannerPage() {
                     className="overflow-hidden mb-6"
                   >
                     <div className="bg-gray-50 rounded-xl p-5 space-y-4">
-                      {/* Passengers */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           <Users size={16} className="inline mr-2" />
@@ -383,7 +361,6 @@ export default function RoutePlannerPage() {
                         </div>
                       </div>
 
-                      {/* Transport Modes */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Allowed Transport Modes
@@ -462,7 +439,6 @@ export default function RoutePlannerPage() {
                 )}
               </AnimatePresence>
 
-              {/* Submit Button */}
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -486,7 +462,6 @@ export default function RoutePlannerPage() {
             </div>
           </motion.div>
 
-          {/* Results Section */}
           <AnimatePresence>
             {showResults && !isLoading && (
               <motion.div
@@ -495,7 +470,6 @@ export default function RoutePlannerPage() {
                 exit={{ opacity: 0, y: -30 }}
                 transition={{ duration: 0.4 }}
               >
-                {/* Journey Summary Bar */}
                 <div className="bg-gray-50 rounded-xl p-4 mb-6 flex flex-wrap justify-between items-center gap-4">
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
@@ -521,7 +495,6 @@ export default function RoutePlannerPage() {
                   </button>
                 </div>
 
-                {/* Route Tabs/Cards */}
                 <div className="grid md:grid-cols-3 gap-4 mb-8">
                   {routes.map((route) => (
                     <motion.div
@@ -587,14 +560,12 @@ export default function RoutePlannerPage() {
                   ))}
                 </div>
 
-                {/* Selected Route Details */}
                 {getSelectedRouteData() && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="grid lg:grid-cols-3 gap-6"
                   >
-                    {/* Left: Step-by-Step Directions */}
                     <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-6">
                       <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                         <MapPin className="text-emerald-600" />
@@ -613,7 +584,6 @@ export default function RoutePlannerPage() {
                         ))}
                       </div>
 
-                      {/* Action Button */}
                       <button className="w-full mt-6 bg-emerald-600 text-white py-3 rounded-xl font-semibold hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2">
                         <CheckCircle size={18} />
                         Start This Green Journey
@@ -621,7 +591,6 @@ export default function RoutePlannerPage() {
                       </button>
                     </div>
 
-                    {/* Right: Carbon Impact Summary */}
                     <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-6">
                       <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                         <Leaf className="text-emerald-600" />
@@ -676,7 +645,6 @@ export default function RoutePlannerPage() {
                         </div>
                       </div>
 
-                      {/* Green Tip */}
                       <div className="mt-6 bg-white/50 rounded-lg p-3">
                         <p className="text-xs text-emerald-700">
                           💡 Green Tip: Taking public transport 5 days a week can save up to 
@@ -690,7 +658,6 @@ export default function RoutePlannerPage() {
             )}
           </AnimatePresence>
 
-          {/* Empty State (Before Search) */}
           {!showResults && !isLoading && (
             <motion.div
               initial={{ opacity: 0 }}

@@ -17,9 +17,7 @@ export default function AuthLayout({
   return (
     <div className="min-h-screen bg-white overflow-hidden">
       <div className="flex min-h-screen">
-        {/* Left Side - Image/Visual Section */}
         <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-emerald-600 to-green-700 overflow-hidden">
-          {/* Background Pattern */}
           <div className="absolute inset-0 opacity-10">
             <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
               <defs>
@@ -31,7 +29,6 @@ export default function AuthLayout({
             </svg>
           </div>
 
-          {/* Floating Elements */}
           <div className="absolute top-20 left-10 animate-float">
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
               <Leaf className="w-8 h-8 text-white" />
@@ -73,15 +70,12 @@ export default function AuthLayout({
             </motion.div>
           </div>
 
-          {/* Decorative Circles */}
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/10 rounded-full blur-3xl" />
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-white/10 rounded-full blur-3xl" />
         </div>
 
-        {/* Right Side - Form Section */}
         <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
           <div className="w-full max-w-md">
-            {/* Mobile Logo */}
             <div className="lg:hidden flex justify-center mb-8">
               <div className="bg-gradient-to-br from-emerald-600 to-green-600 p-3 rounded-2xl">
                 <Leaf className="w-8 h-8 text-white" />
