@@ -19,8 +19,8 @@ function App() {
 
       <AnimatePresence mode="wait">
         <Routes>
+          <Route path="/" element={<LandingPage />} />
           <Route path="/" element={<Layout />}>
-            <Route index element={<LandingPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>

@@ -107,6 +107,19 @@ body::after {
   background: radial-gradient(140% 100% at 50% 0%, transparent 45%, hsl(var(--ink) / 0.06) 100%);
 }
 
+/* Suppress the paper body overlays when the Verdify v2 landing is mounted, and in dark mode. */
+body:has(.verdify-v2)::before,
+body:has(.verdify-v2)::after,
+html.dark body::before,
+html.dark body::after {
+  display: none;
+}
+
+html.dark body {
+  background: #0A0E0C;
+  color: #ECEFE9;
+}
+
 @layer utilities {
   .font-display { font-family: var(--font-display); }
   .font-italic {
@@ -277,4 +290,352 @@ body::after {
     border-color: hsl(var(--foreground));
     background: hsl(var(--secondary));
   }
+}
+
+/* ============================================
+   Verdify V2 — Light/Dark Themed Variant
+   Default = Light. html.dark overrides.
+   ============================================ */
+.verdify-v2 {
+  /* Light palette (default) */
+  --v2-bg: #F4F5F0;
+  --v2-bg-soft: #ECEEE6;
+  --v2-surface: rgba(255, 255, 255, 0.55);
+  --v2-surface-2: rgba(255, 255, 255, 0.42);
+  --v2-border: rgba(10, 14, 12, 0.10);
+  --v2-border-strong: rgba(10, 14, 12, 0.22);
+  --v2-text: #0A0E0C;
+  --v2-text-muted: rgba(10, 14, 12, 0.62);
+  --v2-text-dim: rgba(10, 14, 12, 0.42);
+  --v2-eco: #1F7A3D;
+  --v2-eco-soft: rgba(31, 122, 61, 0.10);
+  --v2-eco-mid: rgba(31, 122, 61, 0.32);
+  --v2-warm: #C85A2E;
+  --v2-btn-fg: #FFFFFF;
+  --v2-mesh-a: rgba(31, 122, 61, 0.18);
+  --v2-mesh-b: rgba(200, 90, 46, 0.14);
+  --v2-mesh-c: rgba(31, 122, 61, 0.12);
+  --v2-grain-opacity: 0.04;
+  --v2-grain-blend: multiply;
+  --v2-cta-bg: linear-gradient(135deg, rgba(31, 122, 61, 0.18) 0%, rgba(255, 255, 255, 0.45) 45%, rgba(244, 245, 240, 0.55) 100%);
+  --v2-cta-shadow: 0 60px 120px -40px rgba(31, 122, 61, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  --v2-card-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.28) 100%);
+  --v2-card-border-glow: linear-gradient(135deg, rgba(31, 122, 61, 0.55), transparent 40%, transparent 60%, rgba(200, 90, 46, 0.38));
+  --v2-card-inner-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 -1px 0 rgba(10, 14, 12, 0.04);
+  --v2-number-stop-a: #0A0E0C;
+  --v2-number-stop-b: rgba(10, 14, 12, 0.4);
+  --v2-ticker-bg: rgba(255, 255, 255, 0.45);
+  --v2-map-surface: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(236, 238, 230, 0.35) 100%);
+  --v2-map-shadow: 0 40px 90px -30px rgba(10, 14, 12, 0.22), 0 0 0 1px rgba(31, 122, 61, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  --v2-eco-glow: 0 0 18px rgba(31, 122, 61, 0.55);
+
+  --v2-font-display: "Geist", "Inter Tight", system-ui, sans-serif;
+  --v2-font-body: "Geist", "Inter Tight", system-ui, sans-serif;
+  --v2-font-italic: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --v2-font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, monospace;
+
+  background-color: var(--v2-bg);
+  color: var(--v2-text);
+  font-family: var(--v2-font-body);
+  font-feature-settings: "ss01", "ss02", "cv11";
+}
+
+html.dark .verdify-v2 {
+  /* Dark palette override */
+  --v2-bg: #0A0E0C;
+  --v2-bg-soft: #0F1513;
+  --v2-surface: #141A17;
+  --v2-surface-2: #1A221F;
+  --v2-border: rgba(236, 239, 233, 0.10);
+  --v2-border-strong: rgba(236, 239, 233, 0.22);
+  --v2-text: #ECEFE9;
+  --v2-text-muted: rgba(236, 239, 233, 0.58);
+  --v2-text-dim: rgba(236, 239, 233, 0.38);
+  --v2-eco: #A6F754;
+  --v2-eco-soft: rgba(166, 247, 84, 0.12);
+  --v2-eco-mid: rgba(166, 247, 84, 0.35);
+  --v2-warm: #FF8C5A;
+  --v2-btn-fg: #0A0E0C;
+  --v2-mesh-a: rgba(166, 247, 84, 0.10);
+  --v2-mesh-b: rgba(255, 140, 90, 0.08);
+  --v2-mesh-c: rgba(166, 247, 84, 0.06);
+  --v2-grain-opacity: 0.06;
+  --v2-grain-blend: overlay;
+  --v2-cta-bg: linear-gradient(135deg, rgba(166, 247, 84, 0.08) 0%, rgba(15, 21, 19, 0.9) 40%, rgba(10, 14, 12, 1) 100%);
+  --v2-cta-shadow: 0 60px 120px -40px rgba(166, 247, 84, 0.12);
+  --v2-card-bg: linear-gradient(180deg, rgba(20, 26, 23, 0.75) 0%, rgba(15, 21, 19, 0.6) 100%);
+  --v2-card-border-glow: linear-gradient(135deg, rgba(166, 247, 84, 0.4), transparent 40%, transparent 60%, rgba(255, 140, 90, 0.25));
+  --v2-number-stop-a: #ECEFE9;
+  --v2-number-stop-b: rgba(236, 239, 233, 0.3);
+  --v2-ticker-bg: rgba(15, 21, 19, 0.5);
+  --v2-map-surface: linear-gradient(180deg, #0F1513 0%, #0A0E0C 100%);
+  --v2-map-shadow: 0 50px 100px -30px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(166, 247, 84, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --v2-eco-glow: 0 0 14px #A6F754;
+  --v2-card-inner-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.06), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.verdify-v2 * {
+  border-color: var(--v2-border);
+}
+
+.verdify-v2.v2-host {
+  background: var(--v2-bg);
+  color: var(--v2-text);
+}
+
+.verdify-v2 .v2-mesh {
+  position: absolute;
+  inset: -10%;
+  background:
+    radial-gradient(40% 30% at 20% 20%, var(--v2-mesh-a), transparent 60%),
+    radial-gradient(35% 35% at 85% 30%, var(--v2-mesh-b), transparent 60%),
+    radial-gradient(50% 40% at 50% 90%, var(--v2-mesh-c), transparent 65%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.verdify-v2 .v2-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: var(--v2-grain-opacity);
+  mix-blend-mode: var(--v2-grain-blend);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+.verdify-v2 .v2-display {
+  font-family: var(--v2-font-display);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 0.92;
+}
+
+.verdify-v2 .v2-huge {
+  font-family: var(--v2-font-display);
+  font-weight: 400;
+  letter-spacing: -0.055em;
+  line-height: 0.88;
+  font-size: clamp(3.2rem, 10.5vw, 10.5rem);
+}
+
+.verdify-v2 .v2-italic {
+  font-family: var(--v2-font-italic);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.verdify-v2 .v2-mono {
+  font-family: var(--v2-font-mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+}
+
+.verdify-v2 .v2-mono-sm {
+  font-family: var(--v2-font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.62rem;
+}
+
+.verdify-v2 .v2-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid var(--v2-border);
+  background: var(--v2-surface-2);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  box-shadow: var(--v2-card-inner-highlight);
+  color: var(--v2-text);
+  font-family: var(--v2-font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.verdify-v2 .v2-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  height: 3rem;
+  padding: 0 1.6rem;
+  background: var(--v2-eco);
+  color: var(--v2-btn-fg);
+  font-family: var(--v2-font-body);
+  font-weight: 500;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  border-radius: 999px;
+  transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.4s ease;
+  box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+}
+.verdify-v2 .v2-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 45px -15px var(--v2-eco), 0 0 0 1px var(--v2-eco-mid);
+}
+
+.verdify-v2 .v2-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  height: 3rem;
+  padding: 0 1.6rem;
+  border: 1px solid var(--v2-border-strong);
+  background: transparent;
+  color: var(--v2-text);
+  font-family: var(--v2-font-body);
+  font-weight: 500;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  border-radius: 999px;
+  transition: border-color 0.4s ease, background 0.4s ease;
+}
+.verdify-v2 .v2-btn-ghost:hover {
+  border-color: var(--v2-eco);
+  background: var(--v2-eco-soft);
+}
+
+.verdify-v2 .v2-card {
+  position: relative;
+  background: var(--v2-card-bg);
+  border: 1px solid var(--v2-border);
+  border-radius: 14px;
+  backdrop-filter: blur(22px) saturate(170%);
+  -webkit-backdrop-filter: blur(22px) saturate(170%);
+  box-shadow: var(--v2-card-inner-highlight);
+  overflow: hidden;
+  transition: border-color 0.4s ease, transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.4s ease;
+}
+.verdify-v2 .v2-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--v2-card-border-glow);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.verdify-v2 .v2-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--v2-border-strong);
+}
+.verdify-v2 .v2-card:hover::before {
+  opacity: 1;
+}
+
+.verdify-v2 .v2-rule {
+  height: 1px;
+  width: 3.5rem;
+  background: linear-gradient(to right, var(--v2-eco), transparent);
+}
+
+.verdify-v2 .v2-number {
+  font-family: var(--v2-font-display);
+  font-weight: 300;
+  font-size: clamp(2.2rem, 3.4vw, 3.4rem);
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+  background: linear-gradient(180deg, var(--v2-number-stop-a) 0%, var(--v2-number-stop-b) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  white-space: nowrap;
+}
+
+.verdify-v2 .v2-ticker {
+  animation: v2-ticker 42s linear infinite;
+}
+@keyframes v2-ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.verdify-v2 .v2-char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.3em);
+  filter: blur(10px);
+  animation: v2-char-in 1s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+@keyframes v2-char-in {
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+.verdify-v2 .v2-link-underline {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.verdify-v2 .v2-link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 1px;
+  width: 100%;
+  background: var(--v2-eco);
+  transform-origin: right;
+  transform: scaleX(0);
+  transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.verdify-v2 .v2-link-underline:hover::after {
+  transform-origin: left;
+  transform: scaleX(1);
+}
+
+.verdify-v2 .v2-eco-dot {
+  position: relative;
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--v2-eco);
+  box-shadow: var(--v2-eco-glow);
+}
+.verdify-v2 .v2-eco-dot::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 999px;
+  border: 1px solid var(--v2-eco);
+  opacity: 0.4;
+  animation: v2-pulse 2s ease-out infinite;
+}
+@keyframes v2-pulse {
+  0% { transform: scale(0.6); opacity: 0.6; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+.verdify-v2 .v2-theme-toggle {
+  border: 1px solid var(--v2-border);
+  color: var(--v2-text-muted);
+  transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
+}
+.verdify-v2 .v2-theme-toggle:hover {
+  border-color: var(--v2-eco-mid);
+  color: var(--v2-eco);
+  background: var(--v2-eco-soft);
+}
+
+/* View Transition: block default cross-fade so the circle-reveal owns the frame */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 2;
 }
