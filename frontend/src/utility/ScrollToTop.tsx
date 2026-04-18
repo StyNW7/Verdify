@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowUpCircle } from "lucide-react";
+import { ArrowUp } from "lucide-react";
 
 const ScrollToTopButton = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -19,16 +19,18 @@ const ScrollToTopButton = () => {
   }, []);
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" }); 
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
     isVisible && (
       <button
+        type="button"
         onClick={scrollToTop}
-        className="fixed bottom-6 right-6 bg-green-600 text-white p-4 rounded-full shadow-lg hover:bg-green-700 transition-colors z-50"
+        aria-label="Scroll to top"
+        className="fixed bottom-4 right-4 z-50 inline-flex h-11 w-11 items-center justify-center rounded-full border border-border/80 bg-background/95 text-foreground shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition hover:-translate-y-0.5 hover:bg-secondary/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
-        <ArrowUpCircle className="w-6 h-6" />
+        <ArrowUp className="h-4 w-4" />
       </button>
     )
   );

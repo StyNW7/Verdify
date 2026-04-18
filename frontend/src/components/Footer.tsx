@@ -1,139 +1,77 @@
 'use client';
 
-import { Leaf, Mail, Linkedin, Twitter } from 'lucide-react';
+import { forwardRef } from 'react';
+import { ArrowRight } from 'lucide-react';
 
-export default function Footer() {
-  const currentYear = new Date().getFullYear();
-
+const Footer = forwardRef<HTMLElement>(function Footer(_, ref) {
   return (
-    <footer className="bg-foreground text-white py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-          {/* Brand */}
+    <footer
+      ref={ref}
+      className="landing-theme relative border-t px-4 pt-24 pb-10 sm:px-6 lg:px-10"
+      style={{
+        borderColor: 'var(--landing-border)',
+        background: 'var(--landing-bg)',
+        color: 'var(--landing-text)',
+      }}
+    >
+      <div className="mx-auto max-w-[1440px]">
+        <div className="grid gap-12 lg:grid-cols-[1.3fr_0.7fr]">
           <div>
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <Leaf size={20} className="text-white" />
-              </div>
-              <span className="font-bold text-xl">Verdify</span>
+            <p className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+              § Project brief
+            </p>
+            <h3 className="landing-display mt-5 max-w-3xl text-[clamp(2.4rem,5.5vw,4.8rem)] leading-[0.96]">
+              One corridor.{' '}
+              <span className="landing-italic" style={{ color: 'var(--landing-accent)' }}>
+                Johor to Singapore
+              </span>
+              , every day.
+            </h3>
+            <p
+              className="mt-6 max-w-lg text-[0.98rem] leading-7"
+              style={{ color: 'var(--landing-text-muted)' }}
+            >
+              Agentic green navigation for commuters, companies, and reviewers who
+              need mobility to end in measurable action.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <a href="/#how" className="landing-btn-primary">
+                Plan a trip <ArrowRight className="h-4 w-4" />
+              </a>
+              <a href="/#caps" className="landing-btn-ghost">
+                Capabilities
+              </a>
             </div>
-            <p className="text-gray-300 text-sm">
-              Your AI Personal Green Navigator for sustainable mobility in the Johor-Singapore Innovation Corridor.
+          </div>
+          <div className="flex flex-col justify-between gap-10">
+            <div
+              className="grid grid-cols-2 gap-y-3 landing-mono-sm"
+              style={{ color: 'var(--landing-text-muted)' }}
+            >
+              <span>Track 4 · Green Horizon</span>
+              <span>Gemini · Genkit · RAG</span>
+              <span>Vertex AI Search</span>
+              <span>Cloud Run</span>
+            </div>
+            <p className="landing-italic text-2xl" style={{ color: 'var(--landing-text)' }}>
+              Built for Net Zero 2050.
             </p>
           </div>
-
-          {/* Product */}
-          <div>
-            <h4 className="font-semibold text-white mb-4">Product</h4>
-            <ul className="space-y-2 text-gray-300 text-sm">
-              <li>
-                <a href="#features" className="hover:text-primary transition-colors">
-                  Features
-                </a>
-              </li>
-              <li>
-                <a href="#how-it-works" className="hover:text-primary transition-colors">
-                  How It Works
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Pricing
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Security
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Company */}
-          <div>
-            <h4 className="font-semibold text-white mb-4">Company</h4>
-            <ul className="space-y-2 text-gray-300 text-sm">
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Blog
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Careers
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Contact
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Legal */}
-          <div>
-            <h4 className="font-semibold text-white mb-4">Legal</h4>
-            <ul className="space-y-2 text-gray-300 text-sm">
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Terms of Service
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Cookie Policy
-                </a>
-              </li>
-            </ul>
-          </div>
         </div>
-
-        {/* Divider */}
-        <div className="border-t border-gray-700 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            {/* Left */}
-            <div className="text-gray-400 text-sm mb-4 md:mb-0">
-              <p>© {currentYear} Verdify. All rights reserved. Powered by Google AI Ecosystems.</p>
-            </div>
-
-            {/* Social as */}
-            <div className="flex space-x-6">
-              <a
-                href="#"
-                className="text-gray-300 hover:text-primary transition-colors"
-                aria-label="Twitter"
-              >
-                <Twitter size={20} />
-              </a>
-              <a
-                href="#"
-                className="text-gray-300 hover:text-primary transition-colors"
-                aria-label="aedIn"
-              >
-                <Linkedin size={20} />
-              </a>
-              <a
-                href="#"
-                className="text-gray-300 hover:text-primary transition-colors"
-                aria-label="Email"
-              >
-                <Mail size={20} />
-              </a>
-            </div>
-          </div>
+        <div
+          className="mt-20 flex items-end justify-between border-t pt-7"
+          style={{ borderColor: 'var(--landing-border)' }}
+        >
+          <p className="landing-display text-[clamp(3rem,10vw,9rem)] leading-[0.88] tracking-[-0.055em]">
+            Verdify<span style={{ color: 'var(--landing-accent)' }}>.</span>
+          </p>
+          <p className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+            © {new Date().getFullYear()} · Verdify
+          </p>
         </div>
       </div>
     </footer>
   );
-}
+});
+
+export default Footer;
