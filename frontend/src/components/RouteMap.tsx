@@ -114,6 +114,9 @@ export default function RouteMap({
           <filter id={`${id}-soft`} x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="6" />
           </filter>
+          <filter id={`${id}-landSoft`} x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="18" />
+          </filter>
           <linearGradient id={`${id}-ecoGrad`} x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor={p.eco} stopOpacity="0.3" />
             <stop offset="50%" stopColor={p.eco} stopOpacity="1" />
@@ -130,18 +133,20 @@ export default function RouteMap({
         <rect width="900" height="500" fill={p.bg} />
         <rect width="900" height="500" fill={`url(#${id}-grid)`} />
 
-        <path
-          d="M -10 420 Q 120 380 240 395 T 480 410 T 720 420 T 910 430 L 910 510 L -10 510 Z"
-          fill={p.land}
-        />
-        <path
-          d="M -10 80 Q 180 60 350 95 T 640 75 T 910 100 L 910 -10 L -10 -10 Z"
-          fill={p.land}
-        />
-        <path
-          d="M 160 210 Q 300 190 430 215 T 700 225 T 900 240 L 900 290 Q 700 270 500 282 T 260 290 T 120 270 Z"
-          fill={p.water}
-        />
+        <g filter={`url(#${id}-landSoft)`}>
+          <path
+            d="M -80 430 Q 120 380 240 395 T 480 410 T 720 420 T 980 430 L 980 580 L -80 580 Z"
+            fill={p.land}
+          />
+          <path
+            d="M -80 90 Q 180 55 350 95 T 640 75 T 980 105 L 980 -80 L -80 -80 Z"
+            fill={p.land}
+          />
+          <path
+            d="M 160 210 Q 300 190 430 215 T 700 225 T 900 240 Q 920 265 900 290 Q 700 270 500 282 T 260 290 T 120 270 Q 130 240 160 210 Z"
+            fill={p.water}
+          />
+        </g>
 
         <circle cx="420" cy="245" r="200" fill={`url(#${id}-glow)`} opacity="0.7" />
 

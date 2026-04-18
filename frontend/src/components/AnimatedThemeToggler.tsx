@@ -146,7 +146,9 @@ export default function AnimatedThemeToggler({ className = '', onToggleComplete 
     );
     try {
       await anim.finished;
-    } catch {}
+    } catch {
+      // Ignore aborted view-transition animations and restore interactivity.
+    }
     setIsAnimating(false);
     onToggleComplete?.(isDark ? 'light' : 'dark');
   }, [isDark, isAnimating, createFallbackAnimation, onToggleComplete]);

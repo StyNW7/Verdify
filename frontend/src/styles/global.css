@@ -538,11 +538,48 @@ html.dark .landing-theme {
   background: var(--landing-accent-soft);
 }
 
+.landing-theme .landing-shell {
+  width: 100%;
+  max-width: 1520px;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+@media (min-width: 640px) {
+  .landing-theme .landing-shell {
+    padding-inline: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .landing-theme .landing-shell {
+    padding-inline: 2.5rem;
+  }
+}
+
+.landing-theme .landing-panel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  padding: 1.5rem;
+  background: var(--landing-surface);
+  border: 1px solid var(--landing-border);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  box-shadow: 0 40px 90px -40px rgba(10, 14, 12, 0.25);
+}
+
+@media (min-width: 768px) {
+  .landing-theme .landing-panel {
+    padding: 2rem;
+  }
+}
+
 .landing-theme .landing-card {
   position: relative;
   background: var(--landing-card-bg);
   border: 1px solid var(--landing-border);
-  border-radius: 14px;
+  border-radius: 18px;
   backdrop-filter: blur(22px) saturate(170%);
   -webkit-backdrop-filter: blur(22px) saturate(170%);
   box-shadow: var(--landing-card-inner-highlight);
