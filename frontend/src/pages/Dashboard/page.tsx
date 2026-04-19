@@ -100,7 +100,10 @@ const recentTrips: Trip[] = [
 
 export default function DashboardPage() {
   return (
-    <div className="relative mx-auto w-full max-w-[1280px] px-6 pb-20 pt-10 lg:px-10">
+    <div
+      className="relative mx-auto w-full px-6 pb-20 pt-10 lg:px-10"
+      style={{ maxWidth: 'var(--page-max-w, 1280px)' }}
+    >
       <header className="mb-10 flex flex-wrap items-end justify-between gap-6">
         <div>
           <p className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>

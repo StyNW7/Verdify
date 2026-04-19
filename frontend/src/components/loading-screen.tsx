@@ -45,8 +45,6 @@ export function LoadingScreen({
           <Atmosphere />
           <Corners variant={variant} />
 
-          {/* Content parallaxes upward slightly slower than the curtain,
-              so the panel feels like a physical sheet being pulled away. */}
           <motion.div
             className="absolute inset-0 flex items-center justify-center"
             exit={{ y: '-24%' }}

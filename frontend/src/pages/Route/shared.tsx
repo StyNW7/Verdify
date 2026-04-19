@@ -418,9 +418,9 @@ export function DateTimeField({
 }
 
 const PREF_META: Record<Preference, { label: string; tagline: string; icon: typeof Leaf }> = {
-  eco: { label: 'Eco First', tagline: 'Lowest emissions, highest points.', icon: Leaf },
-  fast: { label: 'Fastest', tagline: 'Minutes over everything.', icon: Zap },
-  cheap: { label: 'Cheapest', tagline: 'Ringgit before anything else.', icon: Wallet },
+  eco: { label: 'Eco First', tagline: 'Low carbon, big points.', icon: Leaf },
+  fast: { label: 'Fastest', tagline: 'Minutes above all.', icon: Zap },
+  cheap: { label: 'Cheapest', tagline: 'Ringgit first.', icon: Wallet },
 };
 
 export function PreferenceSelector({
@@ -457,7 +457,7 @@ export function PreferenceSelector({
           );
         })}
       </div>
-      <div className="mt-4 hidden gap-4 sm:grid sm:grid-cols-3">
+      <div className="mt-4 hidden flex-col gap-2.5 sm:flex">
         {order.map(p => {
           const m = PREF_META[p];
           const Icon = m.icon;
@@ -467,9 +467,9 @@ export function PreferenceSelector({
               key={p}
               type="button"
               onClick={() => setPreference(p)}
-              whileHover={{ y: -2 }}
+              whileHover={{ x: 2 }}
               transition={{ duration: 0.3, ease: [0.2, 0.7, 0.2, 1] }}
-              className="landing-card group relative flex flex-col items-start gap-3 p-5 text-left"
+              className="landing-card group relative flex min-w-0 items-center gap-4 px-4 py-3.5 text-left"
               style={{
                 borderColor: active ? 'var(--landing-accent)' : 'var(--landing-border)',
                 boxShadow: active
@@ -477,24 +477,30 @@ export function PreferenceSelector({
                   : undefined,
               }}
             >
-              <div className="flex w-full items-center justify-between">
+              <span
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+                style={{
+                  background: active ? 'var(--landing-accent)' : 'var(--landing-accent-soft)',
+                  color: active ? 'var(--landing-button-foreground)' : 'var(--landing-accent)',
+                }}
+              >
+                <Icon size={15} />
+              </span>
+              <div className="flex min-w-0 flex-1 flex-col">
                 <span
-                  className="flex h-8 w-8 items-center justify-center rounded-full"
-                  style={{
-                    background: active ? 'var(--landing-accent)' : 'var(--landing-accent-soft)',
-                    color: active ? 'var(--landing-button-foreground)' : 'var(--landing-accent)',
-                  }}
+                  className="landing-display text-[1.05rem] leading-tight"
+                  style={{ color: 'var(--landing-text)' }}
                 >
-                  <Icon size={15} />
+                  {m.label}
                 </span>
-                {active && <span className="landing-accent-dot" aria-hidden />}
+                <span
+                  className="mt-0.5 text-[0.78rem] leading-snug"
+                  style={{ color: 'var(--landing-text-muted)' }}
+                >
+                  {m.tagline}
+                </span>
               </div>
-              <div className="landing-display text-[1.15rem]" style={{ color: 'var(--landing-text)' }}>
-                {m.label}
-              </div>
-              <div className="text-[0.78rem] leading-snug" style={{ color: 'var(--landing-text-muted)' }}>
-                {m.tagline}
-              </div>
+              {active && <span className="landing-accent-dot shrink-0" aria-hidden />}
             </motion.button>
           );
         })}
