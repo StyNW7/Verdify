@@ -10,8 +10,6 @@ const ScrollToTop = () => {
     if ("scrollRestoration" in window.history) {
       window.history.scrollRestoration = "manual";
     }
-    // Fresh page load should always start at the top, even if the URL still
-    // carries a #section hash from a prior click or bookmark.
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     if (window.location.hash) {
       window.history.replaceState(null, "", window.location.pathname + window.location.search);

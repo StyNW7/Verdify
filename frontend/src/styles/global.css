@@ -711,7 +711,6 @@ html.dark .landing-theme .landing-number {
   background: var(--landing-accent-soft);
 }
 
-/* View Transition: block default cross-fade so the circle-reveal owns the frame */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;

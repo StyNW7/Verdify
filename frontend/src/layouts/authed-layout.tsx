@@ -14,6 +14,7 @@ import {
   LogOut,
   Settings,
   Trophy,
+  UserRound,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -36,6 +37,7 @@ const primaryNav: NavEntry[] = [
 ];
 
 const secondaryNav: NavEntry[] = [
+  { label: 'Profile', to: '/profile', icon: UserRound },
   { label: 'Settings', to: '#settings', icon: Settings, stub: true },
 ];
 
@@ -43,7 +45,7 @@ const SIDEBAR_OPEN = 268;
 const SIDEBAR_CLOSED = 76;
 
 const isAuthedPath = (p: string) =>
-  p.startsWith('/dashboard') || p.startsWith('/route');
+  p.startsWith('/dashboard') || p.startsWith('/route') || p.startsWith('/profile');
 
 export default function AuthedLayout() {
   const { pathname } = useLocation();
@@ -187,7 +189,7 @@ export default function AuthedLayout() {
                   key={entry.to}
                   entry={entry}
                   expanded={expanded}
-                  active={false}
+                  active={pathname.startsWith(entry.to) && !entry.stub}
                 />
               ))}
             </nav>
@@ -313,6 +315,7 @@ export default function AuthedLayout() {
 function pageLabel(pathname: string) {
   if (pathname.startsWith('/dashboard')) return 'Dashboard';
   if (pathname.startsWith('/route')) return 'Route Planner';
+  if (pathname.startsWith('/profile')) return 'Profile';
   return 'Verdify';
 }
 

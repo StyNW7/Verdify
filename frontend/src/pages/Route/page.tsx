@@ -27,8 +27,6 @@ export default function RoutePlannerPage() {
     const node = formSectionRef.current;
     if (!node) return;
     const rect = node.getBoundingClientRect();
-    // Sticky anchor is top-28 (7rem ≈ 112px). Only nudge if the form has
-    // drifted out of its sticky anchor so the sticky re-lock isn't abrupt.
     if (rect.top < 0 || rect.top > 140) {
       node.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
