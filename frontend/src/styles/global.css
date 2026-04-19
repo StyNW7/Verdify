@@ -620,11 +620,19 @@ html.dark .landing-theme {
   font-size: clamp(2.2rem, 3.4vw, 3.4rem);
   line-height: 0.9;
   letter-spacing: -0.035em;
+  color: var(--landing-text);
+  -webkit-text-fill-color: currentColor;
+  white-space: nowrap;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+html.dark .landing-theme .landing-number {
   background: linear-gradient(180deg, var(--landing-number-stop-a) 0%, var(--landing-number-stop-b) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  white-space: nowrap;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
 }
 
 .landing-theme .landing-ticker {

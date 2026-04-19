@@ -1,8 +1,12 @@
+import { useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { Toaster } from "react-hot-toast";
 
 import Layout from "@/layouts/root-layout";
+import AuthedLayout from "@/layouts/authed-layout";
+import { LoadingScreen } from "@/components/loading-screen";
+import { NavHistoryTracker } from "@/utility/nav-history";
 
 import ScrollToTop from "./utility/ScrollToTop";
 import ScrollToTopFunction from "./utility/ScrollToTopFunction";
@@ -12,10 +16,29 @@ import LandingPage from "@/pages/Landing/page";
 import LoginPage from "./pages/Auth/login";
 import AuthLayout from "./pages/Auth/layout";
 import RoutePlannerPage from "./pages/Route/page";
+import DashboardPage from "./pages/Dashboard/page";
+
+const INTRO_KEY = "verdify:intro-seen";
 
 function App() {
+  const [introDone, setIntroDone] = useState<boolean>(() => {
+    if (typeof window === "undefined") return true;
+    return window.sessionStorage.getItem(INTRO_KEY) === "1";
+  });
+
   return (
     <BrowserRouter>
+      {!introDone && (
+        <LoadingScreen
+          variant="intro"
+          onDone={() => {
+            window.sessionStorage.setItem(INTRO_KEY, "1");
+            setIntroDone(true);
+          }}
+        />
+      )}
+
+      <NavHistoryTracker />
       <ScrollToTopFunction />
       <ScrollToTop />
 
@@ -23,9 +46,14 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<LandingPage />} />
-            <Route path="/route" element={<RoutePlannerPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
+
+          <Route element={<AuthedLayout />}>
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/route" element={<RoutePlannerPage />} />
+          </Route>
+
           <Route
             path="/auth/login"
             element={
