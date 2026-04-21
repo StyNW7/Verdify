@@ -336,65 +336,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section
-        id="stack"
-        className="relative overflow-hidden border-y"
-        style={{ borderColor: 'var(--landing-border)', background: 'var(--landing-bg-soft)' }}
-      >
-        <div className="relative mx-auto max-w-[1440px] px-4 py-24 sm:px-6 lg:px-10 lg:py-32">
-          <motion.div {...reveal} className="mb-16 grid gap-8 lg:grid-cols-[0.32fr_0.68fr]">
-            <div className="space-y-4">
-              <p className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>§ Evidence — 04</p>
-              <div className="landing-rule" />
-            </div>
-            <h2 className="landing-display max-w-2xl text-[clamp(2rem,4.6vw,3.8rem)] leading-[1.04] tracking-[-0.035em]">
-              The stack is grounded, deployable, and matched to the{' '}
-              <span className="landing-italic" style={{ color: 'var(--landing-accent)' }}>brief.</span>
-            </h2>
-          </motion.div>
-
-          <div className="space-y-0">
-            {[
-              { m: 'Gemini', t: 'Multi-step reasoning as the planning brain', b: 'Gemini 2.0 Flash/Pro interprets intent, compares routes, and orchestrates explainable recommendations.', i: Sparkles },
-              { m: 'RAG', t: 'Grounded on corridor and national knowledge', b: 'Vertex AI Search RAG pulls Low Carbon Mobility Blueprint, RTS Link, JS-SEZ, and Net Zero 2050 references.', i: MapPin },
-              { m: 'Cloud', t: 'Deployed with the Google AI ecosystem stack', b: 'React + Vite + Tailwind + shadcn/ui frontend. Firebase Genkit for agentic flows. Cloud Run for backend execution.', i: Zap },
-            ].map((r, i) => (
-              <motion.div
-                key={r.m}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.25 }}
-                transition={{ duration: 0.8, delay: i * 0.1 }}
-                className="group grid items-center gap-8 border-b py-10 md:grid-cols-[1fr_2fr_0.3fr]"
-                style={{ borderColor: 'var(--landing-border)' }}
-              >
-                <div className="flex items-center gap-4">
-                  <span
-                    className="flex h-11 w-11 items-center justify-center rounded-[10px] transition-all duration-500 group-hover:scale-110"
-                    style={{ background: 'var(--landing-accent-soft)', border: '1px solid var(--landing-accent-muted)', color: 'var(--landing-accent)' }}
-                  >
-                    <r.i className="h-5 w-5" strokeWidth={1.6} />
-                  </span>
-                  <p className="landing-display text-[clamp(2rem,3.8vw,3.2rem)] tracking-[-0.04em]">{r.m}</p>
-                </div>
-                <div className="space-y-2">
-                  <h3 className="landing-display text-[1.2rem] tracking-[-0.015em]">{r.t}</h3>
-                  <p className="text-[0.95rem] leading-7" style={{ color: 'var(--landing-text-muted)' }}>
-                    {r.b}
-                  </p>
-                </div>
-                <div className="justify-self-end">
-                  <ArrowUpRight
-                    className="h-5 w-5 transition-all duration-500 group-hover:-translate-y-1 group-hover:translate-x-1"
-                    style={{ color: 'var(--landing-text-dim)' }}
-                  />
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section className="px-4 py-24 sm:px-6 lg:px-10 lg:py-32">
         <motion.div
           {...reveal}
@@ -422,7 +363,7 @@ export default function LandingPage() {
           </p>
           <div className="relative mt-10 flex flex-col gap-3 sm:flex-row">
             <a href="#caps" className="landing-btn-primary">Review capabilities <ArrowRight className="h-4 w-4" /></a>
-            <a href="#stack" className="landing-btn-ghost">See the stack</a>
+            <a href="/technology" className="landing-btn-ghost">See the stack</a>
           </div>
         </motion.div>
       </section>

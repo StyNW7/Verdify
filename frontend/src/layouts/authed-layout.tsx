@@ -14,6 +14,7 @@ import {
   LogOut,
   Settings,
   Trophy,
+  UserRound,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -36,6 +37,7 @@ const primaryNav: NavEntry[] = [
 ];
 
 const secondaryNav: NavEntry[] = [
+  { label: 'Profile', to: '/profile', icon: UserRound },
   { label: 'Settings', to: '#settings', icon: Settings, stub: true },
 ];
 
@@ -43,7 +45,7 @@ const SIDEBAR_OPEN = 268;
 const SIDEBAR_CLOSED = 76;
 
 const isAuthedPath = (p: string) =>
-  p.startsWith('/dashboard') || p.startsWith('/route');
+  p.startsWith('/dashboard') || p.startsWith('/route') || p.startsWith('/profile');
 
 export default function AuthedLayout() {
   const { pathname } = useLocation();
@@ -72,7 +74,7 @@ export default function AuthedLayout() {
       {handoff && (
         <LoadingScreen variant="handoff" onDone={() => setHandoff(false)} />
       )}
-      <div className="landing-theme landing-root relative min-h-svh overflow-x-hidden">
+      <div className="landing-theme landing-root relative min-h-svh overflow-x-clip">
         <div className="landing-grain" aria-hidden />
         <div
           aria-hidden
@@ -85,18 +87,37 @@ export default function AuthedLayout() {
           }}
         />
 
-        <div className="relative z-10 flex min-h-svh">
-          <motion.aside
-            initial={false}
-            animate={{ width: expanded ? SIDEBAR_OPEN : SIDEBAR_CLOSED }}
-            transition={{ duration: 0.42, ease: [0.2, 0.7, 0.2, 1] }}
-            className="sticky top-0 hidden h-svh shrink-0 flex-col border-r lg:flex"
+        <div
+          className="relative z-10 flex min-h-svh"
+          style={
+            {
+              '--sidebar-w': `${expanded ? SIDEBAR_OPEN : SIDEBAR_CLOSED}px`,
+              '--sidebar-ease': 'cubic-bezier(0.2, 0.7, 0.2, 1)',
+              '--sidebar-dur': '460ms',
+              '--page-max-w': `min(1280px, calc(100vw - ${SIDEBAR_OPEN}px - 5rem))`,
+            } as React.CSSProperties
+          }
+        >
+          <div
+            aria-hidden
+            className="pointer-events-none fixed inset-y-0 left-0 hidden border-r lg:block"
             style={{
+              width: 'var(--sidebar-w)',
+              transition: 'width var(--sidebar-dur) var(--sidebar-ease)',
+              willChange: 'width',
               borderColor: 'var(--landing-border)',
               background:
                 'linear-gradient(180deg, color-mix(in srgb, var(--landing-bg) 96%, transparent) 0%, color-mix(in srgb, var(--landing-bg-soft) 94%, transparent) 100%)',
               backdropFilter: 'blur(22px) saturate(180%)',
               WebkitBackdropFilter: 'blur(22px) saturate(180%)',
+            }}
+          />
+          <aside
+            className="fixed inset-y-0 left-0 z-10 hidden h-svh shrink-0 flex-col lg:flex"
+            style={{
+              width: 'var(--sidebar-w)',
+              transition: 'width var(--sidebar-dur) var(--sidebar-ease)',
+              willChange: 'width',
             }}
           >
             <div className="flex items-center gap-3 px-5 pb-5 pt-7">
@@ -168,7 +189,7 @@ export default function AuthedLayout() {
                   key={entry.to}
                   entry={entry}
                   expanded={expanded}
-                  active={false}
+                  active={pathname.startsWith(entry.to) && !entry.stub}
                 />
               ))}
             </nav>
@@ -232,7 +253,17 @@ export default function AuthedLayout() {
                 </AnimatePresence>
               </div>
             </div>
-          </motion.aside>
+          </aside>
+
+          <div
+            aria-hidden
+            className="hidden shrink-0 lg:block"
+            style={{
+              width: 'var(--sidebar-w)',
+              transition: 'width var(--sidebar-dur) var(--sidebar-ease)',
+              willChange: 'width',
+            }}
+          />
 
           <div className="flex min-w-0 flex-1 flex-col">
             <header
@@ -265,10 +296,10 @@ export default function AuthedLayout() {
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={pathname}
-                  initial={{ opacity: 0, y: 16, filter: 'blur(6px)' }}
-                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  exit={{ opacity: 0, y: -10, filter: 'blur(6px)' }}
-                  transition={{ duration: 0.5, ease: [0.2, 0.7, 0.2, 1] }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.35, ease: [0.2, 0.7, 0.2, 1] }}
                 >
                   <Outlet />
                 </motion.div>
@@ -284,6 +315,7 @@ export default function AuthedLayout() {
 function pageLabel(pathname: string) {
   if (pathname.startsWith('/dashboard')) return 'Dashboard';
   if (pathname.startsWith('/route')) return 'Route Planner';
+  if (pathname.startsWith('/profile')) return 'Profile';
   return 'Verdify';
 }
 

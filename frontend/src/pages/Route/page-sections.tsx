@@ -108,8 +108,7 @@ export function RouteMapStage({
         background: 'var(--landing-map-surface)',
         border: '1px solid var(--landing-border)',
         boxShadow: 'var(--landing-map-shadow)',
-        backdropFilter: 'blur(24px) saturate(170%)',
-        WebkitBackdropFilter: 'blur(24px) saturate(170%)',
+        contain: 'layout paint',
       }}
     >
       <RouteMap variant={mapVariant} showChips={showChips} />

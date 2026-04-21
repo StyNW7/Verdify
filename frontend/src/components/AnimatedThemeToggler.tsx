@@ -144,11 +144,7 @@ export default function AnimatedThemeToggler({ className = '', onToggleComplete 
         pseudoElement: '::view-transition-new(root)',
       },
     );
-    try {
-      await anim.finished;
-    } catch {
-      // Ignore aborted view-transition animations and restore interactivity.
-    }
+    await anim.finished.catch(() => undefined);
     setIsAnimating(false);
     onToggleComplete?.(isDark ? 'light' : 'dark');
   }, [isDark, isAnimating, createFallbackAnimation, onToggleComplete]);

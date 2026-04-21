@@ -23,137 +23,103 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   {
-    id: 'premise',
-    label: 'Premise',
-    to: '/#premise',
+    id: 'product',
+    label: 'Product',
+    to: '/',
     columns: [
       {
-        title: 'Explore Premise',
+        title: 'Explore Product',
         links: [
-          { label: 'Corridor brief', to: '/#premise', prominent: true },
-          { label: 'Mobility pressure', to: '/#premise', prominent: true },
-          { label: 'Why April 2026', to: '/#premise', prominent: true },
-          { label: 'Continue to sequence', to: '/#how', prominent: true },
+          { label: 'The premise', to: '/#premise', prominent: true },
+          { label: 'How it works', to: '/#how', prominent: true },
+          { label: 'Capabilities', to: '/#caps', prominent: true },
+          { label: 'Plan a trip', to: '/route', prominent: true },
         ],
       },
       {
         title: 'On this page',
         links: [
-          { label: 'How it works', to: '/#how' },
+          { label: 'Premise', to: '/#premise' },
+          { label: 'Sequence', to: '/#how' },
           { label: 'Capabilities', to: '/#caps' },
-          { label: 'Stack', to: '/#stack' },
-          { label: 'Plan a trip', to: '/#how' },
+          { label: 'Closing', to: '/#caps' },
         ],
       },
       {
         title: 'Take action',
         links: [
-          { label: 'Plan a trip', to: '/#how' },
           { label: 'Route planner', to: '/route' },
           { label: 'Sign in', to: '/auth/login' },
           { label: 'Register', to: '/auth/register' },
+          { label: 'See the stack', to: '/technology' },
         ],
       },
     ],
   },
   {
-    id: 'sequence',
-    label: 'Sequence',
-    to: '/#how',
+    id: 'technology',
+    label: 'Technology',
+    to: '/technology',
     columns: [
       {
-        title: 'Explore Sequence',
+        title: 'Explore Technology',
         links: [
-          { label: 'Prompt to action', to: '/#how', prominent: true },
-          { label: 'Grounding and RAG', to: '/#how', prominent: true },
-          { label: 'Autonomous booking', to: '/#how', prominent: true },
-          { label: 'Report generation', to: '/#how', prominent: true },
+          { label: 'Gemini · reasoning', to: '/technology#chap-01', prominent: true },
+          { label: 'Vertex · grounding', to: '/technology#chap-02', prominent: true },
+          { label: 'Genkit · agentic', to: '/technology#chap-03', prominent: true },
+          { label: 'Cloud Run · execution', to: '/technology#chap-04', prominent: true },
         ],
       },
       {
         title: 'On this page',
         links: [
-          { label: 'Premise', to: '/#premise' },
-          { label: 'Capabilities', to: '/#caps' },
-          { label: 'Stack', to: '/#stack' },
-          { label: 'Route planner', to: '/route' },
+          { label: 'Reasoning', to: '/technology#chap-01' },
+          { label: 'Grounding', to: '/technology#chap-02' },
+          { label: 'Agentic flows', to: '/technology#chap-03' },
+          { label: 'Frontend', to: '/technology#chap-05' },
         ],
       },
       {
-        title: 'In the app',
+        title: 'Adjacent',
         links: [
-          { label: 'Plan a trip', to: '/#how' },
-          { label: 'Review live map', to: '/#how' },
+          { label: 'Product overview', to: '/' },
+          { label: 'Profile', to: '/about' },
           { label: 'Route planner', to: '/route' },
-          { label: 'Professional report', to: '/#caps' },
+          { label: 'Infrastructure', to: '/technology#chap-06' },
         ],
       },
     ],
   },
   {
-    id: 'capabilities',
-    label: 'Capabilities',
-    to: '/#caps',
+    id: 'profile',
+    label: 'Profile',
+    to: '/about',
     columns: [
       {
-        title: 'Explore Capabilities',
+        title: 'Explore Profile',
         links: [
-          { label: 'Smart route optimizer', to: '/#caps', prominent: true },
-          { label: 'Carbon intelligence', to: '/#caps', prominent: true },
-          { label: 'Action engine', to: '/#caps', prominent: true },
-          { label: 'Reward system', to: '/#caps', prominent: true },
+          { label: 'Manifesto', to: '/about', prominent: true },
+          { label: 'Project brief', to: '/about', prominent: true },
+          { label: 'The team', to: '/about', prominent: true },
+          { label: 'Closing promise', to: '/about', prominent: true },
         ],
       },
       {
         title: 'On this page',
         links: [
-          { label: 'Premise', to: '/#premise' },
-          { label: 'Sequence', to: '/#how' },
-          { label: 'Stack', to: '/#stack' },
-          { label: 'Plan a trip', to: '/#how' },
+          { label: 'Track 4 · Green Horizon', to: '/about' },
+          { label: 'Audience', to: '/about' },
+          { label: 'Net Zero 2050', to: '/about' },
+          { label: 'Team', to: '/about' },
         ],
       },
       {
-        title: 'More from Verdify',
+        title: 'Adjacent',
         links: [
-          { label: 'Route planner', to: '/route' },
-          { label: 'Read the sequence', to: '/#how' },
-          { label: 'See the stack', to: '/#stack' },
-          { label: 'Plan a trip', to: '/#how' },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'evidence',
-    label: 'Evidence',
-    to: '/#stack',
-    columns: [
-      {
-        title: 'Explore Evidence',
-        links: [
-          { label: 'Google AI stack fit', to: '/#stack', prominent: true },
-          { label: 'Gemini reasoning', to: '/#stack', prominent: true },
-          { label: 'Vertex RAG grounding', to: '/#stack', prominent: true },
-          { label: 'Cloud Run deployment', to: '/#stack', prominent: true },
-        ],
-      },
-      {
-        title: 'On this page',
-        links: [
-          { label: 'Premise', to: '/#premise' },
-          { label: 'Sequence', to: '/#how' },
-          { label: 'Capabilities', to: '/#caps' },
-          { label: 'Plan a trip', to: '/#how' },
-        ],
-      },
-      {
-        title: 'System paths',
-        links: [
-          { label: 'Route planner', to: '/route' },
+          { label: 'Product overview', to: '/' },
+          { label: 'Technology', to: '/technology' },
           { label: 'Sign in', to: '/auth/login' },
           { label: 'Register', to: '/auth/register' },
-          { label: 'Plan a trip', to: '/#how' },
         ],
       },
     ],
@@ -367,8 +333,10 @@ export default function Navbar() {
               <ul className="flex items-center gap-1">
                 {navItems.map((item) => {
                   const isOpen = activeMenu === item.id;
+                  const itemPath = item.to.split('#')[0] || '/';
                   const isActive =
-                    pathname === '/' && item.to === `/${hash}` && hash !== '';
+                    (itemPath === '/' && pathname === '/') ||
+                    (itemPath !== '/' && pathname.startsWith(itemPath));
 
                   return (
                     <li key={item.id}>
