@@ -1,0 +1,152 @@
+[
+  {
+    "id": "chunk_001",
+    "topic": "traffic_congestion_klang_valley",
+    "region": "Malaysia",
+    "category": "congestion",
+    "content": "Traffic congestion in Klang Valley has increased significantly from 37 percent in 2019 to approximately 43.4 percent in 2025. This rise is primarily driven by high dependence on private vehicles, insufficient public transportation integration, and rapid urbanization.",
+    "source": "Straits Times",
+    "keywords": ["traffic", "congestion", "Malaysia", "Klang Valley", "urbanization"],
+    "importance": "high"
+  },
+  {
+    "id": "chunk_002",
+    "topic": "cross_border_congestion_johor_singapore",
+    "region": "Malaysia-Singapore",
+    "category": "congestion",
+    "content": "The Johor Bahru to Singapore corridor experiences severe daily congestion due to cross-border commuting. Factors include immigration processing delays, infrastructure bottlenecks, and high dependency on private vehicles.",
+    "source": "transport_analysis",
+    "keywords": ["cross-border", "Johor Bahru", "Singapore", "traffic", "commuting"],
+    "importance": "high"
+  },
+  {
+    "id": "chunk_003",
+    "topic": "transport_emission_malaysia",
+    "region": "Malaysia",
+    "category": "emission",
+    "content": "The transportation sector contributes approximately 28 percent of total carbon dioxide emissions in Malaysia, with around 85 percent of these emissions originating from road transport such as private cars and motorcycles.",
+    "source": "research_paper",
+    "keywords": ["emission", "CO2", "Malaysia", "transport", "road"],
+    "importance": "high"
+  },
+  {
+    "id": "chunk_004",
+    "topic": "transport_pollution_singapore",
+    "region": "Singapore",
+    "category": "emission",
+    "content": "Transport activities contribute approximately 18.5 percent of PM2.5 pollution in Singapore. Road transport alone accounts for about 43 percent of transport-related emissions and contributes significantly to nitrogen oxide levels.",
+    "source": "Asian Transport Observatory",
+    "keywords": ["Singapore", "PM2.5", "NOx", "transport", "pollution"],
+    "importance": "high"
+  },
+  {
+    "id": "chunk_005",
+    "topic": "car_dependency_malaysia",
+    "region": "Malaysia",
+    "category": "root_cause",
+    "content": "Malaysia has a strong dependence on private vehicles, with public transportation usage estimated at around 25 percent. This reliance leads to increased congestion, higher fuel consumption, and elevated emissions.",
+    "source": "mobility_report",
+    "keywords": ["car dependency", "Malaysia", "transport usage"],
+    "importance": "high"
+  },
+  {
+    "id": "chunk_006",
+    "topic": "public_transport_singapore",
+    "region": "Singapore",
+    "category": "transport_system",
+    "content": "Singapore has a highly optimized public transportation system with near-complete accessibility. Over 100 percent of households are within 500 meters of public transport, supported by MRT expansion and integrated mobility planning.",
+    "source": "transport_policy",
+    "keywords": ["Singapore", "MRT", "public transport", "accessibility"],
+    "importance": "high"
+  },
+  {
+    "id": "chunk_007",
+    "topic": "fossil_fuel_dependency_transport",
+    "region": "Singapore",
+    "category": "root_cause",
+    "content": "Approximately 89 percent of transport energy consumption in Singapore is still derived from fossil fuels, which contributes to sustained greenhouse gas emissions despite efficiency improvements.",
+    "source": "energy_report",
+    "keywords": ["fossil fuel", "energy", "transport", "Singapore"],
+    "importance": "medium"
+  },
+  {
+    "id": "chunk_008",
+    "topic": "relationship_congestion_emission",
+    "region": "Global",
+    "category": "insight",
+    "content": "Traffic congestion increases vehicle emissions due to stop-and-go conditions, prolonged idling, and inefficient fuel combustion. Higher traffic density is directly correlated with increased air pollution levels.",
+    "source": "environmental_study",
+    "keywords": ["congestion", "emission", "pollution", "traffic"],
+    "importance": "high"
+  },
+  {
+    "id": "chunk_009",
+    "topic": "urbanization_transport_impact",
+    "region": "Global",
+    "category": "root_cause",
+    "content": "Rapid urbanization and economic growth contribute to increased vehicle ownership and longer travel distances, which in turn drive higher energy consumption and emissions in urban transport systems.",
+    "source": "urban_study",
+    "keywords": ["urbanization", "transport", "emission"],
+    "importance": "medium"
+  },
+  {
+    "id": "chunk_010",
+    "topic": "vehicle_emission_types",
+    "region": "Global",
+    "category": "emission",
+    "content": "Different vehicle types contribute to varying emission profiles. Passenger cars are the primary source of carbon dioxide, motorcycles contribute significantly to hydrocarbons, and heavy vehicles are major sources of particulate matter.",
+    "source": "science_direct",
+    "keywords": ["vehicles", "CO2", "PM", "emission"],
+    "importance": "medium"
+  },
+  {
+    "id": "chunk_011",
+    "topic": "singapore_policy_solution",
+    "region": "Singapore",
+    "category": "solution",
+    "content": "Singapore implements a vehicle quota system and congestion pricing to control traffic volume. These policies, combined with strong investment in public transport, help reduce congestion and emissions.",
+    "source": "policy_analysis",
+    "keywords": ["policy", "Singapore", "congestion pricing"],
+    "importance": "high"
+  },
+  {
+    "id": "chunk_012",
+    "topic": "malaysia_transport_challenges",
+    "region": "Malaysia",
+    "category": "problem",
+    "content": "Malaysia faces challenges including fragmented public transport systems, uneven infrastructure development, and limited integration between transport modes, which contribute to inefficiency and congestion.",
+    "source": "transport_report",
+    "keywords": ["Malaysia", "transport", "infrastructure"],
+    "importance": "high"
+  },
+  {
+    "id": "chunk_013",
+    "topic": "verdify_opportunity_ecorouting",
+    "region": "Malaysia-Singapore",
+    "category": "solution",
+    "content": "There is a lack of intelligent systems that provide real-time eco-friendly route recommendations based on carbon emissions rather than just travel time. This gap presents an opportunity for solutions like Verdify.",
+    "source": "product_analysis",
+    "keywords": ["eco routing", "AI", "Verdify"],
+    "importance": "high"
+  },
+  {
+    "id": "chunk_014",
+    "topic": "carbon_awareness_users",
+    "region": "Global",
+    "category": "solution",
+    "content": "Providing users with visibility into their carbon emissions per trip can influence behavioral change and encourage adoption of more sustainable transport options.",
+    "source": "behavioral_study",
+    "keywords": ["carbon awareness", "user behavior"],
+    "importance": "medium"
+  },
+  {
+    "id": "chunk_015",
+    "topic": "multimodal_transport_benefit",
+    "region": "Global",
+    "category": "solution",
+    "content": "Combining multiple transport modes such as trains, buses, and walking can significantly reduce emissions compared to single-mode private vehicle usage.",
+    "source": "mobility_research",
+    "keywords": ["multimodal", "transport", "sustainability"],
+    "importance": "high"
+  }
+]
