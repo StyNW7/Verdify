@@ -1,6 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowUpRight,
   ArrowRight,
@@ -12,6 +13,8 @@ import {
   FileText,
   Sparkles,
   MapPin,
+  CornerDownRight,
+  Navigation,
 } from 'lucide-react';
 import RouteMap from '@/components/RouteMap';
 import { useIsDark } from '@/components/AnimatedThemeToggler';
@@ -45,6 +48,39 @@ const caps = [
   { t: 'Professional Trip Report', d: 'Auto-summary: money saved, emissions reduced, Net Zero 2050 contribution.', i: FileText },
 ];
 
+const faqs = [
+  {
+    q: 'What makes Verdify different from Google Maps or Waze?',
+    a: 'Maps optimise for time. Verdify optimises for time, cost, and carbon — together. It understands the Johor–Singapore corridor specifically, books downstream actions, and reports CO₂e back to you in a format you can actually use.',
+    tag: 'Positioning',
+  },
+  {
+    q: 'How does routing actually stay “green” during the April 2026 crunch?',
+    a: 'Energy Crunch Mode re-weights the ranker toward low-energy and low-cost corridors — RTS Link, park-and-ride, EV-first options — using live signals grounded through Vertex AI Search.',
+    tag: 'Routing',
+  },
+  {
+    q: 'Where does the carbon data come from?',
+    a: 'Per-segment CO₂e is computed from mode, distance, and occupancy, cross-referenced with the corridor RAG dataset and Malaysia Net Zero 2050 baselines. Every number on a route card is traceable.',
+    tag: 'Carbon',
+  },
+  {
+    q: 'What can the autonomous action engine actually trigger?',
+    a: 'Parking reservations, EV charging windows, RTS Link holds, and trip reports — dispatched as agentic flows. You confirm; Verdify executes. Nothing is sent without an explicit signal.',
+    tag: 'Agents',
+  },
+  {
+    q: 'Are green reward points redeemable?',
+    a: 'Points accumulate per lower-impact trip and map to partner rewards in the Iskandar and JS-SEZ network. The ledger is visible, cumulative, and exportable into your monthly trip report.',
+    tag: 'Rewards',
+  },
+  {
+    q: 'Is my trip data private?',
+    a: 'Trips are stored against your account only. Aggregated, de-identified corridor signals may inform public-agency dashboards — never personal routes. You can purge your history at any time.',
+    tag: 'Privacy',
+  },
+];
+
 function SplitType({ text, delay = 0, stagger = 24 }: { text: string; delay?: number; stagger?: number }) {
   const words = text.split(' ');
   let idx = 0;
@@ -71,6 +107,138 @@ function SplitType({ text, delay = 0, stagger = 24 }: { text: string; delay?: nu
         return node;
       })}
     </span>
+  );
+}
+
+function AccordionCorridor({ openIdx, setOpenIdx }: { openIdx: number | null; setOpenIdx: (i: number | null) => void }) {
+  return (
+    <div className="relative">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute bottom-0 left-[23px] top-0 w-px"
+        style={{
+          background:
+            'linear-gradient(to bottom, transparent, var(--landing-border-strong) 8%, var(--landing-border-strong) 92%, transparent)',
+        }}
+      />
+      <div className="flex flex-col gap-4">
+        {faqs.map((f, i) => {
+          const open = openIdx === i;
+          return (
+            <div key={i} className="relative pl-[62px]">
+              <button
+                onClick={() => setOpenIdx(open ? null : i)}
+                aria-label={`Toggle ${f.q}`}
+                className="absolute left-0 top-1 flex h-[48px] w-[48px] items-center justify-center rounded-full transition-all duration-500"
+                style={{
+                  background: open ? 'var(--landing-accent)' : 'var(--landing-surface)',
+                  color: open ? 'var(--landing-button-foreground)' : 'var(--landing-text-muted)',
+                  border: '1px solid var(--landing-border-strong)',
+                  boxShadow: open ? 'var(--landing-accent-glow)' : 'none',
+                  backdropFilter: 'blur(10px)',
+                }}
+              >
+                {open ? <Navigation className="h-4 w-4" strokeWidth={1.8} /> : <MapPin className="h-4 w-4" strokeWidth={1.6} />}
+              </button>
+
+              <div
+                className="landing-card overflow-hidden transition-colors"
+                style={{
+                  padding: 0,
+                  borderColor: open ? 'var(--landing-accent-muted)' : undefined,
+                }}
+              >
+                <button
+                  onClick={() => setOpenIdx(open ? null : i)}
+                  className="flex w-full items-center justify-between gap-5 px-6 py-5 text-left"
+                >
+                  <div className="flex items-baseline gap-3">
+                    <span className="landing-italic text-[1.35rem] leading-none" style={{ color: 'var(--landing-accent)' }}>
+                      0{i + 1}
+                    </span>
+                    <span className="text-[1.02rem] tracking-[-0.01em]" style={{ fontFamily: 'var(--landing-font-display)', color: 'var(--landing-text)' }}>
+                      {f.q}
+                    </span>
+                  </div>
+                  <span
+                    className="hidden shrink-0 landing-mono-sm md:inline"
+                    style={{ color: open ? 'var(--landing-accent)' : 'var(--landing-text-dim)' }}
+                  >
+                    {open ? '↓ open' : 'tap to expand'}
+                  </span>
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {open && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.45, ease: [0.2, 0.7, 0.2, 1] }}
+                      style={{ overflow: 'hidden' }}
+                    >
+                      <div
+                        className="px-6 pb-7"
+                        style={{ borderTop: '1px dashed var(--landing-border)' }}
+                      >
+                        <div className="flex items-start gap-3 pt-5">
+                          <CornerDownRight className="mt-[5px] h-4 w-4 shrink-0" style={{ color: 'var(--landing-accent)' }} strokeWidth={1.6} />
+                          <p className="text-[0.98rem] leading-[1.8]" style={{ color: 'var(--landing-text-muted)' }}>
+                            {f.a}
+                          </p>
+                        </div>
+                        <div className="mt-5 flex flex-wrap items-center gap-2">
+                          <span
+                            className="rounded-full px-3 py-1 landing-mono-sm"
+                            style={{
+                              background: 'var(--landing-accent-soft)',
+                              border: '1px solid var(--landing-accent-muted)',
+                              color: 'var(--landing-accent)',
+                            }}
+                          >
+                            · {f.tag}
+                          </span>
+                          <span className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+                            jhr → sg · corridor ref
+                          </span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function FaqSection() {
+  const [openIdx, setOpenIdx] = useState<number | null>(0);
+
+  return (
+    <motion.section
+      id="faq"
+      {...reveal}
+      className="mx-auto max-w-[1440px] px-4 py-24 sm:px-6 lg:px-10 lg:py-32"
+    >
+      <div className="mb-14 grid gap-8 lg:grid-cols-[0.32fr_0.68fr]">
+        <div className="space-y-4">
+          <p className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>§ Questions — 04</p>
+          <div className="landing-rule" />
+        </div>
+        <h2 className="landing-display text-[clamp(2rem,4.6vw,3.8rem)] leading-[1.04] tracking-[-0.035em]">
+          What people actually ask before they{' '}
+          <span className="landing-italic" style={{ color: 'var(--landing-accent)' }}>
+            switch lanes.
+          </span>
+        </h2>
+      </div>
+
+      <AccordionCorridor openIdx={openIdx} setOpenIdx={setOpenIdx} />
+    </motion.section>
   );
 }
 
@@ -335,6 +503,8 @@ export default function LandingPage() {
           ))}
         </div>
       </section>
+
+      <FaqSection />
 
       <section className="px-4 py-24 sm:px-6 lg:px-10 lg:py-32">
         <motion.div
