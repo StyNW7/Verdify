@@ -33,7 +33,7 @@ const primaryNav: NavEntry[] = [
   { label: 'Plan Route', to: '/route', icon: Compass },
   { label: 'History', to: '#history', icon: History, stub: true },
   { label: 'Rewards', to: '#rewards', icon: Gift, stub: true },
-  { label: 'Leaderboard', to: '#leaderboard', icon: Trophy, stub: true },
+  { label: 'Leaderboard', to: '/leaderboard', icon: Trophy },
 ];
 
 const secondaryNav: NavEntry[] = [
@@ -321,6 +321,7 @@ function pageLabel(pathname: string) {
   if (pathname.startsWith('/dashboard')) return 'Dashboard';
   if (pathname.startsWith('/route')) return 'Route Planner';
   if (pathname.startsWith('/profile')) return 'Profile';
+  if (pathname.startsWith('/leaderboard')) return 'Leaderboard';
   return 'Verdify';
 }
 
