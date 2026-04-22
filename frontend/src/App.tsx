@@ -20,6 +20,7 @@ import DashboardPage from "./pages/Dashboard/page";
 import ProfilePage from "./pages/Profile/page";
 import LeaderboardPage from "./pages/Leaderboard/page";
 import HistoryPage from "./pages/History/page";
+import RewardsPage from "./pages/Rewards/page";
 import TechnologyPage from "./pages/Technology/page";
 import AboutPage from "./pages/About/page";
 
@@ -62,6 +63,7 @@ function App() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="/history" element={<HistoryPage />} />
+            <Route path="/rewards" element={<RewardsPage />} />
           </Route>
 
           <Route

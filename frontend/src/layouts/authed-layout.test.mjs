@@ -21,3 +21,22 @@ test('desktop auth sidebar is viewport-fixed and leaves content space in normal 
     /className="hidden shrink-0 lg:block"/,
   );
 });
+
+test('rewards is an enabled authenticated sidebar route', () => {
+  assert.match(
+    source,
+    /\{ label: 'Rewards', to: '\/rewards', icon: Gift \}/,
+  );
+  assert.doesNotMatch(
+    source,
+    /\{ label: 'Rewards', to: '#rewards', icon: Gift, stub: true \}/,
+  );
+});
+
+test('settings is not shown in the authenticated sidebar', () => {
+  assert.doesNotMatch(
+    source,
+    /\{ label: 'Settings', to: '#settings', icon: Settings, stub: true \}/,
+  );
+  assert.doesNotMatch(source, /\bSettings,\n/);
+});

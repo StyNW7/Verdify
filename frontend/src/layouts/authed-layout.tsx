@@ -12,7 +12,6 @@ import {
   History,
   Leaf,
   LogOut,
-  Settings,
   Trophy,
   UserRound,
   type LucideIcon,
@@ -32,20 +31,24 @@ const primaryNav: NavEntry[] = [
   { label: 'Dashboard', to: '/dashboard', icon: Gauge },
   { label: 'Plan Route', to: '/route', icon: Compass },
   { label: 'History', to: '/history', icon: History },
-  { label: 'Rewards', to: '#rewards', icon: Gift, stub: true },
+  { label: 'Rewards', to: '/rewards', icon: Gift },
   { label: 'Leaderboard', to: '/leaderboard', icon: Trophy },
 ];
 
 const secondaryNav: NavEntry[] = [
   { label: 'Profile', to: '/profile', icon: UserRound },
-  { label: 'Settings', to: '#settings', icon: Settings, stub: true },
 ];
 
 const SIDEBAR_OPEN = 268;
 const SIDEBAR_CLOSED = 76;
 
 const isAuthedPath = (p: string) =>
-  p.startsWith('/dashboard') || p.startsWith('/route') || p.startsWith('/profile');
+  p.startsWith('/dashboard') ||
+  p.startsWith('/route') ||
+  p.startsWith('/history') ||
+  p.startsWith('/rewards') ||
+  p.startsWith('/leaderboard') ||
+  p.startsWith('/profile');
 
 export default function AuthedLayout() {
   const { pathname } = useLocation();
@@ -320,8 +323,10 @@ export default function AuthedLayout() {
 function pageLabel(pathname: string) {
   if (pathname.startsWith('/dashboard')) return 'Dashboard';
   if (pathname.startsWith('/route')) return 'Route Planner';
-  if (pathname.startsWith('/profile')) return 'Profile';
+  if (pathname.startsWith('/history')) return 'History';
+  if (pathname.startsWith('/rewards')) return 'Rewards';
   if (pathname.startsWith('/leaderboard')) return 'Leaderboard';
+  if (pathname.startsWith('/profile')) return 'Profile';
   return 'Verdify';
 }
 

@@ -296,9 +296,9 @@ function Podium({ top3 }: { top3: Player[] }) {
       </div>
 
       <div className="relative mt-10 grid grid-cols-3 items-end gap-4 sm:gap-8">
-        {second && <PodiumPillar player={second} place={2} height="58%" />}
-        {first && <PodiumPillar player={first} place={1} height="100%" crowned />}
-        {third && <PodiumPillar player={third} place={3} height="42%" />}
+        {second && <PodiumPillar player={second} place={2} height="132px" />}
+        {first && <PodiumPillar player={first} place={1} height="176px" crowned />}
+        {third && <PodiumPillar player={third} place={3} height="96px" />}
       </div>
     </div>
   );
@@ -356,7 +356,7 @@ function PodiumPillar({
       <div
         className="relative w-full overflow-hidden rounded-t-[14px] border border-b-0"
         style={{
-          height: `calc(${height} * 1.6)`,
+          height,
           minHeight: 80,
           borderColor: 'var(--theme-border)',
           background:
