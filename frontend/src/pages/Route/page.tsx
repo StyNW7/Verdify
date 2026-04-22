@@ -52,8 +52,8 @@ export default function RoutePlannerPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: [0.2, 0.7, 0.2, 1] }}
-        className="landing-display mt-6 max-w-[22ch] sm:mt-8"
-        style={{ fontSize: 'clamp(2.4rem, 9vw, 5.6rem)', color: 'var(--landing-text)' }}
+        className="theme-display mt-6 max-w-[22ch] sm:mt-8"
+        style={{ fontSize: 'clamp(2.4rem, 9vw, 5.6rem)', color: 'var(--theme-fg)' }}
       >
         Plan a corridor crossing that keeps the map{' '}
         <span className="theme-italic" style={{ color: 'var(--theme-accent-warm)' }}>

@@ -49,7 +49,6 @@ const isAuthedPath = (p: string) =>
   p.startsWith('/dashboard') ||
   p.startsWith('/route') ||
   p.startsWith('/history') ||
-  p.startsWith('/rewards') ||
   p.startsWith('/leaderboard') ||
   p.startsWith('/profile');
 
@@ -307,14 +306,14 @@ export default function AuthedLayout() {
                   aria-label="Open menu"
                   className="inline-flex h-9 w-9 items-center justify-center rounded-full lg:hidden"
                   style={{
-                    border: '1px solid var(--landing-border)',
-                    color: 'var(--landing-text)',
+                    border: '1px solid var(--theme-border)',
+                    color: 'var(--theme-fg)',
                   }}
                 >
                   <Menu size={16} strokeWidth={1.6} />
                 </button>
                 <span
-                  className="landing-accent-dot hidden lg:block"
+                  className="theme-accent-dot hidden lg:block"
                   aria-hidden
                 />
                 <span
@@ -343,7 +342,7 @@ export default function AuthedLayout() {
                     transition={{ duration: 0.3 }}
                     className="fixed inset-0 z-[55] cursor-default lg:hidden"
                     style={{
-                      background: 'color-mix(in srgb, var(--landing-bg) 40%, transparent)',
+                      background: 'color-mix(in srgb, var(--theme-bg) 40%, transparent)',
                       backdropFilter: 'blur(8px) saturate(140%)',
                       WebkitBackdropFilter: 'blur(8px) saturate(140%)',
                     }}
@@ -359,29 +358,29 @@ export default function AuthedLayout() {
                     transition={{ duration: 0.45, ease: [0.2, 0.7, 0.2, 1] }}
                     className="fixed inset-y-0 left-0 z-[60] flex h-[100dvh] w-full max-w-[320px] flex-col border-r lg:hidden"
                     style={{
-                      borderColor: 'var(--landing-border)',
-                      background: 'var(--landing-bg)',
+                      borderColor: 'var(--theme-border)',
+                      background: 'var(--theme-bg)',
                       boxShadow: '0 40px 80px -30px rgba(10,14,12,0.35)',
                     }}
                   >
                     <div
                       className="flex items-center justify-between border-b px-5"
-                      style={{ height: 64, borderColor: 'var(--landing-border)' }}
+                      style={{ height: 64, borderColor: 'var(--theme-border)' }}
                     >
                       <Link to="/" className="flex items-center gap-2.5">
                         <span
                           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[8px]"
-                          style={{ background: 'var(--landing-accent)' }}
+                          style={{ background: 'var(--theme-accent)' }}
                         >
                           <Leaf
                             className="h-3.5 w-3.5"
-                            style={{ color: 'var(--landing-button-foreground)' }}
+                            style={{ color: 'var(--theme-accent-fg)' }}
                             strokeWidth={2.2}
                           />
                         </span>
                         <span
-                          className="landing-display text-[1.05rem] tracking-[-0.03em]"
-                          style={{ color: 'var(--landing-text)' }}
+                          className="theme-display text-[1.05rem] tracking-[-0.03em]"
+                          style={{ color: 'var(--theme-fg)' }}
                         >
                           Verdify
                         </span>
@@ -392,8 +391,8 @@ export default function AuthedLayout() {
                         aria-label="Close menu"
                         className="inline-flex h-9 w-9 items-center justify-center rounded-full"
                         style={{
-                          border: '1px solid var(--landing-border)',
-                          color: 'var(--landing-text-muted)',
+                          border: '1px solid var(--theme-border)',
+                          color: 'var(--theme-fg-muted)',
                         }}
                       >
                         <X size={16} strokeWidth={1.6} />
@@ -402,8 +401,8 @@ export default function AuthedLayout() {
 
                     <nav className="flex-1 overflow-y-auto px-3 py-6">
                       <p
-                        className="landing-mono-sm px-3 pb-3"
-                        style={{ color: 'var(--landing-text-dim)', letterSpacing: '0.18em' }}
+                        className="theme-mono-sm px-3 pb-3"
+                        style={{ color: 'var(--theme-fg-dim)', letterSpacing: '0.18em' }}
                       >
                         Track
                       </p>
@@ -421,12 +420,12 @@ export default function AuthedLayout() {
 
                       <div
                         className="my-5 h-px"
-                        style={{ background: 'var(--landing-border)' }}
+                        style={{ background: 'var(--theme-border)' }}
                       />
 
                       <p
-                        className="landing-mono-sm px-3 pb-3"
-                        style={{ color: 'var(--landing-text-dim)', letterSpacing: '0.18em' }}
+                        className="theme-mono-sm px-3 pb-3"
+                        style={{ color: 'var(--theme-fg-dim)', letterSpacing: '0.18em' }}
                       >
                         Account
                       </p>
@@ -445,15 +444,15 @@ export default function AuthedLayout() {
 
                     <div
                       className="border-t px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-4"
-                      style={{ borderColor: 'var(--landing-border)' }}
+                      style={{ borderColor: 'var(--theme-border)' }}
                     >
                       <div className="flex items-center gap-3">
                         <div
                           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[0.72rem] font-medium"
                           style={{
-                            background: 'var(--landing-accent-soft)',
-                            color: 'var(--landing-accent)',
-                            border: '1px solid var(--landing-accent-muted)',
+                            background: 'var(--theme-accent-soft)',
+                            color: 'var(--theme-accent)',
+                            border: '1px solid var(--theme-accent-muted)',
                             letterSpacing: '0.04em',
                           }}
                         >
@@ -462,13 +461,13 @@ export default function AuthedLayout() {
                         <div className="min-w-0 flex-1">
                           <p
                             className="truncate text-[0.82rem]"
-                            style={{ color: 'var(--landing-text)' }}
+                            style={{ color: 'var(--theme-fg)' }}
                           >
                             Sarah Rashid
                           </p>
                           <p
-                            className="landing-mono-sm truncate"
-                            style={{ color: 'var(--landing-text-dim)' }}
+                            className="theme-mono-sm truncate"
+                            style={{ color: 'var(--theme-fg-dim)' }}
                           >
                             Commuter · JB
                           </p>
@@ -477,8 +476,8 @@ export default function AuthedLayout() {
                           type="button"
                           className="inline-flex h-9 w-9 items-center justify-center rounded-full"
                           style={{
-                            border: '1px solid var(--landing-border)',
-                            color: 'var(--landing-text-muted)',
+                            border: '1px solid var(--theme-border)',
+                            color: 'var(--theme-fg-muted)',
                           }}
                           aria-label="Sign out"
                         >
@@ -516,7 +515,7 @@ function pageLabel(pathname: string) {
   if (pathname.startsWith('/dashboard')) return 'Dashboard';
   if (pathname.startsWith('/route')) return 'Route Planner';
   if (pathname.startsWith('/history')) return 'History';
-  if (pathname.startsWith('/rewards')) return 'Rewards';
+  if (pathname.startsWith('/profile')) return 'Profile';
   if (pathname.startsWith('/leaderboard')) return 'Leaderboard';
   if (pathname.startsWith('/profile')) return 'Profile';
   return 'Verdify';
@@ -540,12 +539,12 @@ function MobileNavItem({
       <span
         className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] transition-colors duration-300"
         style={{
-          background: active ? 'var(--landing-accent)' : 'transparent',
+          background: active ? 'var(--theme-accent)' : 'transparent',
           color: active
-            ? 'var(--landing-button-foreground)'
-            : 'var(--landing-text-muted)',
+            ? 'var(--theme-accent-fg)'
+            : 'var(--theme-fg-muted)',
           border: active
-            ? '1px solid var(--landing-accent)'
+            ? '1px solid var(--theme-accent)'
             : '1px solid transparent',
         }}
       >
@@ -554,14 +553,14 @@ function MobileNavItem({
       <span
         className="flex flex-1 items-center justify-between gap-2 whitespace-nowrap text-[0.95rem]"
         style={{
-          color: active ? 'var(--landing-text)' : 'var(--landing-text-muted)',
+          color: active ? 'var(--theme-fg)' : 'var(--theme-fg-muted)',
         }}
       >
         <span>{entry.label}</span>
         {entry.stub ? (
           <span
-            className="landing-mono-sm shrink-0"
-            style={{ color: 'var(--landing-text-dim)', fontSize: '0.56rem' }}
+            className="theme-mono-sm shrink-0"
+            style={{ color: 'var(--theme-fg-dim)', fontSize: '0.56rem' }}
           >
             Soon
           </span>

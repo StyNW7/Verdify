@@ -52,7 +52,7 @@ export default function AboutPage() {
       <div className="theme-grain" aria-hidden />
 
       <section id="hero" className="relative overflow-hidden">
-        <div className="landing-mesh" aria-hidden />
+        <div className="theme-mesh" aria-hidden />
         <div className="relative mx-auto max-w-[1440px] px-5 pt-28 pb-14 sm:px-6 sm:pt-32 sm:pb-20 lg:px-10 lg:pt-40 lg:pb-28">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -82,7 +82,7 @@ export default function AboutPage() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.1, ease: [0.2, 0.7, 0.2, 1] }}
-            className="landing-hero mt-10 sm:mt-14"
+            className="theme-hero mt-10 sm:mt-14"
           >
             <span className="block">We are building for a</span>
             <span className="block">
@@ -102,7 +102,7 @@ export default function AboutPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.5 }}
             className="mt-8 max-w-2xl text-[1rem] leading-[1.75] sm:mt-10 sm:text-[1.08rem] sm:leading-[1.8]"
-            style={{ color: 'var(--landing-text-muted)' }}
+            style={{ color: 'var(--theme-fg-muted)' }}
           >
             Verdify is a small, deliberate team building a personal green navigator for the
             Johor–Singapore corridor. This page is the profile behind the product — the

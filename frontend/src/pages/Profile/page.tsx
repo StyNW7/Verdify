@@ -84,8 +84,8 @@ function ProfileHeader() {
           Account / Preferences
         </p>
         <h1
-          className="landing-display mt-2 text-[clamp(2rem,8vw,3.6rem)] leading-[0.95]"
-          style={{ color: 'var(--landing-text)' }}
+          className="theme-display mt-2 text-[clamp(2rem,8vw,3.6rem)] leading-[0.95]"
+          style={{ color: 'var(--theme-fg)' }}
         >
           Your{' '}
           <span className="theme-italic" style={{ color: 'var(--theme-accent)' }}>

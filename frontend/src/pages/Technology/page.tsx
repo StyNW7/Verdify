@@ -225,7 +225,7 @@ export default function TechnologyPage() {
       />
 
       <section className="relative overflow-hidden">
-        <div className="landing-mesh" aria-hidden />
+        <div className="theme-mesh" aria-hidden />
         <div className="relative mx-auto max-w-[1440px] px-5 pt-28 pb-14 sm:px-6 sm:pt-32 sm:pb-20 lg:px-10 lg:pt-40 lg:pb-28">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -246,7 +246,7 @@ export default function TechnologyPage() {
           </div>
 
           <div className="mt-10 grid gap-8 sm:mt-14 sm:gap-10 lg:grid-cols-[0.62fr_0.38fr] lg:items-end">
-            <h1 className="landing-hero">
+            <h1 className="theme-hero">
               <span className="block">Grounded.</span>
               <span className="block">
                 <span className="theme-italic" style={{ color: 'var(--theme-accent)' }}>Deployable.</span>
@@ -287,7 +287,7 @@ export default function TechnologyPage() {
         }}
       >
         <div className="relative mx-auto flex max-w-[1440px] items-center gap-4 overflow-x-auto px-5 py-3 sm:gap-6 sm:px-6 lg:px-10">
-          <span className="shrink-0 landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+          <span className="shrink-0 theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
             § Chapter {chapters[active].n}
           </span>
           <div
@@ -357,8 +357,8 @@ export default function TechnologyPage() {
 
                 <div>
                   <p
-                    className="landing-display leading-[0.9] tracking-[-0.05em]"
-                    style={{ fontSize: 'clamp(4.5rem, 18vw, 14rem)', color: 'var(--landing-text)' }}
+                    className="theme-display leading-[0.9] tracking-[-0.05em]"
+                    style={{ fontSize: 'clamp(4.5rem, 18vw, 14rem)', color: 'var(--theme-fg)' }}
                   >
                     {c.n}
                   </p>

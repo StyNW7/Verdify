@@ -530,7 +530,7 @@ export default function Navbar() {
               transition={{ duration: 0.3, ease: [0.2, 0.7, 0.2, 1] }}
               className="fixed inset-0 z-[55] cursor-default lg:hidden"
               style={{
-                background: 'color-mix(in srgb, var(--landing-bg) 40%, transparent)',
+                background: 'color-mix(in srgb, var(--theme-bg) 40%, transparent)',
                 backdropFilter: 'blur(8px) saturate(140%)',
                 WebkitBackdropFilter: 'blur(8px) saturate(140%)',
               }}
@@ -546,35 +546,35 @@ export default function Navbar() {
               transition={{ duration: 0.45, ease: [0.2, 0.7, 0.2, 1] }}
               className="fixed inset-y-0 right-0 z-[60] flex h-[100dvh] w-full max-w-[440px] flex-col border-l lg:hidden"
               style={{
-                borderColor: 'var(--landing-border)',
-                background: 'var(--landing-bg)',
+                borderColor: 'var(--theme-border)',
+                background: 'var(--theme-bg)',
                 boxShadow: '0 40px 80px -30px rgba(10,14,12,0.35)',
               }}
             >
               <div
                 aria-hidden
-                className="landing-grain pointer-events-none absolute inset-0"
+                className="theme-grain pointer-events-none absolute inset-0"
                 style={{ opacity: 0.4 }}
               />
 
               <div
                 className="relative flex items-center justify-between border-b px-5"
-                style={{ height: NAV_HEIGHT, borderColor: 'var(--landing-border)' }}
+                style={{ height: NAV_HEIGHT, borderColor: 'var(--theme-border)' }}
               >
                 <div className="flex items-center gap-2">
                   <span
                     className="flex h-6 w-6 items-center justify-center rounded-[6px]"
-                    style={{ background: 'var(--landing-accent)' }}
+                    style={{ background: 'var(--theme-accent)' }}
                   >
                     <Leaf
                       className="h-3 w-3"
-                      style={{ color: 'var(--landing-button-foreground)' }}
+                      style={{ color: 'var(--theme-accent-fg)' }}
                       strokeWidth={2.4}
                     />
                   </span>
                   <span
-                    className="landing-mono-sm"
-                    style={{ color: 'var(--landing-text-dim)' }}
+                    className="theme-mono-sm"
+                    style={{ color: 'var(--theme-fg-dim)' }}
                   >
                     § Navigation
                   </span>
@@ -585,8 +585,8 @@ export default function Navbar() {
                   aria-label="Close menu"
                   className="inline-flex h-9 w-9 items-center justify-center rounded-full"
                   style={{
-                    border: '1px solid var(--landing-border)',
-                    color: 'var(--landing-text-muted)',
+                    border: '1px solid var(--theme-border)',
+                    color: 'var(--theme-fg-muted)',
                   }}
                 >
                   <X size={16} strokeWidth={1.6} />
@@ -609,7 +609,7 @@ export default function Navbar() {
                           ease: [0.2, 0.7, 0.2, 1],
                         }}
                         className="border-b"
-                        style={{ borderColor: 'var(--landing-border)' }}
+                        style={{ borderColor: 'var(--theme-border)' }}
                       >
                         <div className="flex items-stretch">
                           <Link
@@ -618,27 +618,27 @@ export default function Navbar() {
                             className="group flex min-w-0 flex-1 items-baseline gap-3 py-5 pr-3"
                           >
                             <span
-                              className="landing-mono-sm"
-                              style={{ color: 'var(--landing-text-dim)' }}
+                              className="theme-mono-sm"
+                              style={{ color: 'var(--theme-fg-dim)' }}
                             >
                               §{String(idx + 1).padStart(2, '0')}
                             </span>
                             <span
-                              className="landing-display tracking-[-0.035em] text-[1.9rem] leading-none"
-                              style={{ color: 'var(--landing-text)' }}
+                              className="theme-display tracking-[-0.035em] text-[1.9rem] leading-none"
+                              style={{ color: 'var(--theme-fg)' }}
                             >
                               {item.label}
                             </span>
                             <ArrowUpRight
                               className="ml-1 h-4 w-4 -translate-y-[2px] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-1"
-                              style={{ color: 'var(--landing-accent)' }}
+                              style={{ color: 'var(--theme-accent)' }}
                               strokeWidth={1.8}
                             />
                           </Link>
                           <span
                             aria-hidden
                             className="my-3 w-px"
-                            style={{ background: 'var(--landing-border)' }}
+                            style={{ background: 'var(--theme-border)' }}
                           />
                           <button
                             type="button"
@@ -652,9 +652,9 @@ export default function Navbar() {
                                 : `Expand ${item.label} sections`
                             }
                             className="flex shrink-0 items-center gap-2 py-5 pl-4"
-                            style={{ color: 'var(--landing-text-dim)' }}
+                            style={{ color: 'var(--theme-fg-dim)' }}
                           >
-                            <span className="landing-mono-sm hidden xs:inline">
+                            <span className="theme-mono-sm hidden xs:inline">
                               {isExpanded ? 'less' : 'more'}
                             </span>
                             <motion.span
@@ -662,13 +662,13 @@ export default function Navbar() {
                               transition={{ duration: 0.35, ease: [0.2, 0.7, 0.2, 1] }}
                               className="inline-flex h-9 w-9 items-center justify-center rounded-full"
                               style={{
-                                border: '1px solid var(--landing-border)',
+                                border: '1px solid var(--theme-border)',
                                 background: isExpanded
-                                  ? 'var(--landing-accent-soft)'
-                                  : 'var(--landing-surface-alt)',
+                                  ? 'var(--theme-accent-soft)'
+                                  : 'var(--theme-surface-muted)',
                                 color: isExpanded
-                                  ? 'var(--landing-accent)'
-                                  : 'var(--landing-text-muted)',
+                                  ? 'var(--theme-accent)'
+                                  : 'var(--theme-fg-muted)',
                               }}
                             >
                               <ChevronDown size={15} strokeWidth={1.8} />
@@ -707,25 +707,25 @@ export default function Navbar() {
                   <span
                     aria-hidden
                     className="h-px flex-1"
-                    style={{ background: 'var(--landing-border)' }}
+                    style={{ background: 'var(--theme-border)' }}
                   />
                   <span
-                    className="landing-mono-sm"
-                    style={{ color: 'var(--landing-text-dim)' }}
+                    className="theme-mono-sm"
+                    style={{ color: 'var(--theme-fg-dim)' }}
                   >
                     § Session
                   </span>
                   <span
                     aria-hidden
                     className="h-px flex-1"
-                    style={{ background: 'var(--landing-border)' }}
+                    style={{ background: 'var(--theme-border)' }}
                   />
                 </div>
               </div>
 
               <div
                 className="relative border-t px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-5"
-                style={{ borderColor: 'var(--landing-border)' }}
+                style={{ borderColor: 'var(--theme-border)' }}
               >
                 <div className="flex flex-col gap-3">
                   <button
@@ -734,7 +734,7 @@ export default function Navbar() {
                       setIsMobileMenuOpen(false);
                       openAuth('register');
                     }}
-                    className="landing-btn-primary w-full justify-center"
+                    className="theme-btn-primary w-full justify-center"
                   >
                     Get started
                     <ArrowUpRight size={14} strokeWidth={1.8} />
@@ -749,8 +749,8 @@ export default function Navbar() {
                         aria-label="Search"
                         className="inline-flex h-9 w-9 items-center justify-center rounded-full"
                         style={{
-                          border: '1px solid var(--landing-border)',
-                          color: 'var(--landing-text-muted)',
+                          border: '1px solid var(--theme-border)',
+                          color: 'var(--theme-fg-muted)',
                         }}
                       >
                         <Search size={15} strokeWidth={1.6} />
@@ -762,8 +762,8 @@ export default function Navbar() {
                         setIsMobileMenuOpen(false);
                         openAuth('login');
                       }}
-                      className="landing-link-underline text-[0.82rem]"
-                      style={{ color: 'var(--landing-text-muted)' }}
+                      className="theme-link-underline text-[0.82rem]"
+                      style={{ color: 'var(--theme-fg-muted)' }}
                     >
                       Sign in →
                     </button>

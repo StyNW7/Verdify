@@ -412,7 +412,7 @@ export default function LandingPage() {
         className="relative overflow-hidden border-y scroll-mt-24"
         style={{ borderColor: 'var(--theme-border)', background: 'var(--theme-bg-soft)' }}
       >
-        <div className="landing-mesh" aria-hidden style={{ opacity: 0.6 }} />
+        <div className="theme-mesh" aria-hidden style={{ opacity: 0.6 }} />
         <div className="relative mx-auto max-w-[1440px] px-5 py-16 sm:px-6 sm:py-20 lg:px-10 lg:py-32">
           <motion.div {...reveal} className="mb-10 grid gap-6 sm:mb-16 sm:gap-8 lg:grid-cols-[0.32fr_0.68fr]">
             <div className="space-y-4">

@@ -22,21 +22,13 @@ test('desktop auth sidebar is viewport-fixed and leaves content space in normal 
   );
 });
 
-test('rewards is an enabled authenticated sidebar route', () => {
-  assert.match(
-    source,
-    /\{ label: 'Rewards', to: '\/rewards', icon: Gift \}/,
-  );
-  assert.doesNotMatch(
-    source,
-    /\{ label: 'Rewards', to: '#rewards', icon: Gift, stub: true \}/,
-  );
+test('all protected app routes are recognized by the auth shell', () => {
+  for (const route of ['/dashboard', '/route', '/history', '/leaderboard', '/profile']) {
+    assert.match(source, new RegExp(`p\\.startsWith\\('${route}'\\)`));
+  }
 });
 
-test('settings is not shown in the authenticated sidebar', () => {
-  assert.doesNotMatch(
-    source,
-    /\{ label: 'Settings', to: '#settings', icon: Settings, stub: true \}/,
-  );
-  assert.doesNotMatch(source, /\bSettings,\n/);
+test('auth shell labels history and leaderboard routes', () => {
+  assert.match(source, /pathname\.startsWith\('\/history'\)\) return 'History'/);
+  assert.match(source, /pathname\.startsWith\('\/leaderboard'\)\) return 'Leaderboard'/);
 });

@@ -121,8 +121,8 @@ export default function DashboardPage() {
             Wednesday · 19 April
           </p>
           <h1
-            className="landing-display mt-2 text-[clamp(2rem,8vw,3.6rem)] leading-[0.95]"
-            style={{ color: 'var(--landing-text)' }}
+            className="theme-display mt-2 text-[clamp(2rem,8vw,3.6rem)] leading-[0.95]"
+            style={{ color: 'var(--theme-fg)' }}
           >
             Welcome back,{' '}
             <span
@@ -134,7 +134,7 @@ export default function DashboardPage() {
           </h1>
           <p
             className="mt-3 max-w-xl text-[0.92rem] leading-relaxed sm:text-[0.95rem]"
-            style={{ color: 'var(--landing-text-muted)' }}
+            style={{ color: 'var(--theme-fg-muted)' }}
           >
             You're quietly outpacing 92% of commuters on the Johor–Singapore
             corridor. A slow week, but your streak is holding.
@@ -142,10 +142,10 @@ export default function DashboardPage() {
         </div>
 
         <div className="flex w-full items-center gap-2 lg:w-auto">
-          <Link to="/route" className="landing-btn-ghost hidden sm:inline-flex">
+          <Link to="/route" className="theme-btn-ghost hidden sm:inline-flex">
             View route planner
           </Link>
-          <Link to="/route" className="landing-btn-primary flex-1 justify-center lg:flex-initial">
+          <Link to="/route" className="theme-btn-primary flex-1 justify-center lg:flex-initial">
             Plan a trip
             <ArrowUpRight size={14} strokeWidth={1.8} />
           </Link>
@@ -154,7 +154,7 @@ export default function DashboardPage() {
 
       <div
         className="relative mb-6 -mx-5 overflow-x-auto border-y px-5 py-1 lg:hidden"
-        style={{ borderColor: 'var(--landing-border)' }}
+        style={{ borderColor: 'var(--theme-border)' }}
       >
         <div className="flex items-center gap-1">
           {mobileTabs.map((t) => {
@@ -166,10 +166,10 @@ export default function DashboardPage() {
                 onClick={() => setTab(t.id)}
                 className="relative inline-flex shrink-0 items-baseline gap-2 px-3 py-3 transition-colors"
                 style={{
-                  color: active ? 'var(--landing-text)' : 'var(--landing-text-dim)',
+                  color: active ? 'var(--theme-fg)' : 'var(--theme-fg-dim)',
                 }}
               >
-                <span className="landing-mono-sm" style={{ opacity: 0.7 }}>
+                <span className="theme-mono-sm" style={{ opacity: 0.7 }}>
                   §{t.num}
                 </span>
                 <span className="text-[0.88rem]" style={{ letterSpacing: '-0.01em' }}>
@@ -179,7 +179,7 @@ export default function DashboardPage() {
                   <motion.span
                     layoutId="dash-tab-underline"
                     className="absolute inset-x-2 -bottom-[1px] h-[2px]"
-                    style={{ background: 'var(--landing-accent)' }}
+                    style={{ background: 'var(--theme-accent)' }}
                     transition={{ duration: 0.4, ease: [0.2, 0.7, 0.2, 1] }}
                   />
                 ) : null}

@@ -179,8 +179,11 @@ export default function LeaderboardPage() {
   const top3 = filtered.filter((p) => p.rank <= 3).slice(0, 3);
 
   return (
-    <section className="relative w-full px-6 py-10 lg:px-12 lg:py-14">
-      <div className="mx-auto flex max-w-[min(1280px,calc(100vw-var(--sidebar-w,0px)-5rem))] flex-col gap-8">
+    <section
+      className="relative mx-auto w-full px-5 pb-20 pt-8 sm:px-6 sm:pb-24 sm:pt-10 lg:px-10"
+      style={{ maxWidth: 'var(--page-max-w, 1280px)' }}
+    >
+      <div className="flex flex-col gap-6 sm:gap-8">
         <div className="flex flex-col gap-6">
           <div className="flex items-center gap-3">
             <span className="theme-accent-dot" aria-hidden />
@@ -194,7 +197,7 @@ export default function LeaderboardPage() {
 
           <div className="max-w-2xl">
             <h1
-              className="theme-display text-[clamp(2.4rem,5vw,3.8rem)] leading-[1.02] tracking-[-0.035em]"
+              className="theme-display text-[clamp(1.9rem,7vw,3.8rem)] leading-[1.02] tracking-[-0.035em]"
               style={{ color: 'var(--theme-fg)' }}
             >
               Who's moving{' '}
@@ -265,7 +268,7 @@ function Podium({ top3 }: { top3: Player[] }) {
 
   return (
     <div
-      className="theme-card relative overflow-hidden rounded-[28px] px-6 pb-10 pt-8 lg:px-12"
+      className="theme-card relative overflow-hidden rounded-[28px] px-4 pb-8 pt-6 sm:px-6 sm:pb-10 sm:pt-8 lg:px-12"
       style={{ borderColor: 'var(--theme-border)' }}
     >
       <div
@@ -398,9 +401,9 @@ function YouRow({ me }: { me: Player }) {
         className="pointer-events-none absolute -right-16 -top-16 h-52 w-52 rounded-full"
         style={{ background: 'var(--theme-accent-soft)', filter: 'blur(50px)' }}
       />
-      <div className="relative flex flex-col items-start justify-between gap-5 px-6 py-5 sm:flex-row sm:items-center">
-        <div className="flex items-center gap-4">
-          <Avatar player={me} size={56} ring="var(--theme-accent)" />
+      <div className="relative flex flex-col items-start justify-between gap-4 px-4 py-4 sm:gap-5 sm:flex-row sm:items-center sm:px-6 sm:py-5">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <Avatar player={me} size={48} ring="var(--theme-accent)" />
           <div>
             <span
               className="theme-mono-sm"
@@ -408,35 +411,35 @@ function YouRow({ me }: { me: Player }) {
             >
               YOUR STANDING
             </span>
-            <p className="text-[1.1rem] font-medium" style={{ color: 'var(--theme-fg)' }}>
+            <p className="text-[1rem] font-medium sm:text-[1.1rem]" style={{ color: 'var(--theme-fg)' }}>
               Sarah Rashid{' '}
               <span style={{ color: 'var(--theme-fg-dim)' }}>· @{me.handle}</span>
             </p>
-            <p className="mt-1 text-[0.85rem]" style={{ color: 'var(--theme-fg-muted)' }}>
+            <p className="mt-1 text-[0.82rem] sm:text-[0.85rem]" style={{ color: 'var(--theme-fg-muted)' }}>
               Climb <span style={{ color: 'var(--theme-accent)' }}>4 spots</span> this week to
               break the top 40.
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-6">
+        <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:gap-6">
           <div className="text-right">
             <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
               RANK
             </span>
             <p
-              className="theme-number text-[2.2rem] tracking-[-0.03em]"
+              className="theme-number text-[1.6rem] tracking-[-0.03em] sm:text-[2.2rem]"
               style={{ fontWeight: 500 }}
             >
               #{me.rank}
             </p>
           </div>
-          <div className="h-12 w-px" style={{ background: 'var(--theme-border)' }} />
+          <div className="h-10 w-px sm:h-12" style={{ background: 'var(--theme-border)' }} />
           <div className="text-right">
             <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
               POINTS
             </span>
             <p
-              className="theme-number text-[2.2rem] tracking-[-0.03em]"
+              className="theme-number text-[1.6rem] tracking-[-0.03em] sm:text-[2.2rem]"
               style={{ fontWeight: 500 }}
             >
               {fmt(me.points)}
@@ -472,7 +475,7 @@ function Ledger({ players, me }: { players: Player[]; me: Player }) {
       style={{ borderColor: 'var(--theme-border)' }}
     >
       <div
-        className="flex items-center justify-between border-b px-6 py-4"
+        className="flex items-center justify-between border-b px-4 py-3 sm:px-6 sm:py-4"
         style={{ borderColor: 'var(--theme-border)' }}
       >
         <span
@@ -521,7 +524,7 @@ function LedgerRow({
       initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 0.04 * index, duration: 0.3 }}
-      className="relative flex items-center justify-between gap-4 border-b px-6 py-3 last:border-b-0 transition-colors hover:bg-[var(--theme-surface-muted)]"
+      className="relative flex items-center justify-between gap-3 border-b px-4 py-3 last:border-b-0 transition-colors hover:bg-[var(--theme-surface-muted)] sm:gap-4 sm:px-6"
       style={{
         borderColor: 'var(--theme-border)',
         background: isMe
@@ -536,9 +539,9 @@ function LedgerRow({
           style={{ background: 'var(--theme-accent)' }}
         />
       )}
-      <div className="flex min-w-0 items-center gap-4">
+      <div className="flex min-w-0 items-center gap-3 sm:gap-4">
         <span
-          className="theme-mono-sm w-10 shrink-0"
+          className="theme-mono-sm w-8 shrink-0 sm:w-10"
           style={{
             color: isMe ? 'var(--theme-accent)' : 'var(--theme-fg-dim)',
             letterSpacing: '0.06em',
@@ -582,7 +585,7 @@ function LedgerRow({
           </p>
         </div>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
         <span
           className="hidden items-center gap-1 sm:inline-flex"
           style={{ color: 'var(--theme-accent-warm)' }}
@@ -592,9 +595,9 @@ function LedgerRow({
         </span>
         <TrendPill trend={player.trend} delta={player.delta} />
         <span
-          className="shrink-0 text-right text-[1.05rem] tabular-nums"
+          className="shrink-0 text-right text-[0.95rem] tabular-nums sm:text-[1.05rem]"
           style={{
-            minWidth: '6.5ch',
+            minWidth: '5.5ch',
             fontFamily: 'var(--theme-font-display)',
             fontWeight: 500,
             letterSpacing: '-0.02em',

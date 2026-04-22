@@ -132,7 +132,7 @@ function AuthModal({
         <span
           aria-hidden
           className="mx-auto my-2.5 block h-1 w-10 rounded-full md:hidden"
-          style={{ background: 'var(--landing-border-strong)' }}
+          style={{ background: 'var(--theme-border-strong)' }}
         />
         <div
           aria-hidden
@@ -144,7 +144,7 @@ function AuthModal({
 
         <div
           className="relative z-[2] flex w-full flex-1 flex-col overflow-y-auto md:w-[56%] md:flex-initial md:overflow-visible"
-          style={{ background: 'var(--landing-bg)' }}
+          style={{ background: 'var(--theme-bg)' }}
         >
           <div className="flex items-center justify-between px-7 pt-6 md:px-10 md:pt-8">
             <ModeTabs mode={mode} setMode={setMode} />

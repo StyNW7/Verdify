@@ -141,8 +141,11 @@ export default function HistoryPage() {
   };
 
   return (
-    <section className="relative w-full px-6 py-10 lg:px-12 lg:py-14">
-      <div className="mx-auto flex max-w-[min(1280px,calc(100vw-var(--sidebar-w,0px)-5rem))] flex-col gap-8">
+    <section
+      className="relative mx-auto w-full px-5 pb-20 pt-8 sm:px-6 sm:pb-24 sm:pt-10 lg:px-10"
+      style={{ maxWidth: 'var(--page-max-w, 1280px)' }}
+    >
+      <div className="flex flex-col gap-6 sm:gap-8">
         <Header totals={totals} />
         <Filters
           timeKey={timeKey}
@@ -176,7 +179,7 @@ function Header({ totals }: { totals: { co2: number; pts: number; dist: number; 
 
       <div className="max-w-2xl">
         <h1
-          className="theme-display text-[clamp(2.4rem,5vw,3.8rem)] leading-[1.02] tracking-[-0.035em]"
+          className="theme-display text-[clamp(1.9rem,7vw,3.8rem)] leading-[1.02] tracking-[-0.035em]"
           style={{ color: 'var(--theme-fg)' }}
         >
           Every trip you{' '}
@@ -222,20 +225,23 @@ function SummaryStrip({ totals }: { totals: { co2: number; pts: number; dist: nu
         return (
           <div
             key={it.label}
-            className="flex flex-col gap-2 px-5 py-4"
-            style={{
-              borderLeft: i === 0 ? 'none' : '1px solid var(--theme-border)',
-            }}
+            className={[
+              'flex flex-col gap-1.5 px-3.5 py-3.5 sm:gap-2 sm:px-5 sm:py-4',
+              (i === 1 || i === 3) && 'border-l',
+              i === 2 && 'border-t md:border-t-0 md:border-l',
+              i === 0 ? '' : 'md:border-l',
+            ].filter(Boolean).join(' ')}
+            style={{ borderColor: 'var(--theme-border)' }}
           >
             <span
-              className="theme-mono-sm inline-flex items-center gap-2"
-              style={{ color: 'var(--theme-fg-dim)', letterSpacing: '0.18em' }}
+              className="theme-mono-sm inline-flex items-center gap-1.5 sm:gap-2"
+              style={{ color: 'var(--theme-fg-dim)', letterSpacing: '0.16em', fontSize: '0.62rem' }}
             >
-              <Icon className="h-3.5 w-3.5" strokeWidth={1.8} />
+              <Icon className="h-3 w-3 sm:h-3.5 sm:w-3.5" strokeWidth={1.8} />
               {it.label}
             </span>
             <span
-              className="theme-number text-[1.9rem] leading-none tracking-[-0.03em]"
+              className="theme-number text-[1.35rem] leading-none tracking-[-0.03em] sm:text-[1.9rem]"
               style={{ fontWeight: 500 }}
             >
               {it.value}
@@ -266,7 +272,7 @@ function Filters({
 }) {
   return (
     <div
-      className="flex flex-col gap-5 rounded-[20px] border px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
+      className="flex flex-col gap-4 rounded-[20px] border px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-5 sm:px-5"
       style={{
         borderColor: 'var(--theme-border)',
         background: 'var(--theme-surface)',
@@ -352,7 +358,7 @@ function LedgerView({ trips, onOpen }: { trips: Trip[]; onOpen: (t: Trip) => voi
       style={{ borderColor: 'var(--theme-border)' }}
     >
       <div
-        className="grid grid-cols-[96px_72px_1fr_120px_120px_72px] items-center gap-4 border-b px-6 py-3"
+        className="hidden md:grid grid-cols-[96px_72px_1fr_120px_120px_72px] items-center gap-4 border-b px-6 py-3"
         style={{ borderColor: 'var(--theme-border)' }}
       >
         {['DATE', 'TIME', 'ROUTE', 'CO₂ SAVED', 'POINTS', ''].map((h, i) => (
@@ -375,7 +381,7 @@ function LedgerView({ trips, onOpen }: { trips: Trip[]; onOpen: (t: Trip) => voi
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.03 * i, duration: 0.35 }}
-              className="group relative grid cursor-pointer grid-cols-[96px_72px_1fr_120px_120px_72px] items-center gap-4 border-b px-6 py-4 last:border-b-0 transition-colors hover:bg-[var(--theme-surface-muted)]"
+              className="group relative cursor-pointer border-b px-4 py-4 last:border-b-0 transition-colors hover:bg-[var(--theme-surface-muted)] md:px-6"
               style={{ borderColor: 'var(--theme-border)' }}
               onClick={() => onOpen(t)}
             >
@@ -383,82 +389,126 @@ function LedgerView({ trips, onOpen }: { trips: Trip[]; onOpen: (t: Trip) => voi
                 className="absolute left-0 top-0 h-full w-[2px] opacity-0 transition-opacity group-hover:opacity-100"
                 style={{ background: toneColor(meta.tone) }}
               />
-              <div className="flex flex-col">
-                <span
-                  className="text-[0.92rem]"
-                  style={{ color: 'var(--theme-fg)', fontFamily: 'var(--theme-font-display)' }}
-                >
-                  {new Date(t.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
-                </span>
-                <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
-                  {new Date(t.date).getFullYear()}
-                </span>
-              </div>
-              <span className="theme-mono-sm" style={{ color: 'var(--theme-fg)' }}>
-                {formatTime(t.date)}
-              </span>
-              <div className="flex min-w-0 items-center gap-3">
-                <span
-                  className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border"
-                  style={{
-                    borderColor: 'var(--theme-border-strong)',
-                    background: 'var(--theme-surface-muted)',
-                    color: toneColor(meta.tone),
-                  }}
-                >
-                  <Icon className="h-4 w-4" strokeWidth={1.8} />
-                </span>
-                <div className="min-w-0">
-                  <p
-                    className="truncate text-[0.95rem]"
-                    style={{ color: 'var(--theme-fg)', fontFamily: 'var(--theme-font-display)' }}
+
+              <div className="flex flex-col gap-3 md:hidden">
+                <div className="flex items-start gap-3">
+                  <span
+                    className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border"
+                    style={{
+                      borderColor: 'var(--theme-border-strong)',
+                      background: 'var(--theme-surface-muted)',
+                      color: toneColor(meta.tone),
+                    }}
                   >
-                    {t.origin}{' '}
-                    <span
-                      className="italic"
-                      style={{
-                        fontFamily: 'var(--theme-font-italic)',
-                        color: 'var(--theme-fg-dim)',
-                      }}
+                    <Icon className="h-4 w-4" strokeWidth={1.8} />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p
+                      className="truncate text-[0.95rem]"
+                      style={{ color: 'var(--theme-fg)', fontFamily: 'var(--theme-font-display)' }}
                     >
-                      to
-                    </span>{' '}
-                    {t.destination}
-                  </p>
-                  <p className="theme-mono-sm truncate" style={{ color: 'var(--theme-fg-dim)' }}>
-                    {meta.label.toUpperCase()} · {km(t.distanceKm)} · {t.durationMin} MIN
-                  </p>
+                      {t.origin}{' '}
+                      <span
+                        className="italic"
+                        style={{ fontFamily: 'var(--theme-font-italic)', color: 'var(--theme-fg-dim)' }}
+                      >
+                        to
+                      </span>{' '}
+                      {t.destination}
+                    </p>
+                    <p className="theme-mono-sm truncate" style={{ color: 'var(--theme-fg-dim)' }}>
+                      {new Date(t.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })} · {formatTime(t.date)} · {meta.label.toUpperCase()}
+                    </p>
+                  </div>
+                </div>
+                <div
+                  className="flex items-center justify-between gap-3 border-t pt-3"
+                  style={{ borderColor: 'var(--theme-border)' }}
+                >
+                  <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
+                    {km(t.distanceKm)} · {t.durationMin} MIN
+                  </span>
+                  <div className="flex items-center gap-3">
+                    <span
+                      className="text-[0.95rem] tabular-nums"
+                      style={{ fontFamily: 'var(--theme-font-display)', color: 'var(--theme-accent)', fontWeight: 500 }}
+                    >
+                      −{kg(t.co2SavedKg)}
+                    </span>
+                    <span
+                      className="text-[0.95rem] tabular-nums"
+                      style={{ fontFamily: 'var(--theme-font-display)', color: 'var(--theme-fg)', fontWeight: 500 }}
+                    >
+                      +{fmt(t.points)}
+                    </span>
+                  </div>
                 </div>
               </div>
-              <span
-                className="text-right text-[1.02rem] tabular-nums"
-                style={{
-                  fontFamily: 'var(--theme-font-display)',
-                  color: 'var(--theme-accent)',
-                  fontWeight: 500,
-                }}
-              >
-                −{kg(t.co2SavedKg)}
-              </span>
-              <span
-                className="text-right text-[1.02rem] tabular-nums"
-                style={{
-                  fontFamily: 'var(--theme-font-display)',
-                  color: 'var(--theme-fg)',
-                  fontWeight: 500,
-                }}
-              >
-                +{fmt(t.points)}
-              </span>
-              <span
-                className="justify-self-end text-[0.75rem] italic opacity-0 transition-opacity group-hover:opacity-100"
-                style={{
-                  fontFamily: 'var(--theme-font-italic)',
-                  color: 'var(--theme-accent)',
-                }}
-              >
-                open →
-              </span>
+
+              <div className="hidden md:grid grid-cols-[96px_72px_1fr_120px_120px_72px] items-center gap-4">
+                <div className="flex flex-col">
+                  <span
+                    className="text-[0.92rem]"
+                    style={{ color: 'var(--theme-fg)', fontFamily: 'var(--theme-font-display)' }}
+                  >
+                    {new Date(t.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+                  </span>
+                  <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
+                    {new Date(t.date).getFullYear()}
+                  </span>
+                </div>
+                <span className="theme-mono-sm" style={{ color: 'var(--theme-fg)' }}>
+                  {formatTime(t.date)}
+                </span>
+                <div className="flex min-w-0 items-center gap-3">
+                  <span
+                    className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border"
+                    style={{
+                      borderColor: 'var(--theme-border-strong)',
+                      background: 'var(--theme-surface-muted)',
+                      color: toneColor(meta.tone),
+                    }}
+                  >
+                    <Icon className="h-4 w-4" strokeWidth={1.8} />
+                  </span>
+                  <div className="min-w-0">
+                    <p
+                      className="truncate text-[0.95rem]"
+                      style={{ color: 'var(--theme-fg)', fontFamily: 'var(--theme-font-display)' }}
+                    >
+                      {t.origin}{' '}
+                      <span
+                        className="italic"
+                        style={{ fontFamily: 'var(--theme-font-italic)', color: 'var(--theme-fg-dim)' }}
+                      >
+                        to
+                      </span>{' '}
+                      {t.destination}
+                    </p>
+                    <p className="theme-mono-sm truncate" style={{ color: 'var(--theme-fg-dim)' }}>
+                      {meta.label.toUpperCase()} · {km(t.distanceKm)} · {t.durationMin} MIN
+                    </p>
+                  </div>
+                </div>
+                <span
+                  className="text-right text-[1.02rem] tabular-nums"
+                  style={{ fontFamily: 'var(--theme-font-display)', color: 'var(--theme-accent)', fontWeight: 500 }}
+                >
+                  −{kg(t.co2SavedKg)}
+                </span>
+                <span
+                  className="text-right text-[1.02rem] tabular-nums"
+                  style={{ fontFamily: 'var(--theme-font-display)', color: 'var(--theme-fg)', fontWeight: 500 }}
+                >
+                  +{fmt(t.points)}
+                </span>
+                <span
+                  className="justify-self-end text-[0.75rem] italic opacity-0 transition-opacity group-hover:opacity-100"
+                  style={{ fontFamily: 'var(--theme-font-italic)', color: 'var(--theme-accent)' }}
+                >
+                  open →
+                </span>
+              </div>
             </motion.li>
           );
         })}
@@ -557,7 +607,7 @@ function TripDetailCard({ trip, onClose }: { trip: Trip; onClose: () => void }) 
         style={{ background: `radial-gradient(closest-side, ${tone}33, transparent 70%)`, filter: 'blur(10px)' }}
       />
 
-      <div className="relative flex items-start justify-between gap-6 border-b px-7 py-6" style={{ borderColor: 'var(--theme-border)' }}>
+      <div className="relative flex items-start justify-between gap-4 border-b px-5 py-5 sm:gap-6 sm:px-7 sm:py-6" style={{ borderColor: 'var(--theme-border)' }}>
         <div>
           <div className="flex items-center gap-2.5">
             <span
@@ -574,7 +624,7 @@ function TripDetailCard({ trip, onClose }: { trip: Trip; onClose: () => void }) 
             </span>
           </div>
           <h2
-            className="mt-3 text-[1.85rem] leading-[1.05] tracking-[-0.025em]"
+            className="mt-3 text-[1.35rem] leading-[1.08] tracking-[-0.025em] sm:text-[1.85rem] sm:leading-[1.05]"
             style={{ color: 'var(--theme-fg)', fontFamily: 'var(--theme-font-display)' }}
           >
             {trip.origin}{' '}
@@ -616,17 +666,22 @@ function TripDetailCard({ trip, onClose }: { trip: Trip; onClose: () => void }) 
         ].map((s, i) => (
           <div
             key={s.label}
-            className="px-5 py-4"
-            style={{ borderLeft: i === 0 ? 'none' : '1px solid var(--theme-border)' }}
+            className={[
+              'px-4 py-3.5 sm:px-5 sm:py-4',
+              (i === 1 || i === 3) && 'border-l',
+              i === 2 && 'border-t md:border-t-0 md:border-l',
+              i === 0 ? '' : 'md:border-l',
+            ].filter(Boolean).join(' ')}
+            style={{ borderColor: 'var(--theme-border)' }}
           >
             <span
               className="theme-mono-sm"
-              style={{ color: 'var(--theme-fg-dim)', letterSpacing: '0.18em' }}
+              style={{ color: 'var(--theme-fg-dim)', letterSpacing: '0.18em', fontSize: '0.62rem' }}
             >
               {s.label}
             </span>
             <p
-              className="theme-number mt-1 text-[1.55rem] leading-none tracking-[-0.03em]"
+              className="theme-number mt-1 text-[1.2rem] leading-none tracking-[-0.03em] sm:text-[1.55rem]"
               style={{ fontWeight: 500, color: s.accent ?? 'var(--theme-fg)' }}
             >
               {s.value}
@@ -641,7 +696,7 @@ function TripDetailCard({ trip, onClose }: { trip: Trip; onClose: () => void }) 
         ))}
       </div>
 
-      <div className="relative grid grid-cols-1 gap-6 px-7 py-6 md:grid-cols-[1.2fr_1fr]">
+      <div className="relative grid grid-cols-1 gap-5 px-5 py-5 sm:gap-6 sm:px-7 sm:py-6 md:grid-cols-[1.2fr_1fr]">
         <div>
           <span
             className="theme-mono-sm"
