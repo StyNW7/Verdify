@@ -190,15 +190,15 @@ function FlyoutLink({
         }}
         className={
           item.prominent
-            ? 'group inline-flex items-baseline gap-2 landing-display tracking-[-0.035em] text-[clamp(1.25rem,1.6vw,1.65rem)] text-[var(--landing-text)] transition-colors duration-300'
-            : 'inline-flex text-left text-[0.88rem] font-normal text-[var(--landing-text-muted)] transition-colors duration-300 hover:text-[var(--landing-text)]'
+            ? 'group inline-flex items-baseline gap-2 theme-display tracking-[-0.035em] text-[clamp(1.25rem,1.6vw,1.65rem)] text-[var(--theme-fg)] transition-colors duration-300'
+            : 'inline-flex text-left text-[0.88rem] font-normal text-[var(--theme-fg-muted)] transition-colors duration-300 hover:text-[var(--theme-fg)]'
         }
       >
         <span>{item.label}</span>
         {item.prominent ? (
           <ArrowUpRight
             className="h-3.5 w-3.5 -translate-y-px opacity-0 transition-all duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:opacity-100"
-            style={{ color: 'var(--landing-accent)' }}
+            style={{ color: 'var(--theme-accent)' }}
             strokeWidth={1.8}
           />
         ) : null}
@@ -238,8 +238,8 @@ function FlyoutLink({
   };
 
   const className = item.prominent
-    ? 'group inline-flex items-baseline gap-2 landing-display tracking-[-0.035em] text-[clamp(1.25rem,1.6vw,1.65rem)] text-[var(--landing-text)] transition-colors duration-300'
-    : 'inline-flex text-[0.88rem] font-normal text-[var(--landing-text-muted)] transition-colors duration-300 hover:text-[var(--landing-text)]';
+    ? 'group inline-flex items-baseline gap-2 theme-display tracking-[-0.035em] text-[clamp(1.25rem,1.6vw,1.65rem)] text-[var(--theme-fg)] transition-colors duration-300'
+    : 'inline-flex text-[0.88rem] font-normal text-[var(--theme-fg-muted)] transition-colors duration-300 hover:text-[var(--theme-fg)]';
 
   return (
     <Link to={item.to} onClick={handleClick} className={className}>
@@ -247,7 +247,7 @@ function FlyoutLink({
       {item.prominent ? (
         <ArrowUpRight
           className="h-3.5 w-3.5 -translate-y-px translate-x-0 opacity-0 transition-all duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:opacity-100"
-          style={{ color: 'var(--landing-accent)' }}
+          style={{ color: 'var(--theme-accent)' }}
           strokeWidth={1.8}
         />
       ) : null}
@@ -318,13 +318,13 @@ export default function Navbar() {
           className="transition-[background-color,border-color,backdrop-filter] duration-500"
           style={{
             backgroundColor: activeMenu
-              ? 'color-mix(in srgb, var(--landing-bg) 92%, transparent)'
+              ? 'color-mix(in srgb, var(--theme-bg) 92%, transparent)'
               : isScrolled
-              ? 'color-mix(in srgb, var(--landing-bg) 68%, transparent)'
+              ? 'color-mix(in srgb, var(--theme-bg) 68%, transparent)'
               : 'transparent',
             borderBottom: '1px solid',
             borderBottomColor:
-              isScrolled || activeMenu ? 'var(--landing-border)' : 'transparent',
+              isScrolled || activeMenu ? 'var(--theme-border)' : 'transparent',
             backdropFilter:
               isScrolled || activeMenu ? 'blur(22px) saturate(180%)' : 'none',
             WebkitBackdropFilter:
@@ -342,17 +342,17 @@ export default function Navbar() {
             >
               <span
                 className="flex h-6 w-6 items-center justify-center rounded-[6px]"
-                style={{ background: 'var(--landing-accent)' }}
+                style={{ background: 'var(--theme-accent)' }}
               >
                 <Leaf
                   className="h-3 w-3"
-                  style={{ color: 'var(--landing-button-foreground)' }}
+                  style={{ color: 'var(--theme-accent-fg)' }}
                   strokeWidth={2.4}
                 />
               </span>
               <span
-                className="landing-display text-[1.05rem] tracking-[-0.03em]"
-                style={{ color: 'var(--landing-text)' }}
+                className="theme-display text-[1.05rem] tracking-[-0.03em]"
+                style={{ color: 'var(--theme-fg)' }}
               >
                 Verdify
               </span>
@@ -379,8 +379,8 @@ export default function Navbar() {
                         style={{
                           color:
                             isOpen || isActive
-                              ? 'var(--landing-text)'
-                              : 'var(--landing-text-muted)',
+                              ? 'var(--theme-fg)'
+                              : 'var(--theme-fg-muted)',
                         }}
                       >
                         {item.label}
@@ -396,25 +396,25 @@ export default function Navbar() {
                 type="button"
                 aria-label="Search"
                 onMouseEnter={() => setActiveMenu(null)}
-                className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-300 hover:bg-[var(--landing-surface-alt)]"
-                style={{ color: 'var(--landing-text-muted)' }}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-300 hover:bg-[var(--theme-surface-muted)]"
+                style={{ color: 'var(--theme-fg-muted)' }}
               >
                 <Search className="h-[15px] w-[15px]" strokeWidth={1.6} />
               </button>
               <AnimatedThemeToggler
-                className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-300 hover:bg-[var(--landing-surface-alt)]"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-300 hover:bg-[var(--theme-surface-muted)]"
               />
               <span
                 aria-hidden
                 className="mx-2 h-4 w-px"
-                style={{ background: 'var(--landing-border)' }}
+                style={{ background: 'var(--theme-border)' }}
               />
               <button
                 type="button"
                 onClick={() => openAuth('login')}
                 onMouseEnter={() => setActiveMenu(null)}
-                className="landing-link-underline text-[0.82rem] transition-colors duration-300"
-                style={{ color: 'var(--landing-text-muted)' }}
+                className="theme-link-underline text-[0.82rem] transition-colors duration-300"
+                style={{ color: 'var(--theme-fg-muted)' }}
               >
                 Sign in
               </button>
@@ -424,8 +424,8 @@ export default function Navbar() {
                 onMouseEnter={() => setActiveMenu(null)}
                 className="ml-2 inline-flex h-8 items-center gap-1.5 rounded-full px-3.5 text-[0.78rem] font-medium transition-all duration-300"
                 style={{
-                  background: 'var(--landing-accent)',
-                  color: 'var(--landing-button-foreground)',
+                  background: 'var(--theme-accent)',
+                  color: 'var(--theme-accent-fg)',
                   letterSpacing: '0.015em',
                 }}
               >
@@ -438,7 +438,7 @@ export default function Navbar() {
               type="button"
               onClick={() => setIsMobileMenuOpen((o) => !o)}
               className="inline-flex h-9 w-9 items-center justify-center rounded-full lg:hidden"
-              style={{ color: 'var(--landing-text)' }}
+              style={{ color: 'var(--theme-fg)' }}
               aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
             >
               {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
@@ -456,8 +456,8 @@ export default function Navbar() {
               transition={{ duration: 0.28, ease: [0.2, 0.7, 0.2, 1] }}
               className="hidden overflow-hidden border-b lg:block"
               style={{
-                borderColor: 'var(--landing-border)',
-                background: 'color-mix(in srgb, var(--landing-bg) 96%, transparent)',
+                borderColor: 'var(--theme-border)',
+                background: 'color-mix(in srgb, var(--theme-bg) 96%, transparent)',
                 backdropFilter: 'blur(28px) saturate(180%)',
                 WebkitBackdropFilter: 'blur(28px) saturate(180%)',
                 boxShadow: '0 30px 60px -42px rgba(10,14,12,0.28)',
@@ -478,8 +478,8 @@ export default function Navbar() {
                     {activeItem.columns.map((column, index) => (
                       <section key={column.title} className="space-y-5">
                         <p
-                          className="landing-mono-sm"
-                          style={{ color: 'var(--landing-text-dim)' }}
+                          className="theme-mono-sm"
+                          style={{ color: 'var(--theme-fg-dim)' }}
                         >
                           {column.title}
                         </p>
@@ -516,8 +516,8 @@ export default function Navbar() {
             className="fixed inset-x-0 z-40 border-b px-5 py-6 lg:hidden"
             style={{
               top: NAV_HEIGHT,
-              borderColor: 'var(--landing-border)',
-              background: 'color-mix(in srgb, var(--landing-bg) 96%, transparent)',
+              borderColor: 'var(--theme-border)',
+              background: 'color-mix(in srgb, var(--theme-bg) 96%, transparent)',
               backdropFilter: 'blur(24px) saturate(180%)',
               WebkitBackdropFilter: 'blur(24px) saturate(180%)',
             }}
@@ -528,16 +528,16 @@ export default function Navbar() {
                   key={item.id}
                   to={item.to}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between border-b py-4 landing-display tracking-[-0.03em] text-[1.35rem]"
+                  className="flex items-center justify-between border-b py-4 theme-display tracking-[-0.03em] text-[1.35rem]"
                   style={{
-                    borderColor: 'var(--landing-border)',
-                    color: 'var(--landing-text)',
+                    borderColor: 'var(--theme-border)',
+                    color: 'var(--theme-fg)',
                   }}
                 >
                   <span>{item.label}</span>
                   <ArrowUpRight
                     className="h-4 w-4"
-                    style={{ color: 'var(--landing-text-dim)' }}
+                    style={{ color: 'var(--theme-fg-dim)' }}
                     strokeWidth={1.6}
                   />
                 </Link>
@@ -550,7 +550,7 @@ export default function Navbar() {
                     setIsMobileMenuOpen(false);
                     openAuth('register');
                   }}
-                  className="landing-btn-primary w-full justify-center"
+                  className="theme-btn-primary w-full justify-center"
                 >
                   Get started
                   <ArrowUpRight size={14} strokeWidth={1.8} />
@@ -565,8 +565,8 @@ export default function Navbar() {
                       setIsMobileMenuOpen(false);
                       openAuth('login');
                     }}
-                    className="landing-link-underline text-[0.82rem]"
-                    style={{ color: 'var(--landing-text-muted)' }}
+                    className="theme-link-underline text-[0.82rem]"
+                    style={{ color: 'var(--theme-fg-muted)' }}
                   >
                     Sign in →
                   </button>

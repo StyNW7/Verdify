@@ -32,10 +32,10 @@ export function LoadingScreen({
       {show && (
         <motion.div
           key="loading-screen"
-          className="landing-theme fixed inset-0 z-[100] overflow-hidden"
+          className="theme-root fixed inset-0 z-[100] overflow-hidden"
           style={{
-            background: 'var(--landing-bg)',
-            color: 'var(--landing-text)',
+            background: 'var(--theme-bg)',
+            color: 'var(--theme-fg)',
           }}
           initial={{ y: 0 }}
           exit={{ y: '-101%' }}
@@ -61,7 +61,7 @@ export function LoadingScreen({
 
           <motion.div
             className="pointer-events-none absolute inset-x-0 bottom-0 h-px"
-            style={{ background: 'var(--landing-accent)' }}
+            style={{ background: 'var(--theme-accent)' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 0 }}
             exit={{ opacity: 1 }}
@@ -81,7 +81,7 @@ function Atmosphere() {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(48% 34% at 12% 18%, var(--landing-accent-soft), transparent 70%), radial-gradient(38% 30% at 88% 82%, rgba(200, 90, 46, 0.14), transparent 70%)',
+            'radial-gradient(48% 34% at 12% 18%, var(--theme-accent-soft), transparent 70%), radial-gradient(38% 30% at 88% 82%, rgba(200, 90, 46, 0.14), transparent 70%)',
           filter: 'blur(70px)',
           opacity: 0.9,
         }}
@@ -109,17 +109,17 @@ function Corners({ variant }: { variant: Variant }) {
       >
         <span
           className="flex h-6 w-6 items-center justify-center rounded-[7px]"
-          style={{ background: 'var(--landing-accent)' }}
+          style={{ background: 'var(--theme-accent)' }}
         >
           <Leaf
             className="h-3 w-3"
             strokeWidth={2.2}
-            style={{ color: 'var(--landing-button-foreground)' }}
+            style={{ color: 'var(--theme-accent-fg)' }}
           />
         </span>
         <span
-          className="landing-display text-[0.92rem] tracking-[-0.02em]"
-          style={{ color: 'var(--landing-text)' }}
+          className="theme-display text-[0.92rem] tracking-[-0.02em]"
+          style={{ color: 'var(--theme-fg)' }}
         >
           Verdify
         </span>
@@ -131,11 +131,11 @@ function Corners({ variant }: { variant: Variant }) {
         transition={{ duration: 0.7, ease: EASE, delay: 0.25 }}
         className="absolute right-5 top-5 md:right-8 md:top-8"
         style={{
-          fontFamily: 'var(--landing-font-mono)',
+          fontFamily: 'var(--theme-font-mono)',
           fontSize: '0.62rem',
           letterSpacing: '0.24em',
           textTransform: 'uppercase',
-          color: 'var(--landing-text-dim)',
+          color: 'var(--theme-fg-dim)',
         }}
       >
         {variant === 'intro' ? '01 / Boarding' : '02 / Entering'}
@@ -147,11 +147,11 @@ function Corners({ variant }: { variant: Variant }) {
         transition={{ duration: 0.7, ease: EASE, delay: 0.25 }}
         className="absolute bottom-5 left-5 md:bottom-8 md:left-8"
         style={{
-          fontFamily: 'var(--landing-font-mono)',
+          fontFamily: 'var(--theme-font-mono)',
           fontSize: '0.62rem',
           letterSpacing: '0.24em',
           textTransform: 'uppercase',
-          color: 'var(--landing-text-dim)',
+          color: 'var(--theme-fg-dim)',
         }}
       >
         {variant === 'intro'
@@ -165,11 +165,11 @@ function Corners({ variant }: { variant: Variant }) {
         transition={{ duration: 0.7, ease: EASE, delay: 0.35 }}
         className="absolute bottom-5 right-5 md:bottom-8 md:right-8"
         style={{
-          fontFamily: 'var(--landing-font-mono)',
+          fontFamily: 'var(--theme-font-mono)',
           fontSize: '0.62rem',
           letterSpacing: '0.24em',
           textTransform: 'uppercase',
-          color: 'var(--landing-text-dim)',
+          color: 'var(--theme-fg-dim)',
         }}
       >
         v0.1 · MMXXVI
@@ -189,33 +189,33 @@ function IntroContent({ reduce }: { reduce: boolean }) {
       >
         <span
           className="h-[7px] w-[7px] rounded-full"
-          style={{ background: 'var(--landing-accent)' }}
+          style={{ background: 'var(--theme-accent)' }}
         />
         <span
           style={{
-            fontFamily: 'var(--landing-font-mono)',
+            fontFamily: 'var(--theme-font-mono)',
             fontSize: '0.66rem',
             letterSpacing: '0.34em',
             textTransform: 'uppercase',
-            color: 'var(--landing-text-muted)',
+            color: 'var(--theme-fg-muted)',
           }}
         >
           Every trip, accounted for
         </span>
         <span
           className="h-[7px] w-[7px] rounded-full"
-          style={{ background: 'var(--landing-accent-warm)' }}
+          style={{ background: 'var(--theme-accent-warm)' }}
         />
       </motion.div>
 
       <h1
         className="select-none leading-[0.9]"
         style={{
-          fontFamily: 'var(--landing-font-display)',
+          fontFamily: 'var(--theme-font-display)',
           fontWeight: 340,
           letterSpacing: '-0.04em',
           fontSize: 'clamp(3.2rem, 11vw, 8.4rem)',
-          color: 'var(--landing-text)',
+          color: 'var(--theme-fg)',
         }}
       >
         <div className="flex flex-wrap justify-center gap-x-[0.25em] gap-y-2">
@@ -235,12 +235,12 @@ function IntroContent({ reduce }: { reduce: boolean }) {
                   style={{
                     fontFamily:
                       word === 'measured.'
-                        ? 'var(--landing-font-italic)'
+                        ? 'var(--theme-font-italic)'
                         : undefined,
                     fontStyle: word === 'measured.' ? 'italic' : undefined,
                     color:
                       word === 'measured.'
-                        ? 'var(--landing-accent)'
+                        ? 'var(--theme-accent)'
                         : undefined,
                   }}
                 >
@@ -262,10 +262,10 @@ function IntroContent({ reduce }: { reduce: boolean }) {
         }}
         className="mt-10 max-w-sm text-balance"
         style={{
-          fontFamily: 'var(--landing-font-body)',
+          fontFamily: 'var(--theme-font-body)',
           fontSize: '0.9rem',
           lineHeight: 1.5,
-          color: 'var(--landing-text-muted)',
+          color: 'var(--theme-fg-muted)',
         }}
       >
         A ledger for the way you move — one kilometer,
@@ -284,19 +284,19 @@ function HandoffContent({ reduce }: { reduce: boolean }) {
         transition={{ duration: reduce ? 0.2 : 0.6, ease: EASE }}
         className="relative mb-6 flex h-16 w-16 items-center justify-center rounded-full"
         style={{
-          background: 'var(--landing-accent-soft)',
-          border: '1px solid var(--landing-accent-muted)',
+          background: 'var(--theme-accent-soft)',
+          border: '1px solid var(--theme-accent-muted)',
         }}
       >
         <Leaf
           className="h-5 w-5"
           strokeWidth={1.8}
-          style={{ color: 'var(--landing-accent)' }}
+          style={{ color: 'var(--theme-accent)' }}
         />
         {!reduce && (
           <motion.span
             className="absolute inset-0 rounded-full"
-            style={{ border: '1px solid var(--landing-accent)' }}
+            style={{ border: '1px solid var(--theme-accent)' }}
             initial={{ scale: 1, opacity: 0.6 }}
             animate={{ scale: 1.7, opacity: 0 }}
             transition={{ duration: 1.1, ease: 'easeOut', repeat: Infinity }}
@@ -312,18 +312,18 @@ function HandoffContent({ reduce }: { reduce: boolean }) {
       >
         <p
           style={{
-            fontFamily: 'var(--landing-font-display)',
+            fontFamily: 'var(--theme-font-display)',
             fontSize: 'clamp(1.3rem, 3vw, 1.75rem)',
             letterSpacing: '-0.02em',
-            color: 'var(--landing-text)',
+            color: 'var(--theme-fg)',
           }}
         >
           Entering your{' '}
           <span
             style={{
-              fontFamily: 'var(--landing-font-italic)',
+              fontFamily: 'var(--theme-font-italic)',
               fontStyle: 'italic',
-              color: 'var(--landing-accent)',
+              color: 'var(--theme-accent)',
             }}
           >
             ledger
@@ -337,11 +337,11 @@ function HandoffContent({ reduce }: { reduce: boolean }) {
         transition={{ duration: 0.5, ease: EASE, delay: 0.25 }}
         className="mt-3"
         style={{
-          fontFamily: 'var(--landing-font-mono)',
+          fontFamily: 'var(--theme-font-mono)',
           fontSize: '0.62rem',
           letterSpacing: '0.3em',
           textTransform: 'uppercase',
-          color: 'var(--landing-text-dim)',
+          color: 'var(--theme-fg-dim)',
         }}
       >
         Authenticated · Warming up
@@ -354,11 +354,11 @@ function ProgressBar({ duration }: { duration: number }) {
   return (
     <div
       className="absolute bottom-0 left-0 right-0 h-[2px]"
-      style={{ background: 'var(--landing-border)' }}
+      style={{ background: 'var(--theme-border)' }}
     >
       <motion.div
         className="h-full origin-left"
-        style={{ background: 'var(--landing-accent)' }}
+        style={{ background: 'var(--theme-accent)' }}
         initial={{ scaleX: 0 }}
         animate={{ scaleX: 1 }}
         transition={{ duration: duration / 1000, ease: [0.4, 0, 0.2, 1] }}

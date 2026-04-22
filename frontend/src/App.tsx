@@ -19,6 +19,7 @@ import RoutePlannerPage from "./pages/Route/page";
 import DashboardPage from "./pages/Dashboard/page";
 import ProfilePage from "./pages/Profile/page";
 import LeaderboardPage from "./pages/Leaderboard/page";
+import HistoryPage from "./pages/History/page";
 import TechnologyPage from "./pages/Technology/page";
 import AboutPage from "./pages/About/page";
 
@@ -60,6 +61,7 @@ function App() {
             <Route path="/route" element={<RoutePlannerPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
+            <Route path="/history" element={<HistoryPage />} />
           </Route>
 
           <Route

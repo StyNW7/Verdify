@@ -151,7 +151,7 @@ const chapters: Chapter[] = [
 
 function SplitHeading({ text, italic, after }: { text: string; italic: string; after: string }) {
   return (
-    <h2 className="landing-display text-[clamp(2.4rem,6vw,5.6rem)] leading-[0.98] tracking-[-0.045em]">
+    <h2 className="theme-display text-[clamp(2.4rem,6vw,5.6rem)] leading-[0.98] tracking-[-0.045em]">
       <span className="tech-words">
         {text.split(' ').map((w, i, arr) => (
           <span key={`a-${i}`} className="tech-word">
@@ -162,7 +162,7 @@ function SplitHeading({ text, italic, after }: { text: string; italic: string; a
       </span>{' '}
       <span className="tech-words">
         <span className="tech-word">
-          <span className="landing-italic" style={{ color: 'var(--landing-accent)' }}>{italic}</span>
+          <span className="theme-italic" style={{ color: 'var(--theme-accent)' }}>{italic}</span>
         </span>
       </span>{' '}
       <span className="tech-words">
@@ -215,30 +215,30 @@ export default function TechnologyPage() {
   }, []);
 
   return (
-    <div ref={rootRef} className="landing-theme landing-root relative min-h-svh">
-      <div className="landing-grain" aria-hidden />
+    <div ref={rootRef} className="theme-root relative min-h-svh">
+      <div className="theme-grain" aria-hidden />
 
       <motion.div
         aria-hidden
         className="fixed left-0 right-0 top-0 z-40 h-[2px] origin-left"
-        style={{ background: 'var(--landing-accent)', scaleX: progress, transformOrigin: '0 0' }}
+        style={{ background: 'var(--theme-accent)', scaleX: progress, transformOrigin: '0 0' }}
       />
 
       <section className="relative overflow-hidden">
-        <div className="landing-mesh" aria-hidden />
+        <div className="theme-mesh" aria-hidden />
         <div className="relative mx-auto max-w-[1440px] px-4 pt-32 pb-20 sm:px-6 lg:px-10 lg:pt-40 lg:pb-28">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <span className="landing-accent-dot" />
-              <span className="landing-mono-sm" style={{ color: 'var(--landing-text-muted)' }}>
+              <span className="theme-accent-dot" />
+              <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-muted)' }}>
                 The stack · six chapters
               </span>
             </div>
             <div className="hidden items-center gap-2 lg:flex">
-              <span className="landing-chip">Google AI ecosystem</span>
+              <span className="theme-chip">Google AI ecosystem</span>
               <span
-                className="landing-chip"
-                style={{ color: 'var(--landing-accent)', borderColor: 'var(--landing-accent-muted)' }}
+                className="theme-chip"
+                style={{ color: 'var(--theme-accent)', borderColor: 'var(--theme-accent-muted)' }}
               >
                 Production-grade
               </span>
@@ -246,18 +246,18 @@ export default function TechnologyPage() {
           </div>
 
           <div className="mt-14 grid gap-10 lg:grid-cols-[0.62fr_0.38fr] lg:items-end">
-            <h1 className="landing-hero">
+            <h1 className="theme-hero">
               <span className="block">Grounded.</span>
               <span className="block">
-                <span className="landing-italic" style={{ color: 'var(--landing-accent)' }}>Deployable.</span>
+                <span className="theme-italic" style={{ color: 'var(--theme-accent)' }}>Deployable.</span>
               </span>
               <span className="block">Matched to the brief.</span>
             </h1>
             <div className="space-y-6">
-              <p className="text-[1.02rem] leading-[1.75]" style={{ color: 'var(--landing-text-muted)' }}>
+              <p className="text-[1.02rem] leading-[1.75]" style={{ color: 'var(--theme-fg-muted)' }}>
                 Every layer of Verdify is a deliberate pick from the Google AI stack — assembled to reason, ground, act, and report on the Johor–Singapore corridor.
               </p>
-              <div className="landing-rule" />
+              <div className="theme-rule" />
               <div className="grid grid-cols-3 gap-6">
                 {[
                   { k: '06', v: 'chapters' },
@@ -265,8 +265,8 @@ export default function TechnologyPage() {
                   { k: 'SEA', v: 'deployed' },
                 ].map((s) => (
                   <div key={s.v}>
-                    <p className="landing-display text-[1.6rem] tracking-[-0.03em]">{s.k}</p>
-                    <p className="mt-1 landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+                    <p className="theme-display text-[1.6rem] tracking-[-0.03em]">{s.k}</p>
+                    <p className="mt-1 theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
                       {s.v}
                     </p>
                   </div>
@@ -280,29 +280,29 @@ export default function TechnologyPage() {
       <div
         className="sticky top-[4.5rem] z-20 border-y backdrop-blur"
         style={{
-          borderColor: 'var(--landing-border)',
-          background: 'var(--landing-ticker-bg)',
+          borderColor: 'var(--theme-border)',
+          background: 'var(--theme-ticker-bg)',
           backdropFilter: 'blur(18px) saturate(160%)',
           WebkitBackdropFilter: 'blur(18px) saturate(160%)',
         }}
       >
         <div className="relative mx-auto flex max-w-[1440px] items-center gap-6 overflow-x-auto px-4 py-3 sm:px-6 lg:px-10">
-          <span className="shrink-0 landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+          <span className="shrink-0 theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
             § Chapter {chapters[active].n}
           </span>
           <div
             aria-hidden
             className="h-[10px] w-px shrink-0"
-            style={{ background: 'var(--landing-border-strong)' }}
+            style={{ background: 'var(--theme-border-strong)' }}
           />
           <div className="flex items-center gap-5 whitespace-nowrap">
             {chapters.map((c, i) => (
               <a
                 key={c.n}
                 href={`#chap-${c.n}`}
-                className="landing-mono-sm transition-colors"
+                className="theme-mono-sm transition-colors"
                 style={{
-                  color: i === active ? 'var(--landing-accent)' : 'var(--landing-text-dim)',
+                  color: i === active ? 'var(--theme-accent)' : 'var(--theme-fg-dim)',
                 }}
               >
                 {c.n} · {c.label}
@@ -312,11 +312,11 @@ export default function TechnologyPage() {
           <motion.div
             aria-hidden
             className="ml-auto h-[3px] min-w-[80px] max-w-[160px] shrink-0 rounded-full"
-            style={{ background: 'var(--landing-border-strong)' }}
+            style={{ background: 'var(--theme-border-strong)' }}
           >
             <motion.div
               className="h-full rounded-full"
-              style={{ background: 'var(--landing-accent)', width: progressWidth }}
+              style={{ background: 'var(--theme-accent)', width: progressWidth }}
             />
           </motion.div>
         </div>
@@ -332,8 +332,8 @@ export default function TechnologyPage() {
           data-idx={idx}
           className="relative overflow-hidden border-b scroll-mt-24"
           style={{
-            borderColor: 'var(--landing-border)',
-            background: idx % 2 === 1 ? 'var(--landing-bg-soft)' : 'transparent',
+            borderColor: 'var(--theme-border)',
+            background: idx % 2 === 1 ? 'var(--theme-bg-soft)' : 'transparent',
           }}
         >
           <div className="relative mx-auto max-w-[1440px] px-4 py-24 sm:px-6 lg:px-10 lg:py-40">
@@ -343,37 +343,37 @@ export default function TechnologyPage() {
                   <span
                     className="flex h-12 w-12 items-center justify-center rounded-full"
                     style={{
-                      background: 'var(--landing-accent-soft)',
-                      border: '1px solid var(--landing-accent-muted)',
-                      color: 'var(--landing-accent)',
+                      background: 'var(--theme-accent-soft)',
+                      border: '1px solid var(--theme-accent-muted)',
+                      color: 'var(--theme-accent)',
                     }}
                   >
                     <c.i className="h-5 w-5" strokeWidth={1.5} />
                   </span>
-                  <span className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+                  <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
                     § {c.n} — {c.label}
                   </span>
                 </div>
 
                 <div>
                   <p
-                    className="landing-display leading-[0.9] tracking-[-0.05em]"
-                    style={{ fontSize: 'clamp(6rem, 12vw, 14rem)', color: 'var(--landing-text)' }}
+                    className="theme-display leading-[0.9] tracking-[-0.05em]"
+                    style={{ fontSize: 'clamp(6rem, 12vw, 14rem)', color: 'var(--theme-fg)' }}
                   >
                     {c.n}
                   </p>
                   <p
-                    className="mt-1 landing-italic"
+                    className="mt-1 theme-italic"
                     style={{
                       fontSize: 'clamp(1rem, 1.2vw, 1.15rem)',
-                      color: 'var(--landing-accent)',
+                      color: 'var(--theme-accent)',
                     }}
                   >
                     {c.tag}
                   </p>
                 </div>
 
-                <div className="landing-rule" />
+                <div className="theme-rule" />
               </div>
 
               <motion.div
@@ -387,7 +387,7 @@ export default function TechnologyPage() {
 
                 <p
                   className="max-w-2xl text-[1.05rem] leading-[1.8]"
-                  style={{ color: 'var(--landing-text-muted)' }}
+                  style={{ color: 'var(--theme-fg-muted)' }}
                 >
                   {c.body}
                 </p>
@@ -395,22 +395,22 @@ export default function TechnologyPage() {
                 <div
                   className="grid gap-px overflow-hidden rounded-[14px] sm:grid-cols-3"
                   style={{
-                    background: 'var(--landing-border)',
-                    border: '1px solid var(--landing-border-strong)',
+                    background: 'var(--theme-border)',
+                    border: '1px solid var(--theme-border-strong)',
                   }}
                 >
                   {c.meta.map((m) => (
                     <div
                       key={m.k}
                       className="p-5"
-                      style={{ background: 'var(--landing-surface)' }}
+                      style={{ background: 'var(--theme-surface)' }}
                     >
-                      <p className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+                      <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
                         {m.k}
                       </p>
                       <p
-                        className="mt-2 landing-display text-[1.1rem] tracking-[-0.01em]"
-                        style={{ color: 'var(--landing-text)' }}
+                        className="mt-2 theme-display text-[1.1rem] tracking-[-0.01em]"
+                        style={{ color: 'var(--theme-fg)' }}
                       >
                         {m.v}
                       </p>
@@ -419,14 +419,14 @@ export default function TechnologyPage() {
                 </div>
 
                 <div className="flex items-center gap-4 pt-2">
-                  <span className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+                  <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
                     {idx < chapters.length - 1
                       ? `Next · ${chapters[idx + 1].label}`
                       : 'End of chapters'}
                   </span>
                   <ArrowRight
                     className="h-4 w-4"
-                    style={{ color: 'var(--landing-accent)' }}
+                    style={{ color: 'var(--theme-accent)' }}
                   />
                 </div>
               </motion.div>
@@ -438,14 +438,14 @@ export default function TechnologyPage() {
       <section className="relative">
         <div className="mx-auto max-w-[1440px] px-4 pt-28 pb-14 sm:px-6 lg:px-10 lg:pt-44 lg:pb-20">
           <div className="mb-10 flex items-center gap-3">
-            <span className="landing-accent-dot" />
-            <span className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+            <span className="theme-accent-dot" />
+            <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
               § Ecosystem — partners
             </span>
           </div>
-          <h2 className="landing-display max-w-[22ch] text-[clamp(2.4rem,6.2vw,6rem)] leading-[0.98] tracking-[-0.045em]">
+          <h2 className="theme-display max-w-[22ch] text-[clamp(2.4rem,6.2vw,6rem)] leading-[0.98] tracking-[-0.045em]">
             With a stack like this, there&rsquo;s{' '}
-            <span className="landing-italic" style={{ color: 'var(--landing-accent)' }}>
+            <span className="theme-italic" style={{ color: 'var(--theme-accent)' }}>
               nowhere
             </span>{' '}
             to go but forward.
@@ -462,14 +462,14 @@ export default function TechnologyPage() {
               <div className="order-2 lg:order-1">
                 <div className="mb-6 flex items-baseline gap-2">
                   <span
-                    className="landing-display text-[1.35rem] tracking-[-0.02em]"
-                    style={{ color: 'var(--landing-accent)' }}
+                    className="theme-display text-[1.35rem] tracking-[-0.02em]"
+                    style={{ color: 'var(--theme-accent)' }}
                   >
                     {chapters[activePartner].n}
                   </span>
                   <span
-                    className="landing-mono-sm"
-                    style={{ color: 'var(--landing-text-dim)' }}
+                    className="theme-mono-sm"
+                    style={{ color: 'var(--theme-fg-dim)' }}
                   >
                     / {String(chapters.length).padStart(2, '0')}
                   </span>
@@ -478,15 +478,15 @@ export default function TechnologyPage() {
                   <div
                     aria-hidden
                     className="relative w-px shrink-0"
-                    style={{ background: 'var(--landing-border)' }}
+                    style={{ background: 'var(--theme-border)' }}
                   >
                     <motion.div
                       className="absolute left-0 top-0 w-px origin-top"
                       style={{
-                        background: 'var(--landing-accent)',
+                        background: 'var(--theme-accent)',
                         height: '100%',
                         scaleY: partnersProgress,
-                        boxShadow: '0 0 10px var(--landing-accent-muted)',
+                        boxShadow: '0 0 10px var(--theme-accent-muted)',
                       }}
                     />
                   </div>
@@ -500,8 +500,8 @@ export default function TechnologyPage() {
                             transition={{ duration: 0.35, ease: [0.2, 0.7, 0.2, 1] }}
                             className="h-[7px] w-[7px] shrink-0 rounded-full"
                             style={{
-                              background: 'var(--landing-accent)',
-                              boxShadow: '0 0 0 4px var(--landing-accent-soft)',
+                              background: 'var(--theme-accent)',
+                              boxShadow: '0 0 0 4px var(--theme-accent-soft)',
                             }}
                           />
                           <motion.span
@@ -510,8 +510,8 @@ export default function TechnologyPage() {
                               opacity: on ? 1 : 0.42,
                             }}
                             transition={{ duration: 0.45, ease: [0.2, 0.7, 0.2, 1] }}
-                            className="landing-display text-[1.4rem] tracking-[-0.02em] sm:text-[1.55rem]"
-                            style={{ color: on ? 'var(--landing-text)' : 'var(--landing-text-dim)' }}
+                            className="theme-display text-[1.4rem] tracking-[-0.02em] sm:text-[1.55rem]"
+                            style={{ color: on ? 'var(--theme-fg)' : 'var(--theme-fg-dim)' }}
                           >
                             {c.label}
                           </motion.span>
@@ -524,7 +524,7 @@ export default function TechnologyPage() {
 
               <div
                 className="relative order-1 aspect-[4/5] w-full max-w-[520px] justify-self-center overflow-hidden rounded-[20px] lg:order-2"
-                style={{ border: '1px solid var(--landing-border-strong)' }}
+                style={{ border: '1px solid var(--theme-border-strong)' }}
               >
                 {chapters.map((c, i) => (
                   <motion.img
@@ -556,18 +556,18 @@ export default function TechnologyPage() {
                     background: 'rgba(10, 14, 12, 0.55)',
                     backdropFilter: 'blur(10px)',
                     WebkitBackdropFilter: 'blur(10px)',
-                    border: '1px solid var(--landing-accent-muted)',
+                    border: '1px solid var(--theme-accent-muted)',
                   }}
                 >
                   <span
                     className="h-[6px] w-[6px] rounded-full"
                     style={{
-                      background: 'var(--landing-accent)',
-                      boxShadow: '0 0 8px var(--landing-accent)',
+                      background: 'var(--theme-accent)',
+                      boxShadow: '0 0 8px var(--theme-accent)',
                     }}
                   />
                   <span
-                    className="landing-mono-sm"
+                    className="theme-mono-sm"
                     style={{ color: '#ECEFE9' }}
                   >
                     § {chapters[activePartner].n} — {chapters[activePartner].label}
@@ -578,13 +578,13 @@ export default function TechnologyPage() {
                   className="pointer-events-none absolute inset-x-5 bottom-4 flex items-center justify-between"
                 >
                   <span
-                    className="landing-italic text-[0.95rem]"
-                    style={{ color: 'var(--landing-accent)', textShadow: '0 1px 10px rgba(10,14,12,0.55)' }}
+                    className="theme-italic text-[0.95rem]"
+                    style={{ color: 'var(--theme-accent)', textShadow: '0 1px 10px rgba(10,14,12,0.55)' }}
                   >
                     {chapters[activePartner].tag}
                   </span>
                   <span
-                    className="landing-mono-sm"
+                    className="theme-mono-sm"
                     style={{ color: '#ECEFE9', opacity: 0.8 }}
                   >
                     {chapters[activePartner].n} / {String(chapters.length).padStart(2, '0')}
@@ -607,24 +607,24 @@ export default function TechnologyPage() {
                   >
                     <p
                       className="max-w-[38ch] text-[1.02rem] leading-[1.75]"
-                      style={{ color: 'var(--landing-text-muted)' }}
+                      style={{ color: 'var(--theme-fg-muted)' }}
                     >
                       {c.partnerCopy}
                     </p>
                     <button
                       type="button"
-                      className="landing-display group mt-10 inline-flex items-center gap-3 rounded-full px-6 py-3 text-[1rem] tracking-[-0.01em] transition-colors hover:bg-[var(--landing-accent-soft)]"
+                      className="theme-display group mt-10 inline-flex items-center gap-3 rounded-full px-6 py-3 text-[1rem] tracking-[-0.01em] transition-colors hover:bg-[var(--theme-accent-soft)]"
                       style={{
-                        border: '1px solid var(--landing-accent-muted)',
-                        color: 'var(--landing-text)',
+                        border: '1px solid var(--theme-accent-muted)',
+                        color: 'var(--theme-fg)',
                         background: 'transparent',
                       }}
                     >
                       <span
                         className="h-[7px] w-[7px] rounded-full"
                         style={{
-                          background: 'var(--landing-accent)',
-                          boxShadow: '0 0 0 3px var(--landing-accent-soft)',
+                          background: 'var(--theme-accent)',
+                          boxShadow: '0 0 0 3px var(--theme-accent-soft)',
                         }}
                       />
                       {c.brand}
@@ -645,9 +645,9 @@ export default function TechnologyPage() {
           transition={{ duration: 0.9, ease: [0.2, 0.7, 0.2, 1] }}
           className="relative mx-auto max-w-[1440px] overflow-hidden rounded-[20px] px-8 py-16 sm:px-14 sm:py-20 lg:px-20 lg:py-28"
           style={{
-            background: 'var(--landing-cta-bg)',
-            border: '1px solid var(--landing-border-strong)',
-            boxShadow: 'var(--landing-cta-shadow)',
+            background: 'var(--theme-cta-bg)',
+            border: '1px solid var(--theme-border-strong)',
+            boxShadow: 'var(--theme-cta-shadow)',
             backdropFilter: 'blur(26px) saturate(170%)',
             WebkitBackdropFilter: 'blur(26px) saturate(170%)',
           }}
@@ -655,27 +655,27 @@ export default function TechnologyPage() {
           <div
             aria-hidden
             className="pointer-events-none absolute -right-[20%] -top-[30%] h-[500px] w-[500px] rounded-full"
-            style={{ background: 'radial-gradient(closest-side, var(--landing-accent-soft), transparent 70%)' }}
+            style={{ background: 'radial-gradient(closest-side, var(--theme-accent-soft), transparent 70%)' }}
           />
-          <p className="landing-mono-sm relative" style={{ color: 'var(--landing-accent)' }}>
+          <p className="theme-mono-sm relative" style={{ color: 'var(--theme-accent)' }}>
             § Closing — Stack
           </p>
-          <h2 className="landing-display relative mt-6 max-w-4xl text-[clamp(2.2rem,5.4vw,5rem)] leading-[0.98] tracking-[-0.045em]">
+          <h2 className="theme-display relative mt-6 max-w-4xl text-[clamp(2.2rem,5.4vw,5rem)] leading-[0.98] tracking-[-0.045em]">
             A stack built to be{' '}
-            <span className="landing-italic" style={{ color: 'var(--landing-accent)' }}>shipped,</span>{' '}
+            <span className="theme-italic" style={{ color: 'var(--theme-accent)' }}>shipped,</span>{' '}
             not to be rehearsed.
           </h2>
           <p
             className="relative mt-8 max-w-2xl text-[1.02rem] leading-[1.75]"
-            style={{ color: 'var(--landing-text-muted)' }}
+            style={{ color: 'var(--theme-fg-muted)' }}
           >
             Each layer has been picked for how it behaves in production — latency, cost, observability, and its ability to keep a corridor-grade experience honest.
           </p>
           <div className="relative mt-10 flex flex-col gap-3 sm:flex-row">
-            <a href="/" className="landing-btn-primary">
+            <a href="/" className="theme-btn-primary">
               Back to the product <ArrowRight className="h-4 w-4" />
             </a>
-            <a href="/about" className="landing-btn-ghost">
+            <a href="/about" className="theme-btn-ghost">
               Read the profile <ArrowUpRight className="h-4 w-4" />
             </a>
           </div>

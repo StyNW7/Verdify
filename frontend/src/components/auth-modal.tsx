@@ -95,7 +95,7 @@ function AuthModal({
       role="dialog"
       aria-modal="true"
       aria-label={mode === 'login' ? 'Sign in' : 'Create account'}
-      className="landing-theme fixed inset-0 z-[100] flex items-center justify-center"
+      className="theme-root fixed inset-0 z-[100] flex items-center justify-center"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -110,7 +110,7 @@ function AuthModal({
         transition={{ duration: 0.35 }}
         className="absolute inset-0 cursor-default"
         style={{
-          background: 'color-mix(in srgb, var(--landing-bg) 55%, transparent)',
+          background: 'color-mix(in srgb, var(--theme-bg) 55%, transparent)',
           backdropFilter: 'blur(14px) saturate(140%)',
           WebkitBackdropFilter: 'blur(14px) saturate(140%)',
         }}
@@ -123,15 +123,15 @@ function AuthModal({
         transition={{ duration: 0.55, ease: EASE }}
         className="relative z-[1] mx-4 flex w-full max-w-[1120px] overflow-hidden rounded-[20px]"
         style={{
-          border: '1px solid var(--landing-border-strong)',
-          background: 'var(--landing-bg)',
+          border: '1px solid var(--theme-border-strong)',
+          background: 'var(--theme-bg)',
           boxShadow:
-            '0 60px 120px -48px rgba(10,14,12,0.42), 0 0 0 1px var(--landing-border)',
+            '0 60px 120px -48px rgba(10,14,12,0.42), 0 0 0 1px var(--theme-border)',
         }}
       >
         <div
           aria-hidden
-          className="landing-grain pointer-events-none absolute inset-0"
+          className="theme-grain pointer-events-none absolute inset-0"
           style={{ position: 'absolute', zIndex: 1 }}
         />
 
@@ -139,7 +139,7 @@ function AuthModal({
 
         <div
           className="relative z-[2] flex w-full flex-col md:w-[56%]"
-          style={{ background: 'var(--landing-bg)' }}
+          style={{ background: 'var(--theme-bg)' }}
         >
           <div className="flex items-center justify-between px-7 pt-6 md:px-10 md:pt-8">
             <ModeTabs mode={mode} setMode={setMode} />
@@ -149,8 +149,8 @@ function AuthModal({
               aria-label="Close"
               className="inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors"
               style={{
-                border: '1px solid var(--landing-border)',
-                color: 'var(--landing-text-muted)',
+                border: '1px solid var(--theme-border)',
+                color: 'var(--theme-fg-muted)',
               }}
             >
               <X size={16} strokeWidth={1.6} />
@@ -192,15 +192,15 @@ function BrandPane({ mode }: { mode: AuthMode }) {
   const headline =
     mode === 'login' ? (
       <>
-        Welcome <span className="landing-italic">back</span> to the
+        Welcome <span className="theme-italic">back</span> to the
         <br />
-        quiet <span className="landing-italic">corridor</span>.
+        quiet <span className="theme-italic">corridor</span>.
       </>
     ) : (
       <>
-        Begin a <span className="landing-italic">lighter</span>
+        Begin a <span className="theme-italic">lighter</span>
         <br />
-        way to <span className="landing-italic">move</span>.
+        way to <span className="theme-italic">move</span>.
       </>
     );
 
@@ -208,20 +208,20 @@ function BrandPane({ mode }: { mode: AuthMode }) {
     <div
       className="relative z-[2] hidden overflow-hidden md:flex md:w-[44%] md:flex-col"
       style={{
-        background: 'var(--landing-bg-soft)',
-        borderRight: '1px solid var(--landing-border)',
+        background: 'var(--theme-bg-soft)',
+        borderRight: '1px solid var(--theme-border)',
       }}
     >
-      <div aria-hidden className="landing-mesh absolute inset-[-10%]" style={{ opacity: 0.55 }} />
+      <div aria-hidden className="theme-mesh absolute inset-[-10%]" style={{ opacity: 0.55 }} />
 
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-6 -left-2 select-none landing-display"
+        className="pointer-events-none absolute -bottom-6 -left-2 select-none theme-display"
         style={{
           fontSize: 'clamp(6rem, 11vw, 10.5rem)',
           letterSpacing: '-0.06em',
           lineHeight: 0.82,
-          color: 'var(--landing-text)',
+          color: 'var(--theme-fg)',
           opacity: 0.06,
         }}
       >
@@ -233,25 +233,25 @@ function BrandPane({ mode }: { mode: AuthMode }) {
           <div className="flex items-center gap-2">
             <span
               className="flex h-7 w-7 items-center justify-center rounded-[7px]"
-              style={{ background: 'var(--landing-accent)' }}
+              style={{ background: 'var(--theme-accent)' }}
             >
               <Leaf
                 className="h-3.5 w-3.5"
-                style={{ color: 'var(--landing-button-foreground)' }}
+                style={{ color: 'var(--theme-accent-fg)' }}
                 strokeWidth={2.4}
               />
             </span>
             <span
-              className="landing-display tracking-[-0.03em]"
-              style={{ color: 'var(--landing-text)', fontSize: '1.2rem' }}
+              className="theme-display tracking-[-0.03em]"
+              style={{ color: 'var(--theme-fg)', fontSize: '1.2rem' }}
             >
               Verdify
             </span>
           </div>
 
           <span
-            className="landing-mono-sm"
-            style={{ color: 'var(--landing-text-dim)' }}
+            className="theme-mono-sm"
+            style={{ color: 'var(--theme-fg-dim)' }}
           >
             {mode === 'login' ? '§ Access — 01' : '§ Access — 02'}
           </span>
@@ -259,10 +259,10 @@ function BrandPane({ mode }: { mode: AuthMode }) {
 
         <div className="mt-10 space-y-6">
           <div className="flex items-center gap-3">
-            <span className="landing-rule block" />
+            <span className="theme-rule block" />
             <span
-              className="landing-mono-sm"
-              style={{ color: 'var(--landing-text-dim)' }}
+              className="theme-mono-sm"
+              style={{ color: 'var(--theme-fg-dim)' }}
             >
               {mode === 'login' ? 'Return to session' : 'Open a new session'}
             </span>
@@ -275,9 +275,9 @@ function BrandPane({ mode }: { mode: AuthMode }) {
               animate={{ opacity: 1, y: 0, filter: 'blur(0)' }}
               exit={{ opacity: 0, y: -6, filter: 'blur(4px)' }}
               transition={{ duration: 0.5, ease: EASE }}
-              className="landing-display"
+              className="theme-display"
               style={{
-                color: 'var(--landing-text)',
+                color: 'var(--theme-fg)',
                 fontSize: 'clamp(2rem, 3.2vw, 2.75rem)',
                 letterSpacing: '-0.04em',
                 lineHeight: 0.96,
@@ -289,7 +289,7 @@ function BrandPane({ mode }: { mode: AuthMode }) {
 
           <p
             className="max-w-[34ch] text-[0.92rem] leading-[1.55]"
-            style={{ color: 'var(--landing-text-muted)' }}
+            style={{ color: 'var(--theme-fg-muted)' }}
           >
             {mode === 'login'
               ? 'Sign in to pick up routes, carbon ledgers, and reports where you left off.'
@@ -299,10 +299,10 @@ function BrandPane({ mode }: { mode: AuthMode }) {
 
         <div className="relative mt-10 space-y-5">
           <div className="flex items-center gap-3">
-            <span className="landing-accent-dot" />
+            <span className="theme-accent-dot" />
             <span
-              className="landing-mono"
-              style={{ color: 'var(--landing-text-muted)' }}
+              className="theme-mono"
+              style={{ color: 'var(--theme-fg-muted)' }}
             >
               Corridor live · JB → SG
             </span>
@@ -310,7 +310,7 @@ function BrandPane({ mode }: { mode: AuthMode }) {
 
           <div
             className="grid grid-cols-3 gap-4 border-t pt-5"
-            style={{ borderColor: 'var(--landing-border)' }}
+            style={{ borderColor: 'var(--theme-border)' }}
           >
             <StatCell label="Routes indexed" value="1,284" />
             <StatCell label="Live corridors" value="06" />
@@ -325,12 +325,12 @@ function BrandPane({ mode }: { mode: AuthMode }) {
 function StatCell({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col gap-2">
-      <span className="landing-number" style={{ fontSize: 'clamp(1.4rem, 2vw, 1.85rem)' }}>
+      <span className="theme-number" style={{ fontSize: 'clamp(1.4rem, 2vw, 1.85rem)' }}>
         {value}
       </span>
       <span
-        className="landing-mono-sm"
-        style={{ color: 'var(--landing-text-dim)' }}
+        className="theme-mono-sm"
+        style={{ color: 'var(--theme-fg-dim)' }}
       >
         {label}
       </span>
@@ -361,10 +361,10 @@ function ModeTabs({
             onClick={() => setMode(t.id)}
             className="relative inline-flex items-baseline gap-2 px-3 py-2 transition-colors"
             style={{
-              color: active ? 'var(--landing-text)' : 'var(--landing-text-dim)',
+              color: active ? 'var(--theme-fg)' : 'var(--theme-fg-dim)',
             }}
           >
-            <span className="landing-mono-sm" style={{ opacity: 0.7 }}>
+            <span className="theme-mono-sm" style={{ opacity: 0.7 }}>
               §{t.num}
             </span>
             <span
@@ -377,7 +377,7 @@ function ModeTabs({
               <motion.span
                 layoutId="auth-tab-underline"
                 className="absolute inset-x-2 -bottom-0.5 h-px"
-                style={{ background: 'var(--landing-accent)' }}
+                style={{ background: 'var(--theme-accent)' }}
                 transition={{ duration: 0.4, ease: EASE }}
               />
             ) : null}
@@ -414,21 +414,21 @@ function Field({
   const [focused, setFocused] = useState(false);
   const hasValue = value.length > 0;
   const borderColor = error
-    ? 'var(--landing-accent-warm)'
+    ? 'var(--theme-accent-warm)'
     : focused
-    ? 'var(--landing-accent)'
-    : 'var(--landing-border-strong)';
+    ? 'var(--theme-accent)'
+    : 'var(--theme-border-strong)';
 
   return (
     <div className="flex flex-col gap-1.5">
       <label
         htmlFor={id}
-        className="landing-mono-sm flex items-center justify-between"
-        style={{ color: 'var(--landing-text-dim)' }}
+        className="theme-mono-sm flex items-center justify-between"
+        style={{ color: 'var(--theme-fg-dim)' }}
       >
         <span>{label}</span>
         {error ? (
-          <span style={{ color: 'var(--landing-accent-warm)' }}>{error}</span>
+          <span style={{ color: 'var(--theme-accent-warm)' }}>{error}</span>
         ) : null}
       </label>
       <div className="relative flex items-center">
@@ -445,15 +445,15 @@ function Field({
           onChange={(e) => onChange(e.target.value)}
           className="w-full bg-transparent py-2.5 pr-10 text-[0.98rem] outline-none transition-colors"
           style={{
-            color: 'var(--landing-text)',
-            fontFamily: 'var(--landing-font-body)',
+            color: 'var(--theme-fg)',
+            fontFamily: 'var(--theme-font-body)',
             letterSpacing: '-0.005em',
           }}
         />
         {rightSlot ? (
           <div
             className="absolute right-0 flex items-center"
-            style={{ color: 'var(--landing-text-muted)' }}
+            style={{ color: 'var(--theme-fg-muted)' }}
           >
             {rightSlot}
           </div>
@@ -461,7 +461,7 @@ function Field({
         <span
           aria-hidden
           className="pointer-events-none absolute inset-x-0 bottom-0 h-px"
-          style={{ background: 'var(--landing-border)' }}
+          style={{ background: 'var(--theme-border)' }}
         />
         <motion.span
           aria-hidden
@@ -491,27 +491,27 @@ function SocialButton({ label, glyph }: { label: string; glyph: ReactNode }) {
       type="button"
       className="group inline-flex h-11 items-center justify-center gap-2.5 rounded-full transition-all"
       style={{
-        border: '1px solid var(--landing-border-strong)',
-        color: 'var(--landing-text)',
-        fontFamily: 'var(--landing-font-body)',
+        border: '1px solid var(--theme-border-strong)',
+        color: 'var(--theme-fg)',
+        fontFamily: 'var(--theme-font-body)',
         fontSize: '0.82rem',
         letterSpacing: '0.01em',
       }}
       onMouseEnter={(e) => {
         (e.currentTarget as HTMLButtonElement).style.background =
-          'var(--landing-accent-soft)';
+          'var(--theme-accent-soft)';
         (e.currentTarget as HTMLButtonElement).style.borderColor =
-          'var(--landing-accent-muted)';
+          'var(--theme-accent-muted)';
       }}
       onMouseLeave={(e) => {
         (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
         (e.currentTarget as HTMLButtonElement).style.borderColor =
-          'var(--landing-border-strong)';
+          'var(--theme-border-strong)';
       }}
     >
       <span
         className="flex h-4 w-4 items-center justify-center"
-        style={{ color: 'var(--landing-text)' }}
+        style={{ color: 'var(--theme-fg)' }}
       >
         {glyph}
       </span>
@@ -626,7 +626,7 @@ function LoginForm({
               type="button"
               onClick={() => setShow((s) => !s)}
               aria-label={show ? 'Hide password' : 'Show password'}
-              className="p-1 transition-colors hover:text-[var(--landing-text)]"
+              className="p-1 transition-colors hover:text-[var(--theme-fg)]"
             >
               {show ? <EyeOff size={16} strokeWidth={1.6} /> : <Eye size={16} strokeWidth={1.6} />}
             </button>
@@ -637,20 +637,20 @@ function LoginForm({
       <div className="flex items-center justify-between">
         <label
           className="flex cursor-pointer items-center gap-2 text-[0.8rem]"
-          style={{ color: 'var(--landing-text-muted)' }}
+          style={{ color: 'var(--theme-fg-muted)' }}
         >
           <input
             type="checkbox"
             checked={remember}
             onChange={(e) => setRemember(e.target.checked)}
-            className="h-3.5 w-3.5 accent-[var(--landing-accent)]"
+            className="h-3.5 w-3.5 accent-[var(--theme-accent)]"
           />
           Keep me signed in
         </label>
         <button
           type="button"
-          className="landing-link-underline text-[0.8rem]"
-          style={{ color: 'var(--landing-text-muted)' }}
+          className="theme-link-underline text-[0.8rem]"
+          style={{ color: 'var(--theme-fg-muted)' }}
         >
           Forgot password?
         </button>
@@ -660,7 +660,7 @@ function LoginForm({
         <button
           type="submit"
           disabled={loading}
-          className="landing-btn-primary w-full justify-center disabled:cursor-not-allowed disabled:opacity-70"
+          className="theme-btn-primary w-full justify-center disabled:cursor-not-allowed disabled:opacity-70"
         >
           {loading ? (
             <Loader2 size={16} className="animate-spin" strokeWidth={1.8} />
@@ -679,14 +679,14 @@ function LoginForm({
 
       <p
         className="text-center text-[0.82rem]"
-        style={{ color: 'var(--landing-text-muted)' }}
+        style={{ color: 'var(--theme-fg-muted)' }}
       >
         New to Verdify?{' '}
         <button
           type="button"
           onClick={onSwitch}
-          className="landing-link-underline font-medium"
-          style={{ color: 'var(--landing-text)' }}
+          className="theme-link-underline font-medium"
+          style={{ color: 'var(--theme-fg)' }}
         >
           Create an account
         </button>
@@ -792,7 +792,7 @@ function RegisterForm({
                 type="button"
                 onClick={() => setShow((s) => !s)}
                 aria-label={show ? 'Hide password' : 'Show password'}
-                className="p-1 transition-colors hover:text-[var(--landing-text)]"
+                className="p-1 transition-colors hover:text-[var(--theme-fg)]"
               >
                 {show ? <EyeOff size={16} strokeWidth={1.6} /> : <Eye size={16} strokeWidth={1.6} />}
               </button>
@@ -809,16 +809,16 @@ function RegisterForm({
                       background:
                         lvl <= strength
                           ? strength >= 3
-                            ? 'var(--landing-accent)'
-                            : 'var(--landing-accent-warm)'
-                          : 'var(--landing-border)',
+                            ? 'var(--theme-accent)'
+                            : 'var(--theme-accent-warm)'
+                          : 'var(--theme-border)',
                     }}
                   />
                 ))}
               </div>
               <span
-                className="landing-mono-sm"
-                style={{ color: 'var(--landing-text-dim)' }}
+                className="theme-mono-sm"
+                style={{ color: 'var(--theme-fg-dim)' }}
               >
                 {strengthLabel}
               </span>
@@ -829,36 +829,36 @@ function RegisterForm({
 
       <label
         className="flex cursor-pointer items-start gap-3 text-[0.8rem]"
-        style={{ color: 'var(--landing-text-muted)' }}
+        style={{ color: 'var(--theme-fg-muted)' }}
       >
         <input
           type="checkbox"
           checked={agreed}
           onChange={(e) => setAgreed(e.target.checked)}
-          className="mt-0.5 h-3.5 w-3.5 accent-[var(--landing-accent)]"
+          className="mt-0.5 h-3.5 w-3.5 accent-[var(--theme-accent)]"
         />
         <span style={{ lineHeight: 1.5 }}>
           I agree to the{' '}
           <a
             href="#"
-            className="landing-link-underline"
-            style={{ color: 'var(--landing-text)' }}
+            className="theme-link-underline"
+            style={{ color: 'var(--theme-fg)' }}
           >
             Terms
           </a>{' '}
           &amp;{' '}
           <a
             href="#"
-            className="landing-link-underline"
-            style={{ color: 'var(--landing-text)' }}
+            className="theme-link-underline"
+            style={{ color: 'var(--theme-fg)' }}
           >
             Privacy
           </a>
           .
           {errs.agreed ? (
             <span
-              className="landing-mono-sm ml-2"
-              style={{ color: 'var(--landing-accent-warm)' }}
+              className="theme-mono-sm ml-2"
+              style={{ color: 'var(--theme-accent-warm)' }}
             >
               required
             </span>
@@ -870,7 +870,7 @@ function RegisterForm({
         <button
           type="submit"
           disabled={loading}
-          className="landing-btn-primary w-full justify-center disabled:cursor-not-allowed disabled:opacity-70"
+          className="theme-btn-primary w-full justify-center disabled:cursor-not-allowed disabled:opacity-70"
         >
           {loading ? (
             <Loader2 size={16} className="animate-spin" strokeWidth={1.8} />
@@ -889,14 +889,14 @@ function RegisterForm({
 
       <p
         className="text-center text-[0.82rem]"
-        style={{ color: 'var(--landing-text-muted)' }}
+        style={{ color: 'var(--theme-fg-muted)' }}
       >
         Already have an account?{' '}
         <button
           type="button"
           onClick={onSwitch}
-          className="landing-link-underline font-medium"
-          style={{ color: 'var(--landing-text)' }}
+          className="theme-link-underline font-medium"
+          style={{ color: 'var(--theme-fg)' }}
         >
           Sign in
         </button>
@@ -911,13 +911,13 @@ function Divider({ label }: { label: string }) {
       <span
         aria-hidden
         className="absolute inset-x-0 top-1/2 h-px"
-        style={{ background: 'var(--landing-border)' }}
+        style={{ background: 'var(--theme-border)' }}
       />
       <span
-        className="landing-mono-sm relative px-3"
+        className="theme-mono-sm relative px-3"
         style={{
-          color: 'var(--landing-text-dim)',
-          background: 'var(--landing-bg)',
+          color: 'var(--theme-fg-dim)',
+          background: 'var(--theme-bg)',
         }}
       >
         {label}

@@ -48,29 +48,29 @@ const reveal = {
 
 export default function AboutPage() {
   return (
-    <div className="landing-theme landing-root relative min-h-svh">
-      <div className="landing-grain" aria-hidden />
+    <div className="theme-root relative min-h-svh">
+      <div className="theme-grain" aria-hidden />
 
       <section id="hero" className="relative overflow-hidden">
-        <div className="landing-mesh" aria-hidden />
+        <div className="theme-mesh" aria-hidden />
         <div className="relative mx-auto max-w-[1440px] px-4 pt-32 pb-20 sm:px-6 lg:px-10 lg:pt-40 lg:pb-28">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <span className="landing-accent-dot" />
+              <span className="theme-accent-dot" />
               <span
-                className="landing-mono-sm"
-                style={{ color: 'var(--landing-text-muted)' }}
+                className="theme-mono-sm"
+                style={{ color: 'var(--theme-fg-muted)' }}
               >
                 The profile · manifesto · people
               </span>
             </div>
             <div className="hidden items-center gap-2 lg:flex">
-              <span className="landing-chip">Track 4 · Green Horizon</span>
+              <span className="theme-chip">Track 4 · Green Horizon</span>
               <span
-                className="landing-chip"
+                className="theme-chip"
                 style={{
-                  color: 'var(--landing-accent)',
-                  borderColor: 'var(--landing-accent-muted)',
+                  color: 'var(--theme-accent)',
+                  borderColor: 'var(--theme-accent-muted)',
                 }}
               >
                 Johor ⇌ SG
@@ -82,13 +82,13 @@ export default function AboutPage() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.1, ease: [0.2, 0.7, 0.2, 1] }}
-            className="landing-hero mt-14"
+            className="theme-hero mt-14"
           >
             <span className="block">We are building for a</span>
             <span className="block">
               <span
-                className="landing-italic"
-                style={{ color: 'var(--landing-accent)' }}
+                className="theme-italic"
+                style={{ color: 'var(--theme-accent)' }}
               >
                 corridor
               </span>{' '}
@@ -102,7 +102,7 @@ export default function AboutPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.5 }}
             className="mt-10 max-w-2xl text-[1.08rem] leading-[1.8]"
-            style={{ color: 'var(--landing-text-muted)' }}
+            style={{ color: 'var(--theme-fg-muted)' }}
           >
             Verdify is a small, deliberate team building a personal green navigator for the
             Johor–Singapore corridor. This page is the profile behind the product — the
@@ -116,34 +116,34 @@ export default function AboutPage() {
         {...reveal}
         className="relative overflow-hidden border-y scroll-mt-24"
         style={{
-          borderColor: 'var(--landing-border)',
-          background: 'var(--landing-bg-soft)',
+          borderColor: 'var(--theme-border)',
+          background: 'var(--theme-bg-soft)',
         }}
       >
         <div className="relative mx-auto max-w-[1440px] px-4 py-24 sm:px-6 lg:px-10 lg:py-32">
           <div className="grid gap-14 lg:grid-cols-[0.32fr_0.68fr]">
             <div className="space-y-4">
-              <p className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+              <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
                 § Manifesto — 01
               </p>
-              <div className="landing-rule" />
+              <div className="theme-rule" />
               <div className="flex items-center gap-3 pt-2">
                 <Compass
                   className="h-5 w-5"
-                  style={{ color: 'var(--landing-accent)' }}
+                  style={{ color: 'var(--theme-accent)' }}
                   strokeWidth={1.4}
                 />
-                <span className="landing-mono-sm" style={{ color: 'var(--landing-text-muted)' }}>
+                <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-muted)' }}>
                   what we believe
                 </span>
               </div>
             </div>
             <div className="space-y-10">
-              <h2 className="landing-display text-[clamp(2.2rem,5.4vw,4.6rem)] leading-[1] tracking-[-0.04em]">
+              <h2 className="theme-display text-[clamp(2.2rem,5.4vw,4.6rem)] leading-[1] tracking-[-0.04em]">
                 Mobility is the quiet,{' '}
                 <span
-                  className="landing-italic"
-                  style={{ color: 'var(--landing-accent-warm)' }}
+                  className="theme-italic"
+                  style={{ color: 'var(--theme-accent-warm)' }}
                 >
                   daily
                 </span>{' '}
@@ -151,7 +151,7 @@ export default function AboutPage() {
               </h2>
               <div
                 className="grid gap-8 text-[1.02rem] leading-[1.8] md:grid-cols-2"
-                style={{ color: 'var(--landing-text-muted)' }}
+                style={{ color: 'var(--theme-fg-muted)' }}
               >
                 <p>
                   Climate policy moves in decades. People move in minutes. Verdify exists
@@ -175,14 +175,14 @@ export default function AboutPage() {
           className="mb-16 grid gap-8 lg:grid-cols-[0.32fr_0.68fr]"
         >
           <div className="space-y-4">
-            <p className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+            <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
               § Brief — 02
             </p>
-            <div className="landing-rule" />
+            <div className="theme-rule" />
           </div>
-          <h2 className="landing-display max-w-3xl text-[clamp(2rem,4.8vw,3.8rem)] leading-[1.04] tracking-[-0.035em]">
+          <h2 className="theme-display max-w-3xl text-[clamp(2rem,4.8vw,3.8rem)] leading-[1.04] tracking-[-0.035em]">
             A product shaped by{' '}
-            <span className="landing-italic" style={{ color: 'var(--landing-accent)' }}>
+            <span className="theme-italic" style={{ color: 'var(--theme-accent)' }}>
               three
             </span>{' '}
             hard constraints.
@@ -197,32 +197,32 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.25 }}
               transition={{ duration: 0.8, delay: i * 0.08, ease: [0.2, 0.7, 0.2, 1] }}
-              className="landing-card group flex flex-col gap-6 p-8"
+              className="theme-card group flex flex-col gap-6 p-8"
             >
               <div className="flex items-center justify-between">
                 <span
                   className="flex h-11 w-11 items-center justify-center rounded-full"
                   style={{
-                    background: 'var(--landing-accent-soft)',
-                    border: '1px solid var(--landing-accent-muted)',
-                    color: 'var(--landing-accent)',
+                    background: 'var(--theme-accent-soft)',
+                    border: '1px solid var(--theme-accent-muted)',
+                    color: 'var(--theme-accent)',
                   }}
                 >
                   <p.i className="h-4 w-4" strokeWidth={1.5} />
                 </span>
                 <span
-                  className="landing-mono-sm"
-                  style={{ color: 'var(--landing-text-dim)' }}
+                  className="theme-mono-sm"
+                  style={{ color: 'var(--theme-fg-dim)' }}
                 >
                   {p.k}
                 </span>
               </div>
-              <h3 className="landing-display text-[1.9rem] tracking-[-0.025em]">
+              <h3 className="theme-display text-[1.9rem] tracking-[-0.025em]">
                 {p.t}
               </h3>
               <p
                 className="text-[0.98rem] leading-[1.75]"
-                style={{ color: 'var(--landing-text-muted)' }}
+                style={{ color: 'var(--theme-fg-muted)' }}
               >
                 {p.b}
               </p>
@@ -235,8 +235,8 @@ export default function AboutPage() {
         id="team"
         className="relative overflow-hidden border-y scroll-mt-24"
         style={{
-          borderColor: 'var(--landing-border)',
-          background: 'var(--landing-bg-soft)',
+          borderColor: 'var(--theme-border)',
+          background: 'var(--theme-bg-soft)',
         }}
       >
         <div className="relative mx-auto max-w-[1440px] px-4 py-24 sm:px-6 lg:px-10 lg:py-32">
@@ -245,14 +245,14 @@ export default function AboutPage() {
             className="mb-16 grid gap-8 lg:grid-cols-[0.32fr_0.68fr]"
           >
             <div className="space-y-4">
-              <p className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+              <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
                 § Team — 03
               </p>
-              <div className="landing-rule" />
+              <div className="theme-rule" />
             </div>
-            <h2 className="landing-display max-w-3xl text-[clamp(2rem,4.8vw,3.8rem)] leading-[1.04] tracking-[-0.035em]">
+            <h2 className="theme-display max-w-3xl text-[clamp(2rem,4.8vw,3.8rem)] leading-[1.04] tracking-[-0.035em]">
               A small team,{' '}
-              <span className="landing-italic" style={{ color: 'var(--landing-accent)' }}>
+              <span className="theme-italic" style={{ color: 'var(--theme-accent)' }}>
                 deliberately
               </span>{' '}
               shaped.
@@ -261,8 +261,8 @@ export default function AboutPage() {
 
           <div className="grid gap-px overflow-hidden rounded-[14px] sm:grid-cols-2 lg:grid-cols-4"
             style={{
-              background: 'var(--landing-border)',
-              border: '1px solid var(--landing-border-strong)',
+              background: 'var(--theme-border)',
+              border: '1px solid var(--theme-border-strong)',
             }}
           >
             {team.map((m, i) => (
@@ -273,14 +273,14 @@ export default function AboutPage() {
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.75, delay: i * 0.08 }}
                 className="group relative flex aspect-[3/4] flex-col justify-between p-6 transition-colors"
-                style={{ background: 'var(--landing-surface)' }}
+                style={{ background: 'var(--theme-surface)' }}
               >
                 <div
                   className="relative flex-1 overflow-hidden rounded-[10px]"
                   style={{
                     background:
-                      'linear-gradient(135deg, var(--landing-accent-soft) 0%, transparent 55%, var(--landing-bg-soft) 100%)',
-                    border: '1px solid var(--landing-border)',
+                      'linear-gradient(135deg, var(--theme-accent-soft) 0%, transparent 55%, var(--theme-bg-soft) 100%)',
+                    border: '1px solid var(--theme-border)',
                   }}
                 >
                   <div
@@ -288,29 +288,29 @@ export default function AboutPage() {
                     className="absolute inset-0"
                     style={{
                       background:
-                        'radial-gradient(60% 50% at 50% 35%, var(--landing-accent-soft), transparent 70%)',
+                        'radial-gradient(60% 50% at 50% 35%, var(--theme-accent-soft), transparent 70%)',
                     }}
                   />
                   <span
-                    className="absolute left-4 top-4 landing-mono-sm"
-                    style={{ color: 'var(--landing-text-dim)' }}
+                    className="absolute left-4 top-4 theme-mono-sm"
+                    style={{ color: 'var(--theme-fg-dim)' }}
                   >
                     #{m.n}
                   </span>
                   <span
-                    className="absolute bottom-4 right-4 landing-italic text-right"
-                    style={{ color: 'var(--landing-accent)', fontSize: '0.95rem' }}
+                    className="absolute bottom-4 right-4 theme-italic text-right"
+                    style={{ color: 'var(--theme-accent)', fontSize: '0.95rem' }}
                   >
                     {m.meta}
                   </span>
                 </div>
                 <div className="mt-5 space-y-1">
-                  <p className="landing-display text-[1.1rem] tracking-[-0.015em]">
+                  <p className="theme-display text-[1.1rem] tracking-[-0.015em]">
                     {m.name}
                   </p>
                   <p
-                    className="landing-mono-sm"
-                    style={{ color: 'var(--landing-text-muted)' }}
+                    className="theme-mono-sm"
+                    style={{ color: 'var(--theme-fg-muted)' }}
                   >
                     {m.role}
                   </p>
@@ -321,7 +321,7 @@ export default function AboutPage() {
 
           <p
             className="mt-10 max-w-xl text-[0.95rem] leading-[1.75]"
-            style={{ color: 'var(--landing-text-dim)' }}
+            style={{ color: 'var(--theme-fg-dim)' }}
           >
             Placeholders for now — real names and portraits land when the team is ready
             to be named.
@@ -334,9 +334,9 @@ export default function AboutPage() {
           {...reveal}
           className="relative mx-auto max-w-[1440px] overflow-hidden rounded-[20px] px-8 py-16 sm:px-14 sm:py-20 lg:px-20 lg:py-28"
           style={{
-            background: 'var(--landing-cta-bg)',
-            border: '1px solid var(--landing-border-strong)',
-            boxShadow: 'var(--landing-cta-shadow)',
+            background: 'var(--theme-cta-bg)',
+            border: '1px solid var(--theme-border-strong)',
+            boxShadow: 'var(--theme-cta-shadow)',
             backdropFilter: 'blur(26px) saturate(170%)',
             WebkitBackdropFilter: 'blur(26px) saturate(170%)',
           }}
@@ -346,29 +346,29 @@ export default function AboutPage() {
             className="pointer-events-none absolute -left-[20%] -top-[30%] h-[500px] w-[500px] rounded-full"
             style={{
               background:
-                'radial-gradient(closest-side, var(--landing-accent-soft), transparent 70%)',
+                'radial-gradient(closest-side, var(--theme-accent-soft), transparent 70%)',
             }}
           />
           <p
-            className="landing-mono-sm relative"
-            style={{ color: 'var(--landing-accent)' }}
+            className="theme-mono-sm relative"
+            style={{ color: 'var(--theme-accent)' }}
           >
             § Closing — Profile
           </p>
-          <h2 className="landing-display relative mt-6 max-w-5xl text-[clamp(2.4rem,6.2vw,5.6rem)] leading-[0.96] tracking-[-0.045em]">
+          <h2 className="theme-display relative mt-6 max-w-5xl text-[clamp(2.4rem,6.2vw,5.6rem)] leading-[0.96] tracking-[-0.045em]">
             A profile is a{' '}
             <Leaf
               className="inline-block -translate-y-2 rotate-[8deg]"
               style={{
                 width: '0.9em',
                 height: '0.9em',
-                color: 'var(--landing-accent)',
+                color: 'var(--theme-accent)',
               }}
               strokeWidth={1.2}
             />{' '}
             <span
-              className="landing-italic"
-              style={{ color: 'var(--landing-accent)' }}
+              className="theme-italic"
+              style={{ color: 'var(--theme-accent)' }}
             >
               promise
             </span>{' '}
@@ -376,16 +376,16 @@ export default function AboutPage() {
           </h2>
           <p
             className="relative mt-8 max-w-2xl text-[1.02rem] leading-[1.75]"
-            style={{ color: 'var(--landing-text-muted)' }}
+            style={{ color: 'var(--theme-fg-muted)' }}
           >
             If the product holds up, the profile held up first. If any part of this
             page stops being true, the product will change before the page does.
           </p>
           <div className="relative mt-10 flex flex-col gap-3 sm:flex-row">
-            <a href="/" className="landing-btn-primary">
+            <a href="/" className="theme-btn-primary">
               Back to the product <ArrowRight className="h-4 w-4" />
             </a>
-            <a href="/technology" className="landing-btn-ghost">
+            <a href="/technology" className="theme-btn-ghost">
               See the stack <ArrowUpRight className="h-4 w-4" />
             </a>
           </div>

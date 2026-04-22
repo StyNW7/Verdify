@@ -31,7 +31,7 @@ type NavEntry = {
 const primaryNav: NavEntry[] = [
   { label: 'Dashboard', to: '/dashboard', icon: Gauge },
   { label: 'Plan Route', to: '/route', icon: Compass },
-  { label: 'History', to: '#history', icon: History, stub: true },
+  { label: 'History', to: '/history', icon: History },
   { label: 'Rewards', to: '#rewards', icon: Gift, stub: true },
   { label: 'Leaderboard', to: '/leaderboard', icon: Trophy },
 ];
@@ -74,14 +74,14 @@ export default function AuthedLayout() {
       {handoff && (
         <LoadingScreen variant="handoff" onDone={() => setHandoff(false)} />
       )}
-      <div className="landing-theme landing-root relative min-h-svh overflow-x-clip">
-        <div className="landing-grain" aria-hidden />
+      <div className="theme-root relative min-h-svh overflow-x-clip">
+        <div className="theme-grain" aria-hidden />
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-0"
           style={{
             background:
-              'radial-gradient(42% 30% at 8% 12%, var(--landing-mesh-a), transparent 70%), radial-gradient(35% 28% at 92% 88%, var(--landing-mesh-b), transparent 70%)',
+              'radial-gradient(42% 30% at 8% 12%, var(--theme-mesh-a), transparent 70%), radial-gradient(35% 28% at 92% 88%, var(--theme-mesh-b), transparent 70%)',
             filter: 'blur(60px)',
             opacity: 0.65,
           }}
@@ -105,9 +105,9 @@ export default function AuthedLayout() {
               width: 'var(--sidebar-w)',
               transition: 'width var(--sidebar-dur) var(--sidebar-ease)',
               willChange: 'width',
-              borderColor: 'var(--landing-border)',
+              borderColor: 'var(--theme-border)',
               background:
-                'linear-gradient(180deg, color-mix(in srgb, var(--landing-bg) 96%, transparent) 0%, color-mix(in srgb, var(--landing-bg-soft) 94%, transparent) 100%)',
+                'linear-gradient(180deg, color-mix(in srgb, var(--theme-bg) 96%, transparent) 0%, color-mix(in srgb, var(--theme-bg-soft) 94%, transparent) 100%)',
               backdropFilter: 'blur(22px) saturate(180%)',
               WebkitBackdropFilter: 'blur(22px) saturate(180%)',
             }}
@@ -128,11 +128,11 @@ export default function AuthedLayout() {
               >
                 <span
                   className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[8px]"
-                  style={{ background: 'var(--landing-accent)' }}
+                  style={{ background: 'var(--theme-accent)' }}
                 >
                   <Leaf
                     className="h-3.5 w-3.5"
-                    style={{ color: 'var(--landing-button-foreground)' }}
+                    style={{ color: 'var(--theme-accent-fg)' }}
                     strokeWidth={2.2}
                   />
                 </span>
@@ -144,8 +144,8 @@ export default function AuthedLayout() {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -6 }}
                       transition={{ duration: 0.25 }}
-                      className="landing-display overflow-hidden whitespace-nowrap text-[1.05rem] tracking-[-0.03em]"
-                      style={{ color: 'var(--landing-text)' }}
+                      className="theme-display overflow-hidden whitespace-nowrap text-[1.05rem] tracking-[-0.03em]"
+                      style={{ color: 'var(--theme-fg)' }}
                     >
                       Verdify
                     </motion.span>
@@ -161,8 +161,8 @@ export default function AuthedLayout() {
                 aria-label={expanded ? 'Collapse sidebar' : 'Expand sidebar'}
                 className="group flex w-full items-center justify-center rounded-full border transition-colors duration-300"
                 style={{
-                  borderColor: 'var(--landing-border)',
-                  color: 'var(--landing-text-muted)',
+                  borderColor: 'var(--theme-border)',
+                  color: 'var(--theme-fg-muted)',
                   height: 34,
                 }}
               >
@@ -185,7 +185,7 @@ export default function AuthedLayout() {
                 />
               ))}
 
-              <div className="my-4 h-px" style={{ background: 'var(--landing-border)' }} />
+              <div className="my-4 h-px" style={{ background: 'var(--theme-border)' }} />
 
               <SidebarLabel expanded={expanded}>Account</SidebarLabel>
               {secondaryNav.map((entry) => (
@@ -198,16 +198,16 @@ export default function AuthedLayout() {
               ))}
             </nav>
 
-            <div className="border-t px-3 py-4" style={{ borderColor: 'var(--landing-border)' }}>
+            <div className="border-t px-3 py-4" style={{ borderColor: 'var(--theme-border)' }}>
               <div
                 className={`flex items-center ${expanded ? 'gap-3 px-2' : 'justify-center'}`}
               >
                 <div
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[0.72rem] font-medium"
                   style={{
-                    background: 'var(--landing-accent-soft)',
-                    color: 'var(--landing-accent)',
-                    border: '1px solid var(--landing-accent-muted)',
+                    background: 'var(--theme-accent-soft)',
+                    color: 'var(--theme-accent)',
+                    border: '1px solid var(--theme-accent-muted)',
                     letterSpacing: '0.04em',
                   }}
                 >
@@ -225,13 +225,13 @@ export default function AuthedLayout() {
                     >
                       <p
                         className="truncate text-[0.82rem]"
-                        style={{ color: 'var(--landing-text)' }}
+                        style={{ color: 'var(--theme-fg)' }}
                       >
                         Sarah Rashid
                       </p>
                       <p
-                        className="landing-mono-sm truncate"
-                        style={{ color: 'var(--landing-text-dim)' }}
+                        className="theme-mono-sm truncate"
+                        style={{ color: 'var(--theme-fg-dim)' }}
                       >
                         Commuter · JB
                       </p>
@@ -247,8 +247,8 @@ export default function AuthedLayout() {
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-300 hover:bg-[var(--landing-surface-alt)]"
-                      style={{ color: 'var(--landing-text-muted)' }}
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-300 hover:bg-[var(--theme-surface-muted)]"
+                      style={{ color: 'var(--theme-fg-muted)' }}
                       aria-label="Sign out"
                     >
                       <LogOut className="h-[14px] w-[14px]" strokeWidth={1.6} />
@@ -273,26 +273,26 @@ export default function AuthedLayout() {
             <header
               className="sticky top-0 z-20 flex h-16 items-center justify-between border-b px-6 lg:px-10"
               style={{
-                borderColor: 'var(--landing-border)',
-                background: 'color-mix(in srgb, var(--landing-bg) 78%, transparent)',
+                borderColor: 'var(--theme-border)',
+                background: 'color-mix(in srgb, var(--theme-bg) 78%, transparent)',
                 backdropFilter: 'blur(18px) saturate(180%)',
                 WebkitBackdropFilter: 'blur(18px) saturate(180%)',
               }}
             >
               <div className="flex items-center gap-3">
                 <span
-                  className="landing-accent-dot"
+                  className="theme-accent-dot"
                   aria-hidden
                 />
                 <span
-                  className="landing-mono-sm"
-                  style={{ color: 'var(--landing-text-dim)' }}
+                  className="theme-mono-sm"
+                  style={{ color: 'var(--theme-fg-dim)' }}
                 >
                   Verdify / {pageLabel(pathname)}
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <AnimatedThemeToggler className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-300 hover:bg-[var(--landing-surface-alt)]" />
+                <AnimatedThemeToggler className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-300 hover:bg-[var(--theme-surface-muted)]" />
               </div>
             </header>
 
@@ -341,8 +341,8 @@ function SidebarLabel({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="landing-mono-sm block"
-            style={{ color: 'var(--landing-text-dim)', letterSpacing: '0.18em' }}
+            className="theme-mono-sm block"
+            style={{ color: 'var(--theme-fg-dim)', letterSpacing: '0.18em' }}
           >
             {children}
           </motion.span>
@@ -367,11 +367,11 @@ function SidebarItem({
       <span
         className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] transition-colors duration-300"
         style={{
-          background: active ? 'var(--landing-accent)' : 'transparent',
+          background: active ? 'var(--theme-accent)' : 'transparent',
           color: active
-            ? 'var(--landing-button-foreground)'
-            : 'var(--landing-text-muted)',
-          border: active ? '1px solid var(--landing-accent)' : '1px solid transparent',
+            ? 'var(--theme-accent-fg)'
+            : 'var(--theme-fg-muted)',
+          border: active ? '1px solid var(--theme-accent)' : '1px solid transparent',
         }}
       >
         <Icon className="h-[16px] w-[16px]" strokeWidth={1.7} />
@@ -385,14 +385,14 @@ function SidebarItem({
             transition={{ duration: 0.22 }}
             className="flex min-w-0 flex-1 items-center justify-between gap-2 overflow-hidden whitespace-nowrap text-[0.88rem]"
             style={{
-              color: active ? 'var(--landing-text)' : 'var(--landing-text-muted)',
+              color: active ? 'var(--theme-fg)' : 'var(--theme-fg-muted)',
             }}
           >
             <span>{entry.label}</span>
             {entry.stub && (
               <span
-                className="landing-mono-sm shrink-0"
-                style={{ color: 'var(--landing-text-dim)', fontSize: '0.56rem' }}
+                className="theme-mono-sm shrink-0"
+                style={{ color: 'var(--theme-fg-dim)', fontSize: '0.56rem' }}
               >
                 Soon
               </span>
@@ -404,7 +404,7 @@ function SidebarItem({
   );
 
   const className =
-    'group relative flex items-center gap-3 rounded-[12px] px-2 py-1.5 transition-colors duration-300 hover:bg-[var(--landing-surface-alt)]';
+    'group relative flex items-center gap-3 rounded-[12px] px-2 py-1.5 transition-colors duration-300 hover:bg-[var(--theme-surface-muted)]';
 
   if (entry.stub) {
     return (

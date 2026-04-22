@@ -256,11 +256,11 @@ export const UnderlineInput = forwardRef<HTMLInputElement, UnderlineInputProps>(
 
     return (
       <div className="relative w-full">
-        <label className="landing-mono-sm block" style={{ color: 'var(--landing-text-dim)' }}>
+        <label className="theme-mono-sm block" style={{ color: 'var(--theme-fg-dim)' }}>
           {label}
         </label>
         <div className="relative mt-2 flex items-center gap-3">
-          <MapPin size={16} style={{ color: 'var(--landing-accent)' }} className="flex-shrink-0" />
+          <MapPin size={16} style={{ color: 'var(--theme-accent)' }} className="flex-shrink-0" />
           <input
             ref={ref}
             type="text"
@@ -273,21 +273,21 @@ export const UnderlineInput = forwardRef<HTMLInputElement, UnderlineInputProps>(
             aria-label={ariaLabel || label}
             className="w-full bg-transparent py-3 text-[1.05rem] outline-none"
             style={{
-              color: 'var(--landing-text)',
-              fontFamily: 'var(--landing-font-body)',
+              color: 'var(--theme-fg)',
+              fontFamily: 'var(--theme-font-body)',
             }}
           />
         </div>
         <div
           className="relative h-px w-full overflow-hidden"
-          style={{ background: 'var(--landing-border)' }}
+          style={{ background: 'var(--theme-border)' }}
         >
           <motion.div
             initial={false}
             animate={{ scaleX: focused || value ? 1 : 0 }}
             transition={{ duration: 0.5, ease: [0.2, 0.7, 0.2, 1] }}
             className="absolute inset-0 origin-left"
-            style={{ background: 'var(--landing-accent)' }}
+            style={{ background: 'var(--theme-accent)' }}
           />
         </div>
         <AnimatePresence>
@@ -299,8 +299,8 @@ export const UnderlineInput = forwardRef<HTMLInputElement, UnderlineInputProps>(
               transition={{ duration: 0.2 }}
               className="absolute left-0 right-0 top-full z-20 mt-2 overflow-hidden rounded-[10px]"
               style={{
-                background: 'var(--landing-surface)',
-                border: '1px solid var(--landing-border)',
+                background: 'var(--theme-surface)',
+                border: '1px solid var(--theme-border)',
                 backdropFilter: 'blur(22px) saturate(180%)',
                 boxShadow: '0 30px 60px -30px rgba(10,14,12,0.25)',
               }}
@@ -311,11 +311,11 @@ export const UnderlineInput = forwardRef<HTMLInputElement, UnderlineInputProps>(
                     type="button"
                     onMouseDown={() => onChange(s)}
                     className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors"
-                    style={{ color: 'var(--landing-text)' }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--landing-accent-soft)')}
+                    style={{ color: 'var(--theme-fg)' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--theme-accent-soft)')}
                     onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                   >
-                    <MapPin size={12} style={{ color: 'var(--landing-text-dim)' }} />
+                    <MapPin size={12} style={{ color: 'var(--theme-fg-dim)' }} />
                     {s}
                   </button>
                 </li>
@@ -339,9 +339,9 @@ export function SwapButton({ onClick, disabled }: { onClick: () => void; disable
       transition={{ duration: 0.4, ease: [0.2, 0.7, 0.2, 1] }}
       className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full"
       style={{
-        background: 'var(--landing-surface)',
-        border: '1px solid var(--landing-border-strong)',
-        color: 'var(--landing-text)',
+        background: 'var(--theme-surface)',
+        border: '1px solid var(--theme-border-strong)',
+        color: 'var(--theme-fg)',
         backdropFilter: 'blur(18px)',
       }}
       aria-label="Swap origin and destination"
@@ -362,7 +362,7 @@ export function DateTimeField({
   ];
   return (
     <div className="w-full">
-      <div className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+      <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
         Departure
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -373,11 +373,11 @@ export function DateTimeField({
               key={c.key}
               type="button"
               onClick={() => setDateSlot(c.key)}
-              className="landing-mono-sm relative rounded-full px-4 py-2 transition-colors"
+              className="theme-mono-sm relative rounded-full px-4 py-2 transition-colors"
               style={{
-                background: active ? 'var(--landing-accent)' : 'transparent',
-                color: active ? 'var(--landing-button-foreground)' : 'var(--landing-text-muted)',
-                border: `1px solid ${active ? 'var(--landing-accent)' : 'var(--landing-border)'}`,
+                background: active ? 'var(--theme-accent)' : 'transparent',
+                color: active ? 'var(--theme-accent-fg)' : 'var(--theme-fg-muted)',
+                border: `1px solid ${active ? 'var(--theme-accent)' : 'var(--theme-border)'}`,
               }}
             >
               {c.label}
@@ -389,10 +389,10 @@ export function DateTimeField({
             type="date"
             value={pickedDate}
             onChange={(e) => setPickedDate(e.target.value)}
-            className="landing-mono-sm bg-transparent px-3 py-2 outline-none"
+            className="theme-mono-sm bg-transparent px-3 py-2 outline-none"
             style={{
-              color: 'var(--landing-text)',
-              border: '1px solid var(--landing-border)',
+              color: 'var(--theme-fg)',
+              border: '1px solid var(--theme-border)',
               borderRadius: 999,
             }}
           />
@@ -400,15 +400,15 @@ export function DateTimeField({
         {dateSlot !== 'now' && (
           <div
             className="flex items-center gap-2 rounded-full px-3.5 py-2"
-            style={{ border: '1px solid var(--landing-border)' }}
+            style={{ border: '1px solid var(--theme-border)' }}
           >
-            <Clock size={12} style={{ color: 'var(--landing-text-dim)' }} />
+            <Clock size={12} style={{ color: 'var(--theme-fg-dim)' }} />
             <input
               type="time"
               value={time}
               onChange={(e) => setTime(e.target.value)}
-              className="landing-mono-sm bg-transparent outline-none"
-              style={{ color: 'var(--landing-text)' }}
+              className="theme-mono-sm bg-transparent outline-none"
+              style={{ color: 'var(--theme-fg)' }}
             />
           </div>
         )}
@@ -429,12 +429,12 @@ export function PreferenceSelector({
   const order: Preference[] = ['eco', 'fast', 'cheap'];
   return (
     <div className="w-full">
-      <div className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+      <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
         § Preference — 02
       </div>
       <div
         className="mt-3 grid grid-cols-3 overflow-hidden rounded-full sm:hidden"
-        style={{ border: '1px solid var(--landing-border)' }}
+        style={{ border: '1px solid var(--theme-border)' }}
       >
         {order.map(p => {
           const m = PREF_META[p];
@@ -445,10 +445,10 @@ export function PreferenceSelector({
               key={p}
               type="button"
               onClick={() => setPreference(p)}
-              className="landing-mono-sm flex items-center justify-center gap-1.5 py-2.5 transition-colors"
+              className="theme-mono-sm flex items-center justify-center gap-1.5 py-2.5 transition-colors"
               style={{
-                background: active ? 'var(--landing-accent)' : 'transparent',
-                color: active ? 'var(--landing-button-foreground)' : 'var(--landing-text-muted)',
+                background: active ? 'var(--theme-accent)' : 'transparent',
+                color: active ? 'var(--theme-accent-fg)' : 'var(--theme-fg-muted)',
               }}
             >
               <Icon size={13} />
@@ -469,38 +469,38 @@ export function PreferenceSelector({
               onClick={() => setPreference(p)}
               whileHover={{ x: 2 }}
               transition={{ duration: 0.3, ease: [0.2, 0.7, 0.2, 1] }}
-              className="landing-card group relative flex min-w-0 items-center gap-4 px-4 py-3.5 text-left"
+              className="theme-card group relative flex min-w-0 items-center gap-4 px-4 py-3.5 text-left"
               style={{
-                borderColor: active ? 'var(--landing-accent)' : 'var(--landing-border)',
+                borderColor: active ? 'var(--theme-accent)' : 'var(--theme-border)',
                 boxShadow: active
-                  ? '0 0 0 1px var(--landing-accent), 0 18px 45px -22px var(--landing-accent)'
+                  ? '0 0 0 1px var(--theme-accent), 0 18px 45px -22px var(--theme-accent)'
                   : undefined,
               }}
             >
               <span
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
                 style={{
-                  background: active ? 'var(--landing-accent)' : 'var(--landing-accent-soft)',
-                  color: active ? 'var(--landing-button-foreground)' : 'var(--landing-accent)',
+                  background: active ? 'var(--theme-accent)' : 'var(--theme-accent-soft)',
+                  color: active ? 'var(--theme-accent-fg)' : 'var(--theme-accent)',
                 }}
               >
                 <Icon size={15} />
               </span>
               <div className="flex min-w-0 flex-1 flex-col">
                 <span
-                  className="landing-display text-[1.05rem] leading-tight"
-                  style={{ color: 'var(--landing-text)' }}
+                  className="theme-display text-[1.05rem] leading-tight"
+                  style={{ color: 'var(--theme-fg)' }}
                 >
                   {m.label}
                 </span>
                 <span
                   className="mt-0.5 text-[0.78rem] leading-snug"
-                  style={{ color: 'var(--landing-text-muted)' }}
+                  style={{ color: 'var(--theme-fg-muted)' }}
                 >
                   {m.tagline}
                 </span>
               </div>
-              {active && <span className="landing-accent-dot shrink-0" aria-hidden />}
+              {active && <span className="theme-accent-dot shrink-0" aria-hidden />}
             </motion.button>
           );
         })}
@@ -515,19 +515,19 @@ export function PassengerStepper({
   const min = 1, max = 8;
   return (
     <div>
-      <div className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+      <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
         Passengers
       </div>
       <div
         className="mt-3 inline-flex items-center gap-4 rounded-full px-2 py-2"
-        style={{ border: '1px solid var(--landing-border)' }}
+        style={{ border: '1px solid var(--theme-border)' }}
       >
         <button
           type="button"
           onClick={() => setPassengers(Math.max(min, passengers - 1))}
           disabled={passengers <= min}
           className="flex h-8 w-8 items-center justify-center rounded-full transition-colors disabled:opacity-30"
-          style={{ color: 'var(--landing-text)' }}
+          style={{ color: 'var(--theme-fg)' }}
           aria-label="Decrease passengers"
         >
           <Minus size={14} />
@@ -535,9 +535,9 @@ export function PassengerStepper({
         <span
           className="min-w-[2ch] text-center tabular-nums"
           style={{
-            fontFamily: 'var(--landing-font-display)',
+            fontFamily: 'var(--theme-font-display)',
             fontSize: '1.2rem',
-            color: 'var(--landing-text)',
+            color: 'var(--theme-fg)',
           }}
         >
           {passengers}
@@ -547,7 +547,7 @@ export function PassengerStepper({
           onClick={() => setPassengers(Math.min(max, passengers + 1))}
           disabled={passengers >= max}
           className="flex h-8 w-8 items-center justify-center rounded-full transition-colors disabled:opacity-30"
-          style={{ color: 'var(--landing-text)' }}
+          style={{ color: 'var(--theme-fg)' }}
           aria-label="Increase passengers"
         >
           <Plus size={14} />
@@ -563,7 +563,7 @@ export function ModeChips({
   const keys = Object.keys(MODE_META) as ModeKey[];
   return (
     <div>
-      <div className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+      <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
         Allowed modes
       </div>
       <div className="mt-3 flex flex-wrap gap-2">
@@ -576,11 +576,11 @@ export function ModeChips({
               key={k}
               type="button"
               onClick={() => toggleMode(k)}
-              className="landing-mono-sm flex items-center gap-1.5 rounded-full px-3.5 py-2 transition-all"
+              className="theme-mono-sm flex items-center gap-1.5 rounded-full px-3.5 py-2 transition-all"
               style={{
-                background: on ? 'var(--landing-accent-soft)' : 'transparent',
-                color: on ? 'var(--landing-accent)' : 'var(--landing-text-dim)',
-                border: `1px solid ${on ? 'var(--landing-accent-muted)' : 'var(--landing-border)'}`,
+                background: on ? 'var(--theme-accent-soft)' : 'transparent',
+                color: on ? 'var(--theme-accent)' : 'var(--theme-fg-dim)',
+                border: `1px solid ${on ? 'var(--theme-accent-muted)' : 'var(--theme-border)'}`,
                 opacity: on ? 1 : 0.7,
               }}
             >
@@ -600,8 +600,8 @@ export function AdvancedOptions({ state }: { state: PlannerState }) {
       <button
         type="button"
         onClick={() => state.setShowAdvanced(!state.showAdvanced)}
-        className="landing-mono-sm flex items-center gap-2 transition-colors"
-        style={{ color: 'var(--landing-text-muted)' }}
+        className="theme-mono-sm flex items-center gap-2 transition-colors"
+        style={{ color: 'var(--theme-fg-muted)' }}
       >
         <span>§ Advanced — 03</span>
         <motion.span
@@ -622,8 +622,8 @@ export function AdvancedOptions({ state }: { state: PlannerState }) {
           >
             <div className="mt-5 flex flex-col gap-6 rounded-[18px] p-6"
               style={{
-                background: 'var(--landing-surface-alt)',
-                border: '1px solid var(--landing-border)',
+                background: 'var(--theme-surface-muted)',
+                border: '1px solid var(--theme-border)',
                 backdropFilter: 'blur(18px) saturate(160%)',
               }}
             >
@@ -648,7 +648,7 @@ export function SubmitButton({
         onClick();
       }}
       disabled={loading}
-      className="landing-btn-primary h-14 w-full justify-center disabled:opacity-70"
+      className="theme-btn-primary h-14 w-full justify-center disabled:opacity-70"
     >
       {loading ? (
         <>
@@ -686,53 +686,53 @@ export function RouteCard({
       onClick={onSelect}
       whileHover={{ y: -4 }}
       transition={{ duration: 0.4, ease: [0.2, 0.7, 0.2, 1] }}
-      className="landing-card group relative flex h-full flex-col items-start gap-5 p-6 md:p-7 text-left"
+      className="theme-card group relative flex h-full flex-col items-start gap-5 p-6 md:p-7 text-left"
       style={{
-        borderColor: selected ? 'var(--landing-accent)' : 'var(--landing-border)',
+        borderColor: selected ? 'var(--theme-accent)' : 'var(--theme-border)',
         boxShadow: selected
-          ? '0 0 0 1px var(--landing-accent), 0 30px 60px -30px var(--landing-accent)'
+          ? '0 0 0 1px var(--theme-accent), 0 30px 60px -30px var(--theme-accent)'
           : undefined,
       }}
     >
       <div className="flex w-full items-center justify-between">
         <div className="flex items-center gap-2">
-          {route.recommended && <span className="landing-accent-dot" aria-hidden />}
-          <span className="landing-mono-sm" style={{ color: 'var(--landing-text-muted)' }}>
+          {route.recommended && <span className="theme-accent-dot" aria-hidden />}
+          <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-muted)' }}>
             § {route.label}
           </span>
         </div>
         {selected && (
-          <CircleCheck size={16} style={{ color: 'var(--landing-accent)' }} />
+          <CircleCheck size={16} style={{ color: 'var(--theme-accent)' }} />
         )}
       </div>
 
       <div className="flex w-full flex-col">
         <div
-          className="landing-display leading-none"
+          className="theme-display leading-none"
           style={{
             fontSize: emphasized ? 'clamp(3.2rem, 5.5vw, 4.6rem)' : 'clamp(2.4rem, 4vw, 3.3rem)',
-            color: 'var(--landing-text)',
+            color: 'var(--theme-fg)',
           }}
         >
           {route.hero.primary}
         </div>
         <div
-          className="landing-italic mt-1"
+          className="theme-italic mt-1"
           style={{
-            color: 'var(--landing-text-muted)',
+            color: 'var(--theme-fg-muted)',
             fontSize: emphasized ? '1.15rem' : '1rem',
           }}
         >
           {route.hero.unit}
         </div>
-        <p className="mt-2 text-[0.82rem]" style={{ color: 'var(--landing-text-muted)' }}>
+        <p className="mt-2 text-[0.82rem]" style={{ color: 'var(--theme-fg-muted)' }}>
           {route.hero.caption}
         </p>
       </div>
 
       <div
         className="h-px w-full"
-        style={{ background: 'var(--landing-border)' }}
+        style={{ background: 'var(--theme-border)' }}
       />
 
       <div className="grid w-full grid-cols-3 gap-4">
@@ -745,11 +745,11 @@ export function RouteCard({
         {route.modes.map((m, i) => (
           <span
             key={i}
-            className="landing-mono-sm rounded-full px-2.5 py-1.5"
+            className="theme-mono-sm rounded-full px-2.5 py-1.5"
             style={{
-              background: 'var(--landing-accent-soft)',
-              color: 'var(--landing-accent)',
-              border: '1px solid var(--landing-accent-muted)',
+              background: 'var(--theme-accent-soft)',
+              color: 'var(--theme-accent)',
+              border: '1px solid var(--theme-accent-muted)',
             }}
           >
             {m}
@@ -759,15 +759,15 @@ export function RouteCard({
 
       <div
         className="mt-auto flex w-full items-center justify-between pt-1"
-        style={{ color: 'var(--landing-text-muted)' }}
+        style={{ color: 'var(--theme-fg-muted)' }}
       >
-        <span className="landing-mono-sm flex items-center gap-1.5">
-          <Star size={11} style={{ color: 'var(--landing-accent-warm)' }} />
+        <span className="theme-mono-sm flex items-center gap-1.5">
+          <Star size={11} style={{ color: 'var(--theme-accent-warm)' }} />
           +{route.points} pts
         </span>
         <span
-          className="landing-mono-sm flex items-center gap-1 transition-colors"
-          style={{ color: selected ? 'var(--landing-accent)' : 'var(--landing-text-muted)' }}
+          className="theme-mono-sm flex items-center gap-1 transition-colors"
+          style={{ color: selected ? 'var(--theme-accent)' : 'var(--theme-fg-muted)' }}
         >
           {selected ? 'Selected' : 'Select'}
           <ArrowRight size={11} />
@@ -780,14 +780,14 @@ export function RouteCard({
 function MiniStat({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
     <div className="flex flex-col gap-1">
-      <span className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+      <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
         {label}
       </span>
       <span
         style={{
-          fontFamily: 'var(--landing-font-display)',
+          fontFamily: 'var(--theme-font-display)',
           fontSize: '1.05rem',
-          color: accent ? 'var(--landing-accent)' : 'var(--landing-text)',
+          color: accent ? 'var(--theme-accent)' : 'var(--theme-fg)',
           letterSpacing: '-0.02em',
         }}
       >
@@ -799,22 +799,22 @@ function MiniStat({ label, value, accent }: { label: string; value: string; acce
 
 export function DirectionsPanel({ route }: { route: RouteOption }) {
   return (
-    <div className="landing-card p-6 md:p-8 lg:p-10">
+    <div className="theme-card p-6 md:p-8 lg:p-10">
       <div className="flex items-center justify-between">
-        <div className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+        <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
           § Step-by-Step — Directions
         </div>
-        <div className="landing-mono-sm" style={{ color: 'var(--landing-text-muted)' }}>
+        <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-muted)' }}>
           {route.steps.length} stops
         </div>
       </div>
 
       <h3
-        className="landing-display mt-3"
-        style={{ fontSize: 'clamp(1.6rem, 2.6vw, 2.2rem)', color: 'var(--landing-text)' }}
+        className="theme-display mt-3"
+        style={{ fontSize: 'clamp(1.6rem, 2.6vw, 2.2rem)', color: 'var(--theme-fg)' }}
       >
         {route.name}{' '}
-        <span className="landing-italic" style={{ color: 'var(--landing-text-muted)' }}>
+        <span className="theme-italic" style={{ color: 'var(--theme-fg-muted)' }}>
           — {route.durationText}
         </span>
       </h3>
@@ -824,11 +824,11 @@ export function DirectionsPanel({ route }: { route: RouteOption }) {
           <li key={i} className="flex items-start gap-4">
             <div className="relative flex flex-col items-center">
               <span
-                className="landing-mono-sm flex h-7 w-7 items-center justify-center rounded-full"
+                className="theme-mono-sm flex h-7 w-7 items-center justify-center rounded-full"
                 style={{
-                  background: 'var(--landing-accent-soft)',
-                  color: 'var(--landing-accent)',
-                  border: '1px solid var(--landing-accent-muted)',
+                  background: 'var(--theme-accent-soft)',
+                  color: 'var(--theme-accent)',
+                  border: '1px solid var(--theme-accent-muted)',
                 }}
               >
                 {String(i + 1).padStart(2, '0')}
@@ -836,13 +836,13 @@ export function DirectionsPanel({ route }: { route: RouteOption }) {
               {i < route.steps.length - 1 && (
                 <span
                   className="mt-1 h-full min-h-[1.25rem] w-px flex-1"
-                  style={{ background: 'var(--landing-border)' }}
+                  style={{ background: 'var(--theme-border)' }}
                 />
               )}
             </div>
             <p
               className="flex-1 pt-1 text-[0.95rem] leading-relaxed"
-              style={{ color: 'var(--landing-text)' }}
+              style={{ color: 'var(--theme-fg)' }}
             >
               {s}
             </p>
@@ -851,11 +851,11 @@ export function DirectionsPanel({ route }: { route: RouteOption }) {
       </ol>
 
       <div className="mt-8 flex flex-wrap gap-3">
-        <button className="landing-btn-primary">
+        <button className="theme-btn-primary">
           Start journey
           <ArrowRight size={14} />
         </button>
-        <button className="landing-btn-ghost">Save route</button>
+        <button className="theme-btn-ghost">Save route</button>
       </div>
     </div>
   );
@@ -866,71 +866,71 @@ export function ImpactPanel({ route }: { route: RouteOption }) {
     <div
       className="relative overflow-hidden rounded-[20px] p-6 md:p-8 lg:p-10"
       style={{
-        background: 'var(--landing-cta-bg)',
-        boxShadow: 'var(--landing-cta-shadow)',
-        border: '1px solid var(--landing-border)',
+        background: 'var(--theme-cta-bg)',
+        boxShadow: 'var(--theme-cta-shadow)',
+        border: '1px solid var(--theme-border)',
       }}
     >
-      <div className="landing-mesh" aria-hidden />
+      <div className="theme-mesh" aria-hidden />
       <div className="relative flex flex-col gap-7">
         <div className="flex items-center justify-between">
-          <div className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+          <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
             § Impact — Your Trip
           </div>
-          <Leaf size={14} style={{ color: 'var(--landing-accent)' }} />
+          <Leaf size={14} style={{ color: 'var(--theme-accent)' }} />
         </div>
 
         <div>
-          <div className="landing-mono-sm" style={{ color: 'var(--landing-text-muted)' }}>
+          <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-muted)' }}>
             CO₂ saved
           </div>
           <div className="mt-1 flex items-baseline gap-2">
             <span
-              className="landing-display"
+              className="theme-display"
               style={{
                 fontSize: 'clamp(2.6rem, 4.4vw, 3.8rem)',
-                color: 'var(--landing-accent)',
+                color: 'var(--theme-accent)',
                 letterSpacing: '-0.04em',
               }}
             >
               {MOCK_IMPACT.totalSaved}
             </span>
-            <span className="landing-italic" style={{ color: 'var(--landing-text-muted)' }}>
+            <span className="theme-italic" style={{ color: 'var(--theme-fg-muted)' }}>
               kg
             </span>
           </div>
           <div
             className="mt-3 h-[3px] w-full overflow-hidden rounded-full"
-            style={{ background: 'var(--landing-border)' }}
+            style={{ background: 'var(--theme-border)' }}
           >
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${MOCK_IMPACT.percentage}%` }}
               transition={{ duration: 1.2, ease: [0.2, 0.7, 0.2, 1] }}
               className="h-full rounded-full"
-              style={{ background: 'var(--landing-accent)', boxShadow: 'var(--landing-accent-glow)' }}
+              style={{ background: 'var(--theme-accent)', boxShadow: 'var(--theme-accent-glow)' }}
             />
           </div>
-          <div className="landing-mono-sm mt-2" style={{ color: 'var(--landing-text-dim)' }}>
+          <div className="theme-mono-sm mt-2" style={{ color: 'var(--theme-fg-dim)' }}>
             {MOCK_IMPACT.percentage}% below solo-drive baseline
           </div>
         </div>
 
         <div
           className="flex items-center gap-3 border-y py-4"
-          style={{ borderColor: 'var(--landing-border)' }}
+          style={{ borderColor: 'var(--theme-border)' }}
         >
-          <TreePine size={22} style={{ color: 'var(--landing-accent)' }} />
+          <TreePine size={22} style={{ color: 'var(--theme-accent)' }} />
           <div className="flex-1">
-            <div className="landing-mono-sm" style={{ color: 'var(--landing-text-muted)' }}>
+            <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-muted)' }}>
               Equivalent to
             </div>
             <div
-              className="landing-display"
-              style={{ fontSize: '1.4rem', color: 'var(--landing-text)' }}
+              className="theme-display"
+              style={{ fontSize: '1.4rem', color: 'var(--theme-fg)' }}
             >
               {MOCK_IMPACT.treesEquivalent}{' '}
-              <span className="landing-italic" style={{ color: 'var(--landing-text-muted)' }}>
+              <span className="theme-italic" style={{ color: 'var(--theme-fg-muted)' }}>
                 trees planted
               </span>
             </div>
@@ -939,23 +939,23 @@ export function ImpactPanel({ route }: { route: RouteOption }) {
 
         <div className="grid grid-cols-2 gap-5">
           <div>
-            <div className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+            <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
               Green points
             </div>
             <div
-              className="landing-display mt-1"
-              style={{ fontSize: '1.6rem', color: 'var(--landing-text)' }}
+              className="theme-display mt-1"
+              style={{ fontSize: '1.6rem', color: 'var(--theme-fg)' }}
             >
               +{route.points}
             </div>
           </div>
           <div>
-            <div className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+            <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
               You save
             </div>
             <div
-              className="landing-display mt-1"
-              style={{ fontSize: '1.6rem', color: 'var(--landing-text)' }}
+              className="theme-display mt-1"
+              style={{ fontSize: '1.6rem', color: 'var(--theme-fg)' }}
             >
               RM {MOCK_IMPACT.moneySaved.toFixed(2)}
             </div>
@@ -963,8 +963,8 @@ export function ImpactPanel({ route }: { route: RouteOption }) {
         </div>
 
         <p
-          className="landing-italic text-[0.92rem] leading-snug"
-          style={{ color: 'var(--landing-text-muted)' }}
+          className="theme-italic text-[0.92rem] leading-snug"
+          style={{ color: 'var(--theme-fg-muted)' }}
         >
           Five days a week on this corridor saves roughly 500 kg of CO₂ annually.
         </p>
@@ -1010,36 +1010,36 @@ export function TripSummaryStrip({ state, compact }: { state: PlannerState; comp
     <div
       className="flex flex-wrap items-center justify-between gap-4 rounded-[18px] px-5 py-4 md:px-6"
       style={{
-        background: 'var(--landing-surface)',
-        border: '1px solid var(--landing-border)',
+        background: 'var(--theme-surface)',
+        border: '1px solid var(--theme-border)',
         backdropFilter: 'blur(22px) saturate(170%)',
       }}
     >
       <div className="flex items-center gap-3">
-        <span className="landing-accent-dot" aria-hidden />
+        <span className="theme-accent-dot" aria-hidden />
         <span
-          className="landing-display"
-          style={{ fontSize: compact ? '1.05rem' : '1.15rem', color: 'var(--landing-text)' }}
+          className="theme-display"
+          style={{ fontSize: compact ? '1.05rem' : '1.15rem', color: 'var(--theme-fg)' }}
         >
           {state.origin || 'Origin'}
         </span>
-        <ArrowRight size={14} style={{ color: 'var(--landing-text-dim)' }} />
+        <ArrowRight size={14} style={{ color: 'var(--theme-fg-dim)' }} />
         <span
-          className="landing-display"
-          style={{ fontSize: compact ? '1.05rem' : '1.15rem', color: 'var(--landing-text)' }}
+          className="theme-display"
+          style={{ fontSize: compact ? '1.05rem' : '1.15rem', color: 'var(--theme-fg)' }}
         >
           {state.destination || 'Destination'}
         </span>
       </div>
       <div className="flex items-center gap-4">
-        <span className="landing-mono-sm" style={{ color: 'var(--landing-text-muted)' }}>
+        <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-muted)' }}>
           {state.passengers} pax · {state.preference.toUpperCase()}
         </span>
         <button
           type="button"
           onClick={state.reset}
-          className="landing-mono-sm landing-link-underline"
-          style={{ color: 'var(--landing-accent)' }}
+          className="theme-mono-sm theme-link-underline"
+          style={{ color: 'var(--theme-accent)' }}
         >
           <RefreshCw size={11} /> New search
         </button>
