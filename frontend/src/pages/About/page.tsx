@@ -51,7 +51,7 @@ export default function AboutPage() {
     <div className="landing-theme landing-root relative min-h-svh">
       <div className="landing-grain" aria-hidden />
 
-      <section className="relative overflow-hidden">
+      <section id="hero" className="relative overflow-hidden">
         <div className="landing-mesh" aria-hidden />
         <div className="relative mx-auto max-w-[1440px] px-4 pt-32 pb-20 sm:px-6 lg:px-10 lg:pt-40 lg:pb-28">
           <div className="flex flex-wrap items-center justify-between gap-4">
@@ -112,8 +112,9 @@ export default function AboutPage() {
       </section>
 
       <motion.section
+        id="manifesto"
         {...reveal}
-        className="relative overflow-hidden border-y"
+        className="relative overflow-hidden border-y scroll-mt-24"
         style={{
           borderColor: 'var(--landing-border)',
           background: 'var(--landing-bg-soft)',
@@ -168,7 +169,7 @@ export default function AboutPage() {
         </div>
       </motion.section>
 
-      <section className="mx-auto max-w-[1440px] px-4 py-24 sm:px-6 lg:px-10 lg:py-32">
+      <section id="brief" className="mx-auto max-w-[1440px] px-4 py-24 scroll-mt-24 sm:px-6 lg:px-10 lg:py-32">
         <motion.div
           {...reveal}
           className="mb-16 grid gap-8 lg:grid-cols-[0.32fr_0.68fr]"
@@ -231,7 +232,8 @@ export default function AboutPage() {
       </section>
 
       <section
-        className="relative overflow-hidden border-y"
+        id="team"
+        className="relative overflow-hidden border-y scroll-mt-24"
         style={{
           borderColor: 'var(--landing-border)',
           background: 'var(--landing-bg-soft)',
@@ -327,7 +329,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="px-4 py-24 sm:px-6 lg:px-10 lg:py-32">
+      <section id="closing" className="px-4 py-24 scroll-mt-24 sm:px-6 lg:px-10 lg:py-32">
         <motion.div
           {...reveal}
           className="relative mx-auto max-w-[1440px] overflow-hidden rounded-[20px] px-8 py-16 sm:px-14 sm:py-20 lg:px-20 lg:py-28"

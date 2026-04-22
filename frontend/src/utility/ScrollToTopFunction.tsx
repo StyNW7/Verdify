@@ -1,43 +1,70 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation } from "react-router";
 
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
-  const navigate = useNavigate();
   const firstLoad = useRef(true);
 
   useLayoutEffect(() => {
     if ("scrollRestoration" in window.history) {
       window.history.scrollRestoration = "manual";
     }
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-    if (window.location.hash) {
-      window.history.replaceState(null, "", window.location.pathname + window.location.search);
-      navigate(window.location.pathname, { replace: true });
-    }
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
-    if (firstLoad.current) {
-      firstLoad.current = false;
+    const isInitialRun = firstLoad.current;
+    firstLoad.current = false;
+
+    if (isInitialRun && !hash) {
       window.scrollTo({ top: 0, left: 0, behavior: "auto" });
       return;
     }
 
     const targetId = hash.replace("#", "");
-    const scroll = () => {
-      if (targetId) {
-        const element = document.getElementById(targetId);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth", block: "start" });
-          return;
-        }
-      }
-      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+
+    if (!targetId) {
+      const frame = window.requestAnimationFrame(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+      });
+      return () => window.cancelAnimationFrame(frame);
+    }
+
+    const scrollToElement = (element: HTMLElement) => {
+      const navOffset = 72;
+      const y = element.getBoundingClientRect().top + window.scrollY - navOffset;
+      window.scrollTo({
+        top: Math.max(0, y),
+        left: 0,
+        behavior: isInitialRun ? "auto" : "smooth",
+      });
     };
 
-    const frame = window.requestAnimationFrame(scroll);
-    return () => window.cancelAnimationFrame(frame);
+    // The new page may not be in the DOM yet (AnimatePresence mode="wait"
+    // holds the incoming route until the outgoing one finishes exiting).
+    // Poll on each frame until the element appears, or give up after ~2s.
+    let cancelled = false;
+    let rafId = 0;
+    const deadline = performance.now() + 2000;
+
+    const tryScroll = () => {
+      if (cancelled) return;
+      const element = document.getElementById(targetId);
+      if (element) {
+        scrollToElement(element);
+        return;
+      }
+      if (performance.now() < deadline) {
+        rafId = window.requestAnimationFrame(tryScroll);
+      } else {
+        window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+      }
+    };
+
+    rafId = window.requestAnimationFrame(tryScroll);
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(rafId);
+    };
   }, [pathname, hash]);
 
   return null;

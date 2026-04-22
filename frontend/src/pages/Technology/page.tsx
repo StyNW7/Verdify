@@ -12,6 +12,7 @@ import {
   ArrowUpRight,
   ArrowRight,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 type Chapter = {
   n: string;
@@ -22,7 +23,7 @@ type Chapter = {
   body: string;
   meta: Array<{ k: string; v: string }>;
   tag: string;
-  i: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  i: LucideIcon;
   img: string;
   brand: string;
   partnerCopy: string;
@@ -329,7 +330,7 @@ export default function TechnologyPage() {
             sectionRefs.current[idx] = el;
           }}
           data-idx={idx}
-          className="relative overflow-hidden border-b"
+          className="relative overflow-hidden border-b scroll-mt-24"
           style={{
             borderColor: 'var(--landing-border)',
             background: idx % 2 === 1 ? 'var(--landing-bg-soft)' : 'transparent',

@@ -12,14 +12,15 @@ function RootLayout() {
             <div className="min-h-svh bg-background text-foreground">
                 <SiteHeader />
                 <div className="flex min-h-svh flex-col">
-                    <div className="flex-1">
+                    <div className="flex-1 overflow-x-clip">
                         <AnimatePresence mode="wait" initial={false}>
                             <motion.div
                                 key={pathname}
-                                initial={{ opacity: 0, y: 18, filter: "blur(6px)" }}
-                                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                                exit={{ opacity: 0, y: -12, filter: "blur(6px)" }}
-                                transition={{ duration: 0.55, ease: [0.2, 0.7, 0.2, 1] }}
+                                initial={{ opacity: 0, x: 120 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -120 }}
+                                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                                style={{ willChange: "transform, opacity" }}
                             >
                                 <Outlet />
                             </motion.div>

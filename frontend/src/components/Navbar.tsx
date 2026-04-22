@@ -4,7 +4,7 @@ import type { MouseEvent as ReactMouseEvent } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpRight, Leaf, Menu, Search, X } from 'lucide-react';
-import { Link, useLocation } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 
 import AnimatedThemeToggler from '@/components/AnimatedThemeToggler';
 import { useAuthModal } from '@/components/auth-modal';
@@ -42,7 +42,7 @@ const navItems: NavItem[] = [
           { label: 'Premise', to: '/#premise' },
           { label: 'Sequence', to: '/#how' },
           { label: 'Capabilities', to: '/#caps' },
-          { label: 'Closing', to: '/#caps' },
+          { label: 'Closing', to: '/#closing' },
         ],
       },
       {
@@ -98,19 +98,19 @@ const navItems: NavItem[] = [
       {
         title: 'Explore Profile',
         links: [
-          { label: 'Manifesto', to: '/about', prominent: true },
-          { label: 'Project brief', to: '/about', prominent: true },
-          { label: 'The team', to: '/about', prominent: true },
-          { label: 'Closing promise', to: '/about', prominent: true },
+          { label: 'Manifesto', to: '/about#manifesto', prominent: true },
+          { label: 'Project brief', to: '/about#brief', prominent: true },
+          { label: 'The team', to: '/about#team', prominent: true },
+          { label: 'Closing promise', to: '/about#closing', prominent: true },
         ],
       },
       {
         title: 'On this page',
         links: [
-          { label: 'Track 4 · Green Horizon', to: '/about' },
-          { label: 'Audience', to: '/about' },
-          { label: 'Net Zero 2050', to: '/about' },
-          { label: 'Team', to: '/about' },
+          { label: 'Track 4 · Green Horizon', to: '/about#hero' },
+          { label: 'Audience', to: '/about#brief' },
+          { label: 'Net Zero 2050', to: '/about#manifesto' },
+          { label: 'Team', to: '/about#team' },
         ],
       },
       {
@@ -128,27 +128,37 @@ const navItems: NavItem[] = [
 
 const NAV_HEIGHT = 64;
 
-function scrollToHash(hash: string) {
-  const id = hash.replace(/^#/, '');
-  if (!id) return;
+function scrollToId(id: string, behavior: ScrollBehavior = 'smooth') {
+  if (!id) return false;
   const el = document.getElementById(id);
-  if (!el) return;
+  if (!el) return false;
   const y = el.getBoundingClientRect().top + window.scrollY - NAV_HEIGHT - 8;
-  window.scrollTo({ top: y, behavior: 'smooth' });
+  window.scrollTo({ top: Math.max(0, y), behavior });
+  return true;
 }
 
-function handleHashLink(
-  to: string,
-  onAfter?: () => void,
-): (e: ReactMouseEvent<HTMLAnchorElement>) => void {
-  return (e) => {
-    const [path, hash] = to.split('#');
-    if (hash && (path === '' || path === window.location.pathname)) {
-      e.preventDefault();
-      scrollToHash(`#${hash}`);
-      window.history.replaceState(null, '', `#${hash}`);
-      onAfter?.();
+function scrollToIdWhenReady(id: string, timeoutMs = 800) {
+  if (!id) return;
+
+  let rafId = 0;
+  const deadline = performance.now() + timeoutMs;
+
+  const tick = () => {
+    if (scrollToId(id)) return;
+    if (performance.now() < deadline) {
+      rafId = window.requestAnimationFrame(tick);
     }
+  };
+
+  rafId = window.requestAnimationFrame(tick);
+  return () => window.cancelAnimationFrame(rafId);
+}
+
+function parseTo(to: string): { path: string; hash: string } {
+  const [rawPath, rawHash] = to.split('#');
+  return {
+    path: rawPath || '/',
+    hash: rawHash || '',
   };
 }
 
@@ -160,6 +170,9 @@ function FlyoutLink({
   onClick?: () => void;
 }) {
   const { open: openAuth } = useAuthModal();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const authMode =
     item.to === '/auth/login'
       ? ('login' as const)
@@ -193,35 +206,51 @@ function FlyoutLink({
     );
   }
 
-  const combined = (e: ReactMouseEvent<HTMLAnchorElement>) => {
-    handleHashLink(item.to, onClick)(e);
-    if (!e.defaultPrevented) onClick?.();
+  const handleClick = (e: ReactMouseEvent<HTMLAnchorElement>) => {
+    if (
+      e.metaKey ||
+      e.ctrlKey ||
+      e.shiftKey ||
+      e.altKey ||
+      (typeof e.button === 'number' && e.button !== 0)
+    ) {
+      onClick?.();
+      return;
+    }
+
+    e.preventDefault();
+    onClick?.();
+
+    const { path, hash } = parseTo(item.to);
+
+    if (!hash) {
+      if (path !== location.pathname) navigate(path);
+      return;
+    }
+
+    if (path === location.pathname) {
+      navigate(`${path}${location.search}#${hash}`, { replace: false });
+      scrollToIdWhenReady(hash);
+      return;
+    }
+
+    navigate(`${path}#${hash}`);
   };
 
-  if (item.prominent) {
-    return (
-      <Link
-        to={item.to}
-        onClick={combined}
-        className="group inline-flex items-baseline gap-2 landing-display tracking-[-0.035em] text-[clamp(1.25rem,1.6vw,1.65rem)] text-[var(--landing-text)] transition-colors duration-300"
-      >
-        <span>{item.label}</span>
+  const className = item.prominent
+    ? 'group inline-flex items-baseline gap-2 landing-display tracking-[-0.035em] text-[clamp(1.25rem,1.6vw,1.65rem)] text-[var(--landing-text)] transition-colors duration-300'
+    : 'inline-flex text-[0.88rem] font-normal text-[var(--landing-text-muted)] transition-colors duration-300 hover:text-[var(--landing-text)]';
+
+  return (
+    <Link to={item.to} onClick={handleClick} className={className}>
+      <span>{item.label}</span>
+      {item.prominent ? (
         <ArrowUpRight
           className="h-3.5 w-3.5 -translate-y-px translate-x-0 opacity-0 transition-all duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:opacity-100"
           style={{ color: 'var(--landing-accent)' }}
           strokeWidth={1.8}
         />
-      </Link>
-    );
-  }
-
-  return (
-    <Link
-      to={item.to}
-      onClick={combined}
-      className="inline-flex text-[0.88rem] font-normal text-[var(--landing-text-muted)] transition-colors duration-300 hover:text-[var(--landing-text)]"
-    >
-      {item.label}
+      ) : null}
     </Link>
   );
 }
@@ -345,7 +374,7 @@ export default function Navbar() {
                         aria-expanded={isOpen}
                         onMouseEnter={() => setActiveMenu(item.id)}
                         onFocus={() => setActiveMenu(item.id)}
-                        onClick={handleHashLink(item.to, () => setActiveMenu(null))}
+                        onClick={() => setActiveMenu(null)}
                         className="relative inline-flex px-3 py-2 text-[0.88rem] transition-colors duration-300"
                         style={{
                           color:
@@ -460,7 +489,11 @@ export default function Navbar() {
                           }`}
                         >
                           {column.links.map((link) => (
-                            <FlyoutLink key={link.label} item={link} />
+                            <FlyoutLink
+                              key={link.label}
+                              item={link}
+                              onClick={() => setActiveMenu(null)}
+                            />
                           ))}
                         </div>
                       </section>

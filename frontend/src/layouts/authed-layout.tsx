@@ -121,7 +121,11 @@ export default function AuthedLayout() {
             }}
           >
             <div className="flex items-center gap-3 px-5 pb-5 pt-7">
-              <Link to="/" className="flex items-center gap-2.5">
+              <Link
+                to="/"
+                onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'auto' })}
+                className="flex items-center gap-2.5"
+              >
                 <span
                   className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[8px]"
                   style={{ background: 'var(--landing-accent)' }}
@@ -292,14 +296,15 @@ export default function AuthedLayout() {
               </div>
             </header>
 
-            <main className="relative flex-1">
+            <main className="relative flex-1 overflow-x-clip">
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={pathname}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.35, ease: [0.2, 0.7, 0.2, 1] }}
+                  initial={{ opacity: 0, x: 120 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -120 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  style={{ willChange: 'transform, opacity' }}
                 >
                   <Outlet />
                 </motion.div>
@@ -414,7 +419,11 @@ function SidebarItem({
   }
 
   return (
-    <NavLink to={entry.to} className={className}>
+    <NavLink
+      to={entry.to}
+      onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'auto' })}
+      className={className}
+    >
       {content}
     </NavLink>
   );

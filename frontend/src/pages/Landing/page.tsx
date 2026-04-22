@@ -384,7 +384,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <motion.section id="premise" {...reveal} className="mx-auto max-w-[1440px] px-4 py-24 sm:px-6 lg:px-10 lg:py-32">
+      <motion.section id="premise" {...reveal} className="mx-auto max-w-[1440px] px-4 py-24 scroll-mt-24 sm:px-6 lg:px-10 lg:py-32">
         <div className="grid gap-14 lg:grid-cols-[0.32fr_0.68fr]">
           <div className="space-y-4">
             <p className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>§ Premise — 01</p>
@@ -409,7 +409,7 @@ export default function LandingPage() {
 
       <section
         id="how"
-        className="relative overflow-hidden border-y"
+        className="relative overflow-hidden border-y scroll-mt-24"
         style={{ borderColor: 'var(--landing-border)', background: 'var(--landing-bg-soft)' }}
       >
         <div className="landing-mesh" aria-hidden style={{ opacity: 0.6 }} />
@@ -463,7 +463,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section id="caps" className="mx-auto max-w-[1440px] px-4 py-24 sm:px-6 lg:px-10 lg:py-32">
+      <section id="caps" className="mx-auto max-w-[1440px] px-4 py-24 scroll-mt-24 sm:px-6 lg:px-10 lg:py-32">
         <motion.div {...reveal} className="mb-16 grid gap-8 lg:grid-cols-[0.32fr_0.68fr]">
           <div className="space-y-4">
             <p className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>§ Capabilities — 03</p>
@@ -506,7 +506,7 @@ export default function LandingPage() {
 
       <FaqSection />
 
-      <section className="px-4 py-24 sm:px-6 lg:px-10 lg:py-32">
+      <section id="closing" className="px-4 py-24 scroll-mt-24 sm:px-6 lg:px-10 lg:py-32">
         <motion.div
           {...reveal}
           className="relative mx-auto max-w-[1440px] overflow-hidden rounded-[20px] px-8 py-16 sm:px-14 sm:py-20 lg:px-20 lg:py-28"
