@@ -52,12 +52,12 @@ const PRESET_AVATARS = ['🌿', '🦊', '🌊', '🌙', '🐝', '🪴'];
 export default function ProfilePage() {
   return (
     <div
-      className="relative mx-auto w-full px-6 pb-24 pt-10 lg:px-10"
+      className="relative mx-auto w-full px-5 pb-20 pt-8 sm:px-6 sm:pb-24 sm:pt-10 lg:px-10"
       style={{ maxWidth: 'var(--page-max-w, 1280px)' }}
     >
       <ProfileHeader />
 
-      <div className="mt-10 grid grid-cols-1 gap-5 lg:grid-cols-2 lg:items-stretch">
+      <div className="mt-8 grid grid-cols-1 gap-5 sm:mt-10 lg:grid-cols-2 lg:items-stretch">
         <div className="flex h-full flex-col gap-5 [&>section:last-child]:flex-1">
           <IdentityCard />
           <PasswordCard />
@@ -84,8 +84,8 @@ function ProfileHeader() {
           Account / Preferences
         </p>
         <h1
-          className="theme-display mt-2 text-[clamp(2.4rem,5.2vw,3.6rem)] leading-[0.95]"
-          style={{ color: 'var(--theme-fg)' }}
+          className="landing-display mt-2 text-[clamp(2rem,8vw,3.6rem)] leading-[0.95]"
+          style={{ color: 'var(--landing-text)' }}
         >
           Your{' '}
           <span className="theme-italic" style={{ color: 'var(--theme-accent)' }}>

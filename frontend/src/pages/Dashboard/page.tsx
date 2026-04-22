@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowUpRight,
@@ -98,20 +98,31 @@ const recentTrips: Trip[] = [
   },
 ];
 
+type MobileTab = 'overview' | 'trends' | 'trips' | 'impact';
+
+const mobileTabs: { id: MobileTab; num: string; label: string }[] = [
+  { id: 'overview', num: '01', label: 'Overview' },
+  { id: 'trends', num: '02', label: 'Trends' },
+  { id: 'trips', num: '03', label: 'Trips' },
+  { id: 'impact', num: '04', label: 'Impact' },
+];
+
 export default function DashboardPage() {
+  const [tab, setTab] = useState<MobileTab>('overview');
+
   return (
     <div
-      className="relative mx-auto w-full px-6 pb-20 pt-10 lg:px-10"
+      className="relative mx-auto w-full px-5 pb-20 pt-8 sm:px-6 sm:pt-10 lg:px-10"
       style={{ maxWidth: 'var(--page-max-w, 1280px)' }}
     >
-      <header className="mb-10 flex flex-wrap items-end justify-between gap-6">
+      <header className="mb-8 flex flex-col items-start gap-5 sm:mb-10 lg:flex-row lg:flex-wrap lg:items-end lg:justify-between lg:gap-6">
         <div>
           <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
             Wednesday · 19 April
           </p>
           <h1
-            className="theme-display mt-2 text-[clamp(2.4rem,5.2vw,3.6rem)] leading-[0.95]"
-            style={{ color: 'var(--theme-fg)' }}
+            className="landing-display mt-2 text-[clamp(2rem,8vw,3.6rem)] leading-[0.95]"
+            style={{ color: 'var(--landing-text)' }}
           >
             Welcome back,{' '}
             <span
@@ -122,39 +133,84 @@ export default function DashboardPage() {
             </span>
           </h1>
           <p
-            className="mt-3 max-w-xl text-[0.95rem] leading-relaxed"
-            style={{ color: 'var(--theme-fg-muted)' }}
+            className="mt-3 max-w-xl text-[0.92rem] leading-relaxed sm:text-[0.95rem]"
+            style={{ color: 'var(--landing-text-muted)' }}
           >
             You're quietly outpacing 92% of commuters on the Johor–Singapore
             corridor. A slow week, but your streak is holding.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Link to="/route" className="theme-btn-ghost">
+        <div className="flex w-full items-center gap-2 lg:w-auto">
+          <Link to="/route" className="landing-btn-ghost hidden sm:inline-flex">
             View route planner
           </Link>
-          <Link to="/route" className="theme-btn-primary">
+          <Link to="/route" className="landing-btn-primary flex-1 justify-center lg:flex-initial">
             Plan a trip
             <ArrowUpRight size={14} strokeWidth={1.8} />
           </Link>
         </div>
       </header>
 
-      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div
+        className="relative mb-6 -mx-5 overflow-x-auto border-y px-5 py-1 lg:hidden"
+        style={{ borderColor: 'var(--landing-border)' }}
+      >
+        <div className="flex items-center gap-1">
+          {mobileTabs.map((t) => {
+            const active = tab === t.id;
+            return (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => setTab(t.id)}
+                className="relative inline-flex shrink-0 items-baseline gap-2 px-3 py-3 transition-colors"
+                style={{
+                  color: active ? 'var(--landing-text)' : 'var(--landing-text-dim)',
+                }}
+              >
+                <span className="landing-mono-sm" style={{ opacity: 0.7 }}>
+                  §{t.num}
+                </span>
+                <span className="text-[0.88rem]" style={{ letterSpacing: '-0.01em' }}>
+                  {t.label}
+                </span>
+                {active ? (
+                  <motion.span
+                    layoutId="dash-tab-underline"
+                    className="absolute inset-x-2 -bottom-[1px] h-[2px]"
+                    style={{ background: 'var(--landing-accent)' }}
+                    transition={{ duration: 0.4, ease: [0.2, 0.7, 0.2, 1] }}
+                  />
+                ) : null}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <section
+        className={`${tab === 'overview' ? '' : 'hidden'} grid grid-cols-1 gap-4 sm:grid-cols-2 lg:!grid lg:grid-cols-4`}
+      >
         {stats.map((stat, i) => (
           <StatCard key={stat.label} stat={stat} index={i} />
         ))}
       </section>
 
-      <section className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-[1.35fr_1fr]">
+      <section
+        className={`${tab === 'trends' ? '' : 'hidden'} mt-0 grid grid-cols-1 gap-5 lg:!grid lg:mt-8 lg:grid-cols-[1.35fr_1fr]`}
+      >
         <WeeklyTrendCard />
         <AIRecommendationCard />
       </section>
 
-      <section className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-[1.1fr_0.9fr]">
-        <RecentTripsCard trips={recentTrips} />
-        <ImpactLedgerCard />
+      <section className="mt-0 grid grid-cols-1 gap-5 lg:mt-8 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className={`${tab === 'trips' ? '' : 'hidden'} lg:!block`}>
+          <RecentTripsCard trips={recentTrips} />
+        </div>
+        <div className={`${tab === 'impact' ? '' : 'hidden'} lg:!block`}>
+          <ImpactLedgerCard />
+        </div>
       </section>
     </div>
   );

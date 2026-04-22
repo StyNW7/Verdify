@@ -222,9 +222,9 @@ function FaqSection() {
     <motion.section
       id="faq"
       {...reveal}
-      className="mx-auto max-w-[1440px] px-4 py-24 sm:px-6 lg:px-10 lg:py-32"
+      className="mx-auto max-w-[1440px] px-5 py-16 sm:px-6 sm:py-20 lg:px-10 lg:py-32"
     >
-      <div className="mb-14 grid gap-8 lg:grid-cols-[0.32fr_0.68fr]">
+      <div className="mb-10 grid gap-6 sm:mb-14 sm:gap-8 lg:grid-cols-[0.32fr_0.68fr]">
         <div className="space-y-4">
           <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>§ Questions — 04</p>
           <div className="theme-rule" />
@@ -251,7 +251,7 @@ export default function LandingPage() {
       <section className="relative overflow-hidden">
         <div className="theme-mesh" aria-hidden />
 
-        <div className="relative mx-auto max-w-[1440px] px-4 pb-16 pt-12 sm:px-6 lg:px-10 lg:pb-24 lg:pt-16 mt-16">
+        <div className="relative mx-auto max-w-[1440px] px-5 pb-14 pt-10 sm:px-6 sm:pb-16 sm:pt-12 lg:px-10 lg:pb-24 lg:pt-16 mt-16">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <span className="theme-accent-dot" />
@@ -267,7 +267,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="mt-10 grid gap-14 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
+          <div className="mt-8 grid gap-10 sm:mt-10 sm:gap-14 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
             <div>
               <h1 className="theme-hero">
                 <span className="block">
@@ -384,8 +384,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <motion.section id="premise" {...reveal} className="mx-auto max-w-[1440px] px-4 py-24 scroll-mt-24 sm:px-6 lg:px-10 lg:py-32">
-        <div className="grid gap-14 lg:grid-cols-[0.32fr_0.68fr]">
+      <motion.section id="premise" {...reveal} className="mx-auto max-w-[1440px] px-5 py-16 scroll-mt-20 sm:px-6 sm:py-20 lg:px-10 lg:py-32">
+        <div className="grid gap-8 sm:gap-14 lg:grid-cols-[0.32fr_0.68fr]">
           <div className="space-y-4">
             <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>§ Premise — 01</p>
             <div className="theme-rule" />
@@ -412,9 +412,9 @@ export default function LandingPage() {
         className="relative overflow-hidden border-y scroll-mt-24"
         style={{ borderColor: 'var(--theme-border)', background: 'var(--theme-bg-soft)' }}
       >
-        <div className="theme-mesh" aria-hidden style={{ opacity: 0.6 }} />
-        <div className="relative mx-auto max-w-[1440px] px-4 py-24 sm:px-6 lg:px-10 lg:py-32">
-          <motion.div {...reveal} className="mb-16 grid gap-8 lg:grid-cols-[0.32fr_0.68fr]">
+        <div className="landing-mesh" aria-hidden style={{ opacity: 0.6 }} />
+        <div className="relative mx-auto max-w-[1440px] px-5 py-16 sm:px-6 sm:py-20 lg:px-10 lg:py-32">
+          <motion.div {...reveal} className="mb-10 grid gap-6 sm:mb-16 sm:gap-8 lg:grid-cols-[0.32fr_0.68fr]">
             <div className="space-y-4">
               <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>§ Sequence — 02</p>
               <div className="theme-rule" />
@@ -463,8 +463,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section id="caps" className="mx-auto max-w-[1440px] px-4 py-24 scroll-mt-24 sm:px-6 lg:px-10 lg:py-32">
-        <motion.div {...reveal} className="mb-16 grid gap-8 lg:grid-cols-[0.32fr_0.68fr]">
+      <section id="caps" className="mx-auto max-w-[1440px] px-5 py-16 scroll-mt-20 sm:px-6 sm:py-20 lg:px-10 lg:py-32">
+        <motion.div {...reveal} className="mb-10 grid gap-6 sm:mb-16 sm:gap-8 lg:grid-cols-[0.32fr_0.68fr]">
           <div className="space-y-4">
             <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>§ Capabilities — 03</p>
             <div className="theme-rule" />
@@ -506,10 +506,10 @@ export default function LandingPage() {
 
       <FaqSection />
 
-      <section id="closing" className="px-4 py-24 scroll-mt-24 sm:px-6 lg:px-10 lg:py-32">
+      <section id="closing" className="px-5 py-16 scroll-mt-20 sm:px-6 sm:py-20 lg:px-10 lg:py-32">
         <motion.div
           {...reveal}
-          className="relative mx-auto max-w-[1440px] overflow-hidden rounded-[20px] px-8 py-16 sm:px-14 sm:py-20 lg:px-20 lg:py-28"
+          className="relative mx-auto max-w-[1440px] overflow-hidden rounded-[20px] px-6 py-12 sm:px-14 sm:py-20 lg:px-20 lg:py-28"
           style={{
             background: 'var(--theme-cta-bg)',
             border: '1px solid var(--theme-border-strong)',

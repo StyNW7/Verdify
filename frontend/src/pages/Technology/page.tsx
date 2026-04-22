@@ -225,8 +225,8 @@ export default function TechnologyPage() {
       />
 
       <section className="relative overflow-hidden">
-        <div className="theme-mesh" aria-hidden />
-        <div className="relative mx-auto max-w-[1440px] px-4 pt-32 pb-20 sm:px-6 lg:px-10 lg:pt-40 lg:pb-28">
+        <div className="landing-mesh" aria-hidden />
+        <div className="relative mx-auto max-w-[1440px] px-5 pt-28 pb-14 sm:px-6 sm:pt-32 sm:pb-20 lg:px-10 lg:pt-40 lg:pb-28">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <span className="theme-accent-dot" />
@@ -245,8 +245,8 @@ export default function TechnologyPage() {
             </div>
           </div>
 
-          <div className="mt-14 grid gap-10 lg:grid-cols-[0.62fr_0.38fr] lg:items-end">
-            <h1 className="theme-hero">
+          <div className="mt-10 grid gap-8 sm:mt-14 sm:gap-10 lg:grid-cols-[0.62fr_0.38fr] lg:items-end">
+            <h1 className="landing-hero">
               <span className="block">Grounded.</span>
               <span className="block">
                 <span className="theme-italic" style={{ color: 'var(--theme-accent)' }}>Deployable.</span>
@@ -278,7 +278,7 @@ export default function TechnologyPage() {
       </section>
 
       <div
-        className="sticky top-[4.5rem] z-20 border-y backdrop-blur"
+        className="sticky top-[4.5rem] z-20 hidden border-y backdrop-blur md:block"
         style={{
           borderColor: 'var(--theme-border)',
           background: 'var(--theme-ticker-bg)',
@@ -286,8 +286,8 @@ export default function TechnologyPage() {
           WebkitBackdropFilter: 'blur(18px) saturate(160%)',
         }}
       >
-        <div className="relative mx-auto flex max-w-[1440px] items-center gap-6 overflow-x-auto px-4 py-3 sm:px-6 lg:px-10">
-          <span className="shrink-0 theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
+        <div className="relative mx-auto flex max-w-[1440px] items-center gap-4 overflow-x-auto px-5 py-3 sm:gap-6 sm:px-6 lg:px-10">
+          <span className="shrink-0 landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
             § Chapter {chapters[active].n}
           </span>
           <div
@@ -336,8 +336,8 @@ export default function TechnologyPage() {
             background: idx % 2 === 1 ? 'var(--theme-bg-soft)' : 'transparent',
           }}
         >
-          <div className="relative mx-auto max-w-[1440px] px-4 py-24 sm:px-6 lg:px-10 lg:py-40">
-            <div className="grid gap-14 lg:grid-cols-[0.28fr_0.72fr]">
+          <div className="relative mx-auto max-w-[1440px] px-5 py-16 sm:px-6 sm:py-20 lg:px-10 lg:py-40">
+            <div className="grid gap-10 sm:gap-14 lg:grid-cols-[0.28fr_0.72fr]">
               <div className="space-y-8">
                 <div className="flex items-center gap-3">
                   <span
@@ -357,8 +357,8 @@ export default function TechnologyPage() {
 
                 <div>
                   <p
-                    className="theme-display leading-[0.9] tracking-[-0.05em]"
-                    style={{ fontSize: 'clamp(6rem, 12vw, 14rem)', color: 'var(--theme-fg)' }}
+                    className="landing-display leading-[0.9] tracking-[-0.05em]"
+                    style={{ fontSize: 'clamp(4.5rem, 18vw, 14rem)', color: 'var(--landing-text)' }}
                   >
                     {c.n}
                   </p>
@@ -393,7 +393,7 @@ export default function TechnologyPage() {
                 </p>
 
                 <div
-                  className="grid gap-px overflow-hidden rounded-[14px] sm:grid-cols-3"
+                  className="grid grid-cols-1 gap-px overflow-hidden rounded-[14px] sm:grid-cols-3"
                   style={{
                     background: 'var(--theme-border)',
                     border: '1px solid var(--theme-border-strong)',
@@ -436,7 +436,7 @@ export default function TechnologyPage() {
       ))}
 
       <section className="relative">
-        <div className="mx-auto max-w-[1440px] px-4 pt-28 pb-14 sm:px-6 lg:px-10 lg:pt-44 lg:pb-20">
+        <div className="mx-auto max-w-[1440px] px-5 pt-20 pb-10 sm:px-6 sm:pt-28 sm:pb-14 lg:px-10 lg:pt-44 lg:pb-20">
           <div className="mb-10 flex items-center gap-3">
             <span className="theme-accent-dot" />
             <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
@@ -458,8 +458,8 @@ export default function TechnologyPage() {
           style={{ height: `${chapters.length * 100}vh` }}
         >
           <div className="sticky top-0 flex h-screen items-center">
-            <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 items-center gap-10 px-4 sm:px-6 lg:grid-cols-[0.22fr_0.46fr_0.32fr] lg:gap-14 lg:px-10">
-              <div className="order-2 lg:order-1">
+            <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 items-center gap-8 px-5 sm:gap-10 sm:px-6 lg:grid-cols-[0.22fr_0.46fr_0.32fr] lg:gap-14 lg:px-10">
+              <div className="order-2 hidden lg:order-1 lg:block">
                 <div className="mb-6 flex items-baseline gap-2">
                   <span
                     className="theme-display text-[1.35rem] tracking-[-0.02em]"
@@ -637,13 +637,13 @@ export default function TechnologyPage() {
         </div>
       </section>
 
-      <section className="px-4 py-24 sm:px-6 lg:px-10 lg:py-32">
+      <section className="px-5 py-16 sm:px-6 sm:py-20 lg:px-10 lg:py-32">
         <motion.div
           initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.9, ease: [0.2, 0.7, 0.2, 1] }}
-          className="relative mx-auto max-w-[1440px] overflow-hidden rounded-[20px] px-8 py-16 sm:px-14 sm:py-20 lg:px-20 lg:py-28"
+          className="relative mx-auto max-w-[1440px] overflow-hidden rounded-[20px] px-6 py-12 sm:px-14 sm:py-20 lg:px-20 lg:py-28"
           style={{
             background: 'var(--theme-cta-bg)',
             border: '1px solid var(--theme-border-strong)',

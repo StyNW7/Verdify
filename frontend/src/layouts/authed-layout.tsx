@@ -12,8 +12,11 @@ import {
   History,
   Leaf,
   LogOut,
+  Menu,
+  Settings,
   Trophy,
   UserRound,
+  X,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -58,6 +61,21 @@ export default function AuthedLayout() {
     return v === null ? true : v === '1';
   });
 
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+  useEffect(() => {
+    setMobileNavOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!mobileNavOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [mobileNavOpen]);
+
   const handoffDecided = useRef(false);
   const [handoff, setHandoff] = useState(false);
   if (!handoffDecided.current) {
@@ -97,7 +115,7 @@ export default function AuthedLayout() {
               '--sidebar-w': `${expanded ? SIDEBAR_OPEN : SIDEBAR_CLOSED}px`,
               '--sidebar-ease': 'cubic-bezier(0.2, 0.7, 0.2, 1)',
               '--sidebar-dur': '460ms',
-              '--page-max-w': `min(1280px, calc(100vw - ${SIDEBAR_OPEN}px - 5rem))`,
+              '--page-max-w': '1280px',
             } as React.CSSProperties
           }
         >
@@ -283,8 +301,20 @@ export default function AuthedLayout() {
               }}
             >
               <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setMobileNavOpen(true)}
+                  aria-label="Open menu"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full lg:hidden"
+                  style={{
+                    border: '1px solid var(--landing-border)',
+                    color: 'var(--landing-text)',
+                  }}
+                >
+                  <Menu size={16} strokeWidth={1.6} />
+                </button>
                 <span
-                  className="theme-accent-dot"
+                  className="landing-accent-dot hidden lg:block"
                   aria-hidden
                 />
                 <span
@@ -298,6 +328,168 @@ export default function AuthedLayout() {
                 <AnimatedThemeToggler className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-300 hover:bg-[var(--theme-surface-muted)]" />
               </div>
             </header>
+
+            <AnimatePresence>
+              {mobileNavOpen ? (
+                <>
+                  <motion.button
+                    key="authed-backdrop"
+                    aria-label="Close menu"
+                    type="button"
+                    onClick={() => setMobileNavOpen(false)}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="fixed inset-0 z-[55] cursor-default lg:hidden"
+                    style={{
+                      background: 'color-mix(in srgb, var(--landing-bg) 40%, transparent)',
+                      backdropFilter: 'blur(8px) saturate(140%)',
+                      WebkitBackdropFilter: 'blur(8px) saturate(140%)',
+                    }}
+                  />
+                  <motion.aside
+                    key="authed-drawer"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Navigation"
+                    initial={{ x: '-100%' }}
+                    animate={{ x: 0 }}
+                    exit={{ x: '-100%' }}
+                    transition={{ duration: 0.45, ease: [0.2, 0.7, 0.2, 1] }}
+                    className="fixed inset-y-0 left-0 z-[60] flex h-[100dvh] w-full max-w-[320px] flex-col border-r lg:hidden"
+                    style={{
+                      borderColor: 'var(--landing-border)',
+                      background: 'var(--landing-bg)',
+                      boxShadow: '0 40px 80px -30px rgba(10,14,12,0.35)',
+                    }}
+                  >
+                    <div
+                      className="flex items-center justify-between border-b px-5"
+                      style={{ height: 64, borderColor: 'var(--landing-border)' }}
+                    >
+                      <Link to="/" className="flex items-center gap-2.5">
+                        <span
+                          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[8px]"
+                          style={{ background: 'var(--landing-accent)' }}
+                        >
+                          <Leaf
+                            className="h-3.5 w-3.5"
+                            style={{ color: 'var(--landing-button-foreground)' }}
+                            strokeWidth={2.2}
+                          />
+                        </span>
+                        <span
+                          className="landing-display text-[1.05rem] tracking-[-0.03em]"
+                          style={{ color: 'var(--landing-text)' }}
+                        >
+                          Verdify
+                        </span>
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => setMobileNavOpen(false)}
+                        aria-label="Close menu"
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-full"
+                        style={{
+                          border: '1px solid var(--landing-border)',
+                          color: 'var(--landing-text-muted)',
+                        }}
+                      >
+                        <X size={16} strokeWidth={1.6} />
+                      </button>
+                    </div>
+
+                    <nav className="flex-1 overflow-y-auto px-3 py-6">
+                      <p
+                        className="landing-mono-sm px-3 pb-3"
+                        style={{ color: 'var(--landing-text-dim)', letterSpacing: '0.18em' }}
+                      >
+                        Track
+                      </p>
+                      <ul className="flex flex-col gap-1">
+                        {primaryNav.map((entry) => (
+                          <li key={entry.to}>
+                            <MobileNavItem
+                              entry={entry}
+                              active={pathname.startsWith(entry.to) && !entry.stub}
+                              onClick={() => setMobileNavOpen(false)}
+                            />
+                          </li>
+                        ))}
+                      </ul>
+
+                      <div
+                        className="my-5 h-px"
+                        style={{ background: 'var(--landing-border)' }}
+                      />
+
+                      <p
+                        className="landing-mono-sm px-3 pb-3"
+                        style={{ color: 'var(--landing-text-dim)', letterSpacing: '0.18em' }}
+                      >
+                        Account
+                      </p>
+                      <ul className="flex flex-col gap-1">
+                        {secondaryNav.map((entry) => (
+                          <li key={entry.to}>
+                            <MobileNavItem
+                              entry={entry}
+                              active={pathname.startsWith(entry.to) && !entry.stub}
+                              onClick={() => setMobileNavOpen(false)}
+                            />
+                          </li>
+                        ))}
+                      </ul>
+                    </nav>
+
+                    <div
+                      className="border-t px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-4"
+                      style={{ borderColor: 'var(--landing-border)' }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[0.72rem] font-medium"
+                          style={{
+                            background: 'var(--landing-accent-soft)',
+                            color: 'var(--landing-accent)',
+                            border: '1px solid var(--landing-accent-muted)',
+                            letterSpacing: '0.04em',
+                          }}
+                        >
+                          SR
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p
+                            className="truncate text-[0.82rem]"
+                            style={{ color: 'var(--landing-text)' }}
+                          >
+                            Sarah Rashid
+                          </p>
+                          <p
+                            className="landing-mono-sm truncate"
+                            style={{ color: 'var(--landing-text-dim)' }}
+                          >
+                            Commuter · JB
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          className="inline-flex h-9 w-9 items-center justify-center rounded-full"
+                          style={{
+                            border: '1px solid var(--landing-border)',
+                            color: 'var(--landing-text-muted)',
+                          }}
+                          aria-label="Sign out"
+                        >
+                          <LogOut className="h-[14px] w-[14px]" strokeWidth={1.6} />
+                        </button>
+                      </div>
+                    </div>
+                  </motion.aside>
+                </>
+              ) : null}
+            </AnimatePresence>
 
             <main className="relative flex-1 overflow-x-clip">
               <AnimatePresence mode="wait" initial={false}>
@@ -328,6 +520,80 @@ function pageLabel(pathname: string) {
   if (pathname.startsWith('/leaderboard')) return 'Leaderboard';
   if (pathname.startsWith('/profile')) return 'Profile';
   return 'Verdify';
+}
+
+function MobileNavItem({
+  entry,
+  active,
+  onClick,
+}: {
+  entry: NavEntry;
+  active: boolean;
+  onClick: () => void;
+}) {
+  const Icon = entry.icon;
+  const className =
+    'group relative flex items-center gap-3 rounded-[12px] px-3 py-2.5 transition-colors duration-300';
+
+  const content = (
+    <>
+      <span
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] transition-colors duration-300"
+        style={{
+          background: active ? 'var(--landing-accent)' : 'transparent',
+          color: active
+            ? 'var(--landing-button-foreground)'
+            : 'var(--landing-text-muted)',
+          border: active
+            ? '1px solid var(--landing-accent)'
+            : '1px solid transparent',
+        }}
+      >
+        <Icon className="h-[16px] w-[16px]" strokeWidth={1.7} />
+      </span>
+      <span
+        className="flex flex-1 items-center justify-between gap-2 whitespace-nowrap text-[0.95rem]"
+        style={{
+          color: active ? 'var(--landing-text)' : 'var(--landing-text-muted)',
+        }}
+      >
+        <span>{entry.label}</span>
+        {entry.stub ? (
+          <span
+            className="landing-mono-sm shrink-0"
+            style={{ color: 'var(--landing-text-dim)', fontSize: '0.56rem' }}
+          >
+            Soon
+          </span>
+        ) : null}
+      </span>
+    </>
+  );
+
+  if (entry.stub) {
+    return (
+      <button
+        type="button"
+        disabled
+        className={`${className} w-full cursor-not-allowed opacity-70`}
+      >
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <NavLink
+      to={entry.to}
+      onClick={() => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+        onClick();
+      }}
+      className={className}
+    >
+      {content}
+    </NavLink>
+  );
 }
 
 function SidebarLabel({

@@ -34,7 +34,7 @@ export default function RoutePlannerPage() {
 
   return (
     <main
-      className="relative mx-auto w-full px-6 pb-28 pt-28 lg:px-10 lg:pt-32"
+      className="relative mx-auto w-full px-5 pb-20 pt-24 sm:px-6 sm:pb-28 sm:pt-28 lg:px-10 lg:pt-32"
       style={{ overflowAnchor: 'none', maxWidth: 'var(--page-max-w, 1280px)' }}
     >
       <div className="flex flex-wrap items-center gap-3">
@@ -52,8 +52,8 @@ export default function RoutePlannerPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: [0.2, 0.7, 0.2, 1] }}
-        className="theme-display mt-8 max-w-[22ch]"
-        style={{ fontSize: 'clamp(2.8rem, 6vw, 5.6rem)', color: 'var(--theme-fg)' }}
+        className="landing-display mt-6 max-w-[22ch] sm:mt-8"
+        style={{ fontSize: 'clamp(2.4rem, 9vw, 5.6rem)', color: 'var(--landing-text)' }}
       >
         Plan a corridor crossing that keeps the map{' '}
         <span className="theme-italic" style={{ color: 'var(--theme-accent-warm)' }}>
@@ -61,7 +61,7 @@ export default function RoutePlannerPage() {
         </span>
       </motion.h1>
 
-      <div className="mt-14 grid gap-12 xl:grid-cols-[0.88fr_1.12fr] xl:items-start">
+      <div className="mt-10 grid gap-10 sm:mt-14 sm:gap-12 xl:grid-cols-[0.88fr_1.12fr] xl:items-start">
         <section
           ref={formSectionRef}
           className="xl:sticky xl:top-28 xl:self-start"
@@ -152,7 +152,7 @@ export default function RoutePlannerPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.7, delay: 0.05, ease: [0.2, 0.7, 0.2, 1] }}
-            className="mt-20 grid gap-7 xl:grid-cols-[1.35fr_0.95fr]"
+            className="mt-12 grid gap-7 sm:mt-20 xl:grid-cols-[1.35fr_0.95fr]"
           >
             <DirectionsPanel route={selectedRoute} />
             <ImpactPanel route={selectedRoute} />

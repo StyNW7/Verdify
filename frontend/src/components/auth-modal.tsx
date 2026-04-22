@@ -117,11 +117,11 @@ function AuthModal({
       />
 
       <motion.div
-        initial={{ opacity: 0, y: 28, scale: 0.98, filter: 'blur(10px)' }}
+        initial={{ opacity: 0, y: 120, scale: 0.98, filter: 'blur(10px)' }}
         animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
-        exit={{ opacity: 0, y: 16, scale: 0.98, filter: 'blur(6px)' }}
+        exit={{ opacity: 0, y: 120, scale: 0.98, filter: 'blur(6px)' }}
         transition={{ duration: 0.55, ease: EASE }}
-        className="relative z-[1] mx-4 flex w-full max-w-[1120px] overflow-hidden rounded-[20px]"
+        className="auth-modal-shell relative z-[1] flex h-[100dvh] w-full max-w-[1120px] flex-col overflow-hidden md:h-auto md:mx-4 md:flex-row md:rounded-[20px]"
         style={{
           border: '1px solid var(--theme-border-strong)',
           background: 'var(--theme-bg)',
@@ -129,6 +129,11 @@ function AuthModal({
             '0 60px 120px -48px rgba(10,14,12,0.42), 0 0 0 1px var(--theme-border)',
         }}
       >
+        <span
+          aria-hidden
+          className="mx-auto my-2.5 block h-1 w-10 rounded-full md:hidden"
+          style={{ background: 'var(--landing-border-strong)' }}
+        />
         <div
           aria-hidden
           className="theme-grain pointer-events-none absolute inset-0"
@@ -138,8 +143,8 @@ function AuthModal({
         <BrandPane mode={mode} />
 
         <div
-          className="relative z-[2] flex w-full flex-col md:w-[56%]"
-          style={{ background: 'var(--theme-bg)' }}
+          className="relative z-[2] flex w-full flex-1 flex-col overflow-y-auto md:w-[56%] md:flex-initial md:overflow-visible"
+          style={{ background: 'var(--landing-bg)' }}
         >
           <div className="flex items-center justify-between px-7 pt-6 md:px-10 md:pt-8">
             <ModeTabs mode={mode} setMode={setMode} />

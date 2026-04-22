@@ -3,7 +3,7 @@
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowUpRight, Leaf, Menu, Search, X } from 'lucide-react';
+import { ArrowUpRight, ChevronDown, Leaf, Menu, Search, X } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router';
 
 import AnimatedThemeToggler from '@/components/AnimatedThemeToggler';
@@ -259,8 +259,18 @@ export default function Navbar() {
   const { pathname, hash } = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mobileExpanded, setMobileExpanded] = useState<string | null>('product');
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const closeTimer = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [isMobileMenuOpen]);
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 12);
@@ -508,72 +518,260 @@ export default function Navbar() {
 
       <AnimatePresence>
         {isMobileMenuOpen ? (
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.24, ease: [0.2, 0.7, 0.2, 1] }}
-            className="fixed inset-x-0 z-40 border-b px-5 py-6 lg:hidden"
-            style={{
-              top: NAV_HEIGHT,
-              borderColor: 'var(--theme-border)',
-              background: 'color-mix(in srgb, var(--theme-bg) 96%, transparent)',
-              backdropFilter: 'blur(24px) saturate(180%)',
-              WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-            }}
-          >
-            <div className="mx-auto flex max-w-[1024px] flex-col">
-              {navItems.map((item) => (
-                <Link
-                  key={item.id}
-                  to={item.to}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between border-b py-4 theme-display tracking-[-0.03em] text-[1.35rem]"
-                  style={{
-                    borderColor: 'var(--theme-border)',
-                    color: 'var(--theme-fg)',
-                  }}
-                >
-                  <span>{item.label}</span>
-                  <ArrowUpRight
-                    className="h-4 w-4"
-                    style={{ color: 'var(--theme-fg-dim)' }}
-                    strokeWidth={1.6}
-                  />
-                </Link>
-              ))}
+          <>
+            <motion.button
+              key="mobile-backdrop"
+              aria-label="Close menu"
+              type="button"
+              onClick={() => setIsMobileMenuOpen(false)}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: [0.2, 0.7, 0.2, 1] }}
+              className="fixed inset-0 z-[55] cursor-default lg:hidden"
+              style={{
+                background: 'color-mix(in srgb, var(--landing-bg) 40%, transparent)',
+                backdropFilter: 'blur(8px) saturate(140%)',
+                WebkitBackdropFilter: 'blur(8px) saturate(140%)',
+              }}
+            />
+            <motion.aside
+              key="mobile-drawer"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Navigation"
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ duration: 0.45, ease: [0.2, 0.7, 0.2, 1] }}
+              className="fixed inset-y-0 right-0 z-[60] flex h-[100dvh] w-full max-w-[440px] flex-col border-l lg:hidden"
+              style={{
+                borderColor: 'var(--landing-border)',
+                background: 'var(--landing-bg)',
+                boxShadow: '0 40px 80px -30px rgba(10,14,12,0.35)',
+              }}
+            >
+              <div
+                aria-hidden
+                className="landing-grain pointer-events-none absolute inset-0"
+                style={{ opacity: 0.4 }}
+              />
 
-              <div className="mt-6 flex flex-col gap-3">
+              <div
+                className="relative flex items-center justify-between border-b px-5"
+                style={{ height: NAV_HEIGHT, borderColor: 'var(--landing-border)' }}
+              >
+                <div className="flex items-center gap-2">
+                  <span
+                    className="flex h-6 w-6 items-center justify-center rounded-[6px]"
+                    style={{ background: 'var(--landing-accent)' }}
+                  >
+                    <Leaf
+                      className="h-3 w-3"
+                      style={{ color: 'var(--landing-button-foreground)' }}
+                      strokeWidth={2.4}
+                    />
+                  </span>
+                  <span
+                    className="landing-mono-sm"
+                    style={{ color: 'var(--landing-text-dim)' }}
+                  >
+                    § Navigation
+                  </span>
+                </div>
                 <button
                   type="button"
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    openAuth('register');
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  aria-label="Close menu"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full"
+                  style={{
+                    border: '1px solid var(--landing-border)',
+                    color: 'var(--landing-text-muted)',
                   }}
-                  className="theme-btn-primary w-full justify-center"
                 >
-                  Get started
-                  <ArrowUpRight size={14} strokeWidth={1.8} />
+                  <X size={16} strokeWidth={1.6} />
                 </button>
-                <div className="flex items-center justify-between">
-                  <AnimatedThemeToggler
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full"
+              </div>
+
+              <div className="relative flex-1 overflow-y-auto px-5 py-6">
+                <ul className="flex flex-col">
+                  {navItems.map((item, idx) => {
+                    const isExpanded = mobileExpanded === item.id;
+                    const prominent = item.columns[0].links.filter((l) => l.prominent);
+                    return (
+                      <motion.li
+                        key={item.id}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                          duration: 0.4,
+                          delay: 0.08 + idx * 0.06,
+                          ease: [0.2, 0.7, 0.2, 1],
+                        }}
+                        className="border-b"
+                        style={{ borderColor: 'var(--landing-border)' }}
+                      >
+                        <div className="flex items-stretch">
+                          <Link
+                            to={item.to.split('#')[0] || '/'}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="group flex min-w-0 flex-1 items-baseline gap-3 py-5 pr-3"
+                          >
+                            <span
+                              className="landing-mono-sm"
+                              style={{ color: 'var(--landing-text-dim)' }}
+                            >
+                              §{String(idx + 1).padStart(2, '0')}
+                            </span>
+                            <span
+                              className="landing-display tracking-[-0.035em] text-[1.9rem] leading-none"
+                              style={{ color: 'var(--landing-text)' }}
+                            >
+                              {item.label}
+                            </span>
+                            <ArrowUpRight
+                              className="ml-1 h-4 w-4 -translate-y-[2px] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-1"
+                              style={{ color: 'var(--landing-accent)' }}
+                              strokeWidth={1.8}
+                            />
+                          </Link>
+                          <span
+                            aria-hidden
+                            className="my-3 w-px"
+                            style={{ background: 'var(--landing-border)' }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setMobileExpanded((cur) => (cur === item.id ? null : item.id))
+                            }
+                            aria-expanded={isExpanded}
+                            aria-label={
+                              isExpanded
+                                ? `Collapse ${item.label} sections`
+                                : `Expand ${item.label} sections`
+                            }
+                            className="flex shrink-0 items-center gap-2 py-5 pl-4"
+                            style={{ color: 'var(--landing-text-dim)' }}
+                          >
+                            <span className="landing-mono-sm hidden xs:inline">
+                              {isExpanded ? 'less' : 'more'}
+                            </span>
+                            <motion.span
+                              animate={{ rotate: isExpanded ? 180 : 0 }}
+                              transition={{ duration: 0.35, ease: [0.2, 0.7, 0.2, 1] }}
+                              className="inline-flex h-9 w-9 items-center justify-center rounded-full"
+                              style={{
+                                border: '1px solid var(--landing-border)',
+                                background: isExpanded
+                                  ? 'var(--landing-accent-soft)'
+                                  : 'var(--landing-surface-alt)',
+                                color: isExpanded
+                                  ? 'var(--landing-accent)'
+                                  : 'var(--landing-text-muted)',
+                              }}
+                            >
+                              <ChevronDown size={15} strokeWidth={1.8} />
+                            </motion.span>
+                          </button>
+                        </div>
+
+                        <AnimatePresence initial={false}>
+                          {isExpanded ? (
+                            <motion.div
+                              key={`${item.id}-panel`}
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.32, ease: [0.2, 0.7, 0.2, 1] }}
+                              className="overflow-hidden"
+                            >
+                              <div className="flex flex-col gap-3 pb-5 pl-8">
+                                {prominent.map((link) => (
+                                  <FlyoutLink
+                                    key={link.label}
+                                    item={link}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                  />
+                                ))}
+                              </div>
+                            </motion.div>
+                          ) : null}
+                        </AnimatePresence>
+                      </motion.li>
+                    );
+                  })}
+                </ul>
+
+                <div className="mt-8 flex items-center gap-3">
+                  <span
+                    aria-hidden
+                    className="h-px flex-1"
+                    style={{ background: 'var(--landing-border)' }}
                   />
+                  <span
+                    className="landing-mono-sm"
+                    style={{ color: 'var(--landing-text-dim)' }}
+                  >
+                    § Session
+                  </span>
+                  <span
+                    aria-hidden
+                    className="h-px flex-1"
+                    style={{ background: 'var(--landing-border)' }}
+                  />
+                </div>
+              </div>
+
+              <div
+                className="relative border-t px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-5"
+                style={{ borderColor: 'var(--landing-border)' }}
+              >
+                <div className="flex flex-col gap-3">
                   <button
                     type="button"
                     onClick={() => {
                       setIsMobileMenuOpen(false);
-                      openAuth('login');
+                      openAuth('register');
                     }}
-                    className="theme-link-underline text-[0.82rem]"
-                    style={{ color: 'var(--theme-fg-muted)' }}
+                    className="landing-btn-primary w-full justify-center"
                   >
-                    Sign in →
+                    Get started
+                    <ArrowUpRight size={14} strokeWidth={1.8} />
                   </button>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <AnimatedThemeToggler
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-full"
+                      />
+                      <button
+                        type="button"
+                        aria-label="Search"
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-full"
+                        style={{
+                          border: '1px solid var(--landing-border)',
+                          color: 'var(--landing-text-muted)',
+                        }}
+                      >
+                        <Search size={15} strokeWidth={1.6} />
+                      </button>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        openAuth('login');
+                      }}
+                      className="landing-link-underline text-[0.82rem]"
+                      style={{ color: 'var(--landing-text-muted)' }}
+                    >
+                      Sign in →
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.aside>
+          </>
         ) : null}
       </AnimatePresence>
 

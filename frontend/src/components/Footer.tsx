@@ -7,7 +7,7 @@ const Footer = forwardRef<HTMLElement>(function Footer(_, ref) {
   return (
     <footer
       ref={ref}
-      className="theme-root relative border-t px-4 pt-24 pb-10 sm:px-6 lg:px-10"
+      className="landing-theme relative border-t px-5 pt-16 pb-10 sm:px-6 sm:pt-24 lg:px-10"
       style={{
         borderColor: 'var(--theme-border)',
         background: 'var(--theme-bg)',
@@ -15,7 +15,7 @@ const Footer = forwardRef<HTMLElement>(function Footer(_, ref) {
       }}
     >
       <div className="mx-auto max-w-[1440px]">
-        <div className="grid gap-12 lg:grid-cols-[1.3fr_0.7fr]">
+        <div className="grid gap-10 sm:gap-12 lg:grid-cols-[1.3fr_0.7fr]">
           <div>
             <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
               § Project brief
@@ -59,8 +59,8 @@ const Footer = forwardRef<HTMLElement>(function Footer(_, ref) {
           </div>
         </div>
         <div
-          className="mt-20 flex items-end justify-between border-t pt-7"
-          style={{ borderColor: 'var(--theme-border)' }}
+          className="mt-14 flex flex-wrap items-end justify-between gap-4 border-t pt-7 sm:mt-20"
+          style={{ borderColor: 'var(--landing-border)' }}
         >
           <p className="theme-display text-[clamp(3rem,10vw,9rem)] leading-[0.88] tracking-[-0.055em]">
             Verdify<span style={{ color: 'var(--theme-accent)' }}>.</span>

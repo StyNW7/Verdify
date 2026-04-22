@@ -52,8 +52,8 @@ export default function AboutPage() {
       <div className="theme-grain" aria-hidden />
 
       <section id="hero" className="relative overflow-hidden">
-        <div className="theme-mesh" aria-hidden />
-        <div className="relative mx-auto max-w-[1440px] px-4 pt-32 pb-20 sm:px-6 lg:px-10 lg:pt-40 lg:pb-28">
+        <div className="landing-mesh" aria-hidden />
+        <div className="relative mx-auto max-w-[1440px] px-5 pt-28 pb-14 sm:px-6 sm:pt-32 sm:pb-20 lg:px-10 lg:pt-40 lg:pb-28">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <span className="theme-accent-dot" />
@@ -82,7 +82,7 @@ export default function AboutPage() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.1, ease: [0.2, 0.7, 0.2, 1] }}
-            className="theme-hero mt-14"
+            className="landing-hero mt-10 sm:mt-14"
           >
             <span className="block">We are building for a</span>
             <span className="block">
@@ -101,8 +101,8 @@ export default function AboutPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.5 }}
-            className="mt-10 max-w-2xl text-[1.08rem] leading-[1.8]"
-            style={{ color: 'var(--theme-fg-muted)' }}
+            className="mt-8 max-w-2xl text-[1rem] leading-[1.75] sm:mt-10 sm:text-[1.08rem] sm:leading-[1.8]"
+            style={{ color: 'var(--landing-text-muted)' }}
           >
             Verdify is a small, deliberate team building a personal green navigator for the
             Johor–Singapore corridor. This page is the profile behind the product — the
@@ -120,8 +120,8 @@ export default function AboutPage() {
           background: 'var(--theme-bg-soft)',
         }}
       >
-        <div className="relative mx-auto max-w-[1440px] px-4 py-24 sm:px-6 lg:px-10 lg:py-32">
-          <div className="grid gap-14 lg:grid-cols-[0.32fr_0.68fr]">
+        <div className="relative mx-auto max-w-[1440px] px-5 py-16 sm:px-6 sm:py-20 lg:px-10 lg:py-32">
+          <div className="grid gap-8 sm:gap-14 lg:grid-cols-[0.32fr_0.68fr]">
             <div className="space-y-4">
               <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
                 § Manifesto — 01
@@ -169,10 +169,10 @@ export default function AboutPage() {
         </div>
       </motion.section>
 
-      <section id="brief" className="mx-auto max-w-[1440px] px-4 py-24 scroll-mt-24 sm:px-6 lg:px-10 lg:py-32">
+      <section id="brief" className="mx-auto max-w-[1440px] px-5 py-16 scroll-mt-20 sm:px-6 sm:py-20 lg:px-10 lg:py-32">
         <motion.div
           {...reveal}
-          className="mb-16 grid gap-8 lg:grid-cols-[0.32fr_0.68fr]"
+          className="mb-10 grid gap-6 sm:mb-16 sm:gap-8 lg:grid-cols-[0.32fr_0.68fr]"
         >
           <div className="space-y-4">
             <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
@@ -239,10 +239,10 @@ export default function AboutPage() {
           background: 'var(--theme-bg-soft)',
         }}
       >
-        <div className="relative mx-auto max-w-[1440px] px-4 py-24 sm:px-6 lg:px-10 lg:py-32">
+        <div className="relative mx-auto max-w-[1440px] px-5 py-16 sm:px-6 sm:py-20 lg:px-10 lg:py-32">
           <motion.div
             {...reveal}
-            className="mb-16 grid gap-8 lg:grid-cols-[0.32fr_0.68fr]"
+            className="mb-10 grid gap-6 sm:mb-16 sm:gap-8 lg:grid-cols-[0.32fr_0.68fr]"
           >
             <div className="space-y-4">
               <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
@@ -259,7 +259,7 @@ export default function AboutPage() {
             </h2>
           </motion.div>
 
-          <div className="grid gap-px overflow-hidden rounded-[14px] sm:grid-cols-2 lg:grid-cols-4"
+          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[14px] lg:grid-cols-4"
             style={{
               background: 'var(--theme-border)',
               border: '1px solid var(--theme-border-strong)',
@@ -329,10 +329,10 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section id="closing" className="px-4 py-24 scroll-mt-24 sm:px-6 lg:px-10 lg:py-32">
+      <section id="closing" className="px-5 py-16 scroll-mt-20 sm:px-6 sm:py-20 lg:px-10 lg:py-32">
         <motion.div
           {...reveal}
-          className="relative mx-auto max-w-[1440px] overflow-hidden rounded-[20px] px-8 py-16 sm:px-14 sm:py-20 lg:px-20 lg:py-28"
+          className="relative mx-auto max-w-[1440px] overflow-hidden rounded-[20px] px-6 py-12 sm:px-14 sm:py-20 lg:px-20 lg:py-28"
           style={{
             background: 'var(--theme-cta-bg)',
             border: '1px solid var(--theme-border-strong)',
