@@ -21,8 +21,8 @@ vendor/
 *.swo
 *~
 .DS_Store
-.env
-.env.local
+# .env
+# .env.local
 
 firebase-credentials.json
 service-account-key.json
@@ -51,7 +51,7 @@ node_modules/
 package-lock.json
 
 # Planner
-docs/*
+# docs/*
 !docs/developer-cloud-setup.md
 !docs/priorities.md
 *.exe
