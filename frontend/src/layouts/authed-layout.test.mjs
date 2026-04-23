@@ -21,3 +21,14 @@ test('desktop auth sidebar is viewport-fixed and leaves content space in normal 
     /className="hidden shrink-0 lg:block"/,
   );
 });
+
+test('all protected app routes are recognized by the auth shell', () => {
+  for (const route of ['/dashboard', '/route', '/history', '/leaderboard', '/profile']) {
+    assert.match(source, new RegExp(`p\\.startsWith\\('${route}'\\)`));
+  }
+});
+
+test('auth shell labels history and leaderboard routes', () => {
+  assert.match(source, /pathname\.startsWith\('\/history'\)\) return 'History'/);
+  assert.match(source, /pathname\.startsWith\('\/leaderboard'\)\) return 'Leaderboard'/);
+});

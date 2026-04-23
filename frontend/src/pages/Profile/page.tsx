@@ -52,12 +52,12 @@ const PRESET_AVATARS = ['🌿', '🦊', '🌊', '🌙', '🐝', '🪴'];
 export default function ProfilePage() {
   return (
     <div
-      className="relative mx-auto w-full px-6 pb-24 pt-10 lg:px-10"
+      className="relative mx-auto w-full px-5 pb-20 pt-8 sm:px-6 sm:pb-24 sm:pt-10 lg:px-10"
       style={{ maxWidth: 'var(--page-max-w, 1280px)' }}
     >
       <ProfileHeader />
 
-      <div className="mt-10 grid grid-cols-1 gap-5 lg:grid-cols-2 lg:items-stretch">
+      <div className="mt-8 grid grid-cols-1 gap-5 sm:mt-10 lg:grid-cols-2 lg:items-stretch">
         <div className="flex h-full flex-col gap-5 [&>section:last-child]:flex-1">
           <IdentityCard />
           <PasswordCard />
@@ -80,22 +80,22 @@ function ProfileHeader() {
       className="flex flex-wrap items-end justify-between gap-6"
     >
       <div>
-        <p className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+        <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
           Account / Preferences
         </p>
         <h1
-          className="landing-display mt-2 text-[clamp(2.4rem,5.2vw,3.6rem)] leading-[0.95]"
-          style={{ color: 'var(--landing-text)' }}
+          className="theme-display mt-2 text-[clamp(2rem,8vw,3.6rem)] leading-[0.95]"
+          style={{ color: 'var(--theme-fg)' }}
         >
           Your{' '}
-          <span className="landing-italic" style={{ color: 'var(--landing-accent)' }}>
+          <span className="theme-italic" style={{ color: 'var(--theme-accent)' }}>
             account,
           </span>{' '}
           tuned.
         </h1>
         <p
           className="mt-3 max-w-xl text-[0.95rem] leading-relaxed"
-          style={{ color: 'var(--landing-text-muted)' }}
+          style={{ color: 'var(--theme-fg-muted)' }}
         >
           A quiet place to adjust how Verdify reads the road for you — your
           defaults, your voice, your keys.
@@ -104,10 +104,10 @@ function ProfileHeader() {
 
       <div className="flex items-center gap-2">
         <span
-          className="landing-mono-sm rounded-full border px-3 py-1.5"
+          className="theme-mono-sm rounded-full border px-3 py-1.5"
           style={{
-            borderColor: 'var(--landing-border)',
-            color: 'var(--landing-text-dim)',
+            borderColor: 'var(--theme-border)',
+            color: 'var(--theme-fg-dim)',
           }}
         >
           Last synced · moments ago
@@ -153,19 +153,19 @@ function IdentityCard() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.55, delay: 0.08, ease: [0.2, 0.7, 0.2, 1] }}
-      className="landing-card relative overflow-hidden p-6 md:p-8"
+      className="theme-card relative overflow-hidden p-6 md:p-8"
     >
       <CornerTicks />
 
       <div className="flex items-center justify-between">
-        <p className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+        <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
           Identity · #01
         </p>
         <span
-          className="landing-mono-sm rounded-full border px-2 py-1"
+          className="theme-mono-sm rounded-full border px-2 py-1"
           style={{
-            borderColor: 'var(--landing-border)',
-            color: 'var(--landing-text-dim)',
+            borderColor: 'var(--theme-border)',
+            color: 'var(--theme-fg-dim)',
             fontSize: '0.56rem',
           }}
         >
@@ -174,11 +174,11 @@ function IdentityCard() {
       </div>
 
       <h3
-        className="landing-display mt-2 text-[1.6rem] leading-tight"
-        style={{ color: 'var(--landing-text)' }}
+        className="theme-display mt-2 text-[1.6rem] leading-tight"
+        style={{ color: 'var(--theme-fg)' }}
       >
         Your{' '}
-        <span className="landing-italic" style={{ color: 'var(--landing-accent)' }}>
+        <span className="theme-italic" style={{ color: 'var(--theme-accent)' }}>
           face
         </span>{' '}
         on the road.
@@ -189,8 +189,8 @@ function IdentityCard() {
           <div
             className="relative flex h-28 w-28 items-center justify-center overflow-hidden rounded-full"
             style={{
-              background: 'var(--landing-accent-soft)',
-              border: '1px solid var(--landing-accent-muted)',
+              background: 'var(--theme-accent-soft)',
+              border: '1px solid var(--theme-accent-muted)',
               boxShadow: '0 20px 40px -20px rgba(10,14,12,0.35)',
             }}
           >
@@ -204,8 +204,8 @@ function IdentityCard() {
               <span className="text-[2.8rem] leading-none">{avatarPreset}</span>
             ) : (
               <span
-                className="landing-display text-[1.8rem]"
-                style={{ color: 'var(--landing-accent)' }}
+                className="theme-display text-[1.8rem]"
+                style={{ color: 'var(--theme-accent)' }}
               >
                 {initials || 'VD'}
               </span>
@@ -217,8 +217,8 @@ function IdentityCard() {
             onClick={() => fileRef.current?.click()}
             className="absolute -bottom-1 -right-1 flex h-9 w-9 items-center justify-center rounded-full transition-transform duration-300 hover:scale-105"
             style={{
-              background: 'var(--landing-accent)',
-              color: 'var(--landing-button-foreground)',
+              background: 'var(--theme-accent)',
+              color: 'var(--theme-accent-fg)',
               boxShadow: '0 8px 24px -8px rgba(31,122,61,0.55)',
             }}
             aria-label="Upload new avatar"
@@ -237,8 +237,8 @@ function IdentityCard() {
 
         <div className="flex-1">
           <p
-            className="landing-mono-sm"
-            style={{ color: 'var(--landing-text-dim)' }}
+            className="theme-mono-sm"
+            style={{ color: 'var(--theme-fg-dim)' }}
           >
             Or choose a preset
           </p>
@@ -256,11 +256,11 @@ function IdentityCard() {
                   className="flex h-10 w-10 items-center justify-center rounded-full text-[1.2rem] transition-all duration-300"
                   style={{
                     background: active
-                      ? 'var(--landing-accent-soft)'
-                      : 'var(--landing-surface-alt)',
+                      ? 'var(--theme-accent-soft)'
+                      : 'var(--theme-surface-muted)',
                     border: active
-                      ? '1px solid var(--landing-accent)'
-                      : '1px solid var(--landing-border)',
+                      ? '1px solid var(--theme-accent)'
+                      : '1px solid var(--theme-border)',
                     transform: active ? 'scale(1.05)' : undefined,
                   }}
                   aria-label={`Preset ${emoji}`}
@@ -275,7 +275,7 @@ function IdentityCard() {
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="landing-link-underline mt-4 text-[0.82rem]"
+            className="theme-link-underline mt-4 text-[0.82rem]"
           >
             <Upload className="h-[13px] w-[13px]" strokeWidth={1.8} />
             Upload from device
@@ -285,7 +285,7 @@ function IdentityCard() {
 
       <div
         className="mt-8 grid grid-cols-1 gap-5 border-t pt-6 sm:grid-cols-2"
-        style={{ borderColor: 'var(--landing-border)' }}
+        style={{ borderColor: 'var(--theme-border)' }}
       >
         <Field
           label="Display name"
@@ -305,12 +305,12 @@ function IdentityCard() {
       <div className="mt-6 flex items-center justify-between">
         <p
           className="text-[0.78rem]"
-          style={{ color: 'var(--landing-text-muted)' }}
+          style={{ color: 'var(--theme-fg-muted)' }}
         >
           Initials fall back to{' '}
           <span
-            className="landing-italic"
-            style={{ color: 'var(--landing-accent)' }}
+            className="theme-italic"
+            style={{ color: 'var(--theme-accent)' }}
           >
             {initials || 'VD'}
           </span>{' '}
@@ -319,7 +319,7 @@ function IdentityCard() {
         <button
           type="button"
           onClick={onSave}
-          className="landing-btn-primary"
+          className="theme-btn-primary"
         >
           <Save size={14} strokeWidth={1.8} />
           Save changes
@@ -338,26 +338,26 @@ function TripDefaultsCard() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.55, delay: 0.16, ease: [0.2, 0.7, 0.2, 1] }}
-      className="landing-card p-6 md:p-7"
+      className="theme-card p-6 md:p-7"
     >
       <div className="flex items-center justify-between">
-        <p className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+        <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
           Trip defaults · #02
         </p>
         <span
-          className="landing-mono-sm"
-          style={{ color: 'var(--landing-text-dim)' }}
+          className="theme-mono-sm"
+          style={{ color: 'var(--theme-fg-dim)' }}
         >
           Applied to every new plan
         </span>
       </div>
 
       <h3
-        className="landing-display mt-2 text-[1.5rem] leading-tight"
-        style={{ color: 'var(--landing-text)' }}
+        className="theme-display mt-2 text-[1.5rem] leading-tight"
+        style={{ color: 'var(--theme-fg)' }}
       >
         How you{' '}
-        <span className="landing-italic" style={{ color: 'var(--landing-accent)' }}>
+        <span className="theme-italic" style={{ color: 'var(--theme-accent)' }}>
           prefer
         </span>{' '}
         to move.
@@ -365,8 +365,8 @@ function TripDefaultsCard() {
 
       <div className="mt-5">
         <p
-          className="landing-mono-sm mb-3"
-          style={{ color: 'var(--landing-text-dim)' }}
+          className="theme-mono-sm mb-3"
+          style={{ color: 'var(--theme-fg-dim)' }}
         >
           Preferred mode
         </p>
@@ -381,11 +381,11 @@ function TripDefaultsCard() {
                 className="group relative flex flex-col items-start gap-2 rounded-[14px] p-3 text-left transition-all duration-300"
                 style={{
                   background: active
-                    ? 'var(--landing-accent-soft)'
-                    : 'var(--landing-surface-alt)',
+                    ? 'var(--theme-accent-soft)'
+                    : 'var(--theme-surface-muted)',
                   border: active
-                    ? '1px solid var(--landing-accent-muted)'
-                    : '1px solid var(--landing-border)',
+                    ? '1px solid var(--theme-accent-muted)'
+                    : '1px solid var(--theme-border)',
                 }}
                 aria-pressed={active}
               >
@@ -393,14 +393,14 @@ function TripDefaultsCard() {
                   className="flex h-8 w-8 items-center justify-center rounded-[9px]"
                   style={{
                     background: active
-                      ? 'var(--landing-accent)'
-                      : 'var(--landing-surface)',
+                      ? 'var(--theme-accent)'
+                      : 'var(--theme-surface)',
                     color: active
-                      ? 'var(--landing-button-foreground)'
-                      : 'var(--landing-text-muted)',
+                      ? 'var(--theme-accent-fg)'
+                      : 'var(--theme-fg-muted)',
                     border: active
                       ? 'none'
-                      : '1px solid var(--landing-border)',
+                      : '1px solid var(--theme-border)',
                   }}
                 >
                   <Icon className="h-[14px] w-[14px]" strokeWidth={1.8} />
@@ -410,15 +410,15 @@ function TripDefaultsCard() {
                     className="text-[0.88rem]"
                     style={{
                       color: active
-                        ? 'var(--landing-text)'
-                        : 'var(--landing-text-muted)',
+                        ? 'var(--theme-fg)'
+                        : 'var(--theme-fg-muted)',
                     }}
                   >
                     {label}
                   </p>
                   <p
-                    className="landing-mono-sm mt-0.5"
-                    style={{ color: 'var(--landing-text-dim)' }}
+                    className="theme-mono-sm mt-0.5"
+                    style={{ color: 'var(--theme-fg-dim)' }}
                   >
                     {hint}
                   </p>
@@ -427,8 +427,8 @@ function TripDefaultsCard() {
                   <span
                     className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full"
                     style={{
-                      background: 'var(--landing-accent)',
-                      color: 'var(--landing-button-foreground)',
+                      background: 'var(--theme-accent)',
+                      color: 'var(--theme-accent-fg)',
                     }}
                     aria-hidden
                   >
@@ -443,11 +443,11 @@ function TripDefaultsCard() {
 
       <div
         className="mt-6 border-t pt-6"
-        style={{ borderColor: 'var(--landing-border)' }}
+        style={{ borderColor: 'var(--theme-border)' }}
       >
         <p
-          className="landing-mono-sm mb-3"
-          style={{ color: 'var(--landing-text-dim)' }}
+          className="theme-mono-sm mb-3"
+          style={{ color: 'var(--theme-fg-dim)' }}
         >
           Routing priority
         </p>
@@ -462,11 +462,11 @@ function TripDefaultsCard() {
                 className="flex items-center gap-3 rounded-[12px] p-3 text-left transition-colors duration-300"
                 style={{
                   background: active
-                    ? 'var(--landing-accent-soft)'
+                    ? 'var(--theme-accent-soft)'
                     : 'transparent',
                   border: active
-                    ? '1px solid var(--landing-accent-muted)'
-                    : '1px solid var(--landing-border)',
+                    ? '1px solid var(--theme-accent-muted)'
+                    : '1px solid var(--theme-border)',
                 }}
                 aria-pressed={active}
               >
@@ -474,11 +474,11 @@ function TripDefaultsCard() {
                   className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px]"
                   style={{
                     background: active
-                      ? 'var(--landing-accent)'
-                      : 'var(--landing-surface-alt)',
+                      ? 'var(--theme-accent)'
+                      : 'var(--theme-surface-muted)',
                     color: active
-                      ? 'var(--landing-button-foreground)'
-                      : 'var(--landing-text-muted)',
+                      ? 'var(--theme-accent-fg)'
+                      : 'var(--theme-fg-muted)',
                   }}
                 >
                   <Icon className="h-[14px] w-[14px]" strokeWidth={1.8} />
@@ -488,15 +488,15 @@ function TripDefaultsCard() {
                     className="text-[0.9rem]"
                     style={{
                       color: active
-                        ? 'var(--landing-text)'
-                        : 'var(--landing-text-muted)',
+                        ? 'var(--theme-fg)'
+                        : 'var(--theme-fg-muted)',
                     }}
                   >
                     {label}
                   </p>
                   <p
                     className="text-[0.78rem]"
-                    style={{ color: 'var(--landing-text-dim)' }}
+                    style={{ color: 'var(--theme-fg-dim)' }}
                   >
                     {hint}
                   </p>
@@ -504,15 +504,15 @@ function TripDefaultsCard() {
                 <span
                   className="flex h-4 w-4 items-center justify-center rounded-full"
                   style={{
-                    border: '1px solid var(--landing-border-strong)',
-                    background: active ? 'var(--landing-accent)' : 'transparent',
+                    border: '1px solid var(--theme-border-strong)',
+                    background: active ? 'var(--theme-accent)' : 'transparent',
                   }}
                   aria-hidden
                 >
                   {active && (
                     <span
                       className="block h-1.5 w-1.5 rounded-full"
-                      style={{ background: 'var(--landing-button-foreground)' }}
+                      style={{ background: 'var(--theme-accent-fg)' }}
                     />
                   )}
                 </span>
@@ -525,19 +525,19 @@ function TripDefaultsCard() {
       <div className="mt-6 flex items-center justify-between">
         <p
           className="text-[0.78rem]"
-          style={{ color: 'var(--landing-text-muted)' }}
+          style={{ color: 'var(--theme-fg-muted)' }}
         >
           Currently routing as{' '}
           <span
-            className="landing-italic"
-            style={{ color: 'var(--landing-accent)' }}
+            className="theme-italic"
+            style={{ color: 'var(--theme-accent)' }}
           >
             {mode.toLowerCase()}
           </span>{' '}
           ·{' '}
           <span
-            className="landing-italic"
-            style={{ color: 'var(--landing-accent)' }}
+            className="theme-italic"
+            style={{ color: 'var(--theme-accent)' }}
           >
             {priority.toLowerCase()}
           </span>
@@ -545,7 +545,7 @@ function TripDefaultsCard() {
         <button
           type="button"
           onClick={() => toast.success('Preferences updated.')}
-          className="landing-btn-ghost"
+          className="theme-btn-ghost"
         >
           Apply
           <ArrowUpRight size={12} strokeWidth={1.8} />
@@ -585,15 +585,15 @@ function PasswordCard() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.55, delay: 0.24, ease: [0.2, 0.7, 0.2, 1] }}
-      className="landing-card flex flex-col p-6 md:p-7"
+      className="theme-card flex flex-col p-6 md:p-7"
     >
       <div className="flex items-center justify-between">
-        <p className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+        <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
           Security · #03
         </p>
         <span
-          className="flex items-center gap-1.5 landing-mono-sm"
-          style={{ color: 'var(--landing-text-dim)' }}
+          className="flex items-center gap-1.5 theme-mono-sm"
+          style={{ color: 'var(--theme-fg-dim)' }}
         >
           <KeyRound className="h-[11px] w-[11px]" strokeWidth={1.8} />
           Encrypted locally
@@ -601,11 +601,11 @@ function PasswordCard() {
       </div>
 
       <h3
-        className="landing-display mt-2 text-[1.5rem] leading-tight"
-        style={{ color: 'var(--landing-text)' }}
+        className="theme-display mt-2 text-[1.5rem] leading-tight"
+        style={{ color: 'var(--theme-fg)' }}
       >
         A{' '}
-        <span className="landing-italic" style={{ color: 'var(--landing-accent)' }}>
+        <span className="theme-italic" style={{ color: 'var(--theme-accent)' }}>
           new
         </span>{' '}
         password.
@@ -629,8 +629,8 @@ function PasswordCard() {
             <button
               type="button"
               onClick={() => setShow((s) => !s)}
-              className="inline-flex h-7 w-7 items-center justify-center rounded-full transition-colors duration-300 hover:bg-[var(--landing-surface-alt)]"
-              style={{ color: 'var(--landing-text-muted)' }}
+              className="inline-flex h-7 w-7 items-center justify-center rounded-full transition-colors duration-300 hover:bg-[var(--theme-surface-muted)]"
+              style={{ color: 'var(--theme-fg-muted)' }}
               aria-label={show ? 'Hide passwords' : 'Show passwords'}
             >
               {show ? (
@@ -664,14 +664,14 @@ function PasswordCard() {
                   background:
                     i < strength.score
                       ? strength.color
-                      : 'var(--landing-border)',
+                      : 'var(--theme-border)',
                 }}
               />
             ))}
           </div>
           <p
-            className="landing-mono-sm mt-2"
-            style={{ color: 'var(--landing-text-dim)' }}
+            className="theme-mono-sm mt-2"
+            style={{ color: 'var(--theme-fg-dim)' }}
           >
             Strength · {strength.label}
           </p>
@@ -680,7 +680,7 @@ function PasswordCard() {
 
       <div
         className="mt-auto grid grid-cols-3 gap-3 border-t pt-5"
-        style={{ borderColor: 'var(--landing-border)' }}
+        style={{ borderColor: 'var(--theme-border)' }}
       >
         <SecurityFact label="Last changed" value="2 mo ago" />
         <SecurityFact label="Active sessions" value="2 devices" />
@@ -690,7 +690,7 @@ function PasswordCard() {
       <div className="mt-5 flex items-center justify-between">
         <p
           className="text-[0.78rem]"
-          style={{ color: 'var(--landing-text-muted)' }}
+          style={{ color: 'var(--theme-fg-muted)' }}
         >
           Use 8+ characters with letters, numbers, and a symbol.
         </p>
@@ -698,7 +698,7 @@ function PasswordCard() {
           type="button"
           onClick={onSubmit}
           disabled={!canSubmit}
-          className="landing-btn-primary disabled:cursor-not-allowed disabled:opacity-50"
+          className="theme-btn-primary disabled:cursor-not-allowed disabled:opacity-50"
         >
           <KeyRound size={14} strokeWidth={1.8} />
           Change password
@@ -721,20 +721,20 @@ function SecurityFact({
     <div
       className="rounded-[12px] p-3"
       style={{
-        background: 'var(--landing-surface-alt)',
-        border: '1px solid var(--landing-border)',
+        background: 'var(--theme-surface-muted)',
+        border: '1px solid var(--theme-border)',
       }}
     >
       <p
-        className="landing-mono-sm"
-        style={{ color: 'var(--landing-text-dim)' }}
+        className="theme-mono-sm"
+        style={{ color: 'var(--theme-fg-dim)' }}
       >
         {label}
       </p>
       <p
-        className="landing-display mt-1 text-[1rem]"
+        className="theme-display mt-1 text-[1rem]"
         style={{
-          color: accent ? 'var(--landing-accent-warm)' : 'var(--landing-text)',
+          color: accent ? 'var(--theme-accent-warm)' : 'var(--theme-fg)',
         }}
       >
         {value}
@@ -751,15 +751,15 @@ function LanguageCard() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.55, delay: 0.32, ease: [0.2, 0.7, 0.2, 1] }}
-      className="landing-card p-6 md:p-7"
+      className="theme-card p-6 md:p-7"
     >
       <div className="flex items-center justify-between">
-        <p className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+        <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
           Language · #04
         </p>
         <span
-          className="flex items-center gap-1.5 landing-mono-sm"
-          style={{ color: 'var(--landing-text-dim)' }}
+          className="flex items-center gap-1.5 theme-mono-sm"
+          style={{ color: 'var(--theme-fg-dim)' }}
         >
           <Globe className="h-[11px] w-[11px]" strokeWidth={1.8} />
           4 locales
@@ -767,11 +767,11 @@ function LanguageCard() {
       </div>
 
       <h3
-        className="landing-display mt-2 text-[1.5rem] leading-tight"
-        style={{ color: 'var(--landing-text)' }}
+        className="theme-display mt-2 text-[1.5rem] leading-tight"
+        style={{ color: 'var(--theme-fg)' }}
       >
         In what{' '}
-        <span className="landing-italic" style={{ color: 'var(--landing-accent)' }}>
+        <span className="theme-italic" style={{ color: 'var(--theme-accent)' }}>
           voice
         </span>
         ?
@@ -791,11 +791,11 @@ function LanguageCard() {
               className="flex items-center justify-between gap-4 rounded-[12px] p-4 text-left transition-colors duration-300"
               style={{
                 background: active
-                  ? 'var(--landing-accent-soft)'
-                  : 'var(--landing-surface-alt)',
+                  ? 'var(--theme-accent-soft)'
+                  : 'var(--theme-surface-muted)',
                 border: active
-                  ? '1px solid var(--landing-accent-muted)'
-                  : '1px solid var(--landing-border)',
+                  ? '1px solid var(--theme-accent-muted)'
+                  : '1px solid var(--theme-border)',
               }}
               aria-pressed={active}
             >
@@ -804,15 +804,15 @@ function LanguageCard() {
                   className="text-[0.92rem]"
                   style={{
                     color: active
-                      ? 'var(--landing-text)'
-                      : 'var(--landing-text-muted)',
+                      ? 'var(--theme-fg)'
+                      : 'var(--theme-fg-muted)',
                   }}
                 >
                   {l.native}
                 </p>
                 <p
-                  className="landing-mono-sm mt-0.5"
-                  style={{ color: 'var(--landing-text-dim)' }}
+                  className="theme-mono-sm mt-0.5"
+                  style={{ color: 'var(--theme-fg-dim)' }}
                 >
                   {l.label} · {l.note}
                 </p>
@@ -821,8 +821,8 @@ function LanguageCard() {
                 <span
                   className="flex h-6 w-6 items-center justify-center rounded-full"
                   style={{
-                    background: 'var(--landing-accent)',
-                    color: 'var(--landing-button-foreground)',
+                    background: 'var(--theme-accent)',
+                    color: 'var(--theme-accent-fg)',
                   }}
                   aria-hidden
                 >
@@ -830,9 +830,9 @@ function LanguageCard() {
                 </span>
               ) : (
                 <span
-                  className="landing-mono-sm uppercase"
+                  className="theme-mono-sm uppercase"
                   style={{
-                    color: 'var(--landing-text-dim)',
+                    color: 'var(--theme-fg-dim)',
                     letterSpacing: '0.16em',
                   }}
                 >
@@ -846,7 +846,7 @@ function LanguageCard() {
 
       <p
         className="mt-5 text-[0.78rem]"
-        style={{ color: 'var(--landing-text-muted)' }}
+        style={{ color: 'var(--theme-fg-muted)' }}
       >
         Changes take effect across the dashboard, route planner, and
         notifications.
@@ -873,16 +873,16 @@ function Field({
   return (
     <label className="block">
       <span
-        className="landing-mono-sm block"
-        style={{ color: 'var(--landing-text-dim)' }}
+        className="theme-mono-sm block"
+        style={{ color: 'var(--theme-fg-dim)' }}
       >
         {label}
       </span>
       <div
-        className="mt-2 flex items-center gap-2 rounded-[12px] px-3 py-2 transition-colors duration-300 focus-within:border-[var(--landing-accent-muted)]"
+        className="mt-2 flex items-center gap-2 rounded-[12px] px-3 py-2 transition-colors duration-300 focus-within:border-[var(--theme-accent-muted)]"
         style={{
-          background: 'var(--landing-surface-alt)',
-          border: '1px solid var(--landing-border)',
+          background: 'var(--theme-surface-muted)',
+          border: '1px solid var(--theme-border)',
         }}
       >
         <input
@@ -891,7 +891,7 @@ function Field({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           className="w-full bg-transparent text-[0.95rem] outline-none placeholder:opacity-50"
-          style={{ color: 'var(--landing-text)' }}
+          style={{ color: 'var(--theme-fg)' }}
         />
         {right}
       </div>
@@ -904,7 +904,7 @@ function CornerTicks() {
     position: 'absolute',
     width: 14,
     height: 14,
-    borderColor: 'var(--landing-accent-muted)',
+    borderColor: 'var(--theme-accent-muted)',
     pointerEvents: 'none',
   };
   return (
@@ -958,7 +958,7 @@ function scorePassword(pw: string): {
   label: string;
   color: string;
 } {
-  if (!pw) return { score: 0, label: '—', color: 'var(--landing-border)' };
+  if (!pw) return { score: 0, label: '—', color: 'var(--theme-border)' };
   let score = 0;
   if (pw.length >= 8) score += 1;
   if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score += 1;
@@ -966,10 +966,10 @@ function scorePassword(pw: string): {
   if (/[^A-Za-z0-9]/.test(pw)) score += 1;
   const labels = ['Weak', 'Okay', 'Good', 'Strong'];
   const colors = [
-    'var(--landing-accent-warm)',
-    'var(--landing-accent-warm)',
-    'var(--landing-accent-muted)',
-    'var(--landing-accent)',
+    'var(--theme-accent-warm)',
+    'var(--theme-accent-warm)',
+    'var(--theme-accent-muted)',
+    'var(--theme-accent)',
   ];
   const idx = Math.max(0, score - 1);
   return { score, label: labels[idx] ?? 'Weak', color: colors[idx] ?? colors[0] };

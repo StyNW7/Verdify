@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowUpRight,
@@ -98,63 +98,119 @@ const recentTrips: Trip[] = [
   },
 ];
 
+type MobileTab = 'overview' | 'trends' | 'trips' | 'impact';
+
+const mobileTabs: { id: MobileTab; num: string; label: string }[] = [
+  { id: 'overview', num: '01', label: 'Overview' },
+  { id: 'trends', num: '02', label: 'Trends' },
+  { id: 'trips', num: '03', label: 'Trips' },
+  { id: 'impact', num: '04', label: 'Impact' },
+];
+
 export default function DashboardPage() {
+  const [tab, setTab] = useState<MobileTab>('overview');
+
   return (
     <div
-      className="relative mx-auto w-full px-6 pb-20 pt-10 lg:px-10"
+      className="relative mx-auto w-full px-5 pb-20 pt-8 sm:px-6 sm:pt-10 lg:px-10"
       style={{ maxWidth: 'var(--page-max-w, 1280px)' }}
     >
-      <header className="mb-10 flex flex-wrap items-end justify-between gap-6">
+      <header className="mb-8 flex flex-col items-start gap-5 sm:mb-10 lg:flex-row lg:flex-wrap lg:items-end lg:justify-between lg:gap-6">
         <div>
-          <p className="landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+          <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
             Wednesday · 19 April
           </p>
           <h1
-            className="landing-display mt-2 text-[clamp(2.4rem,5.2vw,3.6rem)] leading-[0.95]"
-            style={{ color: 'var(--landing-text)' }}
+            className="theme-display mt-2 text-[clamp(2rem,8vw,3.6rem)] leading-[0.95]"
+            style={{ color: 'var(--theme-fg)' }}
           >
             Welcome back,{' '}
             <span
-              className="landing-italic"
-              style={{ color: 'var(--landing-accent)' }}
+              className="theme-italic"
+              style={{ color: 'var(--theme-accent)' }}
             >
               {USER_FIRST_NAME}.
             </span>
           </h1>
           <p
-            className="mt-3 max-w-xl text-[0.95rem] leading-relaxed"
-            style={{ color: 'var(--landing-text-muted)' }}
+            className="mt-3 max-w-xl text-[0.92rem] leading-relaxed sm:text-[0.95rem]"
+            style={{ color: 'var(--theme-fg-muted)' }}
           >
             You're quietly outpacing 92% of commuters on the Johor–Singapore
             corridor. A slow week, but your streak is holding.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Link to="/route" className="landing-btn-ghost">
+        <div className="flex w-full items-center gap-2 lg:w-auto">
+          <Link to="/route" className="theme-btn-ghost hidden sm:inline-flex">
             View route planner
           </Link>
-          <Link to="/route" className="landing-btn-primary">
+          <Link to="/route" className="theme-btn-primary flex-1 justify-center lg:flex-initial">
             Plan a trip
             <ArrowUpRight size={14} strokeWidth={1.8} />
           </Link>
         </div>
       </header>
 
-      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div
+        className="relative mb-6 -mx-5 overflow-x-auto border-y px-5 py-1 lg:hidden"
+        style={{ borderColor: 'var(--theme-border)' }}
+      >
+        <div className="flex items-center gap-1">
+          {mobileTabs.map((t) => {
+            const active = tab === t.id;
+            return (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => setTab(t.id)}
+                className="relative inline-flex shrink-0 items-baseline gap-2 px-3 py-3 transition-colors"
+                style={{
+                  color: active ? 'var(--theme-fg)' : 'var(--theme-fg-dim)',
+                }}
+              >
+                <span className="theme-mono-sm" style={{ opacity: 0.7 }}>
+                  §{t.num}
+                </span>
+                <span className="text-[0.88rem]" style={{ letterSpacing: '-0.01em' }}>
+                  {t.label}
+                </span>
+                {active ? (
+                  <motion.span
+                    layoutId="dash-tab-underline"
+                    className="absolute inset-x-2 -bottom-[1px] h-[2px]"
+                    style={{ background: 'var(--theme-accent)' }}
+                    transition={{ duration: 0.4, ease: [0.2, 0.7, 0.2, 1] }}
+                  />
+                ) : null}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <section
+        className={`${tab === 'overview' ? '' : 'hidden'} grid grid-cols-1 gap-4 sm:grid-cols-2 lg:!grid lg:grid-cols-4`}
+      >
         {stats.map((stat, i) => (
           <StatCard key={stat.label} stat={stat} index={i} />
         ))}
       </section>
 
-      <section className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-[1.35fr_1fr]">
+      <section
+        className={`${tab === 'trends' ? '' : 'hidden'} mt-0 grid grid-cols-1 gap-5 lg:!grid lg:mt-8 lg:grid-cols-[1.35fr_1fr]`}
+      >
         <WeeklyTrendCard />
         <AIRecommendationCard />
       </section>
 
-      <section className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-[1.1fr_0.9fr]">
-        <RecentTripsCard trips={recentTrips} />
-        <ImpactLedgerCard />
+      <section className="mt-0 grid grid-cols-1 gap-5 lg:mt-8 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className={`${tab === 'trips' ? '' : 'hidden'} lg:!block`}>
+          <RecentTripsCard trips={recentTrips} />
+        </div>
+        <div className={`${tab === 'impact' ? '' : 'hidden'} lg:!block`}>
+          <ImpactLedgerCard />
+        </div>
       </section>
     </div>
   );
@@ -167,21 +223,21 @@ function StatCard({ stat, index }: { stat: Stat; index: number }) {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.05 + index * 0.06, ease: [0.2, 0.7, 0.2, 1] }}
-      className="landing-card p-5"
+      className="theme-card p-5"
     >
       <div className="flex items-center justify-between">
         <span
-          className="landing-mono-sm"
-          style={{ color: 'var(--landing-text-dim)' }}
+          className="theme-mono-sm"
+          style={{ color: 'var(--theme-fg-dim)' }}
         >
           {stat.label}
         </span>
         <span
           className="flex h-8 w-8 items-center justify-center rounded-[10px]"
           style={{
-            background: 'var(--landing-accent-soft)',
-            color: 'var(--landing-accent)',
-            border: '1px solid var(--landing-accent-muted)',
+            background: 'var(--theme-accent-soft)',
+            color: 'var(--theme-accent)',
+            border: '1px solid var(--theme-accent-muted)',
           }}
         >
           <Icon className="h-[14px] w-[14px]" strokeWidth={1.8} />
@@ -189,11 +245,11 @@ function StatCard({ stat, index }: { stat: Stat; index: number }) {
       </div>
 
       <div className="mt-5 flex items-baseline gap-1.5">
-        <span className="landing-number">{stat.value}</span>
+        <span className="theme-number">{stat.value}</span>
         {stat.unit && (
           <span
-            className="landing-italic text-[1rem]"
-            style={{ color: 'var(--landing-text-muted)' }}
+            className="theme-italic text-[1rem]"
+            style={{ color: 'var(--theme-fg-muted)' }}
           >
             {stat.unit}
           </span>
@@ -202,14 +258,14 @@ function StatCard({ stat, index }: { stat: Stat; index: number }) {
 
       <div
         className="mt-4 flex items-center gap-1.5 text-[0.78rem]"
-        style={{ color: 'var(--landing-text-muted)' }}
+        style={{ color: 'var(--theme-fg-muted)' }}
       >
         <TrendingUp
           className="h-3 w-3"
-          style={{ color: 'var(--landing-accent)' }}
+          style={{ color: 'var(--theme-accent)' }}
           strokeWidth={2}
         />
-        <span style={{ color: 'var(--landing-accent)' }}>{stat.delta.value}</span>
+        <span style={{ color: 'var(--theme-accent)' }}>{stat.delta.value}</span>
         <span>{stat.delta.note}</span>
       </div>
     </motion.div>
@@ -250,24 +306,24 @@ function WeeklyTrendCard() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.55, delay: 0.3, ease: [0.2, 0.7, 0.2, 1] }}
-      className="landing-card p-6 md:p-7"
+      className="theme-card p-6 md:p-7"
     >
       <div className="flex items-start justify-between gap-4">
         <div>
           <p
-            className="landing-mono-sm"
-            style={{ color: 'var(--landing-text-dim)' }}
+            className="theme-mono-sm"
+            style={{ color: 'var(--theme-fg-dim)' }}
           >
             Weekly carbon savings
           </p>
           <h3
-            className="landing-display mt-2 text-[1.7rem] leading-tight"
-            style={{ color: 'var(--landing-text)' }}
+            className="theme-display mt-2 text-[1.7rem] leading-tight"
+            style={{ color: 'var(--theme-fg)' }}
           >
             A{' '}
             <span
-              className="landing-italic"
-              style={{ color: 'var(--landing-accent)' }}
+              className="theme-italic"
+              style={{ color: 'var(--theme-accent)' }}
             >
               quiet
             </span>{' '}
@@ -275,7 +331,7 @@ function WeeklyTrendCard() {
           </h3>
         </div>
         <div className="flex items-center gap-4 pt-2">
-          <Legend dot color="var(--landing-accent)" label="CO₂ saved" />
+          <Legend dot color="var(--theme-accent)" label="CO₂ saved" />
         </div>
       </div>
 
@@ -289,8 +345,8 @@ function WeeklyTrendCard() {
         >
           <defs>
             <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--landing-accent)" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="var(--landing-accent)" stopOpacity="0" />
+              <stop offset="0%" stopColor="var(--theme-accent)" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="var(--theme-accent)" stopOpacity="0" />
             </linearGradient>
             <pattern
               id="trendGrain"
@@ -300,7 +356,7 @@ function WeeklyTrendCard() {
               height="3"
               patternUnits="userSpaceOnUse"
             >
-              <circle cx="1" cy="1" r="0.3" fill="var(--landing-text-dim)" />
+              <circle cx="1" cy="1" r="0.3" fill="var(--theme-fg-dim)" />
             </pattern>
           </defs>
 
@@ -313,7 +369,7 @@ function WeeklyTrendCard() {
                 x2={W - padX}
                 y1={y}
                 y2={y}
-                stroke="var(--landing-border)"
+                stroke="var(--theme-border)"
                 strokeDasharray="2 6"
               />
             );
@@ -330,7 +386,7 @@ function WeeklyTrendCard() {
           <motion.path
             d={linePath}
             fill="none"
-            stroke="var(--landing-accent)"
+            stroke="var(--theme-accent)"
             strokeWidth="1.75"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -345,8 +401,8 @@ function WeeklyTrendCard() {
                 cx={p.x}
                 cy={p.y}
                 r={3}
-                fill="var(--landing-bg)"
-                stroke="var(--landing-accent)"
+                fill="var(--theme-bg)"
+                stroke="var(--theme-accent)"
                 strokeWidth="1.5"
                 initial={{ opacity: 0, scale: 0.4 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -357,8 +413,8 @@ function WeeklyTrendCard() {
                 y={p.y - 10}
                 textAnchor="middle"
                 fontSize="9"
-                fontFamily="var(--landing-font-mono)"
-                fill="var(--landing-text-muted)"
+                fontFamily="var(--theme-font-mono)"
+                fill="var(--theme-fg-muted)"
               >
                 {p.kg.toFixed(1)}
               </text>
@@ -367,8 +423,8 @@ function WeeklyTrendCard() {
                 y={H - 14}
                 textAnchor="middle"
                 fontSize="10"
-                fontFamily="var(--landing-font-mono)"
-                fill="var(--landing-text-dim)"
+                fontFamily="var(--theme-font-mono)"
+                fill="var(--theme-fg-dim)"
                 letterSpacing="2"
               >
                 {p.day.toUpperCase()}
@@ -381,20 +437,20 @@ function WeeklyTrendCard() {
       <div
         className="mt-4 flex flex-wrap items-center gap-6 border-t pt-4 text-[0.78rem]"
         style={{
-          borderColor: 'var(--landing-border)',
-          color: 'var(--landing-text-muted)',
+          borderColor: 'var(--theme-border)',
+          color: 'var(--theme-fg-muted)',
         }}
       >
         <span>
-          Peak · <span style={{ color: 'var(--landing-text)' }}>Fri 8.4 kg</span>
+          Peak · <span style={{ color: 'var(--theme-fg)' }}>Fri 8.4 kg</span>
         </span>
         <span>
           Avg ·{' '}
-          <span style={{ color: 'var(--landing-text)' }}>
+          <span style={{ color: 'var(--theme-fg)' }}>
             {(totalKg / weeklyTrend.length).toFixed(1)} kg/day
           </span>
         </span>
-        <span className="ml-auto landing-mono-sm" style={{ color: 'var(--landing-text-dim)' }}>
+        <span className="ml-auto theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
           Week 16 · 2026
         </span>
       </div>
@@ -408,14 +464,14 @@ function AIRecommendationCard() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.55, delay: 0.36, ease: [0.2, 0.7, 0.2, 1] }}
-      className="landing-card relative overflow-hidden p-6 md:p-7"
+      className="theme-card relative overflow-hidden p-6 md:p-7"
     >
       <div
         aria-hidden
         className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full"
         style={{
           background:
-            'radial-gradient(circle at 30% 30%, var(--landing-accent-soft), transparent 70%)',
+            'radial-gradient(circle at 30% 30%, var(--theme-accent-soft), transparent 70%)',
         }}
       />
 
@@ -424,24 +480,24 @@ function AIRecommendationCard() {
           <span
             className="flex h-6 w-6 items-center justify-center rounded-[7px]"
             style={{
-              background: 'var(--landing-accent)',
-              color: 'var(--landing-button-foreground)',
+              background: 'var(--theme-accent)',
+              color: 'var(--theme-accent-fg)',
             }}
           >
             <Sparkles className="h-[12px] w-[12px]" strokeWidth={2} />
           </span>
           <span
-            className="landing-mono-sm"
-            style={{ color: 'var(--landing-text-dim)' }}
+            className="theme-mono-sm"
+            style={{ color: 'var(--theme-fg-dim)' }}
           >
             AI recommendation
           </span>
         </div>
         <span
-          className="landing-mono-sm rounded-full border px-2 py-1"
+          className="theme-mono-sm rounded-full border px-2 py-1"
           style={{
-            borderColor: 'var(--landing-border)',
-            color: 'var(--landing-text-dim)',
+            borderColor: 'var(--theme-border)',
+            color: 'var(--theme-fg-dim)',
             fontSize: '0.56rem',
           }}
         >
@@ -450,42 +506,42 @@ function AIRecommendationCard() {
       </div>
 
       <blockquote
-        className="landing-display relative mt-5 text-[1.35rem] leading-[1.25]"
-        style={{ color: 'var(--landing-text)' }}
+        className="theme-display relative mt-5 text-[1.35rem] leading-[1.25]"
+        style={{ color: 'var(--theme-fg)' }}
       >
         <span
-          className="landing-italic absolute -left-3 -top-2 text-[2.5rem]"
-          style={{ color: 'var(--landing-accent-muted)' }}
+          className="theme-italic absolute -left-3 -top-2 text-[2.5rem]"
+          style={{ color: 'var(--theme-accent-muted)' }}
           aria-hidden
         >
           “
         </span>
         Leave at{' '}
         <span
-          className="landing-italic"
-          style={{ color: 'var(--landing-accent)' }}
+          className="theme-italic"
+          style={{ color: 'var(--theme-accent)' }}
         >
           08:32
         </span>{' '}
         tomorrow to slip past the causeway crush — save{' '}
-        <span style={{ color: 'var(--landing-accent)' }}>18 min</span> and earn{' '}
-        <span style={{ color: 'var(--landing-accent)' }}>2× points</span>.
+        <span style={{ color: 'var(--theme-accent)' }}>18 min</span> and earn{' '}
+        <span style={{ color: 'var(--theme-accent)' }}>2× points</span>.
       </blockquote>
 
       <div
         className="mt-6 flex items-center justify-between border-t pt-4 text-[0.78rem]"
         style={{
-          borderColor: 'var(--landing-border)',
-          color: 'var(--landing-text-muted)',
+          borderColor: 'var(--theme-border)',
+          color: 'var(--theme-fg-muted)',
         }}
       >
         <span>Based on your last 14 days of patterns</span>
         <button
           type="button"
           disabled
-          className="landing-link-underline opacity-60"
+          className="theme-link-underline opacity-60"
           title="LLM integration coming soon"
-          style={{ color: 'var(--landing-text-muted)' }}
+          style={{ color: 'var(--theme-fg-muted)' }}
         >
           Ask Verdify AI
           <ArrowUpRight size={12} strokeWidth={1.8} />
@@ -501,24 +557,24 @@ function RecentTripsCard({ trips }: { trips: Trip[] }) {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.55, delay: 0.44, ease: [0.2, 0.7, 0.2, 1] }}
-      className="landing-card p-6 md:p-7"
+      className="theme-card p-6 md:p-7"
     >
       <div className="flex items-center justify-between">
         <div>
           <p
-            className="landing-mono-sm"
-            style={{ color: 'var(--landing-text-dim)' }}
+            className="theme-mono-sm"
+            style={{ color: 'var(--theme-fg-dim)' }}
           >
             Recent journeys
           </p>
           <h3
-            className="landing-display mt-2 text-[1.5rem]"
-            style={{ color: 'var(--landing-text)' }}
+            className="theme-display mt-2 text-[1.5rem]"
+            style={{ color: 'var(--theme-fg)' }}
           >
             Your last three{' '}
             <span
-              className="landing-italic"
-              style={{ color: 'var(--landing-accent)' }}
+              className="theme-italic"
+              style={{ color: 'var(--theme-accent)' }}
             >
               moves.
             </span>
@@ -533,18 +589,18 @@ function RecentTripsCard({ trips }: { trips: Trip[] }) {
             initial={{ opacity: 0, x: -8 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.55 + i * 0.08 }}
-            className="group flex items-center gap-4 rounded-[14px] border p-4 transition-colors duration-300 hover:border-[var(--landing-accent-muted)]"
+            className="group flex items-center gap-4 rounded-[14px] border p-4 transition-colors duration-300 hover:border-[var(--theme-accent-muted)]"
             style={{
-              borderColor: 'var(--landing-border)',
-              background: 'var(--landing-surface-alt)',
+              borderColor: 'var(--theme-border)',
+              background: 'var(--theme-surface-muted)',
             }}
           >
             <span
               className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
               style={{
-                background: 'var(--landing-accent-soft)',
-                color: 'var(--landing-accent)',
-                border: '1px solid var(--landing-accent-muted)',
+                background: 'var(--theme-accent-soft)',
+                color: 'var(--theme-accent)',
+                border: '1px solid var(--theme-accent-muted)',
               }}
             >
               <MapPin className="h-[15px] w-[15px]" strokeWidth={1.8} />
@@ -553,16 +609,16 @@ function RecentTripsCard({ trips }: { trips: Trip[] }) {
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <span
-                  className="landing-mono-sm"
-                  style={{ color: 'var(--landing-text-dim)' }}
+                  className="theme-mono-sm"
+                  style={{ color: 'var(--theme-fg-dim)' }}
                 >
                   {trip.when}
                 </span>
                 <span
-                  className="landing-mono-sm rounded-full border px-1.5 py-0.5"
+                  className="theme-mono-sm rounded-full border px-1.5 py-0.5"
                   style={{
-                    borderColor: 'var(--landing-border)',
-                    color: 'var(--landing-text-muted)',
+                    borderColor: 'var(--theme-border)',
+                    color: 'var(--theme-fg-muted)',
                     fontSize: '0.52rem',
                   }}
                 >
@@ -571,12 +627,12 @@ function RecentTripsCard({ trips }: { trips: Trip[] }) {
               </div>
               <p
                 className="mt-1 truncate text-[0.95rem]"
-                style={{ color: 'var(--landing-text)' }}
+                style={{ color: 'var(--theme-fg)' }}
               >
                 {trip.from}{' '}
                 <span
-                  className="landing-italic mx-1"
-                  style={{ color: 'var(--landing-text-dim)' }}
+                  className="theme-italic mx-1"
+                  style={{ color: 'var(--theme-fg-dim)' }}
                 >
                   to
                 </span>{' '}
@@ -587,13 +643,13 @@ function RecentTripsCard({ trips }: { trips: Trip[] }) {
             <div className="text-right">
               <p
                 className="text-[0.92rem]"
-                style={{ color: 'var(--landing-accent)' }}
+                style={{ color: 'var(--theme-accent)' }}
               >
                 {trip.co2Saved} kg
               </p>
               <p
-                className="landing-mono-sm"
-                style={{ color: 'var(--landing-text-dim)' }}
+                className="theme-mono-sm"
+                style={{ color: 'var(--theme-fg-dim)' }}
               >
                 +{trip.points} pts
               </p>
@@ -618,60 +674,60 @@ function ImpactLedgerCard() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.55, delay: 0.5, ease: [0.2, 0.7, 0.2, 1] }}
-      className="landing-panel"
+      className="theme-panel"
     >
       <div className="flex items-center justify-between">
         <p
-          className="landing-mono-sm"
-          style={{ color: 'var(--landing-text-dim)' }}
+          className="theme-mono-sm"
+          style={{ color: 'var(--theme-fg-dim)' }}
         >
           Impact ledger
         </p>
         <span
-          className="landing-mono-sm"
-          style={{ color: 'var(--landing-text-dim)' }}
+          className="theme-mono-sm"
+          style={{ color: 'var(--theme-fg-dim)' }}
         >
           Apr 2026
         </span>
       </div>
 
       <h3
-        className="landing-display mt-2 text-[1.5rem] leading-tight"
-        style={{ color: 'var(--landing-text)' }}
+        className="theme-display mt-2 text-[1.5rem] leading-tight"
+        style={{ color: 'var(--theme-fg)' }}
       >
         The{' '}
         <span
-          className="landing-italic"
-          style={{ color: 'var(--landing-accent)' }}
+          className="theme-italic"
+          style={{ color: 'var(--theme-accent)' }}
         >
           small
         </span>{' '}
         arithmetic of a greener commute.
       </h3>
 
-      <ul className="mt-5 divide-y" style={{ borderColor: 'var(--landing-border)' }}>
+      <ul className="mt-5 divide-y" style={{ borderColor: 'var(--theme-border)' }}>
         {rows.map((row) => (
           <li
             key={row.label}
             className="flex items-baseline justify-between gap-4 py-3.5"
-            style={{ borderColor: 'var(--landing-border)' }}
+            style={{ borderColor: 'var(--theme-border)' }}
           >
             <span
               className="text-[0.9rem]"
-              style={{ color: 'var(--landing-text-muted)' }}
+              style={{ color: 'var(--theme-fg-muted)' }}
             >
               {row.label}
             </span>
             <span className="flex items-baseline gap-1.5">
               <span
-                className="landing-display text-[1.3rem]"
-                style={{ color: 'var(--landing-text)' }}
+                className="theme-display text-[1.3rem]"
+                style={{ color: 'var(--theme-fg)' }}
               >
                 {row.value}
               </span>
               <span
-                className="landing-mono-sm"
-                style={{ color: 'var(--landing-text-dim)' }}
+                className="theme-mono-sm"
+                style={{ color: 'var(--theme-fg-dim)' }}
               >
                 {row.unit}
               </span>
@@ -683,11 +739,11 @@ function ImpactLedgerCard() {
       <div className="mt-5 flex items-center justify-between">
         <span
           className="text-[0.78rem]"
-          style={{ color: 'var(--landing-text-muted)' }}
+          style={{ color: 'var(--theme-fg-muted)' }}
         >
           Next badge · Forest Guardian
         </span>
-        <Link to="/route" className="landing-link-underline text-[0.82rem]">
+        <Link to="/route" className="theme-link-underline text-[0.82rem]">
           Earn points
           <ArrowUpRight size={12} strokeWidth={1.8} />
         </Link>
@@ -708,7 +764,7 @@ function Legend({
   return (
     <span
       className="inline-flex items-center gap-1.5 text-[0.75rem]"
-      style={{ color: 'var(--landing-text-muted)' }}
+      style={{ color: 'var(--theme-fg-muted)' }}
     >
       {dot ? (
         <span

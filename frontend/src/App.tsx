@@ -18,6 +18,11 @@ import AuthLayout from "./pages/Auth/layout";
 import RoutePlannerPage from "./pages/Route/page";
 import DashboardPage from "./pages/Dashboard/page";
 import ProfilePage from "./pages/Profile/page";
+import LeaderboardPage from "./pages/Leaderboard/page";
+import HistoryPage from "./pages/History/page";
+import RewardsPage from "./pages/Rewards/page";
+import TechnologyPage from "./pages/Technology/page";
+import AboutPage from "./pages/About/page";
 
 const INTRO_KEY = "verdify:intro-seen";
 
@@ -47,6 +52,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<LandingPage />} />
+            <Route path="technology" element={<TechnologyPage />} />
+            <Route path="about" element={<AboutPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
 
@@ -54,6 +61,9 @@ function App() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/route" element={<RoutePlannerPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/leaderboard" element={<LeaderboardPage />} />
+            <Route path="/history" element={<HistoryPage />} />
+            <Route path="/rewards" element={<RewardsPage />} />
           </Route>
 
           <Route

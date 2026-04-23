@@ -1,0 +1,155 @@
+{
+    "policy_layer": [
+        {
+            "id": "policy_001",
+            "topic": "low_carbon_mobility_blueprint",
+            "region": "Malaysia",
+            "category": "policy",
+            "content": "The Low Carbon Mobility Blueprint outlines strategies to reduce transport emissions through vehicle electrification, energy efficiency, and adoption of alternative fuels.",
+            "time_horizon": "long_term",
+            "source": "LCMB",
+            "importance": "high"
+        },
+        {
+            "id": "policy_002",
+            "topic": "net_zero_2050_malaysia",
+            "region": "Malaysia",
+            "category": "policy",
+            "content": "Malaysia aims to achieve net-zero carbon emissions by 2050, providing a long-term sustainability framework for reducing greenhouse gas emissions across all sectors including transport.",
+            "time_horizon": "long_term",
+            "source": "Net Zero 2050",
+            "importance": "high"
+        },
+        {
+            "id": "policy_003",
+            "topic": "js_sez_green_economy",
+            "region": "Malaysia-Singapore",
+            "category": "policy",
+            "content": "The Johor-Singapore Special Economic Zone promotes green economy initiatives, including sustainable transport integration and smart mobility infrastructure across borders.",
+            "time_horizon": "mid_term",
+            "source": "JS-SEZ",
+            "importance": "high"
+        }
+    ],
+    "infrastructure_layer": [
+        {
+            "id": "infra_001",
+            "topic": "rts_link_johor_singapore",
+            "region": "Malaysia-Singapore",
+            "category": "infrastructure",
+            "content": "The RTS Link is a cross-border rail system connecting Johor Bahru and Singapore, designed to reduce congestion and provide efficient high-capacity transport.",
+            "type": "rail",
+            "source": "RTS Link",
+            "importance": "high"
+        },
+        {
+            "id": "infra_002",
+            "topic": "singapore_mrt_system",
+            "region": "Singapore",
+            "category": "infrastructure",
+            "content": "Singapore's MRT system provides extensive urban rail coverage and plays a key role in reducing private vehicle dependency and emissions.",
+            "type": "rail",
+            "source": "Transport Network",
+            "importance": "high"
+        },
+        {
+            "id": "infra_003",
+            "topic": "road_transport_network",
+            "region": "Global",
+            "category": "infrastructure",
+            "content": "Road transport networks include highways and urban roads that support private and commercial vehicle movement but are major contributors to congestion and emissions.",
+            "type": "road",
+            "source": "Transport Network",
+            "importance": "medium"
+        }
+    ],
+    "data_layer": [
+        {
+            "id": "data_001",
+            "topic": "carbon_monitor_dataset",
+            "region": "Global",
+            "category": "data",
+            "content": "Carbon Monitor provides near real-time CO2 emissions data across sectors including transport, enabling tracking of emission trends and activity levels.",
+            "data_type": "emission",
+            "source": "Carbon Monitor",
+            "importance": "high"
+        },
+        {
+            "id": "data_002",
+            "topic": "emission_factors_standard",
+            "region": "Global",
+            "category": "data",
+            "content": "Emission factors from IPCC and DEFRA provide standardized values to calculate CO2 emissions per kilometer or per transport mode.",
+            "data_type": "calculation",
+            "source": "IPCC/DEFRA",
+            "importance": "high"
+        },
+        {
+            "id": "data_003",
+            "topic": "weather_data_malaysia",
+            "region": "Malaysia",
+            "category": "data",
+            "content": "Weather data including rainfall, temperature, and humidity impacts traffic conditions, fuel consumption, and emission levels.",
+            "data_type": "weather",
+            "source": "MET Malaysia",
+            "importance": "medium"
+        }
+    ],
+    "intelligence_layer": [
+        {
+            "id": "intel_001",
+            "topic": "smart_mobility_ai",
+            "region": "Global",
+            "category": "intelligence",
+            "content": "Smart mobility research highlights the role of AI and IoT in optimizing transport systems, reducing congestion, and improving sustainability.",
+            "insight_type": "optimization",
+            "source": "Research",
+            "importance": "high"
+        },
+        {
+            "id": "intel_002",
+            "topic": "behavioral_transport_change",
+            "region": "Global",
+            "category": "intelligence",
+            "content": "Behavioral studies show that providing users with emission visibility and alternatives encourages adoption of sustainable transport modes.",
+            "insight_type": "behavior",
+            "source": "Behavioral Study",
+            "importance": "medium"
+        }
+    ],
+    "realtime_layer": [
+        {
+            "id": "rt_001",
+            "topic": "traffic_congestion_realtime",
+            "region": "Malaysia-Singapore",
+            "category": "realtime",
+            "content": "Real-time traffic data reflects current congestion levels, delays, and travel time variability in cross-border routes.",
+            "data_type": "traffic",
+            "timestamp": "dynamic",
+            "source": "Traffic API",
+            "importance": "high"
+        },
+        {
+            "id": "rt_002",
+            "topic": "weather_realtime",
+            "region": "Malaysia",
+            "category": "realtime",
+            "content": "Real-time weather conditions such as rain and storms directly affect traffic flow, safety, and vehicle emissions.",
+            "data_type": "weather",
+            "timestamp": "dynamic",
+            "source": "Weather API",
+            "importance": "high"
+        },
+        {
+            "id": "rt_003",
+            "topic": "rts_schedule_realtime",
+            "region": "Malaysia-Singapore",
+            "category": "realtime",
+            "content": "RTS Link schedule data provides real-time updates on train frequency, delays, and availability for cross-border travel.",
+            "data_type": "transport_schedule",
+            "timestamp": "dynamic",
+            "source": "RTS System",
+            "importance": "high"
+        }
+    ]
+}
