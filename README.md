@@ -26,7 +26,7 @@ Built as a strategic response to Malaysia's RM20+ billion annual congestion loss
 
 **Pitch Deck:** [verdify-pitch-deck](https://drive.google.com/file/d/1n6uWS8UHH8Oyjjla3y6tCHtZRm2BmtOj/view?usp=sharing)
 
-**Video Demo:** [verdify-video-demo](https://drive.google.com/file/d/1n6uWS8UHH8Oyjjla3y6tCHtZRm2BmtOj/view?usp=sharing)
+**Video Demo:** [verdify-video-demo](https://drive.google.com/file/d/1zzDwlLQInqVw1m-_0cPcS6SAeKJpfWAK/view?usp=sharing)
 
 ---
 
@@ -209,14 +209,60 @@ npm install
 npm run dev
 ```
 
-### Environment Variables (Optional)
+### Environment Variables (Optional) - Frontend
+
+```bash
+VITE_API_BASE_URL=http://localhost:8080
+```
+
+### Environment Variables (Optional) - Backend
 
 ```bash
 # For Google AI Services (if implementing live backend)
-VITE_GEMINI_API_KEY=your_api_key_here
-VITE_FIREBASE_API_KEY=your_api_key_here
-VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain
-VITE_FIREBASE_PROJECT_ID=your_project_id
+# Server Configuration
+PORT=8080
+ENV=development
+FRONTEND_ORIGIN=http://localhost:5173
+
+# Firebase Configuration
+FIREBASE_PROJECT_ID=your-firebase-project-id
+FIREBASE_CREDENTIALS_PATH=./firebase-credentials.json
+
+# Google Cloud APIs
+GOOGLE_MAPS_API_KEY=your-google-maps-api-key
+VERTEX_PROJECT_ID=your-gcp-project-id
+VERTEX_LOCATION=us-central1
+GEMINI_MODEL=gemini-2.0-flash
+
+# Genkit Configuration
+GENKIT_MODEL=google-gemini-pro
+GENKIT_EVAL_MODEL=google-gemini-1.5-pro
+
+# Database
+FIRESTORE_DATABASE=default
+
+# Logging
+LOG_LEVEL=debug
+
+# Feature Flags
+USE_MOCK_PAYMENT=true
+USE_MOCK_TRANSPORT_APIS=true
+USE_HARDCODED_CARBON_DATA=false
+
+# Peak Hours Configuration (24-hour format, comma-separated)
+PEAK_HOURS_START_1=07
+PEAK_HOURS_END_1=09
+PEAK_HOURS_START_2=12
+PEAK_HOURS_END_2=13
+PEAK_HOURS_START_3=17
+PEAK_HOURS_END_3=19
+
+# Carbon Data Baseline (grams CO2 per km)
+BASELINE_CARBON_EV_TAXI=120
+BASELINE_CARBON_LRT=80
+BASELINE_CARBON_MRT=80
+BASELINE_CARBON_BUS=100
+BASELINE_CARBON_PRIVATE_CAR=200
 ```
 
 ### Backend Setup (Firebase Genkit)
@@ -227,6 +273,8 @@ cd backend
 npm install
 npm run genkit:dev
 ```
+
+Besides that, you can also check the backend/docs/ for more documentation for the architecture, api routes, developer cloud setup, and so on.
 
 ---
 
