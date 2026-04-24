@@ -51,7 +51,7 @@ node_modules/
 package-lock.json
 
 # Planner
-# docs/*
+docs/*
 !docs/developer-cloud-setup.md
 !docs/priorities.md
 *.exe

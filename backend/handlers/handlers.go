@@ -84,18 +84,19 @@ func (app *App) calculateRouteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	peak := services.IsPeakHour(services.NowMY())
-	chosenID, _, err := app.Ranker.SelectBest(r.Context(), mode, peak, candidates)
-	if err != nil {
-		writeErr(w, http.StatusInternalServerError, "failed route ranking")
-		return
+	chosenID := staticCandidateIDForMode(mode)
+	if mode == "smart" {
+		chosenID, _, err = app.Ranker.SelectBest(r.Context(), mode, peak, candidates)
+		if err != nil {
+			writeErr(w, http.StatusInternalServerError, "failed route ranking")
+			return
+		}
 	}
 
-	selected := candidates[0]
-	for _, c := range candidates {
-		if c.ID == chosenID {
-			selected = c
-			break
-		}
+	selected, ok := findCandidateByID(candidates, chosenID)
+	if !ok {
+		writeErr(w, http.StatusInternalServerError, "selected candidate not found")
+		return
 	}
 
 	baseline := selected.TotalDistance * 200
@@ -116,6 +117,28 @@ func (app *App) calculateRouteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	app.Store.SaveRoute(rt)
 	writeOK(w, http.StatusOK, rt)
+}
+
+func staticCandidateIDForMode(mode string) string {
+	switch mode {
+	case "fast":
+		return "cand_fast"
+	case "ecoboost":
+		return "cand_eco"
+	case "flowing":
+		return "cand_flow"
+	default:
+		return ""
+	}
+}
+
+func findCandidateByID(candidates []models.RouteCandidate, candidateID string) (models.RouteCandidate, bool) {
+	for _, c := range candidates {
+		if c.ID == candidateID {
+			return c, true
+		}
+	}
+	return models.RouteCandidate{}, false
 }
 
 func (app *App) createBookingHandler(w http.ResponseWriter, r *http.Request) {

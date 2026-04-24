@@ -11,6 +11,19 @@ import (
 	"github.com/verdify/backend/models"
 )
 
+type routeResponseEnvelope struct {
+	Success bool `json:"success"`
+	Data    struct {
+		RouteID        string  `json:"routeId"`
+		Mode           string  `json:"mode"`
+		TotalDuration  int     `json:"totalDuration"`
+		CarbonEstimate float64 `json:"carbonEstimate"`
+		Steps          []struct {
+			Type string `json:"type"`
+		} `json:"steps"`
+	} `json:"data"`
+}
+
 func TestHealth(t *testing.T) {
 	app := New(config.Load())
 	req := httptest.NewRequest(http.MethodGet, "/health", nil)
@@ -58,4 +71,56 @@ func TestRouteAndBookingFlow(t *testing.T) {
 	if rr.Code != http.StatusCreated {
 		t.Fatalf("booking want 201 got %d body=%s", rr.Code, rr.Body.String())
 	}
+}
+
+func TestExplicitModesMapToDistinctRouteProfiles(t *testing.T) {
+	app := New(config.Load())
+	mux := app.Routes()
+
+	origin := models.Location{Latitude: 1.4854, Longitude: 103.7618}
+	destination := models.Location{Latitude: 1.3521, Longitude: 103.8198}
+
+	fast := callRoute(t, mux, models.RouteRequest{
+		Origin: origin, Destination: destination, Mode: "fast",
+	})
+	eco := callRoute(t, mux, models.RouteRequest{
+		Origin: origin, Destination: destination, Mode: "ecoboost",
+	})
+	flow := callRoute(t, mux, models.RouteRequest{
+		Origin: origin, Destination: destination, Mode: "flowing",
+	})
+
+	if fast.Data.TotalDuration >= eco.Data.TotalDuration || fast.Data.TotalDuration >= flow.Data.TotalDuration {
+		t.Fatalf("fast should be shortest, got fast=%d eco=%d flow=%d", fast.Data.TotalDuration, eco.Data.TotalDuration, flow.Data.TotalDuration)
+	}
+	if eco.Data.CarbonEstimate >= fast.Data.CarbonEstimate || eco.Data.CarbonEstimate >= flow.Data.CarbonEstimate {
+		t.Fatalf("eco should be lowest carbon, got fast=%.2f eco=%.2f flow=%.2f", fast.Data.CarbonEstimate, eco.Data.CarbonEstimate, flow.Data.CarbonEstimate)
+	}
+	if len(fast.Data.Steps) != 1 || fast.Data.Steps[0].Type != "ev_taxi" {
+		t.Fatalf("fast should be direct ev_taxi, got steps=%v", fast.Data.Steps)
+	}
+	if len(eco.Data.Steps) != 3 || eco.Data.Steps[1].Type != "lrt" {
+		t.Fatalf("eco should be walk+lrt+walk, got steps=%v", eco.Data.Steps)
+	}
+	if len(flow.Data.Steps) != 2 || flow.Data.Steps[0].Type != "bus" {
+		t.Fatalf("flow should start with bus segment, got steps=%v", flow.Data.Steps)
+	}
+}
+
+func callRoute(t *testing.T, mux http.Handler, payload models.RouteRequest) routeResponseEnvelope {
+	t.Helper()
+
+	body, _ := json.Marshal(payload)
+	rr := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/routes/calculate", bytes.NewReader(body))
+	mux.ServeHTTP(rr, req)
+	if rr.Code != http.StatusOK {
+		t.Fatalf("route want 200 got %d body=%s", rr.Code, rr.Body.String())
+	}
+
+	var out routeResponseEnvelope
+	if err := json.Unmarshal(rr.Body.Bytes(), &out); err != nil {
+		t.Fatalf("unmarshal route response: %v", err)
+	}
+	return out
 }
