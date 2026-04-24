@@ -1,6 +1,6 @@
 # current-state.md
 
-Last Updated: 2026-04-17 | By: OpenCode
+Last Updated: 2026-04-24 | By: Codex
 
 ## Completed
 - Go module initialized
@@ -9,6 +9,9 @@ Last Updated: 2026-04-17 | By: OpenCode
 - Genkit + Vertex plugin wired with fallback ranker
 - In-memory store + tests (happy path)
 - Codebase restructured to package folders: config/models/db/services/handlers
+- Frontend integration enabled:
+  - CORS middleware added (origin controlled by `FRONTEND_ORIGIN`)
+  - Frontend now consumes backend auth + route endpoints
 
 ## In Progress
 - Replace mock maps candidates with real Google Maps client
