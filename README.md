@@ -328,16 +328,6 @@ Besides that, you can also check the backend/docs/ for more documentation for th
 
 ---
 
-## 🧭 System Architecture Diagram
-
-<p align="center">
-  <img src="./images/verdify-architecture.png" width="800" alt="Verdify System Architecture"/>
-</p>
-
-*Verdify End-to-End System Architecture on Google AI Ecosystem*
-
----
-
 ## 📊 Impact to National Development
 
 | Impact Area | Projected Outcome |
