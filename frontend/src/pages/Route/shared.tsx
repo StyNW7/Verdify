@@ -354,11 +354,11 @@ export function SwapButton({ onClick, disabled }: { onClick: () => void; disable
 export function DateTimeField({
   dateSlot, setDateSlot, pickedDate, setPickedDate, time, setTime,
 }: Pick<PlannerState, 'dateSlot' | 'setDateSlot' | 'pickedDate' | 'setPickedDate' | 'time' | 'setTime'>) {
-  const chips: { key: DateSlot; label: string }[] = [
+  const chips: { key: DateSlot; label: string; shortLabel?: string }[] = [
     { key: 'now', label: 'Now' },
     { key: 'today', label: 'Today' },
-    { key: 'tomorrow', label: 'Tomorrow' },
-    { key: 'pick', label: 'Pick date' },
+    { key: 'tomorrow', label: 'Tomorrow', shortLabel: 'Tmr' },
+    { key: 'pick', label: 'Pick date', shortLabel: 'Pick' },
   ];
   return (
     <div className="w-full">
@@ -373,14 +373,16 @@ export function DateTimeField({
               key={c.key}
               type="button"
               onClick={() => setDateSlot(c.key)}
-              className="theme-mono-sm relative rounded-full px-4 py-2 transition-colors"
+              aria-label={c.label}
+              className="theme-mono-sm relative whitespace-nowrap rounded-full px-3 py-2 transition-colors sm:px-4"
               style={{
                 background: active ? 'var(--theme-accent)' : 'transparent',
                 color: active ? 'var(--theme-accent-fg)' : 'var(--theme-fg-muted)',
                 border: `1px solid ${active ? 'var(--theme-accent)' : 'var(--theme-border)'}`,
               }}
             >
-              {c.label}
+              <span className="sm:hidden">{c.shortLabel ?? c.label}</span>
+              <span className="hidden sm:inline">{c.label}</span>
             </button>
           );
         })}
@@ -417,10 +419,10 @@ export function DateTimeField({
   );
 }
 
-const PREF_META: Record<Preference, { label: string; tagline: string; icon: typeof Leaf }> = {
-  eco: { label: 'Eco First', tagline: 'Low carbon, big points.', icon: Leaf },
-  fast: { label: 'Fastest', tagline: 'Minutes above all.', icon: Zap },
-  cheap: { label: 'Cheapest', tagline: 'Ringgit first.', icon: Wallet },
+const PREF_META: Record<Preference, { label: string; shortLabel: string; tagline: string; icon: typeof Leaf }> = {
+  eco: { label: 'Eco First', shortLabel: 'Eco', tagline: 'Low carbon, big points.', icon: Leaf },
+  fast: { label: 'Fastest', shortLabel: 'Fast', tagline: 'Minutes above all.', icon: Zap },
+  cheap: { label: 'Cheapest', shortLabel: 'Cost', tagline: 'Ringgit first.', icon: Wallet },
 };
 
 export function PreferenceSelector({
@@ -445,14 +447,15 @@ export function PreferenceSelector({
               key={p}
               type="button"
               onClick={() => setPreference(p)}
-              className="theme-mono-sm flex items-center justify-center gap-1.5 py-2.5 transition-colors"
+              aria-label={m.label}
+              className="theme-mono-sm flex min-w-0 items-center justify-center gap-1.5 whitespace-nowrap py-2.5 transition-colors"
               style={{
                 background: active ? 'var(--theme-accent)' : 'transparent',
                 color: active ? 'var(--theme-accent-fg)' : 'var(--theme-fg-muted)',
               }}
             >
               <Icon size={13} />
-              {m.label}
+              <span className="theme-action-label">{m.shortLabel}</span>
             </button>
           );
         })}
@@ -576,7 +579,7 @@ export function ModeChips({
               key={k}
               type="button"
               onClick={() => toggleMode(k)}
-              className="theme-mono-sm flex items-center gap-1.5 rounded-full px-3.5 py-2 transition-all"
+              className="theme-mono-sm flex items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-2 transition-all"
               style={{
                 background: on ? 'var(--theme-accent-soft)' : 'transparent',
                 color: on ? 'var(--theme-accent)' : 'var(--theme-fg-dim)',
@@ -653,12 +656,15 @@ export function SubmitButton({
       {loading ? (
         <>
           <RefreshCw size={14} className="animate-spin" />
-          Mapping corridor…
+          <span className="theme-action-label">
+            <span className="sm:hidden">Mapping</span>
+            <span className="hidden sm:inline">Mapping corridor</span>
+          </span>
         </>
       ) : (
         <>
           <Sparkles size={14} />
-          {label}
+          <span className="theme-action-label">{label}</span>
           <ArrowRight size={14} />
         </>
       )}
@@ -850,12 +856,20 @@ export function DirectionsPanel({ route }: { route: RouteOption }) {
         ))}
       </ol>
 
-      <div className="mt-8 flex flex-wrap gap-3">
-        <button className="theme-btn-primary">
-          Start journey
+      <div className="theme-action-bar mt-8">
+        <button className="theme-btn-primary theme-action-bar-primary">
+          <span className="theme-action-label">
+            <span className="sm:hidden">Start</span>
+            <span className="hidden sm:inline">Start journey</span>
+          </span>
           <ArrowRight size={14} />
         </button>
-        <button className="theme-btn-ghost">Save route</button>
+        <div className="theme-action-bar-icons">
+          <button className="theme-btn-ghost h-12 w-12 px-0 sm:w-auto sm:px-6" aria-label="Save route">
+            <span className="theme-action-label hidden sm:inline">Save route</span>
+            <Star className="sm:hidden" size={14} />
+          </button>
+        </div>
       </div>
     </div>
   );

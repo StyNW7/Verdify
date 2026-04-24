@@ -23,12 +23,14 @@ test('desktop auth sidebar is viewport-fixed and leaves content space in normal 
 });
 
 test('all protected app routes are recognized by the auth shell', () => {
-  for (const route of ['/dashboard', '/route', '/history', '/leaderboard', '/profile']) {
+  for (const route of ['/dashboard', '/route', '/history', '/rewards', '/leaderboard', '/profile']) {
     assert.match(source, new RegExp(`p\\.startsWith\\('${route}'\\)`));
   }
 });
 
-test('auth shell labels history and leaderboard routes', () => {
+test('auth shell labels compact mobile-safe routes', () => {
   assert.match(source, /pathname\.startsWith\('\/history'\)\) return 'History'/);
-  assert.match(source, /pathname\.startsWith\('\/leaderboard'\)\) return 'Leaderboard'/);
+  assert.match(source, /pathname\.startsWith\('\/route'\)\) return 'Route'/);
+  assert.match(source, /pathname\.startsWith\('\/leaderboard'\)\) return 'Board'/);
+  assert.match(source, /pathname\.startsWith\('\/rewards'\)\) return 'Rewards'/);
 });

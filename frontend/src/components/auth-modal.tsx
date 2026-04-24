@@ -494,7 +494,8 @@ function SocialButton({ label, glyph }: { label: string; glyph: ReactNode }) {
   return (
     <button
       type="button"
-      className="group inline-flex h-11 items-center justify-center gap-2.5 rounded-full transition-all"
+      aria-label={`Continue with ${label}`}
+      className="group inline-flex h-11 min-w-0 items-center justify-center gap-2.5 overflow-hidden whitespace-nowrap rounded-full px-3 transition-all"
       style={{
         border: '1px solid var(--theme-border-strong)',
         color: 'var(--theme-fg)',
@@ -520,7 +521,7 @@ function SocialButton({ label, glyph }: { label: string; glyph: ReactNode }) {
       >
         {glyph}
       </span>
-      <span>Continue with {label}</span>
+      <span className="theme-action-label">{label}</span>
     </button>
   );
 }
@@ -671,7 +672,7 @@ function LoginForm({
             <Loader2 size={16} className="animate-spin" strokeWidth={1.8} />
           ) : (
             <>
-              Sign in
+              <span className="theme-action-label">Sign in</span>
               <ArrowUpRight size={15} strokeWidth={1.8} />
             </>
           )}
@@ -881,7 +882,10 @@ function RegisterForm({
             <Loader2 size={16} className="animate-spin" strokeWidth={1.8} />
           ) : (
             <>
-              Create account
+              <span className="theme-action-label">
+                <span className="sm:hidden">Create</span>
+                <span className="hidden sm:inline">Create account</span>
+              </span>
               <ArrowUpRight size={15} strokeWidth={1.8} />
             </>
           )}

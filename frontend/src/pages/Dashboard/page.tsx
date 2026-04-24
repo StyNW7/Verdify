@@ -141,12 +141,15 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <div className="flex w-full items-center gap-2 lg:w-auto">
+        <div className="theme-action-bar lg:w-auto">
           <Link to="/route" className="theme-btn-ghost hidden sm:inline-flex">
-            View route planner
+            <span className="theme-action-label">Planner</span>
           </Link>
-          <Link to="/route" className="theme-btn-primary flex-1 justify-center lg:flex-initial">
-            Plan a trip
+          <Link to="/route" className="theme-btn-primary theme-action-bar-primary lg:w-auto">
+            <span className="theme-action-label">
+              <span className="sm:hidden">Plan</span>
+              <span className="hidden sm:inline">Plan trip</span>
+            </span>
             <ArrowUpRight size={14} strokeWidth={1.8} />
           </Link>
         </div>

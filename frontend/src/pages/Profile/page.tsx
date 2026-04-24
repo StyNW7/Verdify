@@ -687,9 +687,9 @@ function PasswordCard() {
         <SecurityFact label="2-factor auth" value="Off" accent />
       </div>
 
-      <div className="mt-5 flex items-center justify-between">
+      <div className="theme-action-bar mt-5">
         <p
-          className="text-[0.78rem]"
+          className="min-w-0 text-[0.78rem]"
           style={{ color: 'var(--theme-fg-muted)' }}
         >
           Use 8+ characters with letters, numbers, and a symbol.
@@ -698,10 +698,13 @@ function PasswordCard() {
           type="button"
           onClick={onSubmit}
           disabled={!canSubmit}
-          className="theme-btn-primary disabled:cursor-not-allowed disabled:opacity-50"
+          className="theme-btn-primary theme-action-bar-primary sm:w-auto disabled:cursor-not-allowed disabled:opacity-50"
         >
           <KeyRound size={14} strokeWidth={1.8} />
-          Change password
+          <span className="theme-action-label">
+            <span className="sm:hidden">Change</span>
+            <span className="hidden sm:inline">Change password</span>
+          </span>
         </button>
       </div>
     </motion.section>

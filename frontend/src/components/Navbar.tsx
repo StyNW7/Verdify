@@ -432,14 +432,14 @@ export default function Navbar() {
                 type="button"
                 onClick={() => openAuth('register')}
                 onMouseEnter={() => setActiveMenu(null)}
-                className="ml-2 inline-flex h-8 items-center gap-1.5 rounded-full px-3.5 text-[0.78rem] font-medium transition-all duration-300"
+                className="ml-2 inline-flex h-8 max-w-[8rem] items-center gap-1.5 overflow-hidden rounded-full px-3.5 text-[0.78rem] font-medium whitespace-nowrap transition-all duration-300"
                 style={{
                   background: 'var(--theme-accent)',
                   color: 'var(--theme-accent-fg)',
                   letterSpacing: '0.015em',
                 }}
               >
-                Get started
+                <span className="theme-action-label">Start</span>
                 <ArrowUpRight size={13} strokeWidth={1.8} />
               </button>
             </div>
@@ -736,7 +736,7 @@ export default function Navbar() {
                     }}
                     className="theme-btn-primary w-full justify-center"
                   >
-                    Get started
+                    <span className="theme-action-label">Start</span>
                     <ArrowUpRight size={14} strokeWidth={1.8} />
                   </button>
                   <div className="flex items-center justify-between">

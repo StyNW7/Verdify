@@ -13,7 +13,6 @@ import {
   Leaf,
   LogOut,
   Menu,
-  Settings,
   Trophy,
   UserRound,
   X,
@@ -25,6 +24,7 @@ import { AuthModalProvider } from '@/components/auth-modal';
 
 type NavEntry = {
   label: string;
+  shortLabel?: string;
   to: string;
   icon: LucideIcon;
   stub?: boolean;
@@ -32,10 +32,10 @@ type NavEntry = {
 
 const primaryNav: NavEntry[] = [
   { label: 'Dashboard', to: '/dashboard', icon: Gauge },
-  { label: 'Plan Route', to: '/route', icon: Compass },
+  { label: 'Plan Route', shortLabel: 'Route', to: '/route', icon: Compass },
   { label: 'History', to: '/history', icon: History },
   { label: 'Rewards', to: '/rewards', icon: Gift },
-  { label: 'Leaderboard', to: '/leaderboard', icon: Trophy },
+  { label: 'Leaderboard', shortLabel: 'Board', to: '/leaderboard', icon: Trophy },
 ];
 
 const secondaryNav: NavEntry[] = [
@@ -49,6 +49,7 @@ const isAuthedPath = (p: string) =>
   p.startsWith('/dashboard') ||
   p.startsWith('/route') ||
   p.startsWith('/history') ||
+  p.startsWith('/rewards') ||
   p.startsWith('/leaderboard') ||
   p.startsWith('/profile');
 
@@ -317,7 +318,7 @@ export default function AuthedLayout() {
                   aria-hidden
                 />
                 <span
-                  className="theme-mono-sm"
+                  className="theme-mono-sm min-w-0 truncate"
                   style={{ color: 'var(--theme-fg-dim)' }}
                 >
                   Verdify / {pageLabel(pathname)}
@@ -513,11 +514,11 @@ export default function AuthedLayout() {
 
 function pageLabel(pathname: string) {
   if (pathname.startsWith('/dashboard')) return 'Dashboard';
-  if (pathname.startsWith('/route')) return 'Route Planner';
+  if (pathname.startsWith('/route')) return 'Route';
   if (pathname.startsWith('/history')) return 'History';
   if (pathname.startsWith('/profile')) return 'Profile';
-  if (pathname.startsWith('/leaderboard')) return 'Leaderboard';
-  if (pathname.startsWith('/profile')) return 'Profile';
+  if (pathname.startsWith('/leaderboard')) return 'Board';
+  if (pathname.startsWith('/rewards')) return 'Rewards';
   return 'Verdify';
 }
 
@@ -551,12 +552,12 @@ function MobileNavItem({
         <Icon className="h-[16px] w-[16px]" strokeWidth={1.7} />
       </span>
       <span
-        className="flex flex-1 items-center justify-between gap-2 whitespace-nowrap text-[0.95rem]"
+        className="flex min-w-0 flex-1 items-center justify-between gap-2 overflow-hidden whitespace-nowrap text-[0.95rem]"
         style={{
           color: active ? 'var(--theme-fg)' : 'var(--theme-fg-muted)',
         }}
       >
-        <span>{entry.label}</span>
+        <span className="truncate">{entry.shortLabel ?? entry.label}</span>
         {entry.stub ? (
           <span
             className="theme-mono-sm shrink-0"
@@ -658,7 +659,7 @@ function SidebarItem({
               color: active ? 'var(--theme-fg)' : 'var(--theme-fg-muted)',
             }}
           >
-            <span>{entry.label}</span>
+            <span className="truncate">{entry.shortLabel ?? entry.label}</span>
             {entry.stub && (
               <span
                 className="theme-mono-sm shrink-0"

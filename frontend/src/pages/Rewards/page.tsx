@@ -297,7 +297,10 @@ function MarketDesign() {
                   style={{ height: '2.6rem', padding: '0 1.25rem', fontSize: '0.78rem' }}
                 >
                   <Gift size={14} strokeWidth={1.9} />
-                  Redeem now
+                  <span className="theme-action-label">
+                    <span className="sm:hidden">Redeem</span>
+                    <span className="hidden sm:inline">Redeem now</span>
+                  </span>
                 </button>
                 <span
                   className="theme-mono-sm"
@@ -493,7 +496,7 @@ function RewardTile({
         <button
           type="button"
           disabled={locked}
-          className="inline-flex h-9 items-center gap-1.5 rounded-full px-3.5 text-[0.78rem] transition-all duration-300 enabled:hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-55"
+          className="inline-flex h-9 min-w-0 items-center gap-1.5 overflow-hidden whitespace-nowrap rounded-full px-3.5 text-[0.78rem] transition-all duration-300 enabled:hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-55"
           style={{
             background: locked ? 'var(--theme-surface-muted)' : 'var(--theme-accent)',
             color: locked ? 'var(--theme-fg-muted)' : 'var(--theme-accent-fg)',
@@ -503,7 +506,7 @@ function RewardTile({
           }}
         >
           {locked ? <Lock size={13} strokeWidth={1.8} /> : <Gift size={13} strokeWidth={1.8} />}
-          {locked ? 'Locked' : 'Redeem'}
+          <span className="theme-action-label">{locked ? 'Locked' : 'Redeem'}</span>
         </button>
       </div>
     </motion.article>
@@ -581,7 +584,7 @@ function ChallengeRow({
             </span>
             <button
               type="button"
-              className="theme-link-underline text-[0.8rem]"
+              className="theme-link-underline whitespace-nowrap text-[0.8rem]"
               style={{ color: 'var(--theme-fg)' }}
             >
               {active ? 'Continue' : 'Start'}

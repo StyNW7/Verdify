@@ -34,13 +34,20 @@ const Footer = forwardRef<HTMLElement>(function Footer(_, ref) {
               Agentic green navigation for commuters, companies, and reviewers who
               need mobility to end in measurable action.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <a href="/#how" className="theme-btn-primary">
-                Plan a trip <ArrowRight className="h-4 w-4" />
+            <div className="theme-action-bar mt-8 max-w-md">
+              <a href="/#how" className="theme-btn-primary theme-action-bar-primary">
+                <span className="theme-action-label">
+                  <span className="sm:hidden">Plan</span>
+                  <span className="hidden sm:inline">Plan trip</span>
+                </span>
+                <ArrowRight className="h-4 w-4" />
               </a>
-              <a href="/#caps" className="theme-btn-ghost">
-                Capabilities
-              </a>
+              <div className="theme-action-bar-icons">
+                <a href="/#caps" className="theme-btn-ghost h-12 w-12 px-0 sm:w-auto sm:px-6" aria-label="Capabilities">
+                  <span className="theme-action-label hidden sm:inline">Capabilities</span>
+                  <ArrowRight className="h-4 w-4 sm:hidden" />
+                </a>
+              </div>
             </div>
           </div>
           <div className="flex flex-col justify-between gap-10">

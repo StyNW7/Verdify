@@ -295,6 +295,8 @@ html.dark {
 
   .btn-ink {
     display: inline-flex;
+    min-width: 0;
+    max-width: 100%;
     align-items: center;
     justify-content: center;
     gap: 0.6rem;
@@ -307,6 +309,9 @@ html.dark {
     font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     border-radius: 999px;
     transition: background 0.35s ease, transform 0.35s ease;
   }
@@ -314,6 +319,8 @@ html.dark {
 
   .btn-ghost {
     display: inline-flex;
+    min-width: 0;
+    max-width: 100%;
     align-items: center;
     justify-content: center;
     gap: 0.6rem;
@@ -326,6 +333,9 @@ html.dark {
     font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     border-radius: 999px;
     transition: border-color 0.35s ease, background 0.35s ease;
   }
@@ -497,7 +507,10 @@ html.dark .theme-root {
 .theme-btn-primary,
 .theme-root .theme-btn-primary {
   display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
   align-items: center;
+  justify-content: center;
   gap: 0.55rem;
   height: 3rem;
   padding: 0 1.6rem;
@@ -507,6 +520,9 @@ html.dark .theme-root {
   font-weight: 500;
   font-size: 0.82rem;
   letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   border-radius: 999px;
   transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.4s ease;
   box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
@@ -519,7 +535,10 @@ html.dark .theme-root {
 
 .theme-root .theme-btn-ghost {
   display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
   align-items: center;
+  justify-content: center;
   gap: 0.55rem;
   height: 3rem;
   padding: 0 1.6rem;
@@ -530,12 +549,60 @@ html.dark .theme-root {
   font-weight: 500;
   font-size: 0.82rem;
   letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   border-radius: 999px;
   transition: border-color 0.4s ease, background 0.4s ease;
 }
 .theme-root .theme-btn-ghost:hover {
   border-color: var(--theme-accent);
   background: var(--theme-accent-soft);
+}
+
+.theme-action-bar,
+.theme-root .theme-action-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.theme-action-bar-primary,
+.theme-root .theme-action-bar-primary {
+  min-width: 0;
+  width: 100%;
+}
+
+.theme-action-bar-icons,
+.theme-root .theme-action-bar-icons {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.theme-action-label,
+.theme-root .theme-action-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 420px) {
+  .theme-btn-primary,
+  .theme-root .theme-btn-primary,
+  .theme-root .theme-btn-ghost {
+    padding-inline: 1.1rem;
+  }
+
+  .theme-action-bar {
+    gap: 0.5rem;
+  }
 }
 
 .theme-root .theme-shell {

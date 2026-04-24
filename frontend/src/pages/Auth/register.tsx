@@ -382,13 +382,13 @@ export default function RegisterPage() {
           whileTap={{ scale: 0.98 }}
           type="submit"
           disabled={isLoading}
-          className="w-full bg-gradient-to-r from-emerald-600 to-green-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-6"
+          className="w-full bg-gradient-to-r from-emerald-600 to-green-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex min-w-0 items-center justify-center gap-2 overflow-hidden whitespace-nowrap mt-6"
         >
           {isLoading ? (
             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
           ) : (
             <>
-              Create Account
+              <span className="truncate">Create account</span>
               <ArrowRight size={18} />
             </>
           )}
@@ -407,9 +407,9 @@ export default function RegisterPage() {
       <p className="text-center">
         <a
           href="/auth/login"
-          className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors"
+          className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors whitespace-nowrap"
         >
-          Sign In Instead
+          Sign in
         </a>
       </p>
     </div>
