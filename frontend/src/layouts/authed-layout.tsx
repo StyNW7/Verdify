@@ -13,7 +13,6 @@ import {
   Leaf,
   LogOut,
   Menu,
-  Settings,
   Trophy,
   UserRound,
   X,
