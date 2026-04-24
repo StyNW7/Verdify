@@ -4,6 +4,10 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router';
+import toast from 'react-hot-toast';
+
+import { loginUser } from '@/lib/api';
+import { saveAuthSession } from '@/lib/session';
 
 export default function LoginPage() {
 
@@ -54,13 +58,28 @@ export default function LoginPage() {
     if (!validateForm()) return;
 
     setIsLoading(true);
-    
-    setTimeout(() => {
-      setIsLoading(false);
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('userEmail', formData.email);
+
+    try {
+      const result = await loginUser({
+        email: formData.email.trim().toLowerCase(),
+        password: formData.password,
+      });
+
+      saveAuthSession({
+        userId: result.userId,
+        token: result.token,
+        email: formData.email.trim().toLowerCase(),
+      });
+
+      toast.success('Signed in successfully');
       navigate('/dashboard');
-    }, 1500);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Unable to sign in. Please try again.';
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

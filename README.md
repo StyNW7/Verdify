@@ -1,346 +1,425 @@
-# Verdify - Your Personal Green Navigator
+<div align="center">
+    <div>
+        <img height="150px" src="./images/logo-nobg.png" alt="Verdify Logo"/>
+    </div>
+    <div>
+            <h3><b>Verdify</b></h3>
+            <p><i>Your Personal AI Green Navigator for the Johor-Singapore Innovation Corridor</i></p>
+    </div>
+</div>
+<br>
 
-**Verdify** is a multi-modal green transportation routing and booking platform for Malaysia, designed to solve the nation's congestion problem and support the goal of zero emissions by 2050.
+<h1 align="center">MyAI Future Hackathon 2026
+<br/>
+Project 2030: Advancing the Nation by Building Solutions with Google AI
+</h1>
+<div align="center">
 
-Similar to Google Maps + Gemini + Moovit, Verdify not only helps you plan a route but also allows you to book and pay for multiple transportation options seamlessly.
+<img src="./images/screenshots/landing.png" alt="Verdify Dashboard"/>
 
----
+</div>
+<br>
 
-## 🌍 Project Overview
+**Verdify** is an AI Personal Green Navigator specifically designed to address mobility and carbon emissions issues in the Johor-Singapore Innovation Corridor (JS-SEZ). By leveraging the **Google AI Ecosystem Stack** (Gemini, Firebase Genkit, Vertex AI Search RAG, and Google Cloud Run), Verdify not only provides route recommendations but also autonomously plans, calculates, books, and reports on users' green journeys.
 
-**Vision**: Make green transportation the default choice for Malaysian travelers
-**Target Region (MVP)**: Johor-Singapore
-**Key Feature**: Intelligent routing that balances speed, environmental impact, and congestion mitigation
-**Sponsors**: Google, Malaysian University of Technology
+Built as a strategic response to Malaysia's RM20+ billion annual congestion losses, Verdify transforms daily commuters into active contributors toward **Malaysia's Net Zero 2050** target. The platform serves three primary stakeholders: individual commuters (B2C), enterprises with fleet operations (B2B), and government agencies monitoring national mobility (B2G).
 
-### What Makes Verdify Different
+**Pitch Deck:** [verdify-pitch-deck](https://drive.google.com/file/d/1n6uWS8UHH8Oyjjla3y6tCHtZRm2BmtOj/view?usp=sharing)
 
-- **4 Smart Routing Modes**:
-  - 🏃 **Fast Mode**: Fastest route possible
-  - 🌱 **EcoBoost Mode**: Lowest carbon footprint with green points multiplier
-  - 🚗 **Flowing Mode**: Solves congestion by avoiding gridlock
-  - 🤖 **Smart Mode**: AI-selected mode based on time of day
-
-- **Green Points System**: Earn multiplier-based points for sustainable travel
-  - Formula: `Points = Distance * (BaselineCO2 / ActualCO2) * 1.5`
-  - Redeem for vouchers, free travels, discounts
-
-- **Integrated Booking**: One-click booking across multiple transport options
-  - EV Taxis, LRT, MRT, Buses
-  - QR code verification (no need to pay at vehicle)
-  - Mock payment via DuitNow QR (production ready)
-
-- **Gemini RAG Integration**: AI-powered carbon data extraction and route optimization
+**Video Demo:** [verdify-video-demo](https://drive.google.com/file/d/1n6uWS8UHH8Oyjjla3y6tCHtZRm2BmtOj/view?usp=sharing)
 
 ---
 
-## 📁 Project Structure
+## ⚙️ Technology Stack: Frontend
+
+<div align="center">
+
+<kbd><img src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/react.png" height="60" /></kbd>
+<kbd><img src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/vite.png" height="60" /></kbd>
+<kbd><img src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/typescript.png" height="60" /></kbd>
+<kbd><img src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/tailwind_css.png" height="60" /></kbd>
+<kbd><img src="https://raw.githubusercontent.com/marwin1991/profile-technology-icons/refs/heads/main/icons/shadcn_ui.png" height="60" /></kbd>
+
+</div>
+
+<div align="center">
+<h4>React | Vite | TypeScript | TailwindCSS | ShadcnUI | Framer Motion | Recharts | Lucide React</h4>
+</div>
+
+---
+
+## 🧠 Google AI Ecosystem Stack
+
+<div align="center">
+
+<kbd><img src="./images/icons/gemini.png" height="60" /></kbd>
+<kbd><img src="./images/icons/firebase-genkit.png" height="60" /></kbd>
+<kbd><img src="./images/icons/vertex.png" height="60" /></kbd>
+<kbd><img src="./images/icons/cloudrun.png" height="60" /></kbd>
+
+</div>
+
+<div align="center">
+<h4>Gemini 2.0 Flash/Pro | Firebase Genkit | Vertex AI Search | Google Cloud Run</h4>
+</div>
+
+---
+
+## 🎯 Problem Statement
+
+Three interconnected barriers prevent daily commuters in the Johor-Singapore corridor from adopting sustainable mobility:
+
+| Problem | Impact |
+| :--- | :--- |
+| **Severe Mobility Congestion** | 300,000+ daily crossings on Causeway; 2-3 hours travel time (should be 30 min); RM20+ billion annual economic loss |
+| **Rising Carbon Emissions** | Transport sector contributes 27% of national emissions; INCREASING 3% annually; Net Zero 2050 target at risk |
+| **Energy Crunch (April 2026)** | Diesel price up 40%; transport costs up 25-30%; no incentive for green alternatives |
+
+**Key Insight:** 78% of commuters KNOW public transport is greener, but only 23% actually USE it. Existing solutions (Google Maps, Grab, Moovit) provide INFORMATION but not INCENTIVES, ACTION, or TRUST.
+
+---
+
+## 💡 Our Solution
+
+Verdify serves as an end-to-end **B2C, B2B, and B2G** technological bridge between AI-powered route intelligence and real-world green mobility action:
+
+### 1️⃣ B2C Web App (Individual Commuters)
+- Smart Eco Routing with multi-modal options (RTS, LRT, bus, walking, biking, EV)
+- Real-Time Carbon Intelligence with live traffic, weather, and occupancy data
+- Green Points & Reward System (redeem for toll discounts, coffee, EV credits)
+- Peak Hour Load Balancing with 2x points for off-peak travel
+- Reimbursement System (compensated if ETA is wrong)
+
+### 2️⃣ B2B Enterprise Dashboard (Fleet Managers, Corporations)
+- Fleet emission tracking & ESG reporting
+- Employee commuting carbon analytics
+- Bulk reward distribution & corporate challenges
+- API access for internal systems
+
+### 3️⃣ B2G Government Dashboard (MyDIGITAL, MOT, JS-SEZ)
+- Real-time mobility heatmap & congestion monitoring
+- Carbon emission tracking by region
+- Policy impact simulation & commuter behavior analytics
+- Data sovereignty & national agenda alignment
+
+---
+
+## 🔄 End-to-End Workflow
 
 ```
-Verdify/
-├── backend/                    # Go backend (Genkit + Firebase)
-│   ├── docs/                   # Comprehensive documentation
-│   ├── handlers/               # HTTP request handlers
-│   ├── services/               # Business logic
-│   ├── models/                 # Data structures
-│   ├── db/                     # Database layer
-│   ├── IMPLEMENTATION_PLAN.md  # Start here!
-│   └── README.md               # Backend overview
-│
-├── frontend/                   # React + Vite frontend
-│   └── [frontend team handles]
-│
-└── README.md                   # This file
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         USER INPUT LAYER                                     │
+│        Origin | Destination | Departure Time | Preference (Eco/Fast/Cheap) │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      AGENTIC AI CORE (Genkit + Gemini)                       │
+│         Multi-step reasoning | RAG retrieval | Tool calling | Execution     │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+          ┌───────────────────────────┼───────────────────────────┐
+          ▼                           ▼                           ▼
+┌───────────────┐          ┌───────────────┐          ┌───────────────┐
+│  B2C Web App  │          │ B2B Dashboard │          │ B2G Dashboard │
+│  (Commuter)   │          │ (Enterprise)  │          │ (Government)  │
+├───────────────┤          ├───────────────┤          ├───────────────┤
+│• Plan Route   │          │• Fleet Track  │          │• Mobility Map │
+│• View Options │          │• ESG Report   │          │• Carbon Track │
+│• Book & Pay   │          │• Corp Rewards │          │• Policy Tools │
+│• Earn Points  │          │• API Access   │          │• Heatmaps     │
+│• Verify Trip  │          │               │          │               │
+└───────────────┘          └───────────────┘          └───────────────┘
+                                      │
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      SETTLEMENT LAYER (Booking & Payment)                    │
+│              Ticket Booking | QR Generation | Points Distribution           │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         VERDIFY USER WALLET                                  │
+│              (Green Points | Booking History | Carbon Impact)               │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🔧 Technology Stack
+## 🧩 Core Features
 
-### Backend (Go)
-- **Language**: Go 1.21+
-- **Framework**: Genkit (Google's AI framework)
-- **Database**: Firestore
-- **APIs**: Google Maps, Gemini
-- **Auth**: Firebase Auth
-- **Payment**: DuitNow QR (mock for MVP)
+### 🌿 Features for Commuters (B2C)
 
-### Frontend (React)
-- **Framework**: Vite/React
-- **Styling**: Tailwind CSS
-- **API Client**: REST API from backend
+- **Smart Eco Routing** – Multi-modal routes optimized for lowest carbon, not fastest time. 85% less CO₂ compared to driving alone.
+- **Real-Time Carbon Intelligence** – Live traffic, weather, and occupancy data for accurate emissions calculation.
+- **Green Points & Rewards** – Earn points for every green journey. Redeem for toll discounts, coffee vouchers, EV credits, or planting trees.
+- **Peak Hour Load Balancing** – 2x points for off-peak travel to actually reduce congestion, not just avoid it.
+- **Reimbursement System** – If route takes longer than predicted, get compensated. No other navigation app offers this.
+
+🌱 *"Navigate Green. Travel Smart. Earn Rewards."*
 
 ---
 
-## 🚀 Getting Started
+### 🏢 Features for Enterprises (B2B)
 
-### Backend Developer
-1. Read: `/backend/IMPLEMENTATION_PLAN.md` - Complete overview
-2. Read: `/backend/docs/setup-guide.md` - Step-by-step setup
-3. Reference: `/backend/docs/api-spec.md` - API specification
-4. Track: `/backend/docs/priorities.md` - Implementation roadmap
+- **Fleet Emission Tracking** – Real-time carbon monitoring for company vehicles
+- **Automated ESG Reporting** – Generate sustainability reports with one click
+- **Employee Commuting Analytics** – Track and reduce corporate travel footprint
+- **Bulk Reward Distribution** – Incentivize green commuting across organization
 
-### Frontend Developer
-1. Read: `/backend/docs/api-spec.md` - API endpoints you'll consume
-2. Follow: `/backend/docs/architecture.md` - Data models and flows
-3. Test: Use Postman collection (to be generated) to validate endpoints
+📊 *"Turn sustainability commitments into measurable action."*
 
 ---
 
-## 📋 MVP Scope (4-Day Sprint)
+### 🏛️ Features for Government (B2G)
 
-### ✅ What's Included
-- Multi-modal route calculation (walking, EV taxi, LRT, MRT, bus)
-- 4 smart routing modes (Fast, EcoBoost, Flowing, Smart)
-- Green points calculation and tracking
-- Booking system with QR code verification
-- Mock payment integration
-- User authentication (mock)
-- Real-time congestion detection (Google Maps)
-- Gemini RAG for carbon data
+- **Mobility Heatmap** – Real-time congestion monitoring across JS-SEZ corridor
+- **Carbon Tracking Dashboard** – Monitor transport emissions by region
+- **Policy Impact Simulator** – Test policies before implementation
+- **Commuter Behavior Analytics** – Understand mobility patterns for better planning
 
-### ❌ What's NOT Included (Future)
-- Real DuitNow payment processing
-- Real EV taxi and public transport booking APIs
-- Machine learning recommendations
-- Multi-language support
-- SMS/push notifications
-- Analytics dashboard
-- Multi-city support
+📈 *"Evidence-based policymaking powered by AI intelligence."*
 
 ---
 
-## 🏗️ Architecture Overview
+## 🚀 Live Demo
 
+👉 [Verdify Deployed Prototype](https://verdify-frontend-1080742698349.asia-southeast3.run.app/)
+
+**Demo Credentials:**
+- Email: `demo@verdify.com`
+- Password: `demo123`
+- No login required – Demo Mode enabled
+
+---
+
+## 🧰 Getting Started Locally
+
+### Prerequisites
+- **Node.js** (v18+)
+- **Git**
+- **Google Cloud Account** (for backend deployment)
+
+### Clone the Project
+```bash
+git clone https://github.com/StyNW7/Verdify
+cd verdify
+cd frontend
+npm install
+npm run dev
 ```
-Frontend (React)
-    ↓
-Backend API (Go/Genkit)
-    ├→ Route Calculation Service
-    │   ├→ Google Maps API
-    │   ├→ Gemini RAG (carbon data)
-    │   └→ Mode Optimizer
-    │
-    ├→ Booking Service
-    │   ├→ Payment Processing (mock)
-    │   └→ QR Code Generation
-    │
-    ├→ Green Points Service
-    │   ├→ Multiplier Calculation
-    │   └→ Point Verification
-    │
-    └→ User Service
-        ├→ Authentication
-        ├→ Profile Management
-        └→ Booking History
 
-Database (Firestore)
-    ├→ Users
-    ├→ Bookings
-    ├→ Routes
-    ├→ Carbon Data
-    └→ Trips
+### Environment Variables (Optional)
+
+```bash
+# For Google AI Services (if implementing live backend)
+VITE_GEMINI_API_KEY=your_api_key_here
+VITE_FIREBASE_API_KEY=your_api_key_here
+VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain
+VITE_FIREBASE_PROJECT_ID=your_project_id
+```
+
+### Backend Setup (Firebase Genkit)
+
+```bash
+cd verdify
+cd backend
+npm install
+npm run genkit:dev
 ```
 
 ---
 
-## 🔌 Core API Endpoints (MVP)
+## 📸 Result Preview
 
-```
-POST   /api/v1/routes/calculate           # Calculate best route
-POST   /api/v1/bookings/create            # Create booking
-POST   /api/v1/bookings/{id}/pay          # Process payment
-POST   /api/v1/bookings/{id}/verify       # Award green points
-GET    /api/v1/user/{userId}/green-points # Get points balance
-GET    /api/v1/user/{userId}/bookings     # Get booking history
-POST   /api/v1/auth/register              # Create user account
-POST   /api/v1/auth/login                 # Authenticate user
-GET    /health                             # Health check
-```
-
-**Complete specification**: `/backend/docs/api-spec.md`
-
----
-
-## 📊 Implementation Status
-
-**Planning**: ✅ Complete
-**Setup Guide**: ✅ Complete
-**API Specification**: ✅ Complete
-**Architecture Documentation**: ✅ Complete
-**Backend Implementation**: 🔄 In Progress
-**Frontend Implementation**: 🔄 In Progress
-**Integration Testing**: ⏳ Pending
-**Demo**: ⏳ Pending
-
----
-
-## 🎯 Key Features Explained
-
-### 1. Smart Mode Selection
-- **Peak Hours** (7-9am, 12-1pm, 5-7pm): → Flowing Mode (reduce congestion)
-- **Off-Peak**: → EcoBoost Mode (maximize green points)
-- User can override and choose any mode manually
-
-### 2. Green Points Calculation
-```
-Example: 50km route, baseline CO2 = 200g, actual CO2 = 100g
-Points = 50 * (200/100) * 1.5 = 150 points
-```
-- Show estimate BEFORE booking
-- Award actual points AFTER trip verification (scanned QR)
-
-### 3. Multi-Modal Journey
-User can combine multiple transport types in one journey:
-- Walk to station (5 min)
-- LRT ride (40 min)
-- Walk to destination (5 min)
-- All in one booking with one QR code
-
-### 4. Congestion Solving
-- Flowing Mode routes users around congestion
-- Real-time data from Google Maps
-- Reduces overall city gridlock
-
-### 5. Carbon Footprint
-- Baseline: What they would emit with private car
-- Actual: What they emit with chosen route
-- Multiplier rewards the difference
+<table style="width:100%; text-align:center">
+    <col width="100%">
+    <tr>
+        <td width="1%" align="center"><img height="370" src="./images/screenshots/landing-2.png"/></td>
+    </tr>
+    <tr>
+        <td width="1%" align="center">Landing Page</td>
+    </tr>
+    <tr>
+        <td width="1%" align="center"><img height="370" src="./images/screenshots/route-planner.png"/></td>
+    </tr>
+    <tr>
+        <td width="1%" align="center">Route Planner - Input Journey Details</td>
+    </tr>
+    <tr>
+        <td width="1%" align="center"><img height="370" src="./images/screenshots/results.png"/></td>
+    </tr>
+    <tr>
+        <td width="1%" align="center">Results Page - 3 Route Options with Carbon Impact</td>
+    </tr>
+    <tr>
+        <td width="1%" align="center"><img height="370" src="./images/screenshots/history.png"/></td>
+    </tr>
+    <tr>
+        <td width="1%" align="center">User Dashboard - Carbon Savings & Points History</td>
+    </tr>
+    <tr>
+        <td width="1%" align="center"><img height="370" src="./images/screenshots/points.png"/></td>
+    </tr>
+    <tr>
+        <td width="1%" align="center">Green Points Page - Rewards & Redeem Options</td>
+    </tr>
+    <tr>
+        <td width="1%" align="center"><img height="370" src="./images/screenshots/leaderboard.png"/></td>
+    </tr>
+    <tr>
+        <td width="1%" align="center">Leaderboard - Community Green Competition</td>
+    </tr>
+    <tr>
+        <td width="1%" align="center"><img height="370" src="./images/screenshots/booking.png"/></td>
+    </tr>
+    <tr>
+        <td width="1%" align="center">Booking Confirmation - QR Code Ticket</td>
+    </tr>
+</table>
 
 ---
 
-## 🔑 Technical Decisions
+## 🧭 System Architecture Diagram
 
-**Why Go + Genkit?**
-- Fast, efficient, excellent for real-time routing
-- Genkit is Google's framework (aligns with sponsorship)
-- Seamless Gemini integration
+<p align="center">
+  <img src="./images/verdify-architecture.png" width="800" alt="Verdify System Architecture"/>
+</p>
 
-**Why Firestore?**
-- Serverless, scales automatically
-- Real-time sync capabilities
-- Native Firebase integration
-
-**Why Gemini RAG?**
-- Extract carbon data from various sources
-- Weekly updates sufficient for MVP
-- Intelligent route context
-
-**Why Mock Integrations?**
-- Real APIs not finalized yet
-- Allows parallel frontend development
-- Easy to swap with real APIs later
-
-See `/backend/docs/decisions.md` for complete rationale.
+*Verdify End-to-End System Architecture on Google AI Ecosystem*
 
 ---
 
-## 📚 Documentation
+## 📊 Impact to National Development
 
-| Document | Location | For |
-|----------|----------|-----|
-| Implementation Plan | `/backend/IMPLEMENTATION_PLAN.md` | Getting started overview |
-| Setup Guide | `/backend/docs/setup-guide.md` | Step-by-step environment setup |
-| Architecture | `/backend/docs/architecture.md` | System design and data models |
-| API Spec | `/backend/docs/api-spec.md` | REST API endpoints and responses |
-| Priorities | `/backend/docs/priorities.md` | Implementation roadmap by priority |
-| Decisions | `/backend/docs/decisions.md` | Technical decisions and rationale |
-| Current State | `/backend/docs/current-state.md` | Status report and issues |
-
----
-
-## 🚦 MVP Demo Checklist
-
-Before demo, ensure:
-- [ ] All P0 endpoints working
-- [ ] Complete booking lifecycle functional
-- [ ] Green points visible in responses
-- [ ] QR code generation working
-- [ ] Data persisting in Firestore
-- [ ] Postman collection complete
-- [ ] No runtime errors or crashes
-- [ ] Gemini integration working (with fallback)
-- [ ] Frontend successfully consuming APIs
-- [ ] Documentation complete and accurate
+| Impact Area | Projected Outcome |
+| :--- | :--- |
+| **Economic Sovereignty** | RM8-10M annual congestion cost savings; RM2-3M fuel savings for users |
+| **Environmental Impact** | 500K+ green journeys; 50K tons CO₂ saved; 12.5K trees equivalent |
+| **Financial Inclusion** | Green points ecosystem; reward redemption accessible to all |
+| **NDC Contribution** | Support Malaysia's Net Zero 2050 target (45% transport emission reduction) |
+| **SDGs** | SDG 9 (Industry & Infrastructure), SDG 11 (Sustainable Cities), SDG 13 (Climate Action) |
+| **JS-SEZ Alignment** | Direct support for Johor-Singapore Special Economic Zone development |
 
 ---
 
-## 👥 Team
+## 🗺️ Implementation Roadmap
 
-- **Backend Lead**: [Your name]
-- **Frontend Developer 1**: [Name]
-- **Frontend Developer 2**: [Name]
-- **Project Sponsor**: Google, Malaysian University of Technology
-
----
-
-## 📅 Timeline
-
-- **Day 1**: Setup, basic endpoints, mock data
-- **Day 2**: Route calculation, mode logic, booking creation
-- **Day 3**: Gemini integration, green points, trip verification
-- **Day 4**: Testing, bug fixes, demo preparation
-
-**Current Date**: [Today]
-**Demo Date**: [4 days from today]
+| Phase | Period | Milestones |
+| :--- | :--- | :--- |
+| **Proof of Concept** | April 2026 | Hackathon prototype, Gemini + Genkit integration, RAG setup |
+| **Alpha Testing** | May - July 2026 | Pilot with 100 JS-SEZ commuters, 5 transport partners |
+| **Beta Launch** | Aug - Dec 2026 | Public launch in JS-SEZ corridor, 5,000+ active users |
+| **Scale Phase 1** | Q1 2027 | Expand to Klang Valley, B2B enterprise product launch |
+| **Scale Phase 2** | Q2 - Q3 2027 | 150+ cities, 50,000+ users, carbon credit marketplace |
+| **National Rollout** | Q4 2027 | 500,000+ users, sustainable revenue model, regional expansion |
 
 ---
 
-## ❓ Common Questions
+## 🛠️ Technologies Used
 
-**Q: Will this work nationwide from day 1?**
-A: No, MVP is Johor-Singapore only. Expansion to other regions is post-demo.
+### Frontend
+| Technology | Purpose |
+| :--- | :--- |
+| **React 18 + TypeScript** | Core UI framework with type safety |
+| **Vite** | Fast build tool and development server |
+| **Tailwind CSS** | Utility-first styling with green theme |
+| **Shadcn UI** | Accessible, customizable component library |
+| **Framer Motion** | Smooth animations and transitions |
+| **Recharts** | Interactive charts (carbon trends, points history) |
+| **Lucide React** | Consistent icon system |
 
-**Q: How accurate are carbon emissions?**
-A: MVP uses Gemini-extracted baseline values. Real-time accuracy improves after launch.
+### Google AI Ecosystem
+| Technology | Purpose |
+| :--- | :--- |
+| **Gemini 2.0 Flash/Pro** | AI reasoning, route planning, multimodal input |
+| **Firebase Genkit** | Agentic orchestration flows |
+| **Vertex AI Search** | RAG retrieval with Malaysia-specific documents |
+| **Google Cloud Run** | Serverless backend deployment |
 
-**Q: Is payment working?**
-A: No, DuitNow is mocked for MVP. Real payment integration comes later.
+### Backend & Database
+| Technology | Purpose |
+| :--- | :--- |
+| **Firebase Authentication** | User management & auth |
+| **Firebase Firestore** | User data, points, booking history |
+| **Firebase Hosting** | Frontend hosting & CDN |
 
-**Q: Can users really book transport?**
-A: Mock APIs for MVP. Real booking integrations come later.
-
-**Q: When will the app launch?**
-A: MVP demo is [date]. Production roadmap TBD by sponsors.
-
----
-
-## 📞 Support & Issues
-
-- **Setup Help**: See `/backend/docs/setup-guide.md`
-- **API Questions**: See `/backend/docs/api-spec.md`
-- **Architecture**: See `/backend/docs/architecture.md`
-- **Report Issue**: Update `/backend/docs/current-state.md`
-
----
-
-## 🔮 Future Roadmap (Post-MVP)
-
-1. Real payment processing (DuitNow)
-2. Real EV taxi integration
-3. Real public transport booking APIs
-4. Machine learning recommendations
-5. Multi-city expansion
-6. Premium "Luxury Mode"
-7. Analytics dashboard
-8. International expansion
+### RAG Knowledge Base (Malaysia-Specific)
+| Dataset | Source |
+| :--- | :--- |
+| Low Carbon Mobility Blueprint | MOT Malaysia |
+| RTS Link Schedule | Prasarana / MyTransport |
+| JS-SEZ Green Mobility Plan | JS-SEZ Authority |
+| Net Zero 2050 Malaysia | KASA / MESTECC |
+| MET Malaysia Weather Data | MET Malaysia |
 
 ---
 
-## 📄 License
+## 🎯 The 5 Pillars of Verdify
 
-[To be determined]
+| Pillar | What It Does | Key Benefit |
+| :--- | :--- | :--- |
+| 🌱 **Smart Eco Routing** | Multi-modal routes optimized for lowest carbon, not fastest time | 85% less CO₂ vs driving alone |
+| ⭐ **Green Points & Rewards** | Earn points for every green journey; redeem for real rewards | Gamified sustainability |
+| 🚗 **EV-First Policy** | Only electric vehicles recommended for private hire | Zero-emission rides |
+| ⏰ **Peak Hour Balancing** | 2x points for off-peak travel to reduce congestion | Save time + earn more |
+| 💰 **Reimbursement System** | Compensated if route takes longer than predicted | Risk-free trust guarantee |
+
+---
+
+## 👥 Team Member
+
+This project is created by **Team Verdify** for **MyAI Future Hackathon 2026 (Project 2030)** organized by **Google Developer Groups On Campus Universiti Teknologi Malaysia**:
+
+| Name | Role
+| :--- | :---
+| **Stanley Nathanael Wijaya** | Team Leader
+| **Saputra Tanuwijaya** | Backend Developer
+| **Roderich Cavine Chow** | Frontend Developer
+
+---
+
+## 📚 References
+
+- Malaysia Ministry of Transport (2026). *Low Carbon Mobility Blueprint*
+- MyDIGITAL Corporation (2025). *Malaysia Digital Economy Blueprint*
+- World Bank (2024). *Malaysia Economic Monitor: Urban Mobility*
+- Malaysia Competition Commission (2025). *Congestion Cost Analysis Report*
+- Google Developers (2026). *Build with AI: Gemini API Documentation*
+- Firebase Team (2026). *Genkit: Agentic AI Framework*
+- Prasarana Malaysia (2026). *RTS Link Operational Schedule*
+
+Full reference list available in our Proposal Document.
+
+---
+
+## 📬 Contact
+
+Have questions, feedback, or interested in collaboration?
+
+- 📧 Email: [stanley.n.wijaya7@gmail.com](mailto:stanley.n.wijaya7@gmail.com)
+- 💬 Discord: `stynw7`
 
 ---
 
 ## 🙏 Acknowledgments
 
-Sponsored by:
-- Google Cloud
-- Malaysian University of Technology
+- **Google Developer Groups On Campus UTM** – Organizers of MyAI Future Hackathon 2026
+- **Google for Developers** – Technical support, mentorship, and Google Cloud credits
+- **Project 2030** – National agenda alignment and grand challenges framework
 
 ---
 
-**Last Updated**: [Today]
-**Status**: MVP Sprint - 4 Days to Demo
-**Next Update**: [Tomorrow]
+<div align="center">
+    <code>Made with ❤️ by Team Verdify | Advancing the Nation by Building Solutions with Google AI</code>
+    <br/>
+    <code>Navigate Green. Travel Smart. Build for the Good of Humanity.</code>
+</div>
+
+---
+
+<details>
+<summary><b>📝 License & Copyright</b></summary>
+<br/>
+This project is submitted for MyAI Future Hackathon 2026 (Project 2030). All rights reserved by Team Verdify. The source code is provided for evaluation purposes only.
+</details>

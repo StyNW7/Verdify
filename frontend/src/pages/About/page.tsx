@@ -12,10 +12,10 @@ import {
 } from 'lucide-react';
 
 const team = [
-  { n: '01', name: 'Team Member 01', role: 'Product & strategy', meta: 'Corridor lead' },
-  { n: '02', name: 'Team Member 02', role: 'AI · agentic flows', meta: 'Gemini · Genkit' },
-  { n: '03', name: 'Team Member 03', role: 'Frontend · motion', meta: 'React · Framer' },
-  { n: '04', name: 'Team Member 04', role: 'Backend · data', meta: 'Cloud Run · RAG' },
+  { n: '01', name: 'Stanley Nathanael Wijaya', role: 'Team Lead', meta: 'Team Lead' },
+  { n: '02', name: 'Saputra Tanuwijaya', role: 'Backend Developer', meta: 'Backend Developer' },
+  { n: '03', name: 'Roderich Cavine Chow', role: 'Frontend Developer', meta: 'Frontend Developer' },
+  // { n: '04', name: 'Team Member 04', role: 'Backend · data', meta: 'Cloud Run · RAG' },
 ];
 
 const pillars = [
@@ -323,8 +323,7 @@ export default function AboutPage() {
             className="mt-10 max-w-xl text-[0.95rem] leading-[1.75]"
             style={{ color: 'var(--theme-fg-dim)' }}
           >
-            Placeholders for now — real names and portraits land when the team is ready
-            to be named.
+            The team behind Verdify.
           </p>
         </div>
       </section>

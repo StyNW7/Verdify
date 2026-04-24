@@ -73,6 +73,100 @@ Suggested document IDs:
 - bookings: `booking_<uuid>`
 - trips: `trip_<uuid>`
 
+### Firestore Console: what to enter exactly
+
+When you create a collection in Firebase Console, it forces you to create the first document.
+
+Use this approach:
+
+1. Create collection name (for example `users`)
+2. Document ID:
+   - `users`: use Firebase Auth UID (recommended), or `seed_user_1` for temporary seed
+   - others: use custom IDs like `route_seed_1`, `booking_seed_1`
+3. Add minimal fields from templates below
+
+If you only want structure now, create one `seed_*` doc per collection and keep it.
+
+### Collection field templates (recommended)
+
+#### `users/{uid}`
+
+- `email` (string)
+- `phone` (string)
+- `greenPointsBalance` (number)
+- `totalTripsCompleted` (number)
+- `totalCarbonSaved` (number)
+- `createdAt` (timestamp)
+
+Example seed:
+
+```json
+{
+  "email": "demo@verdify.dev",
+  "phone": "+60123456789",
+  "greenPointsBalance": 0,
+  "totalTripsCompleted": 0,
+  "totalCarbonSaved": 0,
+  "createdAt": "server timestamp"
+}
+```
+
+#### `routes/{routeId}`
+
+- `mode` (string)
+- `totalDistance` (number)
+- `totalDuration` (number)
+- `carbonEstimate` (number)
+- `greenPointsEstimate` (number)
+- `createdAt` (timestamp)
+
+#### `bookings/{bookingId}`
+
+- `userId` (string)
+- `routeId` (string)
+- `status` (string: pending|confirmed|completed|cancelled)
+- `paymentStatus` (string)
+- `estimatedPoints` (number)
+- `actualPoints` (number)
+- `createdAt` (timestamp)
+
+#### `trips/{tripId}`
+
+- `userId` (string)
+- `bookingId` (string)
+- `carbonActual` (number)
+- `pointsAwarded` (number)
+- `startTime` (timestamp)
+- `endTime` (timestamp)
+
+#### `carbon-data/{transportType}`
+
+Use document IDs: `ev_taxi`, `lrt`, `mrt`, `bus`, `walking`
+
+Fields:
+
+- `emissionPerKm` (number)
+- `unit` (string, `g_co2_per_km`)
+- `updatedAt` (timestamp)
+- `source` (string)
+
+Example `carbon-data/ev_taxi`:
+
+```json
+{
+  "emissionPerKm": 80,
+  "unit": "g_co2_per_km",
+  "updatedAt": "server timestamp",
+  "source": "seed"
+}
+```
+
+### Important note for current codebase
+
+Current backend still uses in-memory store (`backend/db/store.go`).
+So Firestore data will not be read/written until Firestore repository wiring is implemented.
+You can still prepare collections now (recommended), but runtime behavior currently does not depend on them yet.
+
 ## 5) Firebase Auth Setup
 
 1. Firebase Console → Authentication → Get Started

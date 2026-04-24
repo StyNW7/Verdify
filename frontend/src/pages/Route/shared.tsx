@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useRef, useState, forwardRef } from 'react';
+import { useMemo, useState, forwardRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import toast from 'react-hot-toast';
 import {
   MapPin,
   ArrowUpDown,
@@ -30,6 +31,7 @@ import {
   finishPlannerSubmission,
   startPlannerSubmission,
 } from './planner-phase';
+import { calculateRoute, type BackendLocation, type BackendRoute } from '@/lib/api';
 
 export type Preference = PlannerPreference;
 export type ModeKey = 'rts' | 'lrt' | 'bus' | 'walking' | 'biking' | 'evTaxi';
@@ -147,6 +149,166 @@ export const MODE_META: Record<ModeKey, { label: string; icon: typeof Train }> =
   evTaxi: { label: 'EV Taxi', icon: Car },
 };
 
+const ROUTE_IDS: PlannerRouteId[] = ['eco', 'fast', 'cheap'];
+
+const MODE_BY_ROUTE_ID: Record<PlannerRouteId, 'ecoboost' | 'fast' | 'flowing'> = {
+  eco: 'ecoboost',
+  fast: 'fast',
+  cheap: 'flowing',
+};
+
+const ROUTE_NAME_BY_ID: Record<PlannerRouteId, string> = {
+  eco: 'Green Corridor',
+  fast: 'Express',
+  cheap: 'Budget',
+};
+
+const ROUTE_LABEL_BY_ID: Record<PlannerRouteId, string> = {
+  eco: 'Recommended · Eco',
+  fast: 'Fastest',
+  cheap: 'Cheapest',
+};
+
+const TRANSPORT_LABELS: Record<string, string> = {
+  walking: 'Walk',
+  bus: 'Bus',
+  rts: 'RTS Link',
+  lrt: 'LRT',
+  ev_taxi: 'EV Taxi',
+  evTaxi: 'EV Taxi',
+};
+
+const LOCATION_COORDINATES: Record<string, BackendLocation> = {
+  'bukit indah, johor': { latitude: 1.4838, longitude: 103.6604 },
+  'johor bahru sentral': { latitude: 1.4624, longitude: 103.7643 },
+  'skudai, johor': { latitude: 1.5378, longitude: 103.6564 },
+  'danga bay, johor': { latitude: 1.4708, longitude: 103.7245 },
+  'ciq bangunan sultan iskandar': { latitude: 1.4626, longitude: 103.7638 },
+  'woodlands north, singapore': { latitude: 1.4482, longitude: 103.7857 },
+  'orchard, singapore': { latitude: 1.3048, longitude: 103.8318 },
+  'raffles place, singapore': { latitude: 1.2831, longitude: 103.8515 },
+  'jurong east, singapore': { latitude: 1.3332, longitude: 103.7423 },
+  'changi airport, singapore': { latitude: 1.3644, longitude: 103.9915 },
+};
+
+function normalizeLocationKey(value: string) {
+  return value.trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
+function parseCoordinateInput(value: string): BackendLocation | null {
+  const match = value.trim().match(/^(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)$/);
+  if (!match) return null;
+  const latitude = Number(match[1]);
+  const longitude = Number(match[3]);
+  if (Number.isNaN(latitude) || Number.isNaN(longitude)) return null;
+  return { latitude, longitude };
+}
+
+function resolveLocationInput(value: string): BackendLocation | null {
+  const directCoords = parseCoordinateInput(value);
+  if (directCoords) return directCoords;
+
+  const key = normalizeLocationKey(value);
+  if (LOCATION_COORDINATES[key]) return LOCATION_COORDINATES[key];
+
+  for (const [name, coords] of Object.entries(LOCATION_COORDINATES)) {
+    if (key.includes(name) || name.includes(key)) {
+      return coords;
+    }
+  }
+  return null;
+}
+
+function getTransportLabel(type: string) {
+  return TRANSPORT_LABELS[type] ?? type.replace(/_/g, ' ');
+}
+
+function estimateStepCost(step: { type: string; distance: number }) {
+  switch (step.type) {
+    case 'walking':
+      return 0;
+    case 'bus':
+      return 1.6 + step.distance * 0.18;
+    case 'rts':
+    case 'lrt':
+      return 2.4 + step.distance * 0.22;
+    case 'ev_taxi':
+    case 'evTaxi':
+      return 4.5 + step.distance * 0.88;
+    default:
+      return 1.2 + step.distance * 0.25;
+  }
+}
+
+function round2(value: number) {
+  return Math.round(value * 100) / 100;
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function toRouteOption(
+  route: BackendRoute,
+  id: PlannerRouteId,
+  preferred: PlannerRouteId,
+): RouteOption {
+  const totalDuration = Math.max(1, Math.round(route.totalDuration));
+  const totalCarbonKg = round2(route.carbonEstimate / 1000);
+  const baselineCarbon = route.totalDistance * 200;
+  const savingsPct =
+    baselineCarbon > 0
+      ? clamp(Math.round(((baselineCarbon - route.carbonEstimate) / baselineCarbon) * 100), 0, 99)
+      : 0;
+  const estimatedCost = round2(
+    route.steps.reduce((sum, step) => sum + estimateStepCost(step), 0),
+  );
+  const distinctModes = Array.from(new Set(route.steps.map((step) => getTransportLabel(step.type))));
+  const steps = route.steps.map(
+    (step) =>
+      `${getTransportLabel(step.type)} for ${Math.max(1, Math.round(step.duration))} min (${step.distance.toFixed(1)} km)`,
+  );
+  if (steps.length === 0) {
+    steps.push('No detailed segments available from planner.');
+  }
+
+  const hero =
+    id === 'eco'
+      ? {
+          primary: totalCarbonKg.toFixed(2),
+          unit: 'kg CO2',
+          caption: `${savingsPct}% less than driving baseline`,
+        }
+      : id === 'fast'
+        ? {
+            primary: String(totalDuration),
+            unit: 'minutes',
+            caption: 'Estimated door-to-door',
+          }
+        : {
+            primary: `RM ${estimatedCost.toFixed(2)}`,
+            unit: 'total',
+            caption: 'Estimated fare total',
+          };
+
+  return {
+    id,
+    name: ROUTE_NAME_BY_ID[id],
+    type: id,
+    label: ROUTE_LABEL_BY_ID[id],
+    modes: distinctModes,
+    durationText: `${totalDuration}m`,
+    duration: totalDuration,
+    co2: totalCarbonKg,
+    co2Saved: savingsPct,
+    cost: estimatedCost,
+    points: route.greenPointsEstimate,
+    steps,
+    hero,
+    recommended: id === preferred,
+  };
+}
+
 export type PlannerState = ReturnType<typeof usePlannerState>;
 
 export function usePlannerState() {
@@ -163,26 +325,24 @@ export function usePlannerState() {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [phase, setPhase] = useState<PlannerPhase>('idle');
   const [selectedRouteId, setSelectedRouteId] = useState<PlannerRouteId>('eco');
-  const submitTimerRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (submitTimerRef.current) {
-        window.clearTimeout(submitTimerRef.current);
-      }
-    };
-  }, []);
+  const [routes, setRoutes] = useState<RouteOption[]>(MOCK_ROUTES);
 
   const swap = () => {
     setOrigin(destination);
     setDestination(origin);
   };
 
-  const submit = () => {
-    if (!origin.trim() || !destination.trim()) return;
+  const submit = async () => {
+    if (!origin.trim() || !destination.trim()) {
+      toast.error('Please provide both origin and destination.');
+      return;
+    }
 
-    if (submitTimerRef.current) {
-      window.clearTimeout(submitTimerRef.current);
+    const resolvedOrigin = resolveLocationInput(origin);
+    const resolvedDestination = resolveLocationInput(destination);
+    if (!resolvedOrigin || !resolvedDestination) {
+      toast.error('Use a suggested location or input coordinates as "lat,lng".');
+      return;
     }
 
     const loadingState = startPlannerSubmission({
@@ -194,7 +354,22 @@ export function usePlannerState() {
     setSelectedRouteId(loadingState.selectedRouteId);
     setPhase(loadingState.phase);
 
-    submitTimerRef.current = window.setTimeout(() => {
+    try {
+      const apiResults = await Promise.all(
+        ROUTE_IDS.map((id) =>
+          calculateRoute({
+            origin: resolvedOrigin,
+            destination: resolvedDestination,
+            mode: MODE_BY_ROUTE_ID[id],
+          }),
+        ),
+      );
+
+      const mappedRoutes = apiResults.map((route, index) =>
+        toRouteOption(route, ROUTE_IDS[index], loadingState.selectedRouteId),
+      );
+      setRoutes(mappedRoutes);
+
       const resultState = finishPlannerSubmission({
         phase: 'loading',
         selectedRouteId: loadingState.selectedRouteId,
@@ -202,20 +377,23 @@ export function usePlannerState() {
 
       setSelectedRouteId(resultState.selectedRouteId);
       setPhase(resultState.phase);
-      submitTimerRef.current = null;
-    }, 1400);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Failed to calculate routes. Please try again.';
+      toast.error(message);
+      setPhase('idle');
+    }
   };
 
   const reset = () => {
-    if (submitTimerRef.current) {
-      window.clearTimeout(submitTimerRef.current);
-      submitTimerRef.current = null;
-    }
 
     setPhase('idle');
     setOrigin('');
     setDestination('');
     setSelectedRouteId(deriveSelectedRouteId('eco'));
+    setRoutes(MOCK_ROUTES);
   };
 
   const toggleMode = (k: ModeKey) =>
@@ -230,6 +408,7 @@ export function usePlannerState() {
     preference, setPreference, passengers, setPassengers,
     modes, toggleMode, showAdvanced, setShowAdvanced,
     phase, loading, submitted, selectedRouteId, setSelectedRouteId,
+    routes,
     swap, submit, reset,
   };
 }

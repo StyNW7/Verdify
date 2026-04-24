@@ -14,6 +14,10 @@ import {
   Phone,
 } from 'lucide-react';
 import { useNavigate } from 'react-router';
+import toast from 'react-hot-toast';
+
+import { registerUser } from '@/lib/api';
+import { saveAuthSession } from '@/lib/session';
 
 export default function RegisterPage() {
 
@@ -114,14 +118,30 @@ export default function RegisterPage() {
     if (!validateForm()) return;
 
     setIsLoading(true);
-    
-    setTimeout(() => {
-      setIsLoading(false);
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('userEmail', formData.email);
-      localStorage.setItem('userName', formData.fullName);
+
+    try {
+      const result = await registerUser({
+        email: formData.email.trim().toLowerCase(),
+        password: formData.password,
+        phone: formData.phoneNumber.trim(),
+      });
+
+      saveAuthSession({
+        userId: result.userId,
+        token: result.token,
+        email: result.email,
+        name: formData.fullName.trim(),
+      });
+
+      toast.success('Account created successfully');
       navigate('/dashboard');
-    }, 1500);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Unable to register. Please try again.';
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const getPasswordStrength = () => {
