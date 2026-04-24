@@ -27,7 +27,7 @@ type Location = 'Global' | 'Johor Bahru' | 'Kuala Lumpur' | 'Penang' | 'Singapor
 const LOCATIONS: Location[] = ['Global', 'Johor Bahru', 'Kuala Lumpur', 'Penang', 'Singapore'];
 
 const PLAYERS: Player[] = [
-  { rank: 1, name: 'Ahmad R.', handle: 'ahmad.r', location: 'Kuala Lumpur', points: 12450, streak: 41, trend: 'up', delta: 210, emoji: '🌟' },
+  { rank: 1, name: 'Stanley W.', handle: 'stanley.w', location: 'Kuala Lumpur', points: 12450, streak: 41, trend: 'up', delta: 210, emoji: '🌟' },
   { rank: 2, name: 'Siti N.', handle: 'siti.n', location: 'Singapore', points: 11200, streak: 33, trend: 'up', delta: 180, emoji: '🚀' },
   { rank: 3, name: 'Tan W.L.', handle: 'tan.wl', location: 'Penang', points: 10850, streak: 28, trend: 'down', delta: 40, emoji: '💪' },
   { rank: 4, name: 'Daniyal R.', handle: 'daniyal', location: 'Kuala Lumpur', points: 9210, streak: 21, trend: 'up', delta: 120, emoji: '🌿' },
@@ -42,7 +42,7 @@ const PLAYERS: Player[] = [
   { rank: 43, name: 'Theo Brandt', handle: 'theo', location: 'Kuala Lumpur', points: 2402, streak: 6, trend: 'down', delta: 12, emoji: '🌰' },
 ];
 
-const CURRENT_USER_HANDLE = 'sarah.r';
+const CURRENT_USER_HANDLE = 'stanley.w';
 
 const fmt = (n: number) => n.toLocaleString('en-US');
 
@@ -170,8 +170,8 @@ export default function LeaderboardPage() {
       location === 'Global'
         ? PLAYERS
         : PLAYERS.filter(
-            (p) => p.location === location || p.handle === CURRENT_USER_HANDLE,
-          );
+          (p) => p.location === location || p.handle === CURRENT_USER_HANDLE,
+        );
     return [...list].sort((a, b) => a.rank - b.rank);
   }, [location]);
 
@@ -412,7 +412,7 @@ function YouRow({ me }: { me: Player }) {
               YOUR STANDING
             </span>
             <p className="text-[1rem] font-medium sm:text-[1.1rem]" style={{ color: 'var(--theme-fg)' }}>
-              Sarah Rashid{' '}
+              Stanley Wijaya{' '}
               <span style={{ color: 'var(--theme-fg-dim)' }}>· @{me.handle}</span>
             </p>
             <p className="mt-1 text-[0.82rem] sm:text-[0.85rem]" style={{ color: 'var(--theme-fg-muted)' }}>

@@ -119,8 +119,8 @@ function ProfileHeader() {
 
 function IdentityCard() {
   const fileRef = useRef<HTMLInputElement | null>(null);
-  const [name, setName] = useState('Sarah Rashid');
-  const [email, setEmail] = useState('sarah.rashid@verdify.io');
+  const [name, setName] = useState('Stanley Wijaya');
+  const [email, setEmail] = useState('stanley.wijaya@verdify.io');
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [avatarPreset, setAvatarPreset] = useState<string | null>('🌿');
 
@@ -291,7 +291,7 @@ function IdentityCard() {
           label="Display name"
           value={name}
           onChange={setName}
-          placeholder="Sarah Rashid"
+          placeholder="Stanley Wijaya"
         />
         <Field
           label="Email address"

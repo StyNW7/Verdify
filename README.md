@@ -355,7 +355,7 @@ npm run genkit:dev
 
 ---
 
-## 🎯 The 5 Pillars of Verdify
+## 🎯 The 4 Pillars of Verdify
 
 | Pillar | What It Does | Key Benefit |
 | :--- | :--- | :--- |
@@ -363,7 +363,6 @@ npm run genkit:dev
 | ⭐ **Green Points & Rewards** | Earn points for every green journey; redeem for real rewards | Gamified sustainability |
 | 🚗 **EV-First Policy** | Only electric vehicles recommended for private hire | Zero-emission rides |
 | ⏰ **Peak Hour Balancing** | 2x points for off-peak travel to reduce congestion | Save time + earn more |
-| 💰 **Reimbursement System** | Compensated if route takes longer than predicted | Risk-free trust guarantee |
 
 ---
 

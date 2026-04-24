@@ -30,7 +30,7 @@ type Trip = {
   points: number;
 };
 
-const USER_FIRST_NAME = 'Sarah';
+const USER_FIRST_NAME = 'Stanley';
 
 const stats: Stat[] = [
   {
@@ -298,9 +298,8 @@ function WeeklyTrendCard() {
     .map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`)
     .join(' ');
 
-  const areaPath = `${linePath} L ${points[points.length - 1].x} ${H - padBottom} L ${
-    points[0].x
-  } ${H - padBottom} Z`;
+  const areaPath = `${linePath} L ${points[points.length - 1].x} ${H - padBottom} L ${points[0].x
+    } ${H - padBottom} Z`;
 
   const totalKg = weeklyTrend.reduce((acc, d) => acc + d.kg, 0);
 

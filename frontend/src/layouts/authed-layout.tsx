@@ -248,7 +248,7 @@ export default function AuthedLayout() {
                         className="truncate text-[0.82rem]"
                         style={{ color: 'var(--theme-fg)' }}
                       >
-                        Sarah Rashid
+                        Stanley Wijaya
                       </p>
                       <p
                         className="theme-mono-sm truncate"
@@ -464,7 +464,7 @@ export default function AuthedLayout() {
                             className="truncate text-[0.82rem]"
                             style={{ color: 'var(--theme-fg)' }}
                           >
-                            Sarah Rashid
+                            Stanley Wijaya
                           </p>
                           <p
                             className="theme-mono-sm truncate"
