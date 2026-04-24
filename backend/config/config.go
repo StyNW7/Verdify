@@ -4,6 +4,7 @@ import "os"
 
 type Config struct {
 	Port             string
+	FrontendOrigin   string
 	VertexProjectID  string
 	VertexLocation   string
 	GeminiModel      string
@@ -18,6 +19,7 @@ func Load() Config {
 
 	return Config{
 		Port:             getenv("PORT", "8080"),
+		FrontendOrigin:   getenv("FRONTEND_ORIGIN", "http://localhost:5173"),
 		VertexProjectID:  getenv("VERTEX_PROJECT_ID", ""),
 		VertexLocation:   getenv("VERTEX_LOCATION", "us-central1"),
 		GeminiModel:      model,

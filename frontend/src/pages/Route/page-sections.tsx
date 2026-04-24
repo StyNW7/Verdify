@@ -7,7 +7,6 @@ import { useIsDark } from '@/components/AnimatedThemeToggler';
 import {
   type PlannerState,
   LOCATION_SUGGESTIONS,
-  MOCK_ROUTES,
   AdvancedOptions,
   DateTimeField,
   PreferenceSelector,
@@ -19,13 +18,14 @@ import {
 
 export function useRoutePlannerScene(state: PlannerState) {
   const isDark = useIsDark();
+  const routes = state.routes.length > 0 ? state.routes : [];
   const selectedRoute =
-    MOCK_ROUTES.find((route) => route.id === state.selectedRouteId) ?? MOCK_ROUTES[0];
+    routes.find((route) => route.id === state.selectedRouteId) ?? routes[0];
 
   return {
     isDark,
     mapVariant: getMapVariantForRoute(state.selectedRouteId, isDark),
-    routes: MOCK_ROUTES,
+    routes,
     selectedRoute,
   };
 }
