@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"strings"
 	"testing"
 )
 
@@ -29,5 +30,17 @@ func TestRouteRequestModeOptional(t *testing.T) {
 	}
 	if req.Mode != "" {
 		t.Fatalf("expected empty mode (omitted), got %q", req.Mode)
+	}
+
+	// marshal direction: empty Mode must NOT appear in output (omitempty)
+	out, err := json.Marshal(RouteRequest{
+		Origin:      Location{Latitude: 1, Longitude: 2},
+		Destination: Location{Latitude: 3, Longitude: 4},
+	})
+	if err != nil {
+		t.Fatalf("marshal: %v", err)
+	}
+	if strings.Contains(string(out), `"mode"`) {
+		t.Fatalf("mode should be omitted when empty, got %s", string(out))
 	}
 }
