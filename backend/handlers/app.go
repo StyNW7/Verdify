@@ -13,27 +13,31 @@ import (
 	"github.com/verdify/backend/models"
 	"github.com/verdify/backend/services"
 	"github.com/verdify/backend/services/geocoding"
+	"github.com/verdify/backend/services/places"
 	"github.com/verdify/backend/services/ranker"
 	"github.com/verdify/backend/services/routes"
 )
 
 type App struct {
-	Cfg       config.Config
-	Store     *db.Store
-	Ranker       *ranker.GeminiRanker
-	Maps         *services.MapsClient
+	Cfg          config.Config
+	Store        *db.Store
+	Ranker       ranker.Ranker
+	Builder      *routes.CandidateBuilder
 	RoutesClient *routes.Client
+	Places       places.PlacesAPI
 	Geocoding    *geocoding.Client
 	StartTime    time.Time
 }
 
 func New(cfg config.Config) *App {
+	routesClient := routes.NewClient(cfg.GoogleMapsAPIKey)
 	return &App{
 		Cfg:          cfg,
 		Store:        db.NewStore(),
 		Ranker:       ranker.New(cfg),
-		Maps:         services.NewMapsClient(cfg),
-		RoutesClient: routes.NewClient(cfg.GoogleMapsAPIKey),
+		Builder:      routes.NewCandidateBuilder(routesClient),
+		RoutesClient: routesClient,
+		Places:       places.NewClient(cfg.GoogleMapsAPIKey),
 		Geocoding:    geocoding.NewClient(cfg.GoogleMapsAPIKey),
 		StartTime:    services.NowUTC(),
 	}
@@ -53,6 +57,8 @@ func (app *App) Routes() *http.ServeMux {
 	mux.HandleFunc("GET /api/v1/user/{userId}/green-points", app.getUserGreenPointsHandler)
 	mux.HandleFunc("GET /api/v1/user/{userId}/bookings", app.getUserBookingsHandler)
 	mux.HandleFunc("GET /api/v1/geocode", app.geocodeHandler)
+	mux.HandleFunc("GET /api/v1/places/autocomplete", app.placesAutocompleteHandler)
+	mux.HandleFunc("GET /api/v1/places/details", app.placeDetailsHandler)
 	return mux
 }
 
@@ -104,4 +110,13 @@ func bookingExpiresAt(t time.Time) time.Time {
 
 func newID(prefix string) string {
 	return prefix + uuid.NewString()
+}
+
+// Stubs — replaced with real implementations in Task 7.3.
+func (app *App) placesAutocompleteHandler(w http.ResponseWriter, _ *http.Request) {
+	writeErr(w, http.StatusNotImplemented, "places autocomplete not implemented yet")
+}
+
+func (app *App) placeDetailsHandler(w http.ResponseWriter, _ *http.Request) {
+	writeErr(w, http.StatusNotImplemented, "places details not implemented yet")
 }

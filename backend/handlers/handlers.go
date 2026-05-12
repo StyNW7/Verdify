@@ -8,7 +8,6 @@ import (
 	"github.com/verdify/backend/models"
 	"github.com/verdify/backend/services"
 	"github.com/verdify/backend/services/pricing"
-	"github.com/verdify/backend/services/ranker"
 )
 
 func (app *App) healthHandler(w http.ResponseWriter, _ *http.Request) {
@@ -65,130 +64,6 @@ func (app *App) loginHandler(w http.ResponseWriter, r *http.Request) {
 		"token":     "mock_" + newID(""),
 		"expiresIn": 86400,
 	})
-}
-
-func (app *App) calculateRouteHandler(w http.ResponseWriter, r *http.Request) {
-	var req models.RouteRequest
-	if err := parseJSON(r, &req); err != nil {
-		writeErr(w, http.StatusBadRequest, "invalid json")
-		return
-	}
-	mode := services.NormalizeMode(req.Mode)
-
-	candidates, err := app.Maps.Candidates(req.Origin, req.Destination)
-	if err != nil {
-		writeErr(w, http.StatusInternalServerError, "failed route candidates")
-		return
-	}
-
-	peak := pricing.IsPeakHour(services.NowMY())
-	chosenID := staticCandidateIDForMode(mode)
-	if mode == "" {
-		// Temporary shim until Task 7.2 replaces this handler entirely.
-		rankIn := ranker.RankInput{
-			Peak: peak,
-			Candidates: []ranker.RankCandidate{
-				{ID: candidates[0].ID, Mode: candidates[0].Mode, DurationMin: candidates[0].TotalDuration, CarbonGrams: candidates[0].TotalCarbon},
-				{ID: candidates[1].ID, Mode: candidates[1].Mode, DurationMin: candidates[1].TotalDuration, CarbonGrams: candidates[1].TotalCarbon},
-				{ID: candidates[2].ID, Mode: candidates[2].Mode, DurationMin: candidates[2].TotalDuration, CarbonGrams: candidates[2].TotalCarbon},
-			},
-		}
-		result, rankErr := app.Ranker.Annotate(r.Context(), rankIn)
-		if rankErr != nil || result == nil {
-			writeErr(w, http.StatusInternalServerError, "failed route ranking")
-			return
-		}
-		for _, item := range result.Items {
-			if item.Recommended {
-				chosenID = item.ID
-				break
-			}
-		}
-		if chosenID == "" {
-			chosenID = result.Items[0].ID
-		}
-		_ = err // silence unused since we use rankErr
-	}
-
-	selected, ok := findCandidateByID(candidates, chosenID)
-	if !ok {
-		writeErr(w, http.StatusInternalServerError, "selected candidate not found")
-		return
-	}
-
-	baseline := pricing.BaselineCarbonGrams(selected.TotalDistance)
-	pts := pricing.PointsEstimate(selected.TotalDistance, baseline, selected.TotalCarbon)
-
-	stepsWithCost := make([]models.TransportSegment, len(selected.Steps))
-	var totalCost float64
-	for i, step := range selected.Steps {
-		stepCost := pricing.Round2(pricing.EstimateStepCost(step.Type, step.Distance))
-		step.EstimatedCost = stepCost
-		stepsWithCost[i] = step
-		totalCost += stepCost
-	}
-
-	carbonSaved := baseline - selected.TotalCarbon
-	if carbonSaved < 0 {
-		carbonSaved = 0
-	}
-
-	var polyline string
-	if app.RoutesClient.Enabled() {
-		travelMode := routesTravelMode(mode)
-		routingPref := ""
-		if travelMode == "DRIVE" {
-			routingPref = "TRAFFIC_AWARE"
-		}
-		geom, err := app.RoutesClient.Compute(r.Context(), req.Origin, req.Destination, travelMode, routingPref)
-		if err == nil {
-			polyline = geom.EncodedPolyline
-		}
-	}
-
-	routeID := newID("route_")
-	rt := models.Route{
-		ID:                   routeID,
-		Origin:               req.Origin,
-		Destination:          req.Destination,
-		Mode:                 mode,
-		TotalDistance:        selected.TotalDistance,
-		TotalDuration:        selected.TotalDuration,
-		CarbonEstimate:       selected.TotalCarbon,
-		CarbonBaseline:       pricing.Round2(baseline),
-		CarbonSavedGrams:     pricing.Round2(carbonSaved),
-		CarbonSavingsPercent: pricing.CarbonSavingsPercent(baseline, selected.TotalCarbon),
-		CarbonEstimateKg:     pricing.Round2(selected.TotalCarbon / 1000),
-		EstimatedCost:        pricing.Round2(totalCost),
-		GreenPointsEstimate:  pts,
-		Steps:                stepsWithCost,
-		Polyline:             polyline,
-		CreatedAt:            services.NowUTC(),
-	}
-	app.Store.SaveRoute(rt)
-	writeOK(w, http.StatusOK, rt)
-}
-
-func staticCandidateIDForMode(mode string) string {
-	switch mode {
-	case "fast":
-		return "cand_fast"
-	case "eco":
-		return "cand_eco"
-	case "cheap":
-		return "cand_cheap"
-	default:
-		return ""
-	}
-}
-
-func findCandidateByID(candidates []models.RouteCandidate, candidateID string) (models.RouteCandidate, bool) {
-	for _, c := range candidates {
-		if c.ID == candidateID {
-			return c, true
-		}
-	}
-	return models.RouteCandidate{}, false
 }
 
 func (app *App) createBookingHandler(w http.ResponseWriter, r *http.Request) {
@@ -367,15 +242,3 @@ func (app *App) geocodeHandler(w http.ResponseWriter, r *http.Request) {
 	writeOK(w, http.StatusOK, suggestions)
 }
 
-func routesTravelMode(mode string) string {
-	switch mode {
-	case "fast":
-		return "DRIVE"
-	case "eco":
-		return "TRANSIT"
-	case "cheap":
-		return "DRIVE"
-	default:
-		return "DRIVE"
-	}
-}

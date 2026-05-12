@@ -7,6 +7,7 @@ import (
 
 	"github.com/verdify/backend/config"
 	"github.com/verdify/backend/handlers"
+	"github.com/verdify/backend/services/ranker"
 
 	"github.com/joho/godotenv"
 )
@@ -18,8 +19,8 @@ func main() {
 	mux := withCORS(app.Routes(), cfg.FrontendOrigin)
 	port := cfg.Port
 
-	if app.Ranker.Enabled {
-		if _, err := app.Ranker.Ping(context.Background()); err != nil {
+	if gr, ok := app.Ranker.(*ranker.GeminiRanker); ok && gr.Enabled {
+		if _, err := gr.Ping(context.Background()); err != nil {
 			log.Printf("genkit ping failed, fallback mode active: %v", err)
 		}
 	}
