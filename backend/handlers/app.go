@@ -112,11 +112,3 @@ func newID(prefix string) string {
 	return prefix + uuid.NewString()
 }
 
-// Stubs — replaced with real implementations in Task 7.3.
-func (app *App) placesAutocompleteHandler(w http.ResponseWriter, _ *http.Request) {
-	writeErr(w, http.StatusNotImplemented, "places autocomplete not implemented yet")
-}
-
-func (app *App) placeDetailsHandler(w http.ResponseWriter, _ *http.Request) {
-	writeErr(w, http.StatusNotImplemented, "places details not implemented yet")
-}
