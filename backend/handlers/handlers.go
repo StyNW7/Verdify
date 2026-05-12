@@ -117,9 +117,9 @@ func (app *App) calculateRouteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var polyline string
-	if app.Routes.Enabled() {
+	if app.RoutesClient.Enabled() {
 		travelMode := routesTravelMode(mode)
-		geom, err := app.Routes.ComputeRoute(r.Context(), req.Origin, req.Destination, travelMode)
+		geom, err := app.RoutesClient.ComputeRoute(r.Context(), req.Origin, req.Destination, travelMode)
 		if err == nil {
 			polyline = geom.EncodedPolyline
 		}

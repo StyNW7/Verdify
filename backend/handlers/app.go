@@ -17,22 +17,22 @@ import (
 type App struct {
 	Cfg       config.Config
 	Store     *db.Store
-	Ranker    *services.GeminiRanker
-	Maps      *services.MapsClient
-	Routes    *services.RoutesClient
-	Geocoding *services.GeocodingClient
-	StartTime time.Time
+	Ranker       *services.GeminiRanker
+	Maps         *services.MapsClient
+	RoutesClient *services.RoutesClient
+	Geocoding    *services.GeocodingClient
+	StartTime    time.Time
 }
 
 func New(cfg config.Config) *App {
 	return &App{
-		Cfg:       cfg,
-		Store:     db.NewStore(),
-		Ranker:    services.NewGeminiRanker(cfg),
-		Maps:      services.NewMapsClient(cfg),
-		Routes:    services.NewRoutesClient(cfg.GoogleMapsAPIKey),
-		Geocoding: services.NewGeocodingClient(cfg.GoogleMapsAPIKey),
-		StartTime: services.NowUTC(),
+		Cfg:          cfg,
+		Store:        db.NewStore(),
+		Ranker:       services.NewGeminiRanker(cfg),
+		Maps:         services.NewMapsClient(cfg),
+		RoutesClient: services.NewRoutesClient(cfg.GoogleMapsAPIKey),
+		Geocoding:    services.NewGeocodingClient(cfg.GoogleMapsAPIKey),
+		StartTime:    services.NowUTC(),
 	}
 }
 
