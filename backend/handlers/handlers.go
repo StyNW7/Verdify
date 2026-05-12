@@ -7,6 +7,7 @@ import (
 
 	"github.com/verdify/backend/models"
 	"github.com/verdify/backend/services"
+	"github.com/verdify/backend/services/pricing"
 )
 
 func (app *App) healthHandler(w http.ResponseWriter, _ *http.Request) {
@@ -79,7 +80,7 @@ func (app *App) calculateRouteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	peak := services.IsPeakHour(services.NowMY())
+	peak := pricing.IsPeakHour(services.NowMY())
 	chosenID := staticCandidateIDForMode(mode)
 	if mode == "" {
 		chosenID, _, err = app.Ranker.SelectBest(r.Context(), mode, peak, candidates)
@@ -95,13 +96,13 @@ func (app *App) calculateRouteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	baseline := services.BaselineCarbonGrams(selected.TotalDistance)
-	pts := services.PointsEstimate(selected.TotalDistance, baseline, selected.TotalCarbon)
+	baseline := pricing.BaselineCarbonGrams(selected.TotalDistance)
+	pts := pricing.PointsEstimate(selected.TotalDistance, baseline, selected.TotalCarbon)
 
 	stepsWithCost := make([]models.TransportSegment, len(selected.Steps))
 	var totalCost float64
 	for i, step := range selected.Steps {
-		stepCost := services.Round2(services.EstimateStepCost(step.Type, step.Distance))
+		stepCost := pricing.Round2(pricing.EstimateStepCost(step.Type, step.Distance))
 		step.EstimatedCost = stepCost
 		stepsWithCost[i] = step
 		totalCost += stepCost
@@ -130,11 +131,11 @@ func (app *App) calculateRouteHandler(w http.ResponseWriter, r *http.Request) {
 		TotalDistance:        selected.TotalDistance,
 		TotalDuration:        selected.TotalDuration,
 		CarbonEstimate:       selected.TotalCarbon,
-		CarbonBaseline:       services.Round2(baseline),
-		CarbonSavedGrams:     services.Round2(carbonSaved),
-		CarbonSavingsPercent: services.CarbonSavingsPercent(baseline, selected.TotalCarbon),
-		CarbonEstimateKg:     services.Round2(selected.TotalCarbon / 1000),
-		EstimatedCost:        services.Round2(totalCost),
+		CarbonBaseline:       pricing.Round2(baseline),
+		CarbonSavedGrams:     pricing.Round2(carbonSaved),
+		CarbonSavingsPercent: pricing.CarbonSavingsPercent(baseline, selected.TotalCarbon),
+		CarbonEstimateKg:     pricing.Round2(selected.TotalCarbon / 1000),
+		EstimatedCost:        pricing.Round2(totalCost),
 		GreenPointsEstimate:  pts,
 		Steps:                stepsWithCost,
 		Polyline:             polyline,
@@ -255,13 +256,13 @@ func (app *App) verifyBookingHandler(w http.ResponseWriter, r *http.Request) {
 	b.CompletedAt = &now
 	app.Store.UpdateBooking(b)
 
-	baseline := services.BaselineCarbonGrams(rt.TotalDistance)
+	baseline := pricing.BaselineCarbonGrams(rt.TotalDistance)
 	carbonSaved := baseline - rt.CarbonEstimate
 	if carbonSaved < 0 {
 		carbonSaved = 0
 	}
 	app.Store.ApplyCompletedTrip(b.UserID, b.ActualPoints, carbonSaved)
-	writeOK(w, http.StatusOK, map[string]any{"bookingId": b.ID, "status": b.Status, "actualPoints": b.ActualPoints, "carbonSaved": services.Round2(carbonSaved)})
+	writeOK(w, http.StatusOK, map[string]any{"bookingId": b.ID, "status": b.Status, "actualPoints": b.ActualPoints, "carbonSaved": pricing.Round2(carbonSaved)})
 }
 
 func (app *App) getBookingHandler(w http.ResponseWriter, r *http.Request) {
@@ -271,12 +272,12 @@ func (app *App) getBookingHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rt, _ := app.Store.GetRoute(b.RouteID)
-	baseline := services.BaselineCarbonGrams(rt.TotalDistance)
+	baseline := pricing.BaselineCarbonGrams(rt.TotalDistance)
 	carbonSaved := baseline - rt.CarbonEstimate
 	if carbonSaved < 0 {
 		carbonSaved = 0
 	}
-	writeOK(w, http.StatusOK, map[string]any{"bookingId": b.ID, "userId": b.UserID, "status": b.Status, "totalDistance": rt.TotalDistance, "actualPoints": b.ActualPoints, "carbonSaved": services.Round2(carbonSaved)})
+	writeOK(w, http.StatusOK, map[string]any{"bookingId": b.ID, "userId": b.UserID, "status": b.Status, "totalDistance": rt.TotalDistance, "actualPoints": b.ActualPoints, "carbonSaved": pricing.Round2(carbonSaved)})
 }
 
 func (app *App) cancelBookingHandler(w http.ResponseWriter, r *http.Request) {

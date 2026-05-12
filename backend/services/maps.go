@@ -6,6 +6,7 @@ import (
 
 	"github.com/verdify/backend/config"
 	"github.com/verdify/backend/models"
+	"github.com/verdify/backend/services/pricing"
 )
 
 type MapsClient struct {
@@ -23,9 +24,9 @@ func (m *MapsClient) Candidates(origin, destination models.Location) ([]models.R
 	}
 	now := NowUTC()
 
-	fastDistance := Round2(distance)
-	ecoDistance := Round2(distance * 1.12)
-	flowDistance := Round2(distance * 1.22)
+	fastDistance := pricing.Round2(distance)
+	ecoDistance := pricing.Round2(distance * 1.12)
+	flowDistance := pricing.Round2(distance * 1.22)
 
 	fast := models.RouteCandidate{
 		ID:            "cand_fast",
@@ -49,9 +50,9 @@ func (m *MapsClient) Candidates(origin, destination models.Location) ([]models.R
 		TotalCarbon:   ecoDistance * 40,
 		Congestion:    0.40,
 		Steps: []models.TransportSegment{
-			segment("walking", origin, ecoMidA, Round2(ecoDistance*0.08), 8, 0, now),
-			segment("lrt", ecoMidA, ecoMidB, Round2(ecoDistance*0.84), int(math.Round((ecoDistance*0.84/33.0)*60.0))+4, 40, now),
-			segment("walking", ecoMidB, destination, Round2(ecoDistance*0.08), 7, 0, now),
+			segment("walking", origin, ecoMidA, pricing.Round2(ecoDistance*0.08), 8, 0, now),
+			segment("lrt", ecoMidA, ecoMidB, pricing.Round2(ecoDistance*0.84), int(math.Round((ecoDistance*0.84/33.0)*60.0))+4, 40, now),
+			segment("walking", ecoMidB, destination, pricing.Round2(ecoDistance*0.08), 7, 0, now),
 		},
 	}
 
@@ -64,8 +65,8 @@ func (m *MapsClient) Candidates(origin, destination models.Location) ([]models.R
 		TotalCarbon:   (flowDistance * 0.55 * 60) + (flowDistance * 0.45 * 80),
 		Congestion:    0.25,
 		Steps: []models.TransportSegment{
-			segment("bus", origin, flowMid, Round2(flowDistance*0.55), int(math.Round((flowDistance*0.55/26.0)*60.0))+4, 60, now),
-			segment("ev_taxi", flowMid, destination, Round2(flowDistance*0.45), int(math.Round((flowDistance*0.45/38.0)*60.0))+4, 80, now),
+			segment("bus", origin, flowMid, pricing.Round2(flowDistance*0.55), int(math.Round((flowDistance*0.55/26.0)*60.0))+4, 60, now),
+			segment("ev_taxi", flowMid, destination, pricing.Round2(flowDistance*0.45), int(math.Round((flowDistance*0.45/38.0)*60.0))+4, 80, now),
 		},
 	}
 
@@ -80,7 +81,7 @@ func segment(kind string, start, end models.Location, distance float64, duration
 		Distance:      distance,
 		Duration:      duration,
 		CarbonPerKm:   carbonPerKM,
-		TotalCarbon:   Round2(distance * carbonPerKM),
+		TotalCarbon:   pricing.Round2(distance * carbonPerKM),
 		Departure:     depart,
 		Arrival:       depart.Add(time.Duration(duration) * time.Minute),
 	}
