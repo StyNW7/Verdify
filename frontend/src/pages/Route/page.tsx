@@ -110,10 +110,10 @@ export default function RoutePlannerPage() {
               }
               note="Johor ↔ Singapore corridor"
               className="aspect-[5/4] min-h-[320px] sm:aspect-[3/2] lg:min-h-[420px]"
-              origin={state.origin}
-              destination={state.destination}
-              originCoords={state.originCoords}
-              destCoords={state.destCoords}
+              origin={state.submittedTrip?.origin}
+              destination={state.submittedTrip?.destination}
+              originCoords={state.submittedTrip?.originCoords ?? null}
+              destCoords={state.submittedTrip?.destCoords ?? null}
               selectedRouteId={state.selectedRouteId}
               routes={routes}
             />

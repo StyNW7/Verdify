@@ -282,6 +282,16 @@ export type PlannerState = ReturnType<typeof usePlannerState>;
 
 export type ResolvedCoords = { latitude: number; longitude: number } | null;
 
+// Snapshot of the inputs at the moment the last successful submit happened.
+// The map renders from this, not from the live `origin`/`destination` typing
+// state, so the map only refreshes on Find routes.
+export type SubmittedTrip = {
+  origin: string;
+  destination: string;
+  originCoords: ResolvedCoords;
+  destCoords: ResolvedCoords;
+} | null;
+
 export function usePlannerState() {
   const [origin, setOrigin] = useState('');
   const [destination, setDestination] = useState('');
@@ -299,6 +309,7 @@ export function usePlannerState() {
   const [phase, setPhase] = useState<PlannerPhase>('idle');
   const [selectedRouteId, setSelectedRouteId] = useState<PlannerRouteId>('eco');
   const [routes, setRoutes] = useState<RouteOption[]>(MOCK_ROUTES);
+  const [submittedTrip, setSubmittedTrip] = useState<SubmittedTrip>(null);
 
   const handleSetOrigin = (v: string) => {
     setOrigin(v);
@@ -346,6 +357,14 @@ export function usePlannerState() {
       });
       const mappedRoutes = response.options.map(toRouteOption);
       setRoutes(mappedRoutes);
+      // Snapshot the inputs that produced these routes so the map renders
+      // from a stable submission, not the live typing state.
+      setSubmittedTrip({
+        origin,
+        destination,
+        originCoords: resolvedOrigin,
+        destCoords: resolvedDestination,
+      });
       // If the backend flagged a recommended option, select it. Else keep the preference-derived id.
       const rec = mappedRoutes.find((r) => r.recommended);
       const nextSelected = rec ? rec.id : loadingState.selectedRouteId;
@@ -373,6 +392,7 @@ export function usePlannerState() {
     setDestCoords(null);
     setSelectedRouteId(deriveSelectedRouteId('eco'));
     setRoutes(MOCK_ROUTES);
+    setSubmittedTrip(null);
   };
 
   const toggleMode = (k: ModeKey) =>
@@ -388,7 +408,7 @@ export function usePlannerState() {
     preference, setPreference, passengers, setPassengers,
     modes, toggleMode, showAdvanced, setShowAdvanced,
     phase, loading, submitted, selectedRouteId, setSelectedRouteId,
-    routes,
+    routes, submittedTrip,
     swap, submit, reset,
   };
 }
