@@ -101,6 +101,11 @@ export type BackendTransportSegment = {
   distance: number;
   duration: number;
   estimatedCost: number;
+  transitLine?: string;
+  departureStop?: string;
+  arrivalStop?: string;
+  headsign?: string;
+  stopCount?: number;
 };
 
 export type BackendRouteOption = {

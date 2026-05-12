@@ -145,12 +145,17 @@ func convertLegs(legs []Leg, depart time.Time) []models.TransportSegment {
 					Latitude:  step.EndLocation.Latitude,
 					Longitude: step.EndLocation.Longitude,
 				},
-				Distance:    distanceKM,
-				Duration:    durationMin,
-				CarbonPerKm: carbonPerKM,
-				TotalCarbon: pricing.Round2(distanceKM * carbonPerKM),
-				Departure:   cursor,
-				Arrival:     arrival,
+				Distance:      distanceKM,
+				Duration:      durationMin,
+				CarbonPerKm:   carbonPerKM,
+				TotalCarbon:   pricing.Round2(distanceKM * carbonPerKM),
+				Departure:     cursor,
+				Arrival:       arrival,
+				TransitLine:   step.TransitLineName,
+				DepartureStop: step.DepartureStopName,
+				ArrivalStop:   step.ArrivalStopName,
+				Headsign:      step.Headsign,
+				StopCount:     step.StopCount,
 			})
 			cursor = arrival
 		}

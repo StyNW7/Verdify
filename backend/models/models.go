@@ -19,6 +19,12 @@ type TransportSegment struct {
 	EstimatedCost float64   `json:"estimatedCost"`
 	Departure     time.Time `json:"departure"`
 	Arrival       time.Time `json:"arrival"`
+	// Transit-only contextual fields. Empty for walk/drive segments.
+	TransitLine   string `json:"transitLine,omitempty"`
+	DepartureStop string `json:"departureStop,omitempty"`
+	ArrivalStop   string `json:"arrivalStop,omitempty"`
+	Headsign      string `json:"headsign,omitempty"`
+	StopCount     int    `json:"stopCount,omitempty"`
 }
 
 type Route struct {

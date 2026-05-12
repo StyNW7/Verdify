@@ -72,9 +72,20 @@ type respTransitLine struct {
 	} `json:"vehicle"`
 }
 
+type respTransitStop struct {
+	Name string `json:"name"`
+}
+
+type respStopDetails struct {
+	ArrivalStop   respTransitStop `json:"arrivalStop"`
+	DepartureStop respTransitStop `json:"departureStop"`
+}
+
 type respTransitDetails struct {
-	TransitLine respTransitLine `json:"transitLine"`
-	StopCount   int             `json:"stopCount"`
+	TransitLine  respTransitLine `json:"transitLine"`
+	StopDetails  respStopDetails `json:"stopDetails"`
+	Headsign     string          `json:"headsign"`
+	StopCount    int             `json:"stopCount"`
 }
 
 type respStep struct {
@@ -114,6 +125,9 @@ const fieldMask = "routes.polyline.encodedPolyline," +
 	"routes.legs.steps.transitDetails.transitLine.name," +
 	"routes.legs.steps.transitDetails.transitLine.nameShort," +
 	"routes.legs.steps.transitDetails.transitLine.vehicle.type," +
+	"routes.legs.steps.transitDetails.stopDetails.arrivalStop.name," +
+	"routes.legs.steps.transitDetails.stopDetails.departureStop.name," +
+	"routes.legs.steps.transitDetails.headsign," +
 	"routes.legs.steps.transitDetails.stopCount"
 
 // Compute satisfies RouteFetcher.
@@ -186,15 +200,18 @@ func convertRespLegs(in []respLeg) []Leg {
 		steps := make([]Step, 0, len(leg.Steps))
 		for _, s := range leg.Steps {
 			steps = append(steps, Step{
-				TravelMode:      s.TravelMode,
-				VehicleType:     s.TransitDetails.TransitLine.Vehicle.Type,
-				TransitLineName: pickTransitName(s.TransitDetails.TransitLine),
-				StopCount:       s.TransitDetails.StopCount,
-				DistanceMeters:  s.DistanceMeters,
-				DurationSeconds: parseGoogleDuration(s.StaticDuration),
-				StartLocation:   LatLng{Latitude: s.StartLocation.LatLng.Latitude, Longitude: s.StartLocation.LatLng.Longitude},
-				EndLocation:     LatLng{Latitude: s.EndLocation.LatLng.Latitude, Longitude: s.EndLocation.LatLng.Longitude},
-				EncodedPolyline: s.Polyline.EncodedPolyline,
+				TravelMode:        s.TravelMode,
+				VehicleType:       s.TransitDetails.TransitLine.Vehicle.Type,
+				TransitLineName:   pickTransitName(s.TransitDetails.TransitLine),
+				DepartureStopName: s.TransitDetails.StopDetails.DepartureStop.Name,
+				ArrivalStopName:   s.TransitDetails.StopDetails.ArrivalStop.Name,
+				Headsign:          s.TransitDetails.Headsign,
+				StopCount:         s.TransitDetails.StopCount,
+				DistanceMeters:    s.DistanceMeters,
+				DurationSeconds:   parseGoogleDuration(s.StaticDuration),
+				StartLocation:     LatLng{Latitude: s.StartLocation.LatLng.Latitude, Longitude: s.StartLocation.LatLng.Longitude},
+				EndLocation:       LatLng{Latitude: s.EndLocation.LatLng.Latitude, Longitude: s.EndLocation.LatLng.Longitude},
+				EncodedPolyline:   s.Polyline.EncodedPolyline,
 			})
 		}
 		out = append(out, Leg{Steps: steps})

@@ -227,14 +227,42 @@ function getTransportLabel(type: string) {
   return TRANSPORT_LABELS[type] ?? type.replace(/_/g, ' ');
 }
 
+function renderStep(
+  step: BackendRouteOption['steps'][number],
+  index: number,
+  all: BackendRouteOption['steps'],
+): string {
+  const dur = Math.max(1, Math.round(step.duration));
+  const distKm = step.distance.toFixed(1);
+  const isLast = index === all.length - 1;
+  const next = all[index + 1];
+
+  if (step.type === 'walking') {
+    // For a walk leading into transit, name the destination station.
+    if (next && next.type !== 'walking' && next.departureStop) {
+      return `Walk to ${next.departureStop} · ${dur} min (${distKm} km)`;
+    }
+    if (isLast) {
+      return `Walk to destination · ${dur} min (${distKm} km)`;
+    }
+    return `Walk · ${dur} min (${distKm} km)`;
+  }
+
+  if (step.transitLine) {
+    const toward = step.headsign ? ` toward ${step.headsign}` : '';
+    const stops = step.stopCount ? ` · ${step.stopCount} stop${step.stopCount === 1 ? '' : 's'}` : '';
+    return `${step.transitLine}${toward}${stops} · ${dur} min (${distKm} km)`;
+  }
+
+  // EV taxi / bus / unknown — keep the simple label.
+  return `${getTransportLabel(step.type)} · ${dur} min (${distKm} km)`;
+}
+
 function toRouteOption(option: BackendRouteOption): RouteOption {
   const id: PlannerRouteId = option.mode; // mode and PlannerRouteId share vocabulary
   const totalDuration = Math.max(1, Math.round(option.totalDuration));
   const distinctModes = Array.from(new Set(option.steps.map((step) => getTransportLabel(step.type))));
-  const steps = option.steps.map(
-    (step) =>
-      `${getTransportLabel(step.type)} for ${Math.max(1, Math.round(step.duration))} min (${step.distance.toFixed(1)} km)`,
-  );
+  const steps = option.steps.map((step, i, all) => renderStep(step, i, all));
   if (steps.length === 0) steps.push('No detailed segments available from planner.');
 
   const hero =

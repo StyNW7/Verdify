@@ -39,15 +39,18 @@ type Leg struct {
 // Step is one leg fragment in Google's native taxonomy. The mapping to
 // Verdify's transport types lives in candidates.go (mapTravelMode).
 type Step struct {
-	TravelMode      string // "WALK" | "DRIVE" | "TRANSIT" | "BICYCLE"
-	VehicleType     string // for TRANSIT: "BUS" | "SUBWAY" | "LIGHT_RAIL" | etc.
-	TransitLineName string // human-readable line name (TRANSIT only)
-	StopCount       int    // number of stops (TRANSIT only)
-	DistanceMeters  int
-	DurationSeconds int
-	StartLocation   LatLng
-	EndLocation     LatLng
-	EncodedPolyline string
+	TravelMode        string // "WALK" | "DRIVE" | "TRANSIT" | "BICYCLE"
+	VehicleType       string // for TRANSIT: "BUS" | "SUBWAY" | "LIGHT_RAIL" | etc.
+	TransitLineName   string // human-readable line name (TRANSIT only)
+	DepartureStopName string // station/stop boarded at (TRANSIT only)
+	ArrivalStopName   string // station/stop alighted at (TRANSIT only)
+	Headsign          string // direction sign, e.g., "to Gombak" (TRANSIT only)
+	StopCount         int    // number of stops (TRANSIT only)
+	DistanceMeters    int
+	DurationSeconds   int
+	StartLocation     LatLng
+	EndLocation       LatLng
+	EncodedPolyline   string
 }
 
 type LatLng struct {

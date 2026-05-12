@@ -114,8 +114,17 @@ func TestCandidateBuilder_TransitLegsBecomeRealSteps(t *testing.T) {
 				DistanceMeters:  16000, DurationSeconds: 42 * 60,
 				Legs: []Leg{{Steps: []Step{
 					{TravelMode: "WALK", DistanceMeters: 200, DurationSeconds: 180},
-					{TravelMode: "TRANSIT", VehicleType: "SUBWAY", TransitLineName: "Kelana Jaya Line",
-						StopCount: 8, DistanceMeters: 12000, DurationSeconds: 1500},
+					{
+						TravelMode:        "TRANSIT",
+						VehicleType:       "SUBWAY",
+						TransitLineName:   "Kelana Jaya Line",
+						DepartureStopName: "KLCC",
+						ArrivalStopName:   "Abdullah Hukum",
+						Headsign:          "Gombak",
+						StopCount:         8,
+						DistanceMeters:    12000,
+						DurationSeconds:   1500,
+					},
 					{TravelMode: "WALK", DistanceMeters: 400, DurationSeconds: 360},
 				}}},
 			},
@@ -157,6 +166,20 @@ func TestCandidateBuilder_TransitLegsBecomeRealSteps(t *testing.T) {
 	// Carbon should be re-derived from real steps: 0 + 12*40 + 0 = 480 g
 	if eco.TotalCarbon < 479 || eco.TotalCarbon > 481 {
 		t.Errorf("eco total carbon: want ~480 got %v", eco.TotalCarbon)
+	}
+	// Transit-context fields should propagate from Step to TransportSegment.
+	transit := eco.Steps[1]
+	if transit.TransitLine != "Kelana Jaya Line" {
+		t.Errorf("transit line = %q want Kelana Jaya Line", transit.TransitLine)
+	}
+	if transit.DepartureStop != "KLCC" || transit.ArrivalStop != "Abdullah Hukum" {
+		t.Errorf("stops = %q -> %q want KLCC -> Abdullah Hukum", transit.DepartureStop, transit.ArrivalStop)
+	}
+	if transit.Headsign != "Gombak" {
+		t.Errorf("headsign = %q want Gombak", transit.Headsign)
+	}
+	if transit.StopCount != 8 {
+		t.Errorf("stopCount = %d want 8", transit.StopCount)
 	}
 }
 
