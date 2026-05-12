@@ -115,6 +115,36 @@ type RouteCandidate struct {
 	TotalDistance float64
 	TotalDuration int
 	TotalCarbon   float64
+	TotalCost     float64
 	Congestion    float64
 	Steps         []TransportSegment
+}
+
+// RouteOption is the public, per-mode response object returned inside
+// RouteCalculateResponse.Options. It supersedes Route as the wire shape.
+type RouteOption struct {
+	RouteID              string             `json:"routeId"`
+	Mode                 string             `json:"mode"`
+	TotalDistance        float64            `json:"totalDistance"`
+	TotalDuration        int                `json:"totalDuration"`
+	CarbonEstimate       float64            `json:"carbonEstimate"`
+	CarbonBaseline       float64            `json:"carbonBaseline"`
+	CarbonSavedGrams     float64            `json:"carbonSavedGrams"`
+	CarbonSavingsPercent int                `json:"carbonSavingsPercent"`
+	CarbonEstimateKg     float64            `json:"carbonEstimateKg"`
+	EstimatedCost        float64            `json:"estimatedCost"`
+	GreenPointsEstimate  int                `json:"greenPointsEstimate"`
+	Steps                []TransportSegment `json:"steps"`
+	Polyline             string             `json:"polyline,omitempty"`
+	Reasoning            string             `json:"reasoning"`
+	RecommendedFor       []string           `json:"recommendedFor"`
+	Recommended          bool               `json:"recommended"`
+	DataSource           string             `json:"dataSource"` // "google_routes" | "fallback_synthetic"
+	CreatedAt            time.Time          `json:"createdAt"`
+}
+
+type RouteCalculateResponse struct {
+	Options      []RouteOption `json:"options"`
+	RankerSource string        `json:"rankerSource"` // "gemini" | "fallback_scorer" | "user_mode"
+	Peak         bool          `json:"peak"`
 }

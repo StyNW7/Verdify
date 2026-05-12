@@ -44,3 +44,37 @@ func TestRouteRequestModeOptional(t *testing.T) {
 		t.Fatalf("mode should be omitted when empty, got %s", string(out))
 	}
 }
+
+func TestRouteOptionJSON(t *testing.T) {
+	opt := RouteOption{
+		RouteID:        "route_x",
+		Mode:           "fast",
+		Reasoning:      "Fast EV.",
+		RecommendedFor: []string{"time-critical trips"},
+		Recommended:    true,
+		DataSource:     "google_routes",
+	}
+	b, err := json.Marshal(opt)
+	if err != nil {
+		t.Fatalf("marshal: %v", err)
+	}
+	for _, want := range []string{`"routeId":"route_x"`, `"reasoning":"Fast EV."`, `"recommendedFor":["time-critical trips"]`, `"recommended":true`, `"dataSource":"google_routes"`} {
+		if !strings.Contains(string(b), want) {
+			t.Errorf("missing %s in %s", want, string(b))
+		}
+	}
+}
+
+func TestRouteCalculateResponseShape(t *testing.T) {
+	resp := RouteCalculateResponse{
+		Options:      []RouteOption{{Mode: "fast"}, {Mode: "eco"}, {Mode: "cheap"}},
+		RankerSource: "gemini",
+		Peak:         true,
+	}
+	b, _ := json.Marshal(resp)
+	for _, want := range []string{`"options":[`, `"rankerSource":"gemini"`, `"peak":true`} {
+		if !strings.Contains(string(b), want) {
+			t.Errorf("missing %s in %s", want, string(b))
+		}
+	}
+}
