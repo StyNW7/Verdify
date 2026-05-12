@@ -21,7 +21,7 @@ func NowMY() time.Time {
 func NormalizeMode(mode string) string {
 	v := strings.ToLower(strings.TrimSpace(mode))
 	switch v {
-	case "fast", "ecoboost", "flowing", "smart":
+	case "fast", "eco", "cheap":
 		return v
 	default:
 		return ""

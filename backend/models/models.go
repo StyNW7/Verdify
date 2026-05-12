@@ -5,6 +5,7 @@ import "time"
 type Location struct {
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`
+	Address   string  `json:"address,omitempty"`
 }
 
 type TransportSegment struct {
@@ -81,7 +82,7 @@ type APIMeta struct {
 type RouteRequest struct {
 	Origin      Location `json:"origin"`
 	Destination Location `json:"destination"`
-	Mode        string   `json:"mode"`
+	Mode        string   `json:"mode,omitempty"`
 }
 
 type CreateBookingRequest struct {
