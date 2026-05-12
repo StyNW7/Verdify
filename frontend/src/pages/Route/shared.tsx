@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, forwardRef } from 'react';
+import { useMemo, useState, forwardRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import {
@@ -24,7 +24,6 @@ import {
   CircleCheck,
   Loader2,
 } from 'lucide-react';
-import { geocodeSearch, type GeocodeSuggestion } from '@/lib/api';
 import {
   type PlannerPhase,
   type PlannerPreference,
@@ -33,7 +32,8 @@ import {
   finishPlannerSubmission,
   startPlannerSubmission,
 } from './planner-phase';
-import { calculateRoute, type BackendLocation, type BackendRoute } from '@/lib/api';
+import { calculateRoute, type BackendLocation, type BackendRouteOption, type RouteMode } from '@/lib/api';
+import { usePlacesAutocomplete } from '@/hooks/usePlacesAutocomplete';
 
 export type Preference = PlannerPreference;
 export type ModeKey = 'rts' | 'lrt' | 'bus' | 'walking' | 'biking' | 'evTaxi';
@@ -55,6 +55,9 @@ export type RouteOption = {
   hero: { primary: string; unit: string; caption: string };
   polyline?: string;
   recommended?: boolean;
+  reasoning: string;
+  recommendedFor: string[];
+  dataSource?: 'google_routes' | 'fallback_synthetic';
 };
 
 export const LOCATION_SUGGESTIONS = [
@@ -92,6 +95,8 @@ export const MOCK_ROUTES: RouteOption[] = [
       'Bus 170 to final stop (10 min)',
       'Walk 2 min to arrival',
     ],
+    reasoning: 'Lowest CO₂; the rail leg saves emissions even with a longer total time.',
+    recommendedFor: ['carbon-conscious'],
   },
   {
     id: 'fast',
@@ -112,6 +117,8 @@ export const MOCK_ROUTES: RouteOption[] = [
       'Take RTS Link to Woodlands North (15 min)',
       'Walk 2 min to arrival',
     ],
+    reasoning: 'Direct EV taxi keeps door-to-door under 35 min, at higher fare and emissions.',
+    recommendedFor: ['time-critical trips'],
   },
   {
     id: 'cheap',
@@ -133,6 +140,8 @@ export const MOCK_ROUTES: RouteOption[] = [
       'Bus 170 to destination (35 min)',
       'Walk 5 min to arrival',
     ],
+    reasoning: 'Public buses with one transfer — slowest but cheapest by a wide margin.',
+    recommendedFor: ['tight budget'],
   },
 ];
 
@@ -150,14 +159,6 @@ export const MODE_META: Record<ModeKey, { label: string; icon: typeof Train }> =
   walking: { label: 'Walking', icon: Footprints },
   biking: { label: 'Biking', icon: Bike },
   evTaxi: { label: 'EV Taxi', icon: Car },
-};
-
-const ROUTE_IDS: PlannerRouteId[] = ['eco', 'fast', 'cheap'];
-
-const MODE_BY_ROUTE_ID: Record<PlannerRouteId, 'ecoboost' | 'fast' | 'flowing'> = {
-  eco: 'ecoboost',
-  fast: 'fast',
-  cheap: 'flowing',
 };
 
 const ROUTE_NAME_BY_ID: Record<PlannerRouteId, string> = {
@@ -226,27 +227,22 @@ function getTransportLabel(type: string) {
   return TRANSPORT_LABELS[type] ?? type.replace(/_/g, ' ');
 }
 
-function toRouteOption(
-  route: BackendRoute,
-  id: PlannerRouteId,
-  preferred: PlannerRouteId,
-): RouteOption {
-  const totalDuration = Math.max(1, Math.round(route.totalDuration));
-  const distinctModes = Array.from(new Set(route.steps.map((step) => getTransportLabel(step.type))));
-  const steps = route.steps.map(
+function toRouteOption(option: BackendRouteOption): RouteOption {
+  const id: PlannerRouteId = option.mode; // mode and PlannerRouteId share vocabulary
+  const totalDuration = Math.max(1, Math.round(option.totalDuration));
+  const distinctModes = Array.from(new Set(option.steps.map((step) => getTransportLabel(step.type))));
+  const steps = option.steps.map(
     (step) =>
       `${getTransportLabel(step.type)} for ${Math.max(1, Math.round(step.duration))} min (${step.distance.toFixed(1)} km)`,
   );
-  if (steps.length === 0) {
-    steps.push('No detailed segments available from planner.');
-  }
+  if (steps.length === 0) steps.push('No detailed segments available from planner.');
 
   const hero =
     id === 'eco'
       ? {
-          primary: route.carbonEstimateKg.toFixed(2),
+          primary: option.carbonEstimateKg.toFixed(2),
           unit: 'kg CO2',
-          caption: `${route.carbonSavingsPercent}% less than driving baseline`,
+          caption: `${option.carbonSavingsPercent}% less than driving baseline`,
         }
       : id === 'fast'
         ? {
@@ -255,7 +251,7 @@ function toRouteOption(
             caption: 'Estimated door-to-door',
           }
         : {
-            primary: `RM ${route.estimatedCost.toFixed(2)}`,
+            primary: `RM ${option.estimatedCost.toFixed(2)}`,
             unit: 'total',
             caption: 'Estimated fare total',
           };
@@ -268,14 +264,17 @@ function toRouteOption(
     modes: distinctModes,
     durationText: `${totalDuration}m`,
     duration: totalDuration,
-    co2: route.carbonEstimateKg,
-    co2Saved: route.carbonSavingsPercent,
-    cost: route.estimatedCost,
-    points: route.greenPointsEstimate,
+    co2: option.carbonEstimateKg,
+    co2Saved: option.carbonSavingsPercent,
+    cost: option.estimatedCost,
+    points: option.greenPointsEstimate,
     steps,
     hero,
-    polyline: route.polyline,
-    recommended: id === preferred,
+    polyline: option.polyline,
+    recommended: option.recommended,
+    reasoning: option.reasoning,
+    recommendedFor: option.recommendedFor,
+    dataSource: option.dataSource,
   };
 }
 
@@ -322,44 +321,38 @@ export function usePlannerState() {
       toast.error('Please provide both origin and destination.');
       return;
     }
-
     const resolvedOrigin = originCoords ?? resolveLocationInput(origin);
     const resolvedDestination = destCoords ?? resolveLocationInput(destination);
     if (!resolvedOrigin || !resolvedDestination) {
       toast.error('Use a suggested location or input coordinates as "lat,lng".');
       return;
     }
-
     const loadingState = startPlannerSubmission({
-      phase,
-      preference,
-      selectedRouteId,
+      phase, preference, selectedRouteId,
     });
-
     setSelectedRouteId(loadingState.selectedRouteId);
     setPhase(loadingState.phase);
 
+    // Map the user's preference -> mode hint, OR omit to let Gemini pick.
+    // For now we always omit to exercise the batched ranker; the
+    // PreferenceSelector value still drives the default-selected card.
+    const userMode: RouteMode | undefined = undefined;
+
     try {
-      const apiResults = await Promise.all(
-        ROUTE_IDS.map((id) =>
-          calculateRoute({
-            origin: resolvedOrigin,
-            destination: resolvedDestination,
-            mode: MODE_BY_ROUTE_ID[id],
-          }),
-        ),
-      );
-
-      const mappedRoutes = apiResults.map((route, index) =>
-        toRouteOption(route, ROUTE_IDS[index], loadingState.selectedRouteId),
-      );
+      const response = await calculateRoute({
+        origin: resolvedOrigin,
+        destination: resolvedDestination,
+        mode: userMode,
+      });
+      const mappedRoutes = response.options.map(toRouteOption);
       setRoutes(mappedRoutes);
-
+      // If the backend flagged a recommended option, select it. Else keep the preference-derived id.
+      const rec = mappedRoutes.find((r) => r.recommended);
+      const nextSelected = rec ? rec.id : loadingState.selectedRouteId;
       const resultState = finishPlannerSubmission({
         phase: 'loading',
-        selectedRouteId: loadingState.selectedRouteId,
+        selectedRouteId: nextSelected,
       });
-
       setSelectedRouteId(resultState.selectedRouteId);
       setPhase(resultState.phase);
     } catch (error) {
@@ -400,36 +393,6 @@ export function usePlannerState() {
   };
 }
 
-function useGeocodeSuggestions(query: string, enabled: boolean) {
-  const [suggestions, setSuggestions] = useState<GeocodeSuggestion[]>([]);
-  const [loading, setLoading] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
-  const lastQuery = useRef('');
-
-  const fetch = useCallback((q: string) => {
-    if (q.length < 3) {
-      setSuggestions([]);
-      return;
-    }
-    if (q === lastQuery.current) return;
-    lastQuery.current = q;
-    setLoading(true);
-    geocodeSearch(q)
-      .then(setSuggestions)
-      .catch(() => setSuggestions([]))
-      .finally(() => setLoading(false));
-  }, []);
-
-  useEffect(() => {
-    if (!enabled) return;
-    clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => fetch(query), 350);
-    return () => clearTimeout(timerRef.current);
-  }, [query, enabled, fetch]);
-
-  return { suggestions, loading };
-}
-
 type UnderlineInputProps = {
   value: string;
   onChange: (v: string) => void;
@@ -445,8 +408,8 @@ export const UnderlineInput = forwardRef<HTMLInputElement, UnderlineInputProps>(
   function UnderlineInput({ value, onChange, onCoordSelect, placeholder, label, suggestions, disabled, ariaLabel }, ref) {
     const [focused, setFocused] = useState(false);
 
-    const { suggestions: geocodeSuggestions, loading: geocodeLoading } =
-      useGeocodeSuggestions(value, focused);
+    const { predictions, loading: geocodeLoading, resolvePlace } = usePlacesAutocomplete(value, focused);
+    const showGeocode = focused && predictions.length > 0;
 
     const staticFiltered = useMemo(() => {
       if (!suggestions || !value || !focused) return [];
@@ -455,7 +418,6 @@ export const UnderlineInput = forwardRef<HTMLInputElement, UnderlineInputProps>(
         .slice(0, 5);
     }, [suggestions, value, focused]);
 
-    const showGeocode = focused && geocodeSuggestions.length > 0;
     const showStatic = focused && staticFiltered.length > 0 && !showGeocode;
 
     return (
@@ -512,21 +474,29 @@ export const UnderlineInput = forwardRef<HTMLInputElement, UnderlineInputProps>(
                 boxShadow: '0 30px 60px -30px rgba(10,14,12,0.25)',
               }}
             >
-              {geocodeSuggestions.map(s => (
-                <li key={s.placeId}>
+              {predictions.map((p) => (
+                <li key={p.placeId}>
                   <button
                     type="button"
-                    onMouseDown={() => {
-                      onChange(s.formattedAddress);
-                      onCoordSelect?.(s.latitude, s.longitude);
+                    onMouseDown={async () => {
+                      onChange(p.fullText);
+                      const loc = await resolvePlace(p.placeId);
+                      if (loc) onCoordSelect?.(loc.latitude, loc.longitude);
                     }}
-                    className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors"
+                    className="flex w-full flex-col items-start gap-0.5 px-4 py-2.5 text-left text-sm transition-colors"
                     style={{ color: 'var(--theme-fg)' }}
                     onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--theme-accent-soft)')}
                     onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                   >
-                    <MapPin size={12} style={{ color: 'var(--theme-fg-dim)' }} />
-                    {s.formattedAddress}
+                    <span className="flex items-center gap-2">
+                      <MapPin size={12} style={{ color: 'var(--theme-fg-dim)' }} />
+                      {p.primaryText}
+                    </span>
+                    {p.secondaryText && (
+                      <span className="pl-5 text-xs" style={{ color: 'var(--theme-fg-dim)' }}>
+                        {p.secondaryText}
+                      </span>
+                    )}
                   </button>
                 </li>
               ))}
