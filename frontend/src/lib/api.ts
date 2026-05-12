@@ -85,12 +85,15 @@ export function loginUser(payload: LoginPayload) {
 export type BackendLocation = {
   latitude: number;
   longitude: number;
+  address?: string;
 };
+
+export type RouteMode = 'fast' | 'eco' | 'cheap';
 
 export type CalculateRoutePayload = {
   origin: BackendLocation;
   destination: BackendLocation;
-  mode: 'fast' | 'ecoboost' | 'flowing' | 'smart';
+  mode?: RouteMode; // omit to let the Gemini ranker pick
 };
 
 export type BackendTransportSegment = {
@@ -100,9 +103,9 @@ export type BackendTransportSegment = {
   estimatedCost: number;
 };
 
-export type BackendRoute = {
+export type BackendRouteOption = {
   routeId: string;
-  mode: string;
+  mode: RouteMode;
   totalDistance: number;
   totalDuration: number;
   carbonEstimate: number;
@@ -114,15 +117,27 @@ export type BackendRoute = {
   greenPointsEstimate: number;
   steps: BackendTransportSegment[];
   polyline?: string;
+  reasoning: string;
+  recommendedFor: string[];
+  recommended: boolean;
+  dataSource: 'google_routes' | 'fallback_synthetic';
+  createdAt: string;
+};
+
+export type CalculateRouteResponse = {
+  options: BackendRouteOption[];
+  rankerSource: 'gemini' | 'fallback_scorer' | 'user_mode';
+  peak: boolean;
 };
 
 export function calculateRoute(payload: CalculateRoutePayload) {
-  return apiRequest<BackendRoute>('/api/v1/routes/calculate', {
+  return apiRequest<CalculateRouteResponse>('/api/v1/routes/calculate', {
     method: 'POST',
     body: JSON.stringify(payload),
   });
 }
 
+// Legacy geocode endpoint — still supported as a fallback for the autocomplete hook.
 export type GeocodeSuggestion = {
   formattedAddress: string;
   latitude: number;
@@ -133,6 +148,38 @@ export type GeocodeSuggestion = {
 export function geocodeSearch(query: string) {
   return apiRequest<GeocodeSuggestion[]>(
     `/api/v1/geocode?q=${encodeURIComponent(query)}`,
+    { method: 'GET' },
+  );
+}
+
+// Places Autocomplete (typing-as-you-go path).
+export type PlacePrediction = {
+  placeId: string;
+  primaryText: string;
+  secondaryText: string;
+  fullText: string;
+};
+
+export type PlacesAutocompleteResponse = {
+  sessionToken: string;
+  predictions: PlacePrediction[];
+};
+
+export function placesAutocomplete(q: string, sessionToken: string) {
+  return apiRequest<PlacesAutocompleteResponse>(
+    `/api/v1/places/autocomplete?q=${encodeURIComponent(q)}&sessionToken=${encodeURIComponent(sessionToken)}`,
+    { method: 'GET' },
+  );
+}
+
+export type PlaceDetailsResponse = {
+  placeId: string;
+  location: BackendLocation;
+};
+
+export function placeDetails(placeId: string, sessionToken: string) {
+  return apiRequest<PlaceDetailsResponse>(
+    `/api/v1/places/details?placeId=${encodeURIComponent(placeId)}&sessionToken=${encodeURIComponent(sessionToken)}`,
     { method: 'GET' },
   );
 }
