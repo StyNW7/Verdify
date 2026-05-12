@@ -46,6 +46,7 @@ type Step struct {
 	ArrivalStopName   string // station/stop alighted at (TRANSIT only)
 	Headsign          string // direction sign, e.g., "to Gombak" (TRANSIT only)
 	StopCount         int    // number of stops (TRANSIT only)
+	Instruction       string // turn-by-turn text from Google (plain, HTML-stripped)
 	DistanceMeters    int
 	DurationSeconds   int
 	StartLocation     LatLng

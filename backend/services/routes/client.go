@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -88,14 +89,19 @@ type respTransitDetails struct {
 	StopCount    int             `json:"stopCount"`
 }
 
+type respNavInstruction struct {
+	Instructions string `json:"instructions"` // HTML, e.g., "Walk south on <b>Jalan X</b>"
+}
+
 type respStep struct {
-	DistanceMeters  int                `json:"distanceMeters"`
-	StaticDuration  string             `json:"staticDuration"`
-	TravelMode      string             `json:"travelMode"`
-	Polyline        respPolyline       `json:"polyline"`
-	StartLocation   respLocation       `json:"startLocation"`
-	EndLocation     respLocation       `json:"endLocation"`
-	TransitDetails  respTransitDetails `json:"transitDetails"`
+	DistanceMeters        int                `json:"distanceMeters"`
+	StaticDuration        string             `json:"staticDuration"`
+	TravelMode            string             `json:"travelMode"`
+	Polyline              respPolyline       `json:"polyline"`
+	StartLocation         respLocation       `json:"startLocation"`
+	EndLocation           respLocation       `json:"endLocation"`
+	TransitDetails        respTransitDetails `json:"transitDetails"`
+	NavigationInstruction respNavInstruction `json:"navigationInstruction"`
 }
 
 type respLeg struct {
@@ -128,7 +134,8 @@ const fieldMask = "routes.polyline.encodedPolyline," +
 	"routes.legs.steps.transitDetails.stopDetails.arrivalStop.name," +
 	"routes.legs.steps.transitDetails.stopDetails.departureStop.name," +
 	"routes.legs.steps.transitDetails.headsign," +
-	"routes.legs.steps.transitDetails.stopCount"
+	"routes.legs.steps.transitDetails.stopCount," +
+	"routes.legs.steps.navigationInstruction.instructions"
 
 // Compute satisfies RouteFetcher.
 func (c *Client) Compute(ctx context.Context, origin, dest models.Location, travelMode, routingPreference string) (*Geometry, error) {
@@ -207,6 +214,7 @@ func convertRespLegs(in []respLeg) []Leg {
 				ArrivalStopName:   s.TransitDetails.StopDetails.ArrivalStop.Name,
 				Headsign:          s.TransitDetails.Headsign,
 				StopCount:         s.TransitDetails.StopCount,
+				Instruction:       stripHTML(s.NavigationInstruction.Instructions),
 				DistanceMeters:    s.DistanceMeters,
 				DurationSeconds:   parseGoogleDuration(s.StaticDuration),
 				StartLocation:     LatLng{Latitude: s.StartLocation.LatLng.Latitude, Longitude: s.StartLocation.LatLng.Longitude},
@@ -224,6 +232,18 @@ func pickTransitName(line respTransitLine) string {
 		return line.Name
 	}
 	return line.NameShort
+}
+
+// htmlTagRE strips simple HTML tags like <b>, </b>, <wbr>. Google's
+// navigationInstruction.instructions emits HTML to bold place names; the
+// text content alone is enough for our directions panel.
+var htmlTagRE = regexp.MustCompile(`<[^>]*>`)
+
+func stripHTML(s string) string {
+	if s == "" {
+		return ""
+	}
+	return strings.TrimSpace(htmlTagRE.ReplaceAllString(s, ""))
 }
 
 func parseGoogleDuration(s string) int {

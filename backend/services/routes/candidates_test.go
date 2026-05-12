@@ -113,7 +113,7 @@ func TestCandidateBuilder_TransitLegsBecomeRealSteps(t *testing.T) {
 				EncodedPolyline: "transit_poly",
 				DistanceMeters:  16000, DurationSeconds: 42 * 60,
 				Legs: []Leg{{Steps: []Step{
-					{TravelMode: "WALK", DistanceMeters: 200, DurationSeconds: 180},
+					{TravelMode: "WALK", DistanceMeters: 200, DurationSeconds: 180, Instruction: "Walk south on Jalan Stesen Sentral"},
 					{
 						TravelMode:        "TRANSIT",
 						VehicleType:       "SUBWAY",
@@ -125,7 +125,7 @@ func TestCandidateBuilder_TransitLegsBecomeRealSteps(t *testing.T) {
 						DistanceMeters:    12000,
 						DurationSeconds:   1500,
 					},
-					{TravelMode: "WALK", DistanceMeters: 400, DurationSeconds: 360},
+					{TravelMode: "WALK", DistanceMeters: 400, DurationSeconds: 360, Instruction: "Turn left onto Lingkaran Syed Putra"},
 				}}},
 			},
 		},
@@ -180,6 +180,28 @@ func TestCandidateBuilder_TransitLegsBecomeRealSteps(t *testing.T) {
 	}
 	if transit.StopCount != 8 {
 		t.Errorf("stopCount = %d want 8", transit.StopCount)
+	}
+	// Walk steps should carry navigation instructions from Google.
+	if eco.Steps[0].Instruction != "Walk south on Jalan Stesen Sentral" {
+		t.Errorf("step 0 instruction = %q", eco.Steps[0].Instruction)
+	}
+	if eco.Steps[2].Instruction != "Turn left onto Lingkaran Syed Putra" {
+		t.Errorf("step 2 instruction = %q", eco.Steps[2].Instruction)
+	}
+}
+
+func TestStripHTML(t *testing.T) {
+	cases := []struct{ in, want string }{
+		{"Walk south on <b>Jalan Stesen Sentral</b>", "Walk south on Jalan Stesen Sentral"},
+		{"Turn <b>left</b> onto <wbr>Jalan A", "Turn left onto Jalan A"},
+		{"Plain text with no tags", "Plain text with no tags"},
+		{"", ""},
+		{"<b></b><i>only tags</i>", "only tags"},
+	}
+	for _, c := range cases {
+		if got := stripHTML(c.in); got != c.want {
+			t.Errorf("stripHTML(%q) = %q want %q", c.in, got, c.want)
+		}
 	}
 }
 

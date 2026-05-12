@@ -106,6 +106,7 @@ export type BackendTransportSegment = {
   arrivalStop?: string;
   headsign?: string;
   stopCount?: number;
+  instruction?: string;
 };
 
 export type BackendRouteOption = {

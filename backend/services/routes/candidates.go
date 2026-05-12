@@ -156,6 +156,7 @@ func convertLegs(legs []Leg, depart time.Time) []models.TransportSegment {
 				ArrivalStop:   step.ArrivalStopName,
 				Headsign:      step.Headsign,
 				StopCount:     step.StopCount,
+				Instruction:   step.Instruction,
 			})
 			cursor = arrival
 		}

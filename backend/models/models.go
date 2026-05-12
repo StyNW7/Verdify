@@ -25,6 +25,9 @@ type TransportSegment struct {
 	ArrivalStop   string `json:"arrivalStop,omitempty"`
 	Headsign      string `json:"headsign,omitempty"`
 	StopCount     int    `json:"stopCount,omitempty"`
+	// Turn-by-turn instruction text from Google (HTML-stripped). Empty for
+	// synthetic segments. e.g., "Walk south on Jalan Stesen Sentral".
+	Instruction string `json:"instruction,omitempty"`
 }
 
 type Route struct {

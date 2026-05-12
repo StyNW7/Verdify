@@ -231,38 +231,57 @@ function renderStep(
   step: BackendRouteOption['steps'][number],
   index: number,
   all: BackendRouteOption['steps'],
+  destinationLabel?: string,
 ): string {
   const dur = Math.max(1, Math.round(step.duration));
   const distKm = step.distance.toFixed(1);
   const isLast = index === all.length - 1;
   const next = all[index + 1];
+  const dest = destinationLabel?.trim();
 
   if (step.type === 'walking') {
-    // For a walk leading into transit, name the destination station.
+    // Highest priority on the final walk: name the actual destination.
+    if (isLast) {
+      const label = dest ? `Walk to ${dest}` : 'Walk to destination';
+      return `${label} · ${dur} min (${distKm} km)`;
+    }
+    // If a transit ride follows, the station name is the most useful label.
     if (next && next.type !== 'walking' && next.departureStop) {
       return `Walk to ${next.departureStop} · ${dur} min (${distKm} km)`;
     }
-    if (isLast) {
-      return `Walk to destination · ${dur} min (${distKm} km)`;
+    // Otherwise prefer Google's turn-by-turn instruction text.
+    if (step.instruction) {
+      return `${step.instruction} · ${dur} min (${distKm} km)`;
     }
     return `Walk · ${dur} min (${distKm} km)`;
   }
 
   if (step.transitLine) {
-    const toward = step.headsign ? ` toward ${step.headsign}` : '';
+    const toward = step.headsign
+      ? ` toward ${step.headsign}`
+      : step.arrivalStop
+        ? ` to ${step.arrivalStop}`
+        : '';
     const stops = step.stopCount ? ` · ${step.stopCount} stop${step.stopCount === 1 ? '' : 's'}` : '';
     return `${step.transitLine}${toward}${stops} · ${dur} min (${distKm} km)`;
   }
 
-  // EV taxi / bus / unknown — keep the simple label.
+  // EV taxi / synthetic bus — name the trip destination if we can.
+  if (step.type === 'ev_taxi' || step.type === 'evTaxi') {
+    const label = dest ? `EV Taxi to ${dest}` : 'EV Taxi';
+    return `${label} · ${dur} min (${distKm} km)`;
+  }
+  if (step.type === 'bus' && dest) {
+    return `Bus toward ${dest} · ${dur} min (${distKm} km)`;
+  }
   return `${getTransportLabel(step.type)} · ${dur} min (${distKm} km)`;
 }
 
-function toRouteOption(option: BackendRouteOption): RouteOption {
+function toRouteOption(option: BackendRouteOption, destinationLabel?: string): RouteOption {
   const id: PlannerRouteId = option.mode; // mode and PlannerRouteId share vocabulary
   const totalDuration = Math.max(1, Math.round(option.totalDuration));
   const distinctModes = Array.from(new Set(option.steps.map((step) => getTransportLabel(step.type))));
-  const steps = option.steps.map((step, i, all) => renderStep(step, i, all));
+  const steps = option.steps.map((step, i, all) => renderStep(step, i, all, destinationLabel));
   if (steps.length === 0) steps.push('No detailed segments available from planner.');
 
   const hero =
@@ -383,7 +402,15 @@ export function usePlannerState() {
         destination: resolvedDestination,
         mode: userMode,
       });
-      const mappedRoutes = response.options.map(toRouteOption);
+      // Build a short, human-friendly destination label for step rendering.
+      // Prefer the user's typed value (which Places autocomplete fills with
+      // the picked place's full text); fall back to the address from the
+      // resolved Place Details payload if available.
+      const destinationLabel =
+        destination.trim() ||
+        (resolvedDestination as { address?: string }).address ||
+        '';
+      const mappedRoutes = response.options.map((opt) => toRouteOption(opt, destinationLabel));
       setRoutes(mappedRoutes);
       // Snapshot the inputs that produced these routes so the map renders
       // from a stable submission, not the live typing state.
