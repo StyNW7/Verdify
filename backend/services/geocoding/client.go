@@ -1,4 +1,7 @@
-package services
+// Package geocoding wraps the Google Geocoding API (used for raw
+// "address text -> coordinates" lookups; the typing-as-you-go path
+// belongs in services/places).
+package geocoding
 
 import (
 	"context"
@@ -10,15 +13,15 @@ import (
 	"time"
 )
 
-const geocodeAPIURL = "https://maps.googleapis.com/maps/api/geocode/json"
+const apiURL = "https://maps.googleapis.com/maps/api/geocode/json"
 
-type GeocodingClient struct {
+type Client struct {
 	apiKey     string
 	httpClient *http.Client
 }
 
-func NewGeocodingClient(apiKey string) *GeocodingClient {
-	return &GeocodingClient{
+func NewClient(apiKey string) *Client {
+	return &Client{
 		apiKey: apiKey,
 		httpClient: &http.Client{
 			Timeout: 10 * time.Second,
@@ -26,11 +29,11 @@ func NewGeocodingClient(apiKey string) *GeocodingClient {
 	}
 }
 
-func (gc *GeocodingClient) Enabled() bool {
-	return gc.apiKey != ""
+func (c *Client) Enabled() bool {
+	return c.apiKey != ""
 }
 
-type GeocodeSuggestion struct {
+type Suggestion struct {
 	FormattedAddress string  `json:"formattedAddress"`
 	Latitude         float64 `json:"latitude"`
 	Longitude        float64 `json:"longitude"`
@@ -51,28 +54,27 @@ type geocodeResponse struct {
 	Status string `json:"status"`
 }
 
-func (gc *GeocodingClient) Autocomplete(ctx context.Context, query string) ([]GeocodeSuggestion, error) {
-	if !gc.Enabled() {
+func (c *Client) Autocomplete(ctx context.Context, query string) ([]Suggestion, error) {
+	if !c.Enabled() {
 		return nil, fmt.Errorf("geocoding API not configured")
 	}
-
 	if query == "" {
-		return []GeocodeSuggestion{}, nil
+		return []Suggestion{}, nil
 	}
 
 	params := url.Values{}
 	params.Set("address", query)
-	params.Set("key", gc.apiKey)
+	params.Set("key", c.apiKey)
 	params.Set("region", "my")
 	params.Set("bounds", "1.2|103.6|1.6|104.1")
 
-	reqURL := geocodeAPIURL + "?" + params.Encode()
+	reqURL := apiURL + "?" + params.Encode()
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, reqURL, nil)
 	if err != nil {
 		return nil, fmt.Errorf("create request: %w", err)
 	}
 
-	resp, err := gc.httpClient.Do(httpReq)
+	resp, err := c.httpClient.Do(httpReq)
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
@@ -92,19 +94,18 @@ func (gc *GeocodingClient) Autocomplete(ctx context.Context, query string) ([]Ge
 		return nil, fmt.Errorf("geocoding API status: %s", geoResp.Status)
 	}
 
-	suggestions := make([]GeocodeSuggestion, 0, len(geoResp.Results))
+	suggestions := make([]Suggestion, 0, len(geoResp.Results))
 	limit := len(geoResp.Results)
 	if limit > 5 {
 		limit = 5
 	}
 	for _, r := range geoResp.Results[:limit] {
-		suggestions = append(suggestions, GeocodeSuggestion{
+		suggestions = append(suggestions, Suggestion{
 			FormattedAddress: r.FormattedAddress,
 			Latitude:         r.Geometry.Location.Lat,
 			Longitude:        r.Geometry.Location.Lng,
 			PlaceID:          r.PlaceID,
 		})
 	}
-
 	return suggestions, nil
 }

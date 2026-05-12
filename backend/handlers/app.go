@@ -12,6 +12,7 @@ import (
 	"github.com/verdify/backend/db"
 	"github.com/verdify/backend/models"
 	"github.com/verdify/backend/services"
+	"github.com/verdify/backend/services/geocoding"
 )
 
 type App struct {
@@ -20,7 +21,7 @@ type App struct {
 	Ranker       *services.GeminiRanker
 	Maps         *services.MapsClient
 	RoutesClient *services.RoutesClient
-	Geocoding    *services.GeocodingClient
+	Geocoding    *geocoding.Client
 	StartTime    time.Time
 }
 
@@ -31,7 +32,7 @@ func New(cfg config.Config) *App {
 		Ranker:       services.NewGeminiRanker(cfg),
 		Maps:         services.NewMapsClient(cfg),
 		RoutesClient: services.NewRoutesClient(cfg.GoogleMapsAPIKey),
-		Geocoding:    services.NewGeocodingClient(cfg.GoogleMapsAPIKey),
+		Geocoding:    geocoding.NewClient(cfg.GoogleMapsAPIKey),
 		StartTime:    services.NowUTC(),
 	}
 }
