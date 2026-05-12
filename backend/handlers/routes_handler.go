@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"log"
 	"math"
 	"net/http"
 	"time"
@@ -76,6 +77,18 @@ func (app *App) calculateRouteHandler(w http.ResponseWriter, r *http.Request) {
 		opt.CreatedAt = rt.CreatedAt
 		opts = append(opts, opt)
 	}
+
+	// Structured log line for diagnostics.
+	var realCount, fallbackCount int
+	for _, c := range candidates {
+		if c.DataSource == "google_routes" {
+			realCount++
+		} else {
+			fallbackCount++
+		}
+	}
+	log.Printf("event=route_calculate routes_real=%d routes_fallback=%d ranker=%s peak=%v",
+		realCount, fallbackCount, result.Source, peak)
 
 	writeOK(w, http.StatusOK, models.RouteCalculateResponse{
 		Options:      opts,
