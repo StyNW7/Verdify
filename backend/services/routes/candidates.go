@@ -22,17 +22,19 @@ func NewCandidateBuilder(fetcher RouteFetcher) *CandidateBuilder {
 	return &CandidateBuilder{fetcher: fetcher}
 }
 
-// modeSpec maps a Verdify mode -> Google travel mode + routing pref.
+// modeSpec maps a Verdify mode -> Google Routes request options.
 type modeSpec struct {
-	mode              string // "fast" | "eco" | "cheap"
-	travelMode        string
-	routingPreference string
+	mode string // "fast" | "eco" | "cheap"
+	opts ComputeOpts
 }
 
 var modeOrder = []modeSpec{
-	{mode: "fast", travelMode: TravelDrive, routingPreference: ""},
-	{mode: "eco", travelMode: TravelTransit, routingPreference: ""},
-	{mode: "cheap", travelMode: TravelDrive, routingPreference: "TRAFFIC_AWARE"},
+	// Fast: drive route, traffic-aware ETAs.
+	{mode: "fast", opts: ComputeOpts{TravelMode: TravelDrive, RoutingPreference: "TRAFFIC_AWARE"}},
+	// Eco: any transit mode (LRT/MRT/bus/walk) — Google picks the best combination.
+	{mode: "eco", opts: ComputeOpts{TravelMode: TravelTransit}},
+	// Cheap: transit limited to BUS — slower and walk-heavy but actually cheap by fare.
+	{mode: "cheap", opts: ComputeOpts{TravelMode: TravelTransit, AllowedTransitModes: []string{"BUS"}}},
 }
 
 // Build returns 3 candidates in fixed order. Per-mode Routes failures fall
@@ -59,7 +61,7 @@ func (cb *CandidateBuilder) buildOne(ctx context.Context, origin, dest models.Lo
 	if cb.fetcher == nil {
 		return fallback
 	}
-	geom, err := cb.fetcher.Compute(ctx, origin, dest, spec.travelMode, spec.routingPreference)
+	geom, err := cb.fetcher.Compute(ctx, origin, dest, spec.opts)
 	if err != nil || geom == nil {
 		return fallback
 	}
@@ -81,7 +83,7 @@ func (cb *CandidateBuilder) buildOne(ctx context.Context, origin, dest models.Lo
 	// per-step distances. For DRIVE, Google returns turn-by-turn navigation
 	// maneuvers — not useful for our taxonomy. Keep the synthetic single-step
 	// composition there and only scale carbon to the real distance.
-	if spec.travelMode == TravelTransit && len(geom.Legs) > 0 {
+	if spec.opts.TravelMode == TravelTransit && len(geom.Legs) > 0 {
 		realSteps := convertLegs(geom.Legs, time.Now().UTC())
 		if len(realSteps) > 0 {
 			c.Steps = realSteps

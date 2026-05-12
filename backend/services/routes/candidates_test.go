@@ -13,11 +13,30 @@ type fakeFetcher struct {
 	err  map[string]error
 }
 
-func (f *fakeFetcher) Compute(_ context.Context, _, _ models.Location, travelMode, _ string) (*Geometry, error) {
-	if err, ok := f.err[travelMode]; ok && err != nil {
+// keyForOpts builds a fixture key that disambiguates same-travelMode requests
+// by transit-mode preference (e.g., eco vs cheap both call TRANSIT but with
+// different AllowedTransitModes).
+func keyForOpts(opts ComputeOpts) string {
+	k := opts.TravelMode
+	if len(opts.AllowedTransitModes) > 0 {
+		k += "|" + opts.AllowedTransitModes[0]
+	}
+	return k
+}
+
+func (f *fakeFetcher) Compute(_ context.Context, _, _ models.Location, opts ComputeOpts) (*Geometry, error) {
+	k := keyForOpts(opts)
+	if err, ok := f.err[k]; ok && err != nil {
 		return nil, err
 	}
-	return f.geom[travelMode], nil
+	if g, ok := f.geom[k]; ok {
+		return g, nil
+	}
+	// Fall back to the bare travelMode key for tests that don't differentiate.
+	if err, ok := f.err[opts.TravelMode]; ok && err != nil {
+		return nil, err
+	}
+	return f.geom[opts.TravelMode], nil
 }
 
 func TestCandidateBuilder_AllSucceed(t *testing.T) {
@@ -57,9 +76,12 @@ func TestCandidateBuilder_AllSucceed(t *testing.T) {
 }
 
 func TestCandidateBuilder_PerModeFallback(t *testing.T) {
+	// Cheap (TRANSIT|BUS) succeeds. Eco (TRANSIT, any) errors → falls back.
+	// Fast (DRIVE) succeeds. Verifies fallback is per-mode, not global.
 	fetcher := &fakeFetcher{
 		geom: map[string]*Geometry{
-			"DRIVE": {EncodedPolyline: "drive_poly", DistanceMeters: 14000, DurationSeconds: 22 * 60},
+			"DRIVE":       {EncodedPolyline: "drive_poly", DistanceMeters: 14000, DurationSeconds: 22 * 60},
+			"TRANSIT|BUS": {EncodedPolyline: "bus_poly", DistanceMeters: 18000, DurationSeconds: 55 * 60},
 		},
 		err: map[string]error{
 			"TRANSIT": errors.New("upstream 503"),
@@ -97,9 +119,10 @@ func TestCandidateBuilder_AllFail(t *testing.T) {
 }
 
 func TestCandidateBuilder_TransitLegsBecomeRealSteps(t *testing.T) {
-	// Eco mode is requested with TRANSIT; supply realistic leg data.
-	// Fast/cheap (DRIVE) have legs that should be IGNORED because Google's
-	// turn-by-turn navigation steps aren't meaningful in our taxonomy.
+	// Eco mode is requested with TRANSIT (any mode); cheap with TRANSIT bus-only;
+	// fast with DRIVE. Both transit calls produce real leg-based steps; the
+	// DRIVE leg is ignored because Google's turn-by-turn maneuvers aren't
+	// meaningful in our taxonomy.
 	fetcher := &fakeFetcher{
 		geom: map[string]*Geometry{
 			"DRIVE": {
@@ -126,6 +149,25 @@ func TestCandidateBuilder_TransitLegsBecomeRealSteps(t *testing.T) {
 						DurationSeconds:   1500,
 					},
 					{TravelMode: "WALK", DistanceMeters: 400, DurationSeconds: 360, Instruction: "Turn left onto Lingkaran Syed Putra"},
+				}}},
+			},
+			"TRANSIT|BUS": {
+				EncodedPolyline: "bus_poly",
+				DistanceMeters:  18000, DurationSeconds: 55 * 60,
+				Legs: []Leg{{Steps: []Step{
+					{TravelMode: "WALK", DistanceMeters: 300, DurationSeconds: 240, Instruction: "Walk to bus stop"},
+					{
+						TravelMode:        "TRANSIT",
+						VehicleType:       "BUS",
+						TransitLineName:   "RapidKL 401",
+						DepartureStopName: "KLCC",
+						ArrivalStopName:   "Mid Valley",
+						Headsign:          "Bangsar",
+						StopCount:         12,
+						DistanceMeters:    17200,
+						DurationSeconds:   2700,
+					},
+					{TravelMode: "WALK", DistanceMeters: 500, DurationSeconds: 360},
 				}}},
 			},
 		},
@@ -188,6 +230,21 @@ func TestCandidateBuilder_TransitLegsBecomeRealSteps(t *testing.T) {
 	if eco.Steps[2].Instruction != "Turn left onto Lingkaran Syed Putra" {
 		t.Errorf("step 2 instruction = %q", eco.Steps[2].Instruction)
 	}
+
+	// Cheap mode (TRANSIT bus-only) should also produce real bus-based steps.
+	cheap := cands[2]
+	if cheap.Mode != "cheap" {
+		t.Fatalf("position 2 mode = %q want cheap", cheap.Mode)
+	}
+	if len(cheap.Steps) != 3 {
+		t.Fatalf("cheap want 3 real steps from bus-only TRANSIT, got %d", len(cheap.Steps))
+	}
+	if cheap.Steps[1].Type != "bus" {
+		t.Errorf("cheap middle step: type = %q want bus", cheap.Steps[1].Type)
+	}
+	if cheap.Steps[1].TransitLine != "RapidKL 401" {
+		t.Errorf("cheap bus line = %q want RapidKL 401", cheap.Steps[1].TransitLine)
+	}
 }
 
 func TestStripHTML(t *testing.T) {
@@ -206,11 +263,10 @@ func TestStripHTML(t *testing.T) {
 }
 
 func TestCandidateBuilder_DriveStepsScaleToRealDistance(t *testing.T) {
-	// Cheap mode uses DRIVE (synthetic 2-step bus+ev_taxi composition).
+	// Fast mode uses DRIVE (synthetic single-step ev_taxi composition).
 	// When Google's real distance differs from the synthetic distance, the
-	// step distances must scale together so cost/carbon math matches the
-	// real total — otherwise we'd compute cost from synthetic 3 km when
-	// the real trip is 4 km, leading to nonsense cost ordering.
+	// step distance must scale to the real total — otherwise we'd compute
+	// cost from synthetic 3 km when the real trip is 4 km.
 	fetcher := &fakeFetcher{
 		geom: map[string]*Geometry{
 			"DRIVE": {
@@ -222,25 +278,16 @@ func TestCandidateBuilder_DriveStepsScaleToRealDistance(t *testing.T) {
 	}
 	cb := NewCandidateBuilder(fetcher)
 	cands, _ := cb.Build(context.Background(), origin, dest)
-	cheap := cands[2]
-	if cheap.Mode != "cheap" {
-		t.Fatalf("position 2 mode = %q want cheap", cheap.Mode)
+	fast := cands[0]
+	if fast.Mode != "fast" {
+		t.Fatalf("position 0 mode = %q want fast", fast.Mode)
 	}
-	// Sum of step distances should match the real total distance.
-	var sumStep float64
-	for _, s := range cheap.Steps {
-		sumStep += s.Distance
+	if len(fast.Steps) != 1 || fast.Steps[0].Type != "ev_taxi" {
+		t.Fatalf("fast should have 1 synthetic ev_taxi step, got %+v", fast.Steps)
 	}
-	// Allow small rounding slack (each step rounded to 2dp).
-	if sumStep < 3.95 || sumStep > 4.05 {
-		t.Errorf("cheap steps should sum to ~4.0 km got %.3f", sumStep)
-	}
-	// Cheap has exactly 2 synthetic steps: bus + ev_taxi.
-	if len(cheap.Steps) != 2 {
-		t.Fatalf("cheap should have 2 synthetic steps, got %d", len(cheap.Steps))
-	}
-	if cheap.Steps[0].Type != "bus" || cheap.Steps[1].Type != "ev_taxi" {
-		t.Errorf("cheap step types: %q,%q want bus,ev_taxi", cheap.Steps[0].Type, cheap.Steps[1].Type)
+	// Step distance should match the real total (allow small rounding slack).
+	if fast.Steps[0].Distance < 3.95 || fast.Steps[0].Distance > 4.05 {
+		t.Errorf("fast step distance should be ~4.0 km got %v", fast.Steps[0].Distance)
 	}
 }
 

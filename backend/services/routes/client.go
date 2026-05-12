@@ -44,12 +44,17 @@ type waypoint struct {
 	} `json:"location"`
 }
 
+type transitPreferences struct {
+	AllowedTravelModes []string `json:"allowedTravelModes,omitempty"`
+}
+
 type request struct {
-	Origin                   waypoint `json:"origin"`
-	Destination              waypoint `json:"destination"`
-	TravelMode               string   `json:"travelMode"`
-	RoutingPreference        string   `json:"routingPreference,omitempty"`
-	ComputeAlternativeRoutes bool     `json:"computeAlternativeRoutes"`
+	Origin                   waypoint            `json:"origin"`
+	Destination              waypoint            `json:"destination"`
+	TravelMode               string              `json:"travelMode"`
+	RoutingPreference        string              `json:"routingPreference,omitempty"`
+	ComputeAlternativeRoutes bool                `json:"computeAlternativeRoutes"`
+	TransitPreferences       *transitPreferences `json:"transitPreferences,omitempty"`
 }
 
 type respLatLng struct {
@@ -138,15 +143,22 @@ const fieldMask = "routes.polyline.encodedPolyline," +
 	"routes.legs.steps.navigationInstruction.instructions"
 
 // Compute satisfies RouteFetcher.
-func (c *Client) Compute(ctx context.Context, origin, dest models.Location, travelMode, routingPreference string) (*Geometry, error) {
+func (c *Client) Compute(ctx context.Context, origin, dest models.Location, opts ComputeOpts) (*Geometry, error) {
 	if !c.Enabled() {
 		return nil, fmt.Errorf("routes API not configured")
 	}
 
 	req := request{
-		TravelMode:               travelMode,
-		RoutingPreference:        routingPreference,
+		TravelMode:               opts.TravelMode,
 		ComputeAlternativeRoutes: false,
+	}
+	// RoutingPreference is only valid for DRIVE; Google rejects it for TRANSIT.
+	if opts.TravelMode == TravelDrive {
+		req.RoutingPreference = opts.RoutingPreference
+	}
+	// TransitPreferences only valid for TRANSIT.
+	if opts.TravelMode == TravelTransit && len(opts.AllowedTransitModes) > 0 {
+		req.TransitPreferences = &transitPreferences{AllowedTravelModes: opts.AllowedTransitModes}
 	}
 	req.Origin.Location.LatLng.Latitude = origin.Latitude
 	req.Origin.Location.LatLng.Longitude = origin.Longitude

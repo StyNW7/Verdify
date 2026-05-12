@@ -14,11 +14,20 @@ const (
 	TravelTransit = "TRANSIT"
 )
 
+// ComputeOpts bundles the per-mode request parameters for one Routes API call.
+// New fields belong here (rather than as additional positional args) so the
+// interface stays stable as Google adds new preferences.
+type ComputeOpts struct {
+	TravelMode          string   // "DRIVE" | "TRANSIT" | "BICYCLE" | "WALK"
+	RoutingPreference   string   // "TRAFFIC_AWARE" etc.; only honored for DRIVE
+	AllowedTransitModes []string // ["BUS"] / ["SUBWAY"] etc.; only for TRANSIT
+}
+
 // RouteFetcher is the interface satisfied by the live Google Routes
 // client and by test fakes. CandidateBuilder depends on this, not on
 // *Client, so tests can inject deterministic geometries.
 type RouteFetcher interface {
-	Compute(ctx context.Context, origin, dest models.Location, travelMode, routingPreference string) (*Geometry, error)
+	Compute(ctx context.Context, origin, dest models.Location, opts ComputeOpts) (*Geometry, error)
 }
 
 // Geometry is the API-agnostic shape returned from a single Routes call.

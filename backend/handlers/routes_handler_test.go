@@ -26,7 +26,7 @@ type calcEnvelope struct {
 
 type fakeFetcher struct{ err error }
 
-func (f *fakeFetcher) Compute(_ context.Context, _, _ models.Location, _, _ string) (*routes.Geometry, error) {
+func (f *fakeFetcher) Compute(_ context.Context, _, _ models.Location, _ routes.ComputeOpts) (*routes.Geometry, error) {
 	if f.err != nil {
 		return nil, f.err
 	}
