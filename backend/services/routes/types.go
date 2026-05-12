@@ -26,4 +26,31 @@ type Geometry struct {
 	EncodedPolyline string
 	DistanceMeters  int
 	DurationSeconds int
+	// Legs carry the step-by-step breakdown when Google returns it.
+	// Empty for fallback/synthetic geometries.
+	Legs []Leg
+}
+
+// Leg is one route leg from origin to destination (single-leg in our usage).
+type Leg struct {
+	Steps []Step
+}
+
+// Step is one leg fragment in Google's native taxonomy. The mapping to
+// Verdify's transport types lives in candidates.go (mapTravelMode).
+type Step struct {
+	TravelMode      string // "WALK" | "DRIVE" | "TRANSIT" | "BICYCLE"
+	VehicleType     string // for TRANSIT: "BUS" | "SUBWAY" | "LIGHT_RAIL" | etc.
+	TransitLineName string // human-readable line name (TRANSIT only)
+	StopCount       int    // number of stops (TRANSIT only)
+	DistanceMeters  int
+	DurationSeconds int
+	StartLocation   LatLng
+	EndLocation     LatLng
+	EncodedPolyline string
+}
+
+type LatLng struct {
+	Latitude  float64
+	Longitude float64
 }

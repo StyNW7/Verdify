@@ -51,17 +51,70 @@ type request struct {
 	ComputeAlternativeRoutes bool     `json:"computeAlternativeRoutes"`
 }
 
+type respLatLng struct {
+	Latitude  float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
+}
+
+type respLocation struct {
+	LatLng respLatLng `json:"latLng"`
+}
+
+type respPolyline struct {
+	EncodedPolyline string `json:"encodedPolyline"`
+}
+
+type respTransitLine struct {
+	Name      string `json:"name"`
+	NameShort string `json:"nameShort"`
+	Vehicle   struct {
+		Type string `json:"type"`
+	} `json:"vehicle"`
+}
+
+type respTransitDetails struct {
+	TransitLine respTransitLine `json:"transitLine"`
+	StopCount   int             `json:"stopCount"`
+}
+
+type respStep struct {
+	DistanceMeters  int                `json:"distanceMeters"`
+	StaticDuration  string             `json:"staticDuration"`
+	TravelMode      string             `json:"travelMode"`
+	Polyline        respPolyline       `json:"polyline"`
+	StartLocation   respLocation       `json:"startLocation"`
+	EndLocation     respLocation       `json:"endLocation"`
+	TransitDetails  respTransitDetails `json:"transitDetails"`
+}
+
+type respLeg struct {
+	Steps []respStep `json:"steps"`
+}
+
 type respRoute struct {
-	Polyline struct {
-		EncodedPolyline string `json:"encodedPolyline"`
-	} `json:"polyline"`
-	DistanceMeters int    `json:"distanceMeters"`
-	Duration       string `json:"duration"`
+	Polyline       respPolyline `json:"polyline"`
+	DistanceMeters int          `json:"distanceMeters"`
+	Duration       string       `json:"duration"`
+	Legs           []respLeg    `json:"legs"`
 }
 
 type respBody struct {
 	Routes []respRoute `json:"routes"`
 }
+
+const fieldMask = "routes.polyline.encodedPolyline," +
+	"routes.distanceMeters," +
+	"routes.duration," +
+	"routes.legs.steps.distanceMeters," +
+	"routes.legs.steps.staticDuration," +
+	"routes.legs.steps.travelMode," +
+	"routes.legs.steps.polyline.encodedPolyline," +
+	"routes.legs.steps.startLocation.latLng," +
+	"routes.legs.steps.endLocation.latLng," +
+	"routes.legs.steps.transitDetails.transitLine.name," +
+	"routes.legs.steps.transitDetails.transitLine.nameShort," +
+	"routes.legs.steps.transitDetails.transitLine.vehicle.type," +
+	"routes.legs.steps.transitDetails.stopCount"
 
 // Compute satisfies RouteFetcher.
 func (c *Client) Compute(ctx context.Context, origin, dest models.Location, travelMode, routingPreference string) (*Geometry, error) {
@@ -90,7 +143,7 @@ func (c *Client) Compute(ctx context.Context, origin, dest models.Location, trav
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
 	httpReq.Header.Set("X-Goog-Api-Key", c.apiKey)
-	httpReq.Header.Set("X-Goog-FieldMask", "routes.polyline.encodedPolyline,routes.distanceMeters,routes.duration")
+	httpReq.Header.Set("X-Goog-FieldMask", fieldMask)
 
 	resp, err := c.httpClient.Do(httpReq)
 	if err != nil {
@@ -119,7 +172,41 @@ func (c *Client) Compute(ctx context.Context, origin, dest models.Location, trav
 		EncodedPolyline: r.Polyline.EncodedPolyline,
 		DistanceMeters:  r.DistanceMeters,
 		DurationSeconds: parseGoogleDuration(r.Duration),
+		Legs:            convertRespLegs(r.Legs),
 	}, nil
+}
+
+// convertRespLegs maps Google's wire shape into our internal Leg/Step types.
+func convertRespLegs(in []respLeg) []Leg {
+	if len(in) == 0 {
+		return nil
+	}
+	out := make([]Leg, 0, len(in))
+	for _, leg := range in {
+		steps := make([]Step, 0, len(leg.Steps))
+		for _, s := range leg.Steps {
+			steps = append(steps, Step{
+				TravelMode:      s.TravelMode,
+				VehicleType:     s.TransitDetails.TransitLine.Vehicle.Type,
+				TransitLineName: pickTransitName(s.TransitDetails.TransitLine),
+				StopCount:       s.TransitDetails.StopCount,
+				DistanceMeters:  s.DistanceMeters,
+				DurationSeconds: parseGoogleDuration(s.StaticDuration),
+				StartLocation:   LatLng{Latitude: s.StartLocation.LatLng.Latitude, Longitude: s.StartLocation.LatLng.Longitude},
+				EndLocation:     LatLng{Latitude: s.EndLocation.LatLng.Latitude, Longitude: s.EndLocation.LatLng.Longitude},
+				EncodedPolyline: s.Polyline.EncodedPolyline,
+			})
+		}
+		out = append(out, Leg{Steps: steps})
+	}
+	return out
+}
+
+func pickTransitName(line respTransitLine) string {
+	if line.Name != "" {
+		return line.Name
+	}
+	return line.NameShort
 }
 
 func parseGoogleDuration(s string) int {

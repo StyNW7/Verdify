@@ -95,3 +95,90 @@ func TestCandidateBuilder_AllFail(t *testing.T) {
 		}
 	}
 }
+
+func TestCandidateBuilder_TransitLegsBecomeRealSteps(t *testing.T) {
+	// Eco mode is requested with TRANSIT; supply realistic leg data.
+	// Fast/cheap (DRIVE) have legs that should be IGNORED because Google's
+	// turn-by-turn navigation steps aren't meaningful in our taxonomy.
+	fetcher := &fakeFetcher{
+		geom: map[string]*Geometry{
+			"DRIVE": {
+				EncodedPolyline: "drive_poly",
+				DistanceMeters:  14000, DurationSeconds: 22 * 60,
+				Legs: []Leg{{Steps: []Step{
+					{TravelMode: "DRIVE", DistanceMeters: 14000, DurationSeconds: 22 * 60},
+				}}},
+			},
+			"TRANSIT": {
+				EncodedPolyline: "transit_poly",
+				DistanceMeters:  16000, DurationSeconds: 42 * 60,
+				Legs: []Leg{{Steps: []Step{
+					{TravelMode: "WALK", DistanceMeters: 200, DurationSeconds: 180},
+					{TravelMode: "TRANSIT", VehicleType: "SUBWAY", TransitLineName: "Kelana Jaya Line",
+						StopCount: 8, DistanceMeters: 12000, DurationSeconds: 1500},
+					{TravelMode: "WALK", DistanceMeters: 400, DurationSeconds: 360},
+				}}},
+			},
+		},
+	}
+	cb := NewCandidateBuilder(fetcher)
+	cands, err := cb.Build(context.Background(), origin, dest)
+	if err != nil {
+		t.Fatalf("Build: %v", err)
+	}
+
+	// fast keeps the synthetic single-step composition (we don't unpack DRIVE legs).
+	fast := cands[0]
+	if fast.Mode != "fast" {
+		t.Fatalf("position 0 mode = %q want fast", fast.Mode)
+	}
+	if len(fast.Steps) != 1 || fast.Steps[0].Type != "ev_taxi" {
+		t.Errorf("fast should keep synthetic ev_taxi step, got %+v", fast.Steps)
+	}
+
+	// eco gets 3 real steps from the transit legs.
+	eco := cands[1]
+	if eco.Mode != "eco" {
+		t.Fatalf("position 1 mode = %q want eco", eco.Mode)
+	}
+	if len(eco.Steps) != 3 {
+		t.Fatalf("eco want 3 real steps from legs, got %d", len(eco.Steps))
+	}
+	wantTypes := []string{"walking", "lrt", "walking"}
+	for i, s := range eco.Steps {
+		if s.Type != wantTypes[i] {
+			t.Errorf("eco step %d: type = %q want %q", i, s.Type, wantTypes[i])
+		}
+	}
+	// 12 km transit step should round to ~12.0
+	if eco.Steps[1].Distance < 11.9 || eco.Steps[1].Distance > 12.1 {
+		t.Errorf("eco transit step distance: want ~12 got %v", eco.Steps[1].Distance)
+	}
+	// Carbon should be re-derived from real steps: 0 + 12*40 + 0 = 480 g
+	if eco.TotalCarbon < 479 || eco.TotalCarbon > 481 {
+		t.Errorf("eco total carbon: want ~480 got %v", eco.TotalCarbon)
+	}
+}
+
+func TestMapTravelMode(t *testing.T) {
+	cases := []struct {
+		travel, vehicle, want string
+	}{
+		{"WALK", "", "walking"},
+		{"DRIVE", "", "ev_taxi"},
+		{"TRANSIT", "BUS", "bus"},
+		{"TRANSIT", "SUBWAY", "lrt"},
+		{"TRANSIT", "LIGHT_RAIL", "lrt"},
+		{"TRANSIT", "MONORAIL", "lrt"},
+		{"TRANSIT", "HEAVY_RAIL", "mrt"},
+		{"TRANSIT", "RAIL", "mrt"},
+		{"TRANSIT", "FERRY", "ferry"},
+		{"TRANSIT", "UNKNOWN", "bus"}, // safe default
+		{"BICYCLE", "", "walking"},    // unknown mode → walk fallback
+	}
+	for _, c := range cases {
+		if got := mapTravelMode(c.travel, c.vehicle); got != c.want {
+			t.Errorf("mapTravelMode(%q,%q) = %q want %q", c.travel, c.vehicle, got, c.want)
+		}
+	}
+}

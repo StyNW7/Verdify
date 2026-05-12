@@ -2,10 +2,12 @@ package routes
 
 import (
 	"context"
+	"time"
 
 	"golang.org/x/sync/errgroup"
 
 	"github.com/verdify/backend/models"
+	"github.com/verdify/backend/services/pricing"
 )
 
 // CandidateBuilder fans out one Google Routes API call per mode in
@@ -61,20 +63,120 @@ func (cb *CandidateBuilder) buildOne(ctx context.Context, origin, dest models.Lo
 		return fallback
 	}
 
-	// Real distance/duration override the synthetic numbers. Carbon stays
-	// per-km × real distance (pricing.go logic in handler computes cost).
 	realDistanceKM := float64(geom.DistanceMeters) / 1000.0
 	realDurationMin := geom.DurationSeconds / 60
 	if realDurationMin < 1 {
 		realDurationMin = 1
 	}
 
-	c := fallback // start from synthetic to preserve Label, Steps, Congestion, per-km factors
+	c := fallback // start from synthetic to preserve Label, Congestion
 	c.TotalDistance = realDistanceKM
 	c.TotalDuration = realDurationMin
 	c.Polyline = geom.EncodedPolyline
 	c.DataSource = "google_routes"
-	// Re-derive total carbon from the real distance, keeping the synthetic per-km factor mix.
-	c.TotalCarbon = c.TotalCarbon * (realDistanceKM / fallback.TotalDistance)
+
+	// For TRANSIT mode, Google's step breakdown is meaningful (walk + line +
+	// walk). Convert it to TransportSegment and re-derive carbon from real
+	// per-step distances. For DRIVE, Google returns turn-by-turn navigation
+	// maneuvers — not useful for our taxonomy. Keep the synthetic single-step
+	// composition there and only scale carbon to the real distance.
+	if spec.travelMode == TravelTransit && len(geom.Legs) > 0 {
+		realSteps := convertLegs(geom.Legs, time.Now().UTC())
+		if len(realSteps) > 0 {
+			c.Steps = realSteps
+			var totalCarbon float64
+			for _, s := range realSteps {
+				totalCarbon += s.TotalCarbon
+			}
+			c.TotalCarbon = pricing.Round2(totalCarbon)
+			return c
+		}
+	}
+
+	// Fallback path: synthetic step composition, carbon scaled to real distance.
+	if fallback.TotalDistance > 0 {
+		c.TotalCarbon = pricing.Round2(fallback.TotalCarbon * (realDistanceKM / fallback.TotalDistance))
+	}
 	return c
+}
+
+// convertLegs maps Google's native Leg/Step shape into Verdify's
+// TransportSegment taxonomy.
+func convertLegs(legs []Leg, depart time.Time) []models.TransportSegment {
+	segs := make([]models.TransportSegment, 0)
+	cursor := depart
+	for _, leg := range legs {
+		for _, step := range leg.Steps {
+			stepType := mapTravelMode(step.TravelMode, step.VehicleType)
+			distanceKM := pricing.Round2(float64(step.DistanceMeters) / 1000.0)
+			durationMin := step.DurationSeconds / 60
+			if durationMin < 1 {
+				durationMin = 1
+			}
+			carbonPerKM := carbonPerKMByType(stepType)
+			arrival := cursor.Add(time.Duration(durationMin) * time.Minute)
+			segs = append(segs, models.TransportSegment{
+				Type: stepType,
+				StartLocation: models.Location{
+					Latitude:  step.StartLocation.Latitude,
+					Longitude: step.StartLocation.Longitude,
+				},
+				EndLocation: models.Location{
+					Latitude:  step.EndLocation.Latitude,
+					Longitude: step.EndLocation.Longitude,
+				},
+				Distance:    distanceKM,
+				Duration:    durationMin,
+				CarbonPerKm: carbonPerKM,
+				TotalCarbon: pricing.Round2(distanceKM * carbonPerKM),
+				Departure:   cursor,
+				Arrival:     arrival,
+			})
+			cursor = arrival
+		}
+	}
+	return segs
+}
+
+// mapTravelMode converts Google's travel mode (and transit vehicle subtype)
+// to Verdify's internal step taxonomy.
+func mapTravelMode(travelMode, vehicleType string) string {
+	switch travelMode {
+	case "WALK":
+		return "walking"
+	case "DRIVE":
+		return "ev_taxi"
+	case "TRANSIT":
+		switch vehicleType {
+		case "BUS", "INTERCITY_BUS", "TROLLEYBUS":
+			return "bus"
+		case "SUBWAY", "METRO_RAIL", "LIGHT_RAIL", "MONORAIL", "TRAM":
+			return "lrt"
+		case "HEAVY_RAIL", "COMMUTER_TRAIN", "HIGH_SPEED_TRAIN", "LONG_DISTANCE_TRAIN", "RAIL":
+			return "mrt"
+		case "FERRY":
+			return "ferry"
+		default:
+			return "bus" // safe default for unknown transit types
+		}
+	}
+	return "walking"
+}
+
+// carbonPerKMByType returns g CO2/km for one Verdify transport type.
+func carbonPerKMByType(stepType string) float64 {
+	switch stepType {
+	case "walking":
+		return 0
+	case "bus":
+		return 60
+	case "lrt", "mrt", "rts":
+		return 40
+	case "ev_taxi", "evTaxi":
+		return 80
+	case "ferry":
+		return 120
+	default:
+		return 80
+	}
 }
