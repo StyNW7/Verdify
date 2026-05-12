@@ -19,6 +19,8 @@ type App struct {
 	Store     *db.Store
 	Ranker    *services.GeminiRanker
 	Maps      *services.MapsClient
+	Routes    *services.RoutesClient
+	Geocoding *services.GeocodingClient
 	StartTime time.Time
 }
 
@@ -28,6 +30,8 @@ func New(cfg config.Config) *App {
 		Store:     db.NewStore(),
 		Ranker:    services.NewGeminiRanker(cfg),
 		Maps:      services.NewMapsClient(cfg),
+		Routes:    services.NewRoutesClient(cfg.GoogleMapsAPIKey),
+		Geocoding: services.NewGeocodingClient(cfg.GoogleMapsAPIKey),
 		StartTime: services.NowUTC(),
 	}
 }
@@ -45,6 +49,7 @@ func (app *App) Routes() *http.ServeMux {
 	mux.HandleFunc("POST /api/v1/bookings/{id}/cancel", app.cancelBookingHandler)
 	mux.HandleFunc("GET /api/v1/user/{userId}/green-points", app.getUserGreenPointsHandler)
 	mux.HandleFunc("GET /api/v1/user/{userId}/bookings", app.getUserBookingsHandler)
+	mux.HandleFunc("GET /api/v1/geocode", app.geocodeHandler)
 	return mux
 }
 

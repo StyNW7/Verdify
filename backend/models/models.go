@@ -15,21 +15,28 @@ type TransportSegment struct {
 	Duration      int       `json:"duration"`
 	CarbonPerKm   float64   `json:"carbonPerKm"`
 	TotalCarbon   float64   `json:"totalCarbon"`
+	EstimatedCost float64   `json:"estimatedCost"`
 	Departure     time.Time `json:"departure"`
 	Arrival       time.Time `json:"arrival"`
 }
 
 type Route struct {
-	ID                  string             `json:"routeId"`
-	Origin              Location           `json:"origin"`
-	Destination         Location           `json:"destination"`
-	Mode                string             `json:"mode"`
-	TotalDistance       float64            `json:"totalDistance"`
-	TotalDuration       int                `json:"totalDuration"`
-	CarbonEstimate      float64            `json:"carbonEstimate"`
-	GreenPointsEstimate int                `json:"greenPointsEstimate"`
-	Steps               []TransportSegment `json:"steps"`
-	CreatedAt           time.Time          `json:"createdAt"`
+	ID                   string             `json:"routeId"`
+	Origin               Location           `json:"origin"`
+	Destination          Location           `json:"destination"`
+	Mode                 string             `json:"mode"`
+	TotalDistance        float64            `json:"totalDistance"`
+	TotalDuration        int                `json:"totalDuration"`
+	CarbonEstimate       float64            `json:"carbonEstimate"`
+	CarbonBaseline       float64            `json:"carbonBaseline"`
+	CarbonSavedGrams     float64            `json:"carbonSavedGrams"`
+	CarbonSavingsPercent int                `json:"carbonSavingsPercent"`
+	CarbonEstimateKg     float64            `json:"carbonEstimateKg"`
+	EstimatedCost        float64            `json:"estimatedCost"`
+	GreenPointsEstimate  int                `json:"greenPointsEstimate"`
+	Steps                []TransportSegment `json:"steps"`
+	Polyline             string             `json:"polyline,omitempty"`
+	CreatedAt            time.Time          `json:"createdAt"`
 }
 
 type Booking struct {

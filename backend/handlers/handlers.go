@@ -99,21 +99,50 @@ func (app *App) calculateRouteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	baseline := selected.TotalDistance * 200
+	baseline := services.BaselineCarbonGrams(selected.TotalDistance)
 	pts := services.PointsEstimate(selected.TotalDistance, baseline, selected.TotalCarbon)
+
+	stepsWithCost := make([]models.TransportSegment, len(selected.Steps))
+	var totalCost float64
+	for i, step := range selected.Steps {
+		stepCost := services.Round2(services.EstimateStepCost(step.Type, step.Distance))
+		step.EstimatedCost = stepCost
+		stepsWithCost[i] = step
+		totalCost += stepCost
+	}
+
+	carbonSaved := baseline - selected.TotalCarbon
+	if carbonSaved < 0 {
+		carbonSaved = 0
+	}
+
+	var polyline string
+	if app.Routes.Enabled() {
+		travelMode := routesTravelMode(mode)
+		geom, err := app.Routes.ComputeRoute(r.Context(), req.Origin, req.Destination, travelMode)
+		if err == nil {
+			polyline = geom.EncodedPolyline
+		}
+	}
 
 	routeID := newID("route_")
 	rt := models.Route{
-		ID:                  routeID,
-		Origin:              req.Origin,
-		Destination:         req.Destination,
-		Mode:                mode,
-		TotalDistance:       selected.TotalDistance,
-		TotalDuration:       selected.TotalDuration,
-		CarbonEstimate:      selected.TotalCarbon,
-		GreenPointsEstimate: pts,
-		Steps:               selected.Steps,
-		CreatedAt:           services.NowUTC(),
+		ID:                   routeID,
+		Origin:               req.Origin,
+		Destination:          req.Destination,
+		Mode:                 mode,
+		TotalDistance:        selected.TotalDistance,
+		TotalDuration:        selected.TotalDuration,
+		CarbonEstimate:       selected.TotalCarbon,
+		CarbonBaseline:       services.Round2(baseline),
+		CarbonSavedGrams:     services.Round2(carbonSaved),
+		CarbonSavingsPercent: services.CarbonSavingsPercent(baseline, selected.TotalCarbon),
+		CarbonEstimateKg:     services.Round2(selected.TotalCarbon / 1000),
+		EstimatedCost:        services.Round2(totalCost),
+		GreenPointsEstimate:  pts,
+		Steps:                stepsWithCost,
+		Polyline:             polyline,
+		CreatedAt:            services.NowUTC(),
 	}
 	app.Store.SaveRoute(rt)
 	writeOK(w, http.StatusOK, rt)
@@ -230,7 +259,7 @@ func (app *App) verifyBookingHandler(w http.ResponseWriter, r *http.Request) {
 	b.CompletedAt = &now
 	app.Store.UpdateBooking(b)
 
-	baseline := rt.TotalDistance * 200
+	baseline := services.BaselineCarbonGrams(rt.TotalDistance)
 	carbonSaved := baseline - rt.CarbonEstimate
 	if carbonSaved < 0 {
 		carbonSaved = 0
@@ -246,7 +275,7 @@ func (app *App) getBookingHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rt, _ := app.Store.GetRoute(b.RouteID)
-	baseline := rt.TotalDistance * 200
+	baseline := services.BaselineCarbonGrams(rt.TotalDistance)
 	carbonSaved := baseline - rt.CarbonEstimate
 	if carbonSaved < 0 {
 		carbonSaved = 0
@@ -297,4 +326,35 @@ func (app *App) getUserBookingsHandler(w http.ResponseWriter, r *http.Request) {
 	status := strings.TrimSpace(q.Get("status"))
 	items, total := app.Store.ListUserBookings(userID, status, limit, offset)
 	writeOK(w, http.StatusOK, map[string]any{"bookings": items, "pagination": map[string]int{"total": total, "limit": limit, "offset": offset}})
+}
+
+func (app *App) geocodeHandler(w http.ResponseWriter, r *http.Request) {
+	query := strings.TrimSpace(r.URL.Query().Get("q"))
+	if query == "" {
+		writeErr(w, http.StatusBadRequest, "query parameter 'q' is required")
+		return
+	}
+	if !app.Geocoding.Enabled() {
+		writeErr(w, http.StatusServiceUnavailable, "geocoding not configured")
+		return
+	}
+	suggestions, err := app.Geocoding.Autocomplete(r.Context(), query)
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, "geocoding failed")
+		return
+	}
+	writeOK(w, http.StatusOK, suggestions)
+}
+
+func routesTravelMode(mode string) string {
+	switch mode {
+	case "fast":
+		return "DRIVE"
+	case "ecoboost":
+		return "TRANSIT"
+	case "flowing":
+		return "DRIVE"
+	default:
+		return "DRIVE"
+	}
 }

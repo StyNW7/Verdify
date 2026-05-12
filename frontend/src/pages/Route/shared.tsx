@@ -1,4 +1,4 @@
-import { useMemo, useState, forwardRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, forwardRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import {
@@ -22,7 +22,9 @@ import {
   Star,
   RefreshCw,
   CircleCheck,
+  Loader2,
 } from 'lucide-react';
+import { geocodeSearch, type GeocodeSuggestion } from '@/lib/api';
 import {
   type PlannerPhase,
   type PlannerPreference,
@@ -51,6 +53,7 @@ export type RouteOption = {
   points: number;
   steps: string[];
   hero: { primary: string; unit: string; caption: string };
+  polyline?: string;
   recommended?: boolean;
 };
 
@@ -223,46 +226,12 @@ function getTransportLabel(type: string) {
   return TRANSPORT_LABELS[type] ?? type.replace(/_/g, ' ');
 }
 
-function estimateStepCost(step: { type: string; distance: number }) {
-  switch (step.type) {
-    case 'walking':
-      return 0;
-    case 'bus':
-      return 1.6 + step.distance * 0.18;
-    case 'rts':
-    case 'lrt':
-      return 2.4 + step.distance * 0.22;
-    case 'ev_taxi':
-    case 'evTaxi':
-      return 4.5 + step.distance * 0.88;
-    default:
-      return 1.2 + step.distance * 0.25;
-  }
-}
-
-function round2(value: number) {
-  return Math.round(value * 100) / 100;
-}
-
-function clamp(value: number, min: number, max: number) {
-  return Math.min(max, Math.max(min, value));
-}
-
 function toRouteOption(
   route: BackendRoute,
   id: PlannerRouteId,
   preferred: PlannerRouteId,
 ): RouteOption {
   const totalDuration = Math.max(1, Math.round(route.totalDuration));
-  const totalCarbonKg = round2(route.carbonEstimate / 1000);
-  const baselineCarbon = route.totalDistance * 200;
-  const savingsPct =
-    baselineCarbon > 0
-      ? clamp(Math.round(((baselineCarbon - route.carbonEstimate) / baselineCarbon) * 100), 0, 99)
-      : 0;
-  const estimatedCost = round2(
-    route.steps.reduce((sum, step) => sum + estimateStepCost(step), 0),
-  );
   const distinctModes = Array.from(new Set(route.steps.map((step) => getTransportLabel(step.type))));
   const steps = route.steps.map(
     (step) =>
@@ -275,9 +244,9 @@ function toRouteOption(
   const hero =
     id === 'eco'
       ? {
-          primary: totalCarbonKg.toFixed(2),
+          primary: route.carbonEstimateKg.toFixed(2),
           unit: 'kg CO2',
-          caption: `${savingsPct}% less than driving baseline`,
+          caption: `${route.carbonSavingsPercent}% less than driving baseline`,
         }
       : id === 'fast'
         ? {
@@ -286,7 +255,7 @@ function toRouteOption(
             caption: 'Estimated door-to-door',
           }
         : {
-            primary: `RM ${estimatedCost.toFixed(2)}`,
+            primary: `RM ${route.estimatedCost.toFixed(2)}`,
             unit: 'total',
             caption: 'Estimated fare total',
           };
@@ -299,21 +268,26 @@ function toRouteOption(
     modes: distinctModes,
     durationText: `${totalDuration}m`,
     duration: totalDuration,
-    co2: totalCarbonKg,
-    co2Saved: savingsPct,
-    cost: estimatedCost,
+    co2: route.carbonEstimateKg,
+    co2Saved: route.carbonSavingsPercent,
+    cost: route.estimatedCost,
     points: route.greenPointsEstimate,
     steps,
     hero,
+    polyline: route.polyline,
     recommended: id === preferred,
   };
 }
 
 export type PlannerState = ReturnType<typeof usePlannerState>;
 
+export type ResolvedCoords = { latitude: number; longitude: number } | null;
+
 export function usePlannerState() {
   const [origin, setOrigin] = useState('');
   const [destination, setDestination] = useState('');
+  const [originCoords, setOriginCoords] = useState<ResolvedCoords>(null);
+  const [destCoords, setDestCoords] = useState<ResolvedCoords>(null);
   const [dateSlot, setDateSlot] = useState<DateSlot>('now');
   const [pickedDate, setPickedDate] = useState<string>('');
   const [time, setTime] = useState<string>('');
@@ -327,9 +301,20 @@ export function usePlannerState() {
   const [selectedRouteId, setSelectedRouteId] = useState<PlannerRouteId>('eco');
   const [routes, setRoutes] = useState<RouteOption[]>(MOCK_ROUTES);
 
+  const handleSetOrigin = (v: string) => {
+    setOrigin(v);
+    setOriginCoords(null);
+  };
+  const handleSetDestination = (v: string) => {
+    setDestination(v);
+    setDestCoords(null);
+  };
+
   const swap = () => {
     setOrigin(destination);
     setDestination(origin);
+    setOriginCoords(destCoords);
+    setDestCoords(originCoords);
   };
 
   const submit = async () => {
@@ -338,8 +323,8 @@ export function usePlannerState() {
       return;
     }
 
-    const resolvedOrigin = resolveLocationInput(origin);
-    const resolvedDestination = resolveLocationInput(destination);
+    const resolvedOrigin = originCoords ?? resolveLocationInput(origin);
+    const resolvedDestination = destCoords ?? resolveLocationInput(destination);
     if (!resolvedOrigin || !resolvedDestination) {
       toast.error('Use a suggested location or input coordinates as "lat,lng".');
       return;
@@ -388,10 +373,11 @@ export function usePlannerState() {
   };
 
   const reset = () => {
-
     setPhase('idle');
     setOrigin('');
     setDestination('');
+    setOriginCoords(null);
+    setDestCoords(null);
     setSelectedRouteId(deriveSelectedRouteId('eco'));
     setRoutes(MOCK_ROUTES);
   };
@@ -403,7 +389,8 @@ export function usePlannerState() {
   const submitted = phase === 'results';
 
   return {
-    origin, setOrigin, destination, setDestination,
+    origin, setOrigin: handleSetOrigin, destination, setDestination: handleSetDestination,
+    originCoords, setOriginCoords, destCoords, setDestCoords,
     dateSlot, setDateSlot, pickedDate, setPickedDate, time, setTime,
     preference, setPreference, passengers, setPassengers,
     modes, toggleMode, showAdvanced, setShowAdvanced,
@@ -413,9 +400,40 @@ export function usePlannerState() {
   };
 }
 
+function useGeocodeSuggestions(query: string, enabled: boolean) {
+  const [suggestions, setSuggestions] = useState<GeocodeSuggestion[]>([]);
+  const [loading, setLoading] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const lastQuery = useRef('');
+
+  const fetch = useCallback((q: string) => {
+    if (q.length < 3) {
+      setSuggestions([]);
+      return;
+    }
+    if (q === lastQuery.current) return;
+    lastQuery.current = q;
+    setLoading(true);
+    geocodeSearch(q)
+      .then(setSuggestions)
+      .catch(() => setSuggestions([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    if (!enabled) return;
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => fetch(query), 350);
+    return () => clearTimeout(timerRef.current);
+  }, [query, enabled, fetch]);
+
+  return { suggestions, loading };
+}
+
 type UnderlineInputProps = {
   value: string;
   onChange: (v: string) => void;
+  onCoordSelect?: (lat: number, lng: number) => void;
   placeholder: string;
   label: string;
   suggestions?: string[];
@@ -424,14 +442,21 @@ type UnderlineInputProps = {
 };
 
 export const UnderlineInput = forwardRef<HTMLInputElement, UnderlineInputProps>(
-  function UnderlineInput({ value, onChange, placeholder, label, suggestions, disabled, ariaLabel }, ref) {
+  function UnderlineInput({ value, onChange, onCoordSelect, placeholder, label, suggestions, disabled, ariaLabel }, ref) {
     const [focused, setFocused] = useState(false);
-    const filtered = useMemo(() => {
+
+    const { suggestions: geocodeSuggestions, loading: geocodeLoading } =
+      useGeocodeSuggestions(value, focused);
+
+    const staticFiltered = useMemo(() => {
       if (!suggestions || !value || !focused) return [];
       return suggestions
         .filter(s => s.toLowerCase().includes(value.toLowerCase()) && s.toLowerCase() !== value.toLowerCase())
         .slice(0, 5);
     }, [suggestions, value, focused]);
+
+    const showGeocode = focused && geocodeSuggestions.length > 0;
+    const showStatic = focused && staticFiltered.length > 0 && !showGeocode;
 
     return (
       <div className="relative w-full">
@@ -446,7 +471,7 @@ export const UnderlineInput = forwardRef<HTMLInputElement, UnderlineInputProps>(
             value={value}
             onChange={(e) => onChange(e.target.value)}
             onFocus={() => setFocused(true)}
-            onBlur={() => setTimeout(() => setFocused(false), 120)}
+            onBlur={() => setTimeout(() => setFocused(false), 150)}
             placeholder={placeholder}
             disabled={disabled}
             aria-label={ariaLabel || label}
@@ -456,6 +481,9 @@ export const UnderlineInput = forwardRef<HTMLInputElement, UnderlineInputProps>(
               fontFamily: 'var(--theme-font-body)',
             }}
           />
+          {geocodeLoading && focused && (
+            <Loader2 size={14} className="animate-spin flex-shrink-0" style={{ color: 'var(--theme-fg-dim)' }} />
+          )}
         </div>
         <div
           className="relative h-px w-full overflow-hidden"
@@ -470,7 +498,7 @@ export const UnderlineInput = forwardRef<HTMLInputElement, UnderlineInputProps>(
           />
         </div>
         <AnimatePresence>
-          {filtered.length > 0 && (
+          {showGeocode && (
             <motion.ul
               initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}
@@ -484,7 +512,41 @@ export const UnderlineInput = forwardRef<HTMLInputElement, UnderlineInputProps>(
                 boxShadow: '0 30px 60px -30px rgba(10,14,12,0.25)',
               }}
             >
-              {filtered.map(s => (
+              {geocodeSuggestions.map(s => (
+                <li key={s.placeId}>
+                  <button
+                    type="button"
+                    onMouseDown={() => {
+                      onChange(s.formattedAddress);
+                      onCoordSelect?.(s.latitude, s.longitude);
+                    }}
+                    className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors"
+                    style={{ color: 'var(--theme-fg)' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--theme-accent-soft)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                  >
+                    <MapPin size={12} style={{ color: 'var(--theme-fg-dim)' }} />
+                    {s.formattedAddress}
+                  </button>
+                </li>
+              ))}
+            </motion.ul>
+          )}
+          {showStatic && !showGeocode && (
+            <motion.ul
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2 }}
+              className="absolute left-0 right-0 top-full z-20 mt-2 overflow-hidden rounded-[10px]"
+              style={{
+                background: 'var(--theme-surface)',
+                border: '1px solid var(--theme-border)',
+                backdropFilter: 'blur(22px) saturate(180%)',
+                boxShadow: '0 30px 60px -30px rgba(10,14,12,0.25)',
+              }}
+            >
+              {staticFiltered.map(s => (
                 <li key={s}>
                   <button
                     type="button"

@@ -97,6 +97,7 @@ export type BackendTransportSegment = {
   type: string;
   distance: number;
   duration: number;
+  estimatedCost: number;
 };
 
 export type BackendRoute = {
@@ -105,8 +106,14 @@ export type BackendRoute = {
   totalDistance: number;
   totalDuration: number;
   carbonEstimate: number;
+  carbonBaseline: number;
+  carbonSavedGrams: number;
+  carbonSavingsPercent: number;
+  carbonEstimateKg: number;
+  estimatedCost: number;
   greenPointsEstimate: number;
   steps: BackendTransportSegment[];
+  polyline?: string;
 };
 
 export function calculateRoute(payload: CalculateRoutePayload) {
@@ -114,4 +121,18 @@ export function calculateRoute(payload: CalculateRoutePayload) {
     method: 'POST',
     body: JSON.stringify(payload),
   });
+}
+
+export type GeocodeSuggestion = {
+  formattedAddress: string;
+  latitude: number;
+  longitude: number;
+  placeId: string;
+};
+
+export function geocodeSearch(query: string) {
+  return apiRequest<GeocodeSuggestion[]>(
+    `/api/v1/geocode?q=${encodeURIComponent(query)}`,
+    { method: 'GET' },
+  );
 }

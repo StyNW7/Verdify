@@ -110,6 +110,10 @@ export default function RoutePlannerPage() {
               }
               note="Johor ↔ Singapore corridor"
               className="aspect-[5/4] min-h-[320px] sm:aspect-[3/2] lg:min-h-[420px]"
+              origin={state.origin}
+              destination={state.destination}
+              selectedRouteId={state.selectedRouteId}
+              routes={routes}
             />
 
             <div className="min-h-[224px]">

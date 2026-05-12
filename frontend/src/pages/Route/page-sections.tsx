@@ -2,10 +2,13 @@ import { motion } from 'framer-motion';
 import { Orbit, Sparkles } from 'lucide-react';
 
 import RouteMap from '@/components/RouteMap';
+import GoogleRouteMap from '@/components/GoogleRouteMap';
 import { useIsDark } from '@/components/AnimatedThemeToggler';
 
+import { type PlannerRouteId } from './planner-phase';
 import {
   type PlannerState,
+  type RouteOption,
   LOCATION_SUGGESTIONS,
   AdvancedOptions,
   DateTimeField,
@@ -50,6 +53,7 @@ export function PlannerForm({
           <UnderlineInput
             value={state.origin}
             onChange={state.setOrigin}
+            onCoordSelect={(lat, lng) => state.setOriginCoords({ latitude: lat, longitude: lng })}
             placeholder="Bukit Indah, Johor"
             label="From"
             suggestions={LOCATION_SUGGESTIONS}
@@ -57,6 +61,7 @@ export function PlannerForm({
           <UnderlineInput
             value={state.destination}
             onChange={state.setDestination}
+            onCoordSelect={(lat, lng) => state.setDestCoords({ latitude: lat, longitude: lng })}
             placeholder="Woodlands North, Singapore"
             label="To"
             suggestions={LOCATION_SUGGESTIONS}
@@ -94,13 +99,25 @@ export function RouteMapStage({
   note,
   className = '',
   showChips = true,
+  origin,
+  destination,
+  selectedRouteId,
+  routes,
 }: {
   mapVariant: 'light' | 'warm' | 'dark';
   badge: string;
   note: string;
   className?: string;
   showChips?: boolean;
+  origin?: string;
+  destination?: string;
+  selectedRouteId?: PlannerRouteId;
+  routes?: RouteOption[];
 }) {
+  const isDark = useIsDark();
+  const hasApiKey = !!import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  const showGoogleMap = hasApiKey && origin && destination && routes && routes.length > 0;
+
   return (
     <div
       className={`relative overflow-hidden rounded-[22px] ${className}`}
@@ -111,7 +128,17 @@ export function RouteMapStage({
         contain: 'layout paint',
       }}
     >
-      <RouteMap variant={mapVariant} showChips={showChips} />
+      {showGoogleMap ? (
+        <GoogleRouteMap
+          origin={origin}
+          destination={destination}
+          selectedRouteId={selectedRouteId ?? 'eco'}
+          routes={routes}
+          isDark={isDark}
+        />
+      ) : (
+        <RouteMap variant={mapVariant} showChips={showChips} />
+      )}
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-between gap-3 p-4 sm:p-5">
         <div className="flex items-center gap-2">
           <span className="theme-accent-dot" aria-hidden />

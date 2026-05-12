@@ -2,6 +2,7 @@ import { useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { Toaster } from "react-hot-toast";
+import { APIProvider } from "@vis.gl/react-google-maps";
 
 import Layout from "@/layouts/root-layout";
 import AuthedLayout from "@/layouts/authed-layout";
@@ -32,7 +33,10 @@ function App() {
     return window.sessionStorage.getItem(INTRO_KEY) === "1";
   });
 
+  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? '';
+
   return (
+    <APIProvider apiKey={googleMapsApiKey}>
     <BrowserRouter>
       {!introDone && (
         <LoadingScreen
@@ -87,6 +91,7 @@ function App() {
 
       <Toaster position="top-center" />
     </BrowserRouter>
+    </APIProvider>
   );
 }
 
