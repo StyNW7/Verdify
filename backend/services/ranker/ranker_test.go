@@ -142,6 +142,34 @@ func TestAnnotate_GeminiDisabled(t *testing.T) {
 	}
 }
 
+func TestAnnotate_TwoRecommendedFallsBackToScorerForRecOnly(t *testing.T) {
+	// Two candidates with recommended:true — the validator should drop both
+	// flags and let the fallback scorer pick exactly one. Reasoning + tags
+	// from Gemini stay intact.
+	fake := &fakeAnnotator{resp: &Annotations{Items: []Annotation{
+		{ID: "cand_fast", Reasoning: "Direct EV.", RecommendedFor: []string{"time-critical trips"}, Recommended: true},
+		{ID: "cand_eco", Reasoning: "Lowest carbon.", RecommendedFor: []string{"carbon-conscious"}, Recommended: true},
+		{ID: "cand_cheap", Reasoning: "Cheapest.", RecommendedFor: []string{"tight budget"}, Recommended: false},
+	}}}
+	r := &GeminiRanker{Enabled: true, llm: fake.call}
+	res, err := r.Annotate(context.Background(), RankInput{Candidates: mkCandidates()})
+	if err != nil {
+		t.Fatalf("Annotate: %v", err)
+	}
+	if countRecommended(res.Items) != 1 {
+		t.Fatalf("want exactly 1 recommended got %d", countRecommended(res.Items))
+	}
+	// Reasoning from Gemini must be preserved (not replaced with templated)
+	for _, a := range res.Items {
+		if a.Reasoning == "" {
+			t.Errorf("%s lost reasoning", a.ID)
+		}
+		if a.ID == "cand_fast" && a.Reasoning != "Direct EV." {
+			t.Errorf("cand_fast reasoning lost: %q", a.Reasoning)
+		}
+	}
+}
+
 func countRecommended(items []Annotation) int {
 	n := 0
 	for _, a := range items {
