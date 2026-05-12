@@ -12,13 +12,6 @@ type MapsClient struct {
 	apiKey string
 }
 
-var farePerKM = map[string]float64{
-	"walking": 0.0,
-	"bus":     0.20,
-	"lrt":     1.50,
-	"ev_taxi": 2.00,
-}
-
 func NewMapsClient(cfg config.Config) *MapsClient {
 	return &MapsClient{apiKey: cfg.GoogleMapsAPIKey}
 }
@@ -88,7 +81,6 @@ func segment(kind string, start, end models.Location, distance float64, duration
 		Duration:      duration,
 		CarbonPerKm:   carbonPerKM,
 		TotalCarbon:   Round2(distance * carbonPerKM),
-		EstimatedCost: Round2(distance * farePerKM[kind]),
 		Departure:     depart,
 		Arrival:       depart.Add(time.Duration(duration) * time.Minute),
 	}
