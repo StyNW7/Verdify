@@ -101,6 +101,8 @@ export function RouteMapStage({
   showChips = true,
   origin,
   destination,
+  originCoords,
+  destCoords,
   selectedRouteId,
   routes,
 }: {
@@ -111,6 +113,8 @@ export function RouteMapStage({
   showChips?: boolean;
   origin?: string;
   destination?: string;
+  originCoords?: { latitude: number; longitude: number } | null;
+  destCoords?: { latitude: number; longitude: number } | null;
   selectedRouteId?: PlannerRouteId;
   routes?: RouteOption[];
 }) {
@@ -132,6 +136,8 @@ export function RouteMapStage({
         <GoogleRouteMap
           origin={origin}
           destination={destination}
+          originCoords={originCoords}
+          destCoords={destCoords}
           selectedRouteId={selectedRouteId ?? 'eco'}
           routes={routes}
           isDark={isDark}

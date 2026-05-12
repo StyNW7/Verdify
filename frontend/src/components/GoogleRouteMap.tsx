@@ -108,6 +108,9 @@ function useDecodedPolylines(routes: RouteOption[]): DecodedPaths {
 export type GoogleRouteMapProps = {
   origin: string;
   destination: string;
+  /** Explicit coords from Places Details; preferred over resolving from `origin` string. */
+  originCoords?: { latitude: number; longitude: number } | null;
+  destCoords?: { latitude: number; longitude: number } | null;
   selectedRouteId: string;
   routes: RouteOption[];
   isDark: boolean;
@@ -119,13 +122,27 @@ const DEFAULT_CENTER = { lat: 1.466, lng: 103.723 };
 export default function GoogleRouteMap({
   origin,
   destination,
+  originCoords,
+  destCoords,
   selectedRouteId,
   routes,
   isDark,
   className = '',
 }: GoogleRouteMapProps) {
-  const originCoord = useMemo(() => resolveCoord(origin), [origin]);
-  const destCoord = useMemo(() => resolveCoord(destination), [destination]);
+  const originCoord = useMemo(
+    () =>
+      originCoords
+        ? { lat: originCoords.latitude, lng: originCoords.longitude }
+        : resolveCoord(origin),
+    [originCoords, origin],
+  );
+  const destCoord = useMemo(
+    () =>
+      destCoords
+        ? { lat: destCoords.latitude, lng: destCoords.longitude }
+        : resolveCoord(destination),
+    [destCoords, destination],
+  );
   const decodedPolylines = useDecodedPolylines(routes);
 
   const center = useMemo(() => {
