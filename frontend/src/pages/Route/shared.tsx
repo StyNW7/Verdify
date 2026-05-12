@@ -974,6 +974,43 @@ export function RouteCard({
         ))}
       </div>
 
+      {route.reasoning && (
+        <p
+          className="text-[0.85rem] leading-relaxed"
+          style={{ color: 'var(--theme-fg-muted)' }}
+        >
+          {route.reasoning}
+        </p>
+      )}
+
+      {route.recommendedFor.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {route.recommendedFor.map((tag) => (
+            <span
+              key={tag}
+              className="theme-mono-sm rounded-full px-2 py-1"
+              style={{
+                background: 'var(--theme-surface)',
+                color: 'var(--theme-fg-muted)',
+                border: '1px solid var(--theme-border)',
+                fontSize: '0.7rem',
+              }}
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {route.dataSource === 'fallback_synthetic' && (
+        <span
+          className="theme-italic text-[0.72rem]"
+          style={{ color: 'var(--theme-fg-dim)' }}
+        >
+          estimated
+        </span>
+      )}
+
       <div
         className="mt-auto flex w-full items-center justify-between pt-1"
         style={{ color: 'var(--theme-fg-muted)' }}
