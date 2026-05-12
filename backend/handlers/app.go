@@ -13,13 +13,14 @@ import (
 	"github.com/verdify/backend/models"
 	"github.com/verdify/backend/services"
 	"github.com/verdify/backend/services/geocoding"
+	"github.com/verdify/backend/services/ranker"
 	"github.com/verdify/backend/services/routes"
 )
 
 type App struct {
 	Cfg       config.Config
 	Store     *db.Store
-	Ranker       *services.GeminiRanker
+	Ranker       *ranker.GeminiRanker
 	Maps         *services.MapsClient
 	RoutesClient *routes.Client
 	Geocoding    *geocoding.Client
@@ -30,7 +31,7 @@ func New(cfg config.Config) *App {
 	return &App{
 		Cfg:          cfg,
 		Store:        db.NewStore(),
-		Ranker:       services.NewGeminiRanker(cfg),
+		Ranker:       ranker.New(cfg),
 		Maps:         services.NewMapsClient(cfg),
 		RoutesClient: routes.NewClient(cfg.GoogleMapsAPIKey),
 		Geocoding:    geocoding.NewClient(cfg.GoogleMapsAPIKey),

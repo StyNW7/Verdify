@@ -1,4 +1,6 @@
-package services
+// Package ranker wraps the Gemini batched annotator. The public
+// surface is the Ranker interface; GeminiRanker is the live impl.
+package ranker
 
 import (
 	"context"
@@ -13,19 +15,18 @@ import (
 	"github.com/verdify/backend/models"
 )
 
+// LEGACY shape — keep until Task 6.2 swaps callers.
 type rankInput struct {
 	Mode       string           `json:"mode"`
 	Peak       bool             `json:"peak"`
 	Candidates []candidateInput `json:"candidates"`
 }
-
 type candidateInput struct {
 	ID         string  `json:"id"`
 	TimeMin    int     `json:"timeMin"`
 	Carbon     float64 `json:"carbon"`
 	Congestion float64 `json:"congestion"`
 }
-
 type rankOutput struct {
 	BestID string `json:"bestId"`
 	Reason string `json:"reason"`
@@ -37,11 +38,10 @@ type GeminiRanker struct {
 	model   string
 }
 
-func NewGeminiRanker(cfg config.Config) *GeminiRanker {
+func New(cfg config.Config) *GeminiRanker {
 	if cfg.VertexProjectID == "" {
 		return &GeminiRanker{Enabled: false}
 	}
-
 	ctx := context.Background()
 	g := genkit.Init(ctx,
 		genkit.WithPlugins(&googlegenai.VertexAI{
@@ -50,7 +50,6 @@ func NewGeminiRanker(cfg config.Config) *GeminiRanker {
 		}),
 		genkit.WithDefaultModel(cfg.GeminiModel),
 	)
-
 	return &GeminiRanker{Enabled: true, g: g, model: cfg.GeminiModel}
 }
 
@@ -68,6 +67,8 @@ func (r *GeminiRanker) Ping(ctx context.Context) (string, error) {
 	return strings.TrimSpace(out), nil
 }
 
+// SelectBest is the LEGACY single-pick API. Retained until the handler
+// switches to Annotate in Task 7.x; then deleted.
 func (r *GeminiRanker) SelectBest(ctx context.Context, mode string, peak bool, candidates []models.RouteCandidate) (string, string, error) {
 	if len(candidates) == 0 {
 		return "", "", fmt.Errorf("no candidates")
@@ -108,44 +109,4 @@ func (r *GeminiRanker) SelectBest(ctx context.Context, mode string, peak bool, c
 	}
 	id, reason := fallbackSelect(mode, peak, candidates)
 	return id, reason + " (fallback unknown bestId)", nil
-}
-
-func fallbackSelect(mode string, peak bool, candidates []models.RouteCandidate) (string, string) {
-	m := mode
-	if m == "" {
-		if peak {
-			m = "cheap"
-		} else {
-			m = "eco"
-		}
-	}
-	best := candidates[0]
-	bestScore := scoreCandidate(best, m)
-	for i := 1; i < len(candidates); i++ {
-		s := scoreCandidate(candidates[i], m)
-		if s < bestScore {
-			best = candidates[i]
-			bestScore = s
-		}
-	}
-	return best.ID, "weighted fallback scorer"
-}
-
-func scoreCandidate(c models.RouteCandidate, mode string) float64 {
-	if c.TotalDuration <= 0 {
-		c.TotalDuration = 1
-	}
-	if c.TotalCarbon <= 0 {
-		c.TotalCarbon = 1
-	}
-	switch mode {
-	case "fast":
-		return float64(c.TotalDuration)*0.9 + c.TotalCarbon*0.1
-	case "cheap":
-		return c.Congestion*100*0.8 + c.TotalCarbon*0.2
-	case "eco":
-		return float64(c.TotalDuration)*0.3 + c.TotalCarbon*0.7
-	default:
-		return float64(c.TotalDuration)*0.3 + c.TotalCarbon*0.7
-	}
 }
