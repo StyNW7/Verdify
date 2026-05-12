@@ -72,10 +72,6 @@ func (app *App) calculateRouteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	mode := services.NormalizeMode(req.Mode)
-	if mode == "" {
-		writeErr(w, http.StatusBadRequest, "invalid mode")
-		return
-	}
 
 	candidates, err := app.Maps.Candidates(req.Origin, req.Destination)
 	if err != nil {
@@ -85,7 +81,7 @@ func (app *App) calculateRouteHandler(w http.ResponseWriter, r *http.Request) {
 
 	peak := services.IsPeakHour(services.NowMY())
 	chosenID := staticCandidateIDForMode(mode)
-	if mode == "smart" {
+	if mode == "" {
 		chosenID, _, err = app.Ranker.SelectBest(r.Context(), mode, peak, candidates)
 		if err != nil {
 			writeErr(w, http.StatusInternalServerError, "failed route ranking")
@@ -152,10 +148,10 @@ func staticCandidateIDForMode(mode string) string {
 	switch mode {
 	case "fast":
 		return "cand_fast"
-	case "ecoboost":
+	case "eco":
 		return "cand_eco"
-	case "flowing":
-		return "cand_flow"
+	case "cheap":
+		return "cand_cheap"
 	default:
 		return ""
 	}
@@ -350,9 +346,9 @@ func routesTravelMode(mode string) string {
 	switch mode {
 	case "fast":
 		return "DRIVE"
-	case "ecoboost":
+	case "eco":
 		return "TRANSIT"
-	case "flowing":
+	case "cheap":
 		return "DRIVE"
 	default:
 		return "DRIVE"

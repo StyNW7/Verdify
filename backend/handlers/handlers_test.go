@@ -51,7 +51,7 @@ func TestRouteAndBookingFlow(t *testing.T) {
 	_ = json.Unmarshal(rr.Body.Bytes(), &regResp)
 	userID := regResp.Data.(map[string]any)["userId"].(string)
 
-	routeReq := models.RouteRequest{Origin: models.Location{Latitude: 1.4854, Longitude: 103.7618}, Destination: models.Location{Latitude: 1.3521, Longitude: 103.8198}, Mode: "smart"}
+	routeReq := models.RouteRequest{Origin: models.Location{Latitude: 1.4854, Longitude: 103.7618}, Destination: models.Location{Latitude: 1.3521, Longitude: 103.8198}, Mode: ""}
 	body, _ = json.Marshal(routeReq)
 	rr = httptest.NewRecorder()
 	req = httptest.NewRequest(http.MethodPost, "/api/v1/routes/calculate", bytes.NewReader(body))
@@ -84,10 +84,10 @@ func TestExplicitModesMapToDistinctRouteProfiles(t *testing.T) {
 		Origin: origin, Destination: destination, Mode: "fast",
 	})
 	eco := callRoute(t, mux, models.RouteRequest{
-		Origin: origin, Destination: destination, Mode: "ecoboost",
+		Origin: origin, Destination: destination, Mode: "eco",
 	})
 	flow := callRoute(t, mux, models.RouteRequest{
-		Origin: origin, Destination: destination, Mode: "flowing",
+		Origin: origin, Destination: destination, Mode: "cheap",
 	})
 
 	if fast.Data.TotalDuration >= eco.Data.TotalDuration || fast.Data.TotalDuration >= flow.Data.TotalDuration {

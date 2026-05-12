@@ -112,11 +112,11 @@ func (r *GeminiRanker) SelectBest(ctx context.Context, mode string, peak bool, c
 
 func fallbackSelect(mode string, peak bool, candidates []models.RouteCandidate) (string, string) {
 	m := mode
-	if m == "smart" {
+	if m == "" {
 		if peak {
-			m = "flowing"
+			m = "cheap"
 		} else {
-			m = "ecoboost"
+			m = "eco"
 		}
 	}
 	best := candidates[0]
@@ -141,9 +141,9 @@ func scoreCandidate(c models.RouteCandidate, mode string) float64 {
 	switch mode {
 	case "fast":
 		return float64(c.TotalDuration)*0.9 + c.TotalCarbon*0.1
-	case "flowing":
+	case "cheap":
 		return c.Congestion*100*0.8 + c.TotalCarbon*0.2
-	case "ecoboost":
+	case "eco":
 		return float64(c.TotalDuration)*0.3 + c.TotalCarbon*0.7
 	default:
 		return float64(c.TotalDuration)*0.3 + c.TotalCarbon*0.7

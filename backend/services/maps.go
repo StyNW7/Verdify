@@ -57,8 +57,8 @@ func (m *MapsClient) Candidates(origin, destination models.Location) ([]models.R
 
 	flowMid := midpoint(origin, destination, 0.55)
 	flow := models.RouteCandidate{
-		ID:            "cand_flow",
-		Label:         "Bus + EV bypass",
+		ID:            "cand_cheap",
+		Label:         "Cheap bus + EV bypass",
 		TotalDistance: flowDistance,
 		TotalDuration: int(math.Round((flowDistance/31.0)*60.0)) + 10,
 		TotalCarbon:   (flowDistance * 0.55 * 60) + (flowDistance * 0.45 * 80),
