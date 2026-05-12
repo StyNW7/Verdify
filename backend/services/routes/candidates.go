@@ -31,10 +31,14 @@ type modeSpec struct {
 var modeOrder = []modeSpec{
 	// Fast: drive route, traffic-aware ETAs.
 	{mode: "fast", opts: ComputeOpts{TravelMode: TravelDrive, RoutingPreference: "TRAFFIC_AWARE"}},
-	// Eco: any transit mode (LRT/MRT/bus/walk) — Google picks the best combination.
-	{mode: "eco", opts: ComputeOpts{TravelMode: TravelTransit}},
-	// Cheap: transit limited to BUS — slower and walk-heavy but actually cheap by fare.
-	{mode: "cheap", opts: ComputeOpts{TravelMode: TravelTransit, AllowedTransitModes: []string{"BUS"}}},
+	// Eco: any transit mode + minimize walking (prefer rail/bus, even with transfers).
+	{mode: "eco", opts: ComputeOpts{TravelMode: TravelTransit, TransitRoutingPref: "LESS_WALKING"}},
+	// Cheap: bus only + fewer transfers (accept longer walks, simpler bus route).
+	{mode: "cheap", opts: ComputeOpts{
+		TravelMode:          TravelTransit,
+		AllowedTransitModes: []string{"BUS"},
+		TransitRoutingPref:  "FEWER_TRANSFERS",
+	}},
 }
 
 // Build returns 3 candidates in fixed order. Per-mode Routes failures fall

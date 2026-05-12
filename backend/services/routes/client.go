@@ -46,6 +46,7 @@ type waypoint struct {
 
 type transitPreferences struct {
 	AllowedTravelModes []string `json:"allowedTravelModes,omitempty"`
+	RoutingPreference  string   `json:"routingPreference,omitempty"`
 }
 
 type request struct {
@@ -157,8 +158,11 @@ func (c *Client) Compute(ctx context.Context, origin, dest models.Location, opts
 		req.RoutingPreference = opts.RoutingPreference
 	}
 	// TransitPreferences only valid for TRANSIT.
-	if opts.TravelMode == TravelTransit && len(opts.AllowedTransitModes) > 0 {
-		req.TransitPreferences = &transitPreferences{AllowedTravelModes: opts.AllowedTransitModes}
+	if opts.TravelMode == TravelTransit && (len(opts.AllowedTransitModes) > 0 || opts.TransitRoutingPref != "") {
+		req.TransitPreferences = &transitPreferences{
+			AllowedTravelModes: opts.AllowedTransitModes,
+			RoutingPreference:  opts.TransitRoutingPref,
+		}
 	}
 	req.Origin.Location.LatLng.Latitude = origin.Latitude
 	req.Origin.Location.LatLng.Longitude = origin.Longitude

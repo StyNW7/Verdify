@@ -21,6 +21,7 @@ type ComputeOpts struct {
 	TravelMode          string   // "DRIVE" | "TRANSIT" | "BICYCLE" | "WALK"
 	RoutingPreference   string   // "TRAFFIC_AWARE" etc.; only honored for DRIVE
 	AllowedTransitModes []string // ["BUS"] / ["SUBWAY"] etc.; only for TRANSIT
+	TransitRoutingPref  string   // "LESS_WALKING" | "FEWER_TRANSFERS"; only for TRANSIT
 }
 
 // RouteFetcher is the interface satisfied by the live Google Routes

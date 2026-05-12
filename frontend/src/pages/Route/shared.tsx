@@ -58,6 +58,10 @@ export type RouteOption = {
   reasoning: string;
   recommendedFor: string[];
   dataSource?: 'google_routes' | 'fallback_synthetic';
+  // When another route is effectively the same (e.g. eco & cheap both walk),
+  // the leader card lists the IDs it absorbed. Absorbed cards are filtered
+  // out of the grid by groupConvergent().
+  convergesWith?: PlannerRouteId[];
 };
 
 export const LOCATION_SUGGESTIONS = [
@@ -171,6 +175,13 @@ const ROUTE_LABEL_BY_ID: Record<PlannerRouteId, string> = {
   eco: 'Recommended · Eco',
   fast: 'Fastest',
   cheap: 'Cheapest',
+};
+
+// Short label used when one card visually represents multiple modes.
+export const ROUTE_SHORT_LABEL: Record<PlannerRouteId, string> = {
+  eco: 'Eco',
+  fast: 'Fast',
+  cheap: 'Cheap',
 };
 
 const TRANSPORT_LABELS: Record<string, string> = {
@@ -333,6 +344,39 @@ function toRouteOption(option: BackendRouteOption, destinationLabel?: string): R
   };
 }
 
+// optionsConverge tests whether two route options are effectively
+// identical from a user's perspective. Used to merge eco/cheap cards
+// for short trips where they collapse to the same walking-only route.
+function optionsConverge(a: RouteOption, b: RouteOption): boolean {
+  const durDelta = Math.abs(a.duration - b.duration) / Math.max(a.duration, b.duration, 1);
+  const co2Delta = Math.abs(a.co2 - b.co2) / Math.max(a.co2, b.co2, 0.1);
+  const costDelta = Math.abs(a.cost - b.cost);
+  // Step composition signature — same types in same order means same route shape.
+  const aTypes = a.modes.join('|');
+  const bTypes = b.modes.join('|');
+  return durDelta < 0.1 && (co2Delta < 0.1 || (a.co2 < 0.5 && b.co2 < 0.5)) && costDelta < 1 && aTypes === bTypes;
+}
+
+// groupConvergent merges visually-identical routes. The leader keeps full
+// rendering; absorbed ones are dropped from the slice. Leader preference:
+// recommended option first, then fixed order (fast, eco, cheap).
+function groupConvergent(routes: RouteOption[]): RouteOption[] {
+  const groups: RouteOption[][] = [];
+  for (const r of routes) {
+    const existing = groups.find((g) => optionsConverge(g[0], r));
+    if (existing) existing.push(r);
+    else groups.push([r]);
+  }
+  return groups.map((g) => {
+    if (g.length === 1) return g[0];
+    // Pick the leader: prefer the recommended option, else the earliest in g.
+    const leaderIdx = Math.max(0, g.findIndex((o) => o.recommended));
+    const leader = g[leaderIdx];
+    const others = g.filter((_, i) => i !== leaderIdx);
+    return { ...leader, convergesWith: others.map((o) => o.id) };
+  });
+}
+
 export type PlannerState = ReturnType<typeof usePlannerState>;
 
 export type ResolvedCoords = { latitude: number; longitude: number } | null;
@@ -418,7 +462,9 @@ export function usePlannerState() {
         destination.trim() ||
         (resolvedDestination as { address?: string }).address ||
         '';
-      const mappedRoutes = response.options.map((opt) => toRouteOption(opt, destinationLabel));
+      const mappedRoutes = groupConvergent(
+        response.options.map((opt) => toRouteOption(opt, destinationLabel)),
+      );
       setRoutes(mappedRoutes);
       // Snapshot the inputs that produced these routes so the map renders
       // from a stable submission, not the live typing state.
@@ -428,9 +474,16 @@ export function usePlannerState() {
         originCoords: resolvedOrigin,
         destCoords: resolvedDestination,
       });
-      // If the backend flagged a recommended option, select it. Else keep the preference-derived id.
+      // Pick the selected route: prefer recommended, else the preference-derived id.
+      // If the preference-derived id was absorbed by convergence, fall back to the
+      // first leader so we always select an actually-rendered card.
       const rec = mappedRoutes.find((r) => r.recommended);
-      const nextSelected = rec ? rec.id : loadingState.selectedRouteId;
+      const preferredStillVisible = mappedRoutes.some((r) => r.id === loadingState.selectedRouteId);
+      const nextSelected = rec
+        ? rec.id
+        : preferredStillVisible
+          ? loadingState.selectedRouteId
+          : mappedRoutes[0]?.id ?? loadingState.selectedRouteId;
       const resultState = finishPlannerSubmission({
         phase: 'loading',
         selectedRouteId: nextSelected,
@@ -998,7 +1051,9 @@ export function RouteCard({
         <div className="flex items-center gap-2">
           {route.recommended && <span className="theme-accent-dot" aria-hidden />}
           <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-muted)' }}>
-            § {route.label}
+            {route.convergesWith && route.convergesWith.length > 0
+              ? `§ ${[route.id, ...route.convergesWith].map((id) => ROUTE_SHORT_LABEL[id]).join(' · ')} · same route`
+              : `§ ${route.label}`}
           </span>
         </div>
         {selected && (
