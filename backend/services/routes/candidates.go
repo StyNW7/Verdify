@@ -2,6 +2,7 @@ package routes
 
 import (
 	"context"
+	"math"
 	"time"
 
 	"golang.org/x/sync/errgroup"
@@ -93,9 +94,28 @@ func (cb *CandidateBuilder) buildOne(ctx context.Context, origin, dest models.Lo
 		}
 	}
 
-	// Fallback path: synthetic step composition, carbon scaled to real distance.
+	// Fallback path: synthetic step composition, scaled to the real total
+	// distance/duration so that step-by-step cost and carbon math reflects
+	// what the user is actually traveling, not the synthetic haversine.
 	if fallback.TotalDistance > 0 {
-		c.TotalCarbon = pricing.Round2(fallback.TotalCarbon * (realDistanceKM / fallback.TotalDistance))
+		distRatio := realDistanceKM / fallback.TotalDistance
+		var durRatio float64 = 1
+		if fallback.TotalDuration > 0 {
+			durRatio = float64(realDurationMin) / float64(fallback.TotalDuration)
+		}
+		scaledSteps := make([]models.TransportSegment, len(c.Steps))
+		for i, step := range c.Steps {
+			step.Distance = pricing.Round2(step.Distance * distRatio)
+			scaledDur := int(math.Round(float64(step.Duration) * durRatio))
+			if scaledDur < 1 {
+				scaledDur = 1
+			}
+			step.Duration = scaledDur
+			step.TotalCarbon = pricing.Round2(step.Distance * step.CarbonPerKm)
+			scaledSteps[i] = step
+		}
+		c.Steps = scaledSteps
+		c.TotalCarbon = pricing.Round2(fallback.TotalCarbon * distRatio)
 	}
 	return c
 }

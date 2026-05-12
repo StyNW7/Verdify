@@ -160,6 +160,45 @@ func TestCandidateBuilder_TransitLegsBecomeRealSteps(t *testing.T) {
 	}
 }
 
+func TestCandidateBuilder_DriveStepsScaleToRealDistance(t *testing.T) {
+	// Cheap mode uses DRIVE (synthetic 2-step bus+ev_taxi composition).
+	// When Google's real distance differs from the synthetic distance, the
+	// step distances must scale together so cost/carbon math matches the
+	// real total — otherwise we'd compute cost from synthetic 3 km when
+	// the real trip is 4 km, leading to nonsense cost ordering.
+	fetcher := &fakeFetcher{
+		geom: map[string]*Geometry{
+			"DRIVE": {
+				EncodedPolyline: "p",
+				DistanceMeters:  4000, // 4 km real
+				DurationSeconds: 12 * 60,
+			},
+		},
+	}
+	cb := NewCandidateBuilder(fetcher)
+	cands, _ := cb.Build(context.Background(), origin, dest)
+	cheap := cands[2]
+	if cheap.Mode != "cheap" {
+		t.Fatalf("position 2 mode = %q want cheap", cheap.Mode)
+	}
+	// Sum of step distances should match the real total distance.
+	var sumStep float64
+	for _, s := range cheap.Steps {
+		sumStep += s.Distance
+	}
+	// Allow small rounding slack (each step rounded to 2dp).
+	if sumStep < 3.95 || sumStep > 4.05 {
+		t.Errorf("cheap steps should sum to ~4.0 km got %.3f", sumStep)
+	}
+	// Cheap has exactly 2 synthetic steps: bus + ev_taxi.
+	if len(cheap.Steps) != 2 {
+		t.Fatalf("cheap should have 2 synthetic steps, got %d", len(cheap.Steps))
+	}
+	if cheap.Steps[0].Type != "bus" || cheap.Steps[1].Type != "ev_taxi" {
+		t.Errorf("cheap step types: %q,%q want bus,ev_taxi", cheap.Steps[0].Type, cheap.Steps[1].Type)
+	}
+}
+
 func TestMapTravelMode(t *testing.T) {
 	cases := []struct {
 		travel, vehicle, want string
