@@ -227,6 +227,14 @@ function getTransportLabel(type: string) {
   return TRANSPORT_LABELS[type] ?? type.replace(/_/g, ' ');
 }
 
+// shortenLabel reduces a verbose Places address to its primary name.
+// "Fahrenheit88, Jalan Gading, Bukit Bintang, Kuala Lumpur, ..." → "Fahrenheit88"
+function shortenLabel(s: string | undefined): string | undefined {
+  if (!s) return s;
+  const first = s.split(',')[0]?.trim();
+  return first || s;
+}
+
 function renderStep(
   step: BackendRouteOption['steps'][number],
   index: number,
@@ -237,7 +245,7 @@ function renderStep(
   const distKm = step.distance.toFixed(1);
   const isLast = index === all.length - 1;
   const next = all[index + 1];
-  const dest = destinationLabel?.trim();
+  const dest = shortenLabel(destinationLabel?.trim());
 
   if (step.type === 'walking') {
     // Highest priority on the final walk: name the actual destination.
