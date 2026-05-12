@@ -116,7 +116,11 @@ func (app *App) calculateRouteHandler(w http.ResponseWriter, r *http.Request) {
 	var polyline string
 	if app.RoutesClient.Enabled() {
 		travelMode := routesTravelMode(mode)
-		geom, err := app.RoutesClient.ComputeRoute(r.Context(), req.Origin, req.Destination, travelMode)
+		routingPref := ""
+		if travelMode == "DRIVE" {
+			routingPref = "TRAFFIC_AWARE"
+		}
+		geom, err := app.RoutesClient.Compute(r.Context(), req.Origin, req.Destination, travelMode, routingPref)
 		if err == nil {
 			polyline = geom.EncodedPolyline
 		}
