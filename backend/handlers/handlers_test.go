@@ -86,15 +86,15 @@ func TestExplicitModesMapToDistinctRouteProfiles(t *testing.T) {
 	eco := callRoute(t, mux, models.RouteRequest{
 		Origin: origin, Destination: destination, Mode: "eco",
 	})
-	flow := callRoute(t, mux, models.RouteRequest{
+	cheap := callRoute(t, mux, models.RouteRequest{
 		Origin: origin, Destination: destination, Mode: "cheap",
 	})
 
-	if fast.Data.TotalDuration >= eco.Data.TotalDuration || fast.Data.TotalDuration >= flow.Data.TotalDuration {
-		t.Fatalf("fast should be shortest, got fast=%d eco=%d flow=%d", fast.Data.TotalDuration, eco.Data.TotalDuration, flow.Data.TotalDuration)
+	if fast.Data.TotalDuration >= eco.Data.TotalDuration || fast.Data.TotalDuration >= cheap.Data.TotalDuration {
+		t.Fatalf("fast should be shortest, got fast=%d eco=%d cheap=%d", fast.Data.TotalDuration, eco.Data.TotalDuration, cheap.Data.TotalDuration)
 	}
-	if eco.Data.CarbonEstimate >= fast.Data.CarbonEstimate || eco.Data.CarbonEstimate >= flow.Data.CarbonEstimate {
-		t.Fatalf("eco should be lowest carbon, got fast=%.2f eco=%.2f flow=%.2f", fast.Data.CarbonEstimate, eco.Data.CarbonEstimate, flow.Data.CarbonEstimate)
+	if eco.Data.CarbonEstimate >= fast.Data.CarbonEstimate || eco.Data.CarbonEstimate >= cheap.Data.CarbonEstimate {
+		t.Fatalf("eco should be lowest carbon, got fast=%.2f eco=%.2f cheap=%.2f", fast.Data.CarbonEstimate, eco.Data.CarbonEstimate, cheap.Data.CarbonEstimate)
 	}
 	if len(fast.Data.Steps) != 1 || fast.Data.Steps[0].Type != "ev_taxi" {
 		t.Fatalf("fast should be direct ev_taxi, got steps=%v", fast.Data.Steps)
@@ -102,8 +102,8 @@ func TestExplicitModesMapToDistinctRouteProfiles(t *testing.T) {
 	if len(eco.Data.Steps) != 3 || eco.Data.Steps[1].Type != "lrt" {
 		t.Fatalf("eco should be walk+lrt+walk, got steps=%v", eco.Data.Steps)
 	}
-	if len(flow.Data.Steps) != 2 || flow.Data.Steps[0].Type != "bus" {
-		t.Fatalf("flow should start with bus segment, got steps=%v", flow.Data.Steps)
+	if len(cheap.Data.Steps) != 2 || cheap.Data.Steps[0].Type != "bus" {
+		t.Fatalf("cheap should start with bus segment, got steps=%v", cheap.Data.Steps)
 	}
 }
 
