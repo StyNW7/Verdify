@@ -26,6 +26,8 @@ func SyntheticCandidates(origin, destination models.Location) []models.RouteCand
 	fast := models.RouteCandidate{
 		ID:            "cand_fast",
 		Label:         "Fast EV taxi",
+		Mode:          "fast",
+		DataSource:    "fallback_synthetic",
 		TotalDistance: fastDistance,
 		TotalDuration: int(math.Round((fastDistance/42.0)*60.0)) + 8,
 		TotalCarbon:   fastDistance * 80,
@@ -41,6 +43,8 @@ func SyntheticCandidates(origin, destination models.Location) []models.RouteCand
 	eco := models.RouteCandidate{
 		ID:            "cand_eco",
 		Label:         "Eco transit mix",
+		Mode:          "eco",
+		DataSource:    "fallback_synthetic",
 		TotalDistance: ecoDistance,
 		TotalDuration: int(math.Round((ecoDistance/30.0)*60.0)) + 18,
 		TotalCarbon:   ecoDistance * 40,
@@ -57,6 +61,8 @@ func SyntheticCandidates(origin, destination models.Location) []models.RouteCand
 	cheap := models.RouteCandidate{
 		ID:            "cand_cheap",
 		Label:         "Cheap bus + EV bypass",
+		Mode:          "cheap",
+		DataSource:    "fallback_synthetic",
 		TotalDistance: cheapDistance,
 		TotalDuration: int(math.Round((cheapDistance/31.0)*60.0)) + 10,
 		TotalCarbon:   (cheapDistance * 0.55 * 60) + (cheapDistance * 0.45 * 80),

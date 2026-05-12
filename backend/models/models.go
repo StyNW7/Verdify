@@ -112,11 +112,14 @@ type VerifyRequest struct {
 type RouteCandidate struct {
 	ID            string
 	Label         string
+	Mode          string  // "fast" | "eco" | "cheap"
 	TotalDistance float64
 	TotalDuration int
 	TotalCarbon   float64
 	Congestion    float64
 	Steps         []TransportSegment
+	Polyline      string  // empty when DataSource = fallback_synthetic without override
+	DataSource    string  // "google_routes" | "fallback_synthetic"
 }
 
 // RouteOption is the public, per-mode response object returned inside
