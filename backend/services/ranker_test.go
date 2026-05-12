@@ -10,7 +10,7 @@ func TestFallbackSelect_AutoPickByPeak(t *testing.T) {
 	cands := []models.RouteCandidate{
 		{ID: "cand_fast", TotalDuration: 20, TotalCarbon: 50, Congestion: 0.8},
 		{ID: "cand_eco", TotalDuration: 45, TotalCarbon: 10, Congestion: 0.9},
-		{ID: "cand_cheap", TotalDuration: 60, TotalCarbon: 280, Congestion: 0.05},
+		{ID: "cand_cheap", TotalDuration: 60, TotalCarbon: 30, Congestion: 0.05},
 	}
 	cases := []struct {
 		peak   bool

@@ -115,7 +115,6 @@ type RouteCandidate struct {
 	TotalDistance float64
 	TotalDuration int
 	TotalCarbon   float64
-	TotalCost     float64
 	Congestion    float64
 	Steps         []TransportSegment
 }
