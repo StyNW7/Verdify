@@ -1,5 +1,4 @@
-// Package ranker wraps the Gemini batched annotator. The public
-// surface is the Ranker interface; GeminiRanker is the live impl.
+// Package ranker wraps the Gemini batched annotator.
 package ranker
 
 import (
@@ -15,27 +14,60 @@ import (
 	"github.com/verdify/backend/models"
 )
 
-// LEGACY shape — keep until Task 6.2 swaps callers.
-type rankInput struct {
-	Mode       string           `json:"mode"`
-	Peak       bool             `json:"peak"`
-	Candidates []candidateInput `json:"candidates"`
+// Ranker is the interface satisfied by the live Gemini ranker and by
+// test fakes. The handler depends on this, not on *GeminiRanker.
+type Ranker interface {
+	Annotate(ctx context.Context, in RankInput) (*RankResult, error)
 }
-type candidateInput struct {
-	ID         string  `json:"id"`
-	TimeMin    int     `json:"timeMin"`
-	Carbon     float64 `json:"carbon"`
-	Congestion float64 `json:"congestion"`
+
+type RankInput struct {
+	UserMode    *string         // nil means "you pick the recommended one"
+	Peak        bool            // pricing.IsPeakHour at request time
+	LocaleHints []string        // e.g., ["KL", "Malaysia"]
+	Candidates  []RankCandidate // exactly 3, ordered fast/eco/cheap
 }
-type rankOutput struct {
-	BestID string `json:"bestId"`
-	Reason string `json:"reason"`
+
+type RankCandidate struct {
+	ID             string  // "cand_fast" | "cand_eco" | "cand_cheap"
+	Mode           string  // "fast" | "eco" | "cheap"
+	Label          string  // human-readable, e.g., "Fast EV taxi"
+	DistanceKM     float64
+	DurationMin    int
+	CarbonGrams    float64
+	CostMYR        float64
+	PointsEstimate int
+	Steps          []string // ["EV taxi 14.2 km"]
+	DataSource     string   // "google_routes" | "fallback_synthetic"
 }
+
+type RankResult struct {
+	Items  []Annotation
+	Source string // "gemini" | "fallback_scorer" | "user_mode"
+}
+
+type Annotation struct {
+	ID             string   `json:"id"`
+	Reasoning      string   `json:"reasoning"`
+	RecommendedFor []string `json:"recommendedFor"`
+	Recommended    bool     `json:"recommended"`
+}
+
+// Annotations is the JSON shape Gemini returns and that the ranker
+// validates against before merging.
+type Annotations struct {
+	Items []Annotation `json:"annotations"`
+}
+
+const reasoningMaxLen = 280
+
+type llmCall func(ctx context.Context, in RankInput) (*Annotations, error)
 
 type GeminiRanker struct {
 	Enabled bool
 	g       *genkit.Genkit
 	model   string
+	// llm is the actual Gemini hook. Injectable so tests don't reach Vertex.
+	llm llmCall
 }
 
 func New(cfg config.Config) *GeminiRanker {
@@ -50,7 +82,9 @@ func New(cfg config.Config) *GeminiRanker {
 		}),
 		genkit.WithDefaultModel(cfg.GeminiModel),
 	)
-	return &GeminiRanker{Enabled: true, g: g, model: cfg.GeminiModel}
+	r := &GeminiRanker{Enabled: true, g: g, model: cfg.GeminiModel}
+	r.llm = r.realCall
+	return r
 }
 
 func (r *GeminiRanker) Ping(ctx context.Context) (string, error) {
@@ -67,46 +101,153 @@ func (r *GeminiRanker) Ping(ctx context.Context) (string, error) {
 	return strings.TrimSpace(out), nil
 }
 
-// SelectBest is the LEGACY single-pick API. Retained until the handler
-// switches to Annotate in Task 7.x; then deleted.
-func (r *GeminiRanker) SelectBest(ctx context.Context, mode string, peak bool, candidates []models.RouteCandidate) (string, string, error) {
-	if len(candidates) == 0 {
-		return "", "", fmt.Errorf("no candidates")
-	}
-	if !r.Enabled {
-		id, reason := fallbackSelect(mode, peak, candidates)
-		return id, reason, nil
+// Annotate is the batched ranker entry point.
+//
+//   - If r is disabled or the LLM errors, falls back fully to the
+//     templated scorer (RankResult.Source = "fallback_scorer").
+//   - If RankInput.UserMode != nil, the user's mode is flagged recommended
+//     regardless of what Gemini returned (Source = "user_mode").
+//   - Unknown recommendedFor tags are dropped silently.
+//   - Reasoning longer than 280 chars is truncated.
+//   - If Gemini sets zero or 2+ recommended:true while UserMode is nil,
+//     the scorer picks one and Gemini's reasoning/tags are preserved.
+func (r *GeminiRanker) Annotate(ctx context.Context, in RankInput) (*RankResult, error) {
+	if len(in.Candidates) != 3 {
+		return nil, fmt.Errorf("ranker.Annotate: want 3 candidates got %d", len(in.Candidates))
 	}
 
-	in := rankInput{Mode: mode, Peak: peak, Candidates: make([]candidateInput, 0, len(candidates))}
-	for _, c := range candidates {
-		in.Candidates = append(in.Candidates, candidateInput{
-			ID:         c.ID,
-			TimeMin:    c.TotalDuration,
-			Carbon:     c.TotalCarbon,
-			Congestion: c.Congestion,
+	if !r.Enabled || r.llm == nil {
+		return r.fullFallback(in), nil
+	}
+
+	raw, err := r.llm(ctx, in)
+	if err != nil || raw == nil {
+		return r.fullFallback(in), nil
+	}
+
+	items := r.validateAndMerge(in, raw)
+	source := "gemini"
+	if in.UserMode != nil {
+		source = "user_mode"
+	}
+	return &RankResult{Items: items, Source: source}, nil
+}
+
+// validateAndMerge applies the validation rules and assembles the final
+// 3 annotations.
+func (r *GeminiRanker) validateAndMerge(in RankInput, raw *Annotations) []Annotation {
+	byID := make(map[string]Annotation, len(raw.Items))
+	for _, a := range raw.Items {
+		// drop unknown vocab tags
+		clean := make([]string, 0, len(a.RecommendedFor))
+		for _, tag := range a.RecommendedFor {
+			if _, ok := RecommendedForVocab[tag]; ok {
+				clean = append(clean, tag)
+			}
+		}
+		a.RecommendedFor = clean
+		if len(a.Reasoning) > reasoningMaxLen {
+			a.Reasoning = a.Reasoning[:reasoningMaxLen]
+		}
+		byID[a.ID] = a
+	}
+
+	items := make([]Annotation, 0, 3)
+	for _, c := range in.Candidates {
+		ann, ok := byID[c.ID]
+		if !ok {
+			// Gemini missed this candidate entirely → templated reasoning + no flag
+			ann = templatedAnnotation(c)
+		}
+		items = append(items, ann)
+	}
+
+	// recommended-flag invariants
+	if in.UserMode != nil {
+		for i := range items {
+			items[i].Recommended = items[i].ID == "cand_"+*in.UserMode
+		}
+		return items
+	}
+	// UserMode nil: require exactly one recommended:true
+	recCount := 0
+	for _, a := range items {
+		if a.Recommended {
+			recCount++
+		}
+	}
+	if recCount != 1 {
+		// drop Gemini's recommendations; let the scorer pick
+		for i := range items {
+			items[i].Recommended = false
+		}
+		// pick via fallback scorer over the original candidates
+		modelCands := make([]models.RouteCandidate, 0, len(in.Candidates))
+		for _, c := range in.Candidates {
+			modelCands = append(modelCands, models.RouteCandidate{
+				ID: c.ID, Mode: c.Mode, TotalDuration: c.DurationMin,
+				TotalCarbon: c.CarbonGrams, Congestion: 0.5,
+			})
+		}
+		mode := ""
+		bestID, _ := fallbackSelect(mode, in.Peak, modelCands)
+		for i := range items {
+			if items[i].ID == bestID {
+				items[i].Recommended = true
+			}
+		}
+	}
+	return items
+}
+
+func (r *GeminiRanker) fullFallback(in RankInput) *RankResult {
+	items := make([]Annotation, 0, len(in.Candidates))
+	for _, c := range in.Candidates {
+		items = append(items, templatedAnnotation(c))
+	}
+	// pick recommended via scorer (mode-respecting)
+	modelCands := make([]models.RouteCandidate, 0, len(in.Candidates))
+	for _, c := range in.Candidates {
+		modelCands = append(modelCands, models.RouteCandidate{
+			ID: c.ID, Mode: c.Mode, TotalDuration: c.DurationMin,
+			TotalCarbon: c.CarbonGrams, Congestion: 0.5,
 		})
 	}
-	b, _ := json.Marshal(in)
+	mode := ""
+	if in.UserMode != nil {
+		mode = *in.UserMode
+	}
+	bestID, _ := fallbackSelect(mode, in.Peak, modelCands)
+	if in.UserMode != nil {
+		bestID = "cand_" + *in.UserMode
+	}
+	for i := range items {
+		items[i].Recommended = items[i].ID == bestID
+	}
+	source := "fallback_scorer"
+	if in.UserMode != nil {
+		source = "user_mode"
+	}
+	return &RankResult{Items: items, Source: source}
+}
 
-	out, _, err := genkit.GenerateData[rankOutput](ctx, r.g,
+// realCall is the production LLM hook used when Enabled.
+func (r *GeminiRanker) realCall(ctx context.Context, in RankInput) (*Annotations, error) {
+	payload, err := json.Marshal(map[string]any{
+		"peak":       in.Peak,
+		"userMode":   in.UserMode,
+		"candidates": in.Candidates,
+	})
+	if err != nil {
+		return nil, err
+	}
+	out, _, err := genkit.GenerateData[Annotations](ctx, r.g,
 		ai.WithModelName(r.model),
-		ai.WithSystem("You are a route ranker. Return valid JSON with fields: bestId, reason."),
-		ai.WithPrompt("Select the best route candidate for mode and peak context. Input JSON: %s", string(b)),
+		ai.WithSystem(systemPrompt(in.UserMode, in.Peak)),
+		ai.WithPrompt("Annotate these candidates. Input JSON: %s", string(payload)),
 	)
-	if err != nil || out == nil || out.BestID == "" {
-		id, reason := fallbackSelect(mode, peak, candidates)
-		if err != nil {
-			return id, reason + " (fallback after genkit error)", nil
-		}
-		return id, reason, nil
+	if err != nil {
+		return nil, err
 	}
-
-	for _, c := range candidates {
-		if c.ID == out.BestID {
-			return out.BestID, out.Reason, nil
-		}
-	}
-	id, reason := fallbackSelect(mode, peak, candidates)
-	return id, reason + " (fallback unknown bestId)", nil
+	return out, nil
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/verdify/backend/models"
 	"github.com/verdify/backend/services"
 	"github.com/verdify/backend/services/pricing"
+	"github.com/verdify/backend/services/ranker"
 )
 
 func (app *App) healthHandler(w http.ResponseWriter, _ *http.Request) {
@@ -83,11 +84,30 @@ func (app *App) calculateRouteHandler(w http.ResponseWriter, r *http.Request) {
 	peak := pricing.IsPeakHour(services.NowMY())
 	chosenID := staticCandidateIDForMode(mode)
 	if mode == "" {
-		chosenID, _, err = app.Ranker.SelectBest(r.Context(), mode, peak, candidates)
-		if err != nil {
+		// Temporary shim until Task 7.2 replaces this handler entirely.
+		rankIn := ranker.RankInput{
+			Peak: peak,
+			Candidates: []ranker.RankCandidate{
+				{ID: candidates[0].ID, Mode: candidates[0].Mode, DurationMin: candidates[0].TotalDuration, CarbonGrams: candidates[0].TotalCarbon},
+				{ID: candidates[1].ID, Mode: candidates[1].Mode, DurationMin: candidates[1].TotalDuration, CarbonGrams: candidates[1].TotalCarbon},
+				{ID: candidates[2].ID, Mode: candidates[2].Mode, DurationMin: candidates[2].TotalDuration, CarbonGrams: candidates[2].TotalCarbon},
+			},
+		}
+		result, rankErr := app.Ranker.Annotate(r.Context(), rankIn)
+		if rankErr != nil || result == nil {
 			writeErr(w, http.StatusInternalServerError, "failed route ranking")
 			return
 		}
+		for _, item := range result.Items {
+			if item.Recommended {
+				chosenID = item.ID
+				break
+			}
+		}
+		if chosenID == "" {
+			chosenID = result.Items[0].ID
+		}
+		_ = err // silence unused since we use rankErr
 	}
 
 	selected, ok := findCandidateByID(candidates, chosenID)
