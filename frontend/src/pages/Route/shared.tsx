@@ -177,7 +177,6 @@ const ROUTE_LABEL_BY_ID: Record<PlannerRouteId, string> = {
   cheap: 'Cheapest',
 };
 
-// Short label used when one card visually represents multiple modes.
 export const ROUTE_SHORT_LABEL: Record<PlannerRouteId, string> = {
   eco: 'Eco',
   fast: 'Fast',
@@ -238,8 +237,6 @@ function getTransportLabel(type: string) {
   return TRANSPORT_LABELS[type] ?? type.replace(/_/g, ' ');
 }
 
-// shortenLabel reduces a verbose Places address to its primary name.
-// "Fahrenheit88, Jalan Gading, Bukit Bintang, Kuala Lumpur, ..." → "Fahrenheit88"
 function shortenLabel(s: string | undefined): string | undefined {
   if (!s) return s;
   const first = s.split(',')[0]?.trim();
@@ -297,7 +294,7 @@ function renderStep(
 }
 
 function toRouteOption(option: BackendRouteOption, destinationLabel?: string): RouteOption {
-  const id: PlannerRouteId = option.mode; // mode and PlannerRouteId share vocabulary
+  const id: PlannerRouteId = option.mode;
   const totalDuration = Math.max(1, Math.round(option.totalDuration));
   const distinctModes = Array.from(new Set(option.steps.map((step) => getTransportLabel(step.type))));
   const steps = option.steps.map((step, i, all) => renderStep(step, i, all, destinationLabel));
@@ -351,7 +348,6 @@ function optionsConverge(a: RouteOption, b: RouteOption): boolean {
   const durDelta = Math.abs(a.duration - b.duration) / Math.max(a.duration, b.duration, 1);
   const co2Delta = Math.abs(a.co2 - b.co2) / Math.max(a.co2, b.co2, 0.1);
   const costDelta = Math.abs(a.cost - b.cost);
-  // Step composition signature — same types in same order means same route shape.
   const aTypes = a.modes.join('|');
   const bTypes = b.modes.join('|');
   return durDelta < 0.1 && (co2Delta < 0.1 || (a.co2 < 0.5 && b.co2 < 0.5)) && costDelta < 1 && aTypes === bTypes;
@@ -369,7 +365,6 @@ function groupConvergent(routes: RouteOption[]): RouteOption[] {
   }
   return groups.map((g) => {
     if (g.length === 1) return g[0];
-    // Pick the leader: prefer the recommended option, else the earliest in g.
     const leaderIdx = Math.max(0, g.findIndex((o) => o.recommended));
     const leader = g[leaderIdx];
     const others = g.filter((_, i) => i !== leaderIdx);

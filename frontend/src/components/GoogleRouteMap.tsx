@@ -97,7 +97,7 @@ function useDecodedPolylines(routes: RouteOption[]): DecodedPaths {
           const path = encoding.decodePath(route.polyline);
           decoded[route.id] = path.map((p) => ({ lat: p.lat(), lng: p.lng() }));
         } catch {
-          // skip invalid polylines
+          continue;
         }
       }
     }

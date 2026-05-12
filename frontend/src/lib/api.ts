@@ -93,7 +93,7 @@ export type RouteMode = 'fast' | 'eco' | 'cheap';
 export type CalculateRoutePayload = {
   origin: BackendLocation;
   destination: BackendLocation;
-  mode?: RouteMode; // omit to let the Gemini ranker pick
+  mode?: RouteMode;
 };
 
 export type BackendTransportSegment = {
@@ -158,7 +158,6 @@ export function geocodeSearch(query: string) {
   );
 }
 
-// Places Autocomplete (typing-as-you-go path).
 export type PlacePrediction = {
   placeId: string;
   primaryText: string;

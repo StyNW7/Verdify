@@ -56,7 +56,6 @@ func (cb *CandidateBuilder) Build(ctx context.Context, origin, dest models.Locat
 			return nil
 		})
 	}
-	// All goroutines return nil; we never error out of the group.
 	_ = g.Wait()
 	return results, nil
 }
@@ -76,7 +75,7 @@ func (cb *CandidateBuilder) buildOne(ctx context.Context, origin, dest models.Lo
 		realDurationMin = 1
 	}
 
-	c := fallback // start from synthetic to preserve Label, Congestion
+	c := fallback
 	c.TotalDistance = realDistanceKM
 	c.TotalDuration = realDurationMin
 	c.Polyline = geom.EncodedPolyline

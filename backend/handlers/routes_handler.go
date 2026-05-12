@@ -27,7 +27,6 @@ func (app *App) calculateRouteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// mode validation: empty is OK (means "Gemini auto-pick")
 	mode := ""
 	if req.Mode != "" {
 		mode = services.NormalizeMode(req.Mode)
@@ -45,7 +44,6 @@ func (app *App) calculateRouteHandler(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), totalBudget)
 	defer cancel()
 
-	// Phase 1 — fan out Routes API calls (budget 3s)
 	rctx, rcancel := context.WithTimeout(ctx, routesBudget)
 	candidates, err := app.Builder.Build(rctx, req.Origin, req.Destination)
 	rcancel()
@@ -56,21 +54,17 @@ func (app *App) calculateRouteHandler(w http.ResponseWriter, r *http.Request) {
 
 	peak := pricing.IsPeakHour(services.NowMY())
 
-	// Phase 2 — batched Gemini call (budget 3s)
 	rankIn := buildRankInput(mode, peak, candidates)
 	annCtx, acancel := context.WithTimeout(ctx, rankerBudget)
 	result, rerr := app.Ranker.Annotate(annCtx, rankIn)
 	acancel()
 	if rerr != nil || result == nil {
-		// last-resort templated annotations
 		result = templatedResult(rankIn)
 	}
 
-	// Phase 3 — compose response options
 	opts := make([]models.RouteOption, 0, len(candidates))
 	for i, c := range candidates {
 		opt := buildOption(c, result.Items[i])
-		// persist so booking flow can look up by routeId
 		rt := optionToRoute(req.Origin, req.Destination, opt, c.Steps)
 		app.Store.SaveRoute(rt)
 		opt.RouteID = rt.ID
@@ -78,7 +72,6 @@ func (app *App) calculateRouteHandler(w http.ResponseWriter, r *http.Request) {
 		opts = append(opts, opt)
 	}
 
-	// Structured log line for diagnostics.
 	var realCount, fallbackCount int
 	for _, c := range candidates {
 		if c.DataSource == "google_routes" {

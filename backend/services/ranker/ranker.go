@@ -66,7 +66,6 @@ type GeminiRanker struct {
 	Enabled bool
 	g       *genkit.Genkit
 	model   string
-	// llm is the actual Gemini hook. Injectable so tests don't reach Vertex.
 	llm llmCall
 }
 
@@ -138,7 +137,6 @@ func (r *GeminiRanker) Annotate(ctx context.Context, in RankInput) (*RankResult,
 func (r *GeminiRanker) validateAndMerge(in RankInput, raw *Annotations) []Annotation {
 	byID := make(map[string]Annotation, len(raw.Items))
 	for _, a := range raw.Items {
-		// drop unknown vocab tags
 		clean := make([]string, 0, len(a.RecommendedFor))
 		for _, tag := range a.RecommendedFor {
 			if _, ok := RecommendedForVocab[tag]; ok {
@@ -156,20 +154,17 @@ func (r *GeminiRanker) validateAndMerge(in RankInput, raw *Annotations) []Annota
 	for _, c := range in.Candidates {
 		ann, ok := byID[c.ID]
 		if !ok {
-			// Gemini missed this candidate entirely → templated reasoning + no flag
 			ann = templatedAnnotation(c)
 		}
 		items = append(items, ann)
 	}
 
-	// recommended-flag invariants
 	if in.UserMode != nil {
 		for i := range items {
 			items[i].Recommended = items[i].ID == "cand_"+*in.UserMode
 		}
 		return items
 	}
-	// UserMode nil: require exactly one recommended:true
 	recCount := 0
 	for _, a := range items {
 		if a.Recommended {
@@ -177,11 +172,9 @@ func (r *GeminiRanker) validateAndMerge(in RankInput, raw *Annotations) []Annota
 		}
 	}
 	if recCount != 1 {
-		// drop Gemini's recommendations; let the scorer pick
 		for i := range items {
 			items[i].Recommended = false
 		}
-		// pick via fallback scorer over the original candidates
 		modelCands := make([]models.RouteCandidate, 0, len(in.Candidates))
 		for _, c := range in.Candidates {
 			modelCands = append(modelCands, models.RouteCandidate{
@@ -205,7 +198,6 @@ func (r *GeminiRanker) fullFallback(in RankInput) *RankResult {
 	for _, c := range in.Candidates {
 		items = append(items, templatedAnnotation(c))
 	}
-	// pick recommended via scorer (mode-respecting)
 	modelCands := make([]models.RouteCandidate, 0, len(in.Candidates))
 	for _, c := range in.Candidates {
 		modelCands = append(modelCands, models.RouteCandidate{

@@ -6,7 +6,6 @@ import (
 	"github.com/verdify/backend/models"
 )
 
-// Two KL coordinates roughly 10 km apart.
 var (
 	origin = models.Location{Latitude: 3.1390, Longitude: 101.6869}
 	dest   = models.Location{Latitude: 3.0738, Longitude: 101.6068}

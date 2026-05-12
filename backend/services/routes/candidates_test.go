@@ -69,7 +69,6 @@ func TestCandidateBuilder_AllSucceed(t *testing.T) {
 	if cands[1].Polyline != "transit_poly" {
 		t.Errorf("eco polyline: want transit_poly got %q", cands[1].Polyline)
 	}
-	// fast distance from real DRIVE call: 14.0 km
 	if cands[0].TotalDistance < 13.9 || cands[0].TotalDistance > 14.1 {
 		t.Errorf("fast distance: want ~14 got %v", cands[0].TotalDistance)
 	}
@@ -178,7 +177,6 @@ func TestCandidateBuilder_TransitLegsBecomeRealSteps(t *testing.T) {
 		t.Fatalf("Build: %v", err)
 	}
 
-	// fast keeps the synthetic single-step composition (we don't unpack DRIVE legs).
 	fast := cands[0]
 	if fast.Mode != "fast" {
 		t.Fatalf("position 0 mode = %q want fast", fast.Mode)
@@ -187,7 +185,6 @@ func TestCandidateBuilder_TransitLegsBecomeRealSteps(t *testing.T) {
 		t.Errorf("fast should keep synthetic ev_taxi step, got %+v", fast.Steps)
 	}
 
-	// eco gets 3 real steps from the transit legs.
 	eco := cands[1]
 	if eco.Mode != "eco" {
 		t.Fatalf("position 1 mode = %q want eco", eco.Mode)
@@ -201,15 +198,12 @@ func TestCandidateBuilder_TransitLegsBecomeRealSteps(t *testing.T) {
 			t.Errorf("eco step %d: type = %q want %q", i, s.Type, wantTypes[i])
 		}
 	}
-	// 12 km transit step should round to ~12.0
 	if eco.Steps[1].Distance < 11.9 || eco.Steps[1].Distance > 12.1 {
 		t.Errorf("eco transit step distance: want ~12 got %v", eco.Steps[1].Distance)
 	}
-	// Carbon should be re-derived from real steps: 0 + 12*40 + 0 = 480 g
 	if eco.TotalCarbon < 479 || eco.TotalCarbon > 481 {
 		t.Errorf("eco total carbon: want ~480 got %v", eco.TotalCarbon)
 	}
-	// Transit-context fields should propagate from Step to TransportSegment.
 	transit := eco.Steps[1]
 	if transit.TransitLine != "Kelana Jaya Line" {
 		t.Errorf("transit line = %q want Kelana Jaya Line", transit.TransitLine)
@@ -223,7 +217,6 @@ func TestCandidateBuilder_TransitLegsBecomeRealSteps(t *testing.T) {
 	if transit.StopCount != 8 {
 		t.Errorf("stopCount = %d want 8", transit.StopCount)
 	}
-	// Walk steps should carry navigation instructions from Google.
 	if eco.Steps[0].Instruction != "Walk south on Jalan Stesen Sentral" {
 		t.Errorf("step 0 instruction = %q", eco.Steps[0].Instruction)
 	}
@@ -231,7 +224,6 @@ func TestCandidateBuilder_TransitLegsBecomeRealSteps(t *testing.T) {
 		t.Errorf("step 2 instruction = %q", eco.Steps[2].Instruction)
 	}
 
-	// Cheap mode (TRANSIT bus-only) should also produce real bus-based steps.
 	cheap := cands[2]
 	if cheap.Mode != "cheap" {
 		t.Fatalf("position 2 mode = %q want cheap", cheap.Mode)
@@ -285,7 +277,6 @@ func TestCandidateBuilder_DriveStepsScaleToRealDistance(t *testing.T) {
 	if len(fast.Steps) != 1 || fast.Steps[0].Type != "ev_taxi" {
 		t.Fatalf("fast should have 1 synthetic ev_taxi step, got %+v", fast.Steps)
 	}
-	// Step distance should match the real total (allow small rounding slack).
 	if fast.Steps[0].Distance < 3.95 || fast.Steps[0].Distance > 4.05 {
 		t.Errorf("fast step distance should be ~4.0 km got %v", fast.Steps[0].Distance)
 	}

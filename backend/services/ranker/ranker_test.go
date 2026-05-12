@@ -89,7 +89,6 @@ func TestAnnotate_ZeroRecommendedFallsBackToScorerForRecOnly(t *testing.T) {
 	if countRecommended(res.Items) != 1 {
 		t.Fatalf("want 1 recommended got %d", countRecommended(res.Items))
 	}
-	// Reasoning preserved (still Gemini-sourced)
 	for _, a := range res.Items {
 		if a.Reasoning == "" {
 			t.Errorf("%s lost reasoning", a.ID)
@@ -159,7 +158,6 @@ func TestAnnotate_TwoRecommendedFallsBackToScorerForRecOnly(t *testing.T) {
 	if countRecommended(res.Items) != 1 {
 		t.Fatalf("want exactly 1 recommended got %d", countRecommended(res.Items))
 	}
-	// Reasoning from Gemini must be preserved (not replaced with templated)
 	for _, a := range res.Items {
 		if a.Reasoning == "" {
 			t.Errorf("%s lost reasoning", a.ID)

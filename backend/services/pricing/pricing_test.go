@@ -63,7 +63,7 @@ func TestPointsEstimate(t *testing.T) {
 	if PointsEstimate(10, 1000, 0) != 0 {
 		t.Fatal("zero actual must return 0")
 	}
-	got := PointsEstimate(10, 2000, 1000) // 10 * 2 * 1.5 = 30
+	got := PointsEstimate(10, 2000, 1000)
 	if got != 30 {
 		t.Fatalf("want 30 got %v", got)
 	}

@@ -15,7 +15,6 @@ const team = [
   { n: '01', name: 'Stanley Nathanael Wijaya', role: 'Team Lead', meta: 'Team Lead' },
   { n: '02', name: 'Saputra Tanuwijaya', role: 'Backend Developer', meta: 'Backend Developer' },
   { n: '03', name: 'Roderich Cavine Chow', role: 'Frontend Developer', meta: 'Frontend Developer' },
-  // { n: '04', name: 'Team Member 04', role: 'Backend · data', meta: 'Cloud Run · RAG' },
 ];
 
 const pillars = [
