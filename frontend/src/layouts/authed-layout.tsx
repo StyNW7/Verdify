@@ -4,6 +4,7 @@ import { LoadingScreen } from '@/components/loading-screen';
 import { getLastPath } from '@/utility/nav-history';
 import { parseAuthRequired, resolveAuthGuard } from '@/lib/auth-guard';
 import { useAuth } from '@/lib/auth-provider';
+import { useAuthLoadingFallback } from '@/hooks/useAuthLoadingFallback';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ChevronsLeft,
@@ -58,8 +59,24 @@ const isAuthedPath = (p: string) =>
 export default function AuthedLayout() {
   const { pathname, search } = useLocation();
   const { user, loading } = useAuth();
-  if (loading) {
-    return null;
+  const stillLoading = useAuthLoadingFallback(loading);
+  if (stillLoading) {
+    // Show a visible spinner instead of nothing so the user knows the page
+    // is alive while Firebase Auth settles. After the fallback timeout
+    // (see useAuthLoadingFallback), we fall through and evaluate the guard
+    // so a stalled SDK never traps the user on a blank screen.
+    return (
+      <div
+        className="flex min-h-svh items-center justify-center"
+        style={{ background: 'var(--theme-bg)', color: 'var(--theme-fg-dim)' }}
+      >
+        <div
+          className="h-6 w-6 animate-spin rounded-full"
+          style={{ border: '2px solid var(--theme-border-strong)', borderTopColor: 'var(--theme-accent)' }}
+          aria-label="Loading"
+        />
+      </div>
+    );
   }
   const guard = resolveAuthGuard({
     authRequired: parseAuthRequired(import.meta.env.VITE_AUTH_REQUIRED),
