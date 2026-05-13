@@ -23,6 +23,7 @@ import {
   RefreshCw,
   CircleCheck,
   Loader2,
+  AlertTriangle,
 } from 'lucide-react';
 import {
   type PlannerPhase,
@@ -32,7 +33,13 @@ import {
   finishPlannerSubmission,
   startPlannerSubmission,
 } from './planner-phase';
-import { calculateRoute, type BackendLocation, type BackendRouteOption, type RouteMode } from '@/lib/api';
+import {
+  calculateRoute,
+  rerouteBooking,
+  type BackendLocation,
+  type BackendRouteOption,
+  type RouteMode,
+} from '@/lib/api';
 import { usePlacesAutocomplete } from '@/hooks/usePlacesAutocomplete';
 
 export type Preference = PlannerPreference;
@@ -41,6 +48,7 @@ export type DateSlot = 'now' | 'today' | 'tomorrow' | 'pick';
 
 export type RouteOption = {
   id: PlannerRouteId;
+  backendRouteId: string; // the actual route_{uuid} stored by the backend
   name: string;
   type: Preference;
   label: string;
@@ -80,6 +88,7 @@ export const LOCATION_SUGGESTIONS = [
 export const MOCK_ROUTES: RouteOption[] = [
   {
     id: 'eco',
+    backendRouteId: '',
     name: 'Green Corridor',
     type: 'eco',
     label: 'Recommended · Eco',
@@ -104,6 +113,7 @@ export const MOCK_ROUTES: RouteOption[] = [
   },
   {
     id: 'fast',
+    backendRouteId: '',
     name: 'Express',
     type: 'fast',
     label: 'Fastest',
@@ -126,6 +136,7 @@ export const MOCK_ROUTES: RouteOption[] = [
   },
   {
     id: 'cheap',
+    backendRouteId: '',
     name: 'Budget',
     type: 'cheap',
     label: 'Cheapest',
@@ -321,6 +332,7 @@ function toRouteOption(option: BackendRouteOption, destinationLabel?: string): R
 
   return {
     id,
+    backendRouteId: option.routeId,
     name: ROUTE_NAME_BY_ID[id],
     type: id,
     label: ROUTE_LABEL_BY_ID[id],
@@ -512,6 +524,59 @@ export function usePlannerState() {
   const loading = phase === 'loading';
   const submitted = phase === 'results';
 
+  // Journey + reroute state ─────────────────────────────────────────────────
+  const [bookingId, setBookingId] = useState<string | null>(null);
+  const [journeyActive, setJourneyActive] = useState(false);
+  const [rerouteInFlight, setRerouteInFlight] = useState(false);
+  const [rerouteCount, setRerouteCount] = useState(0);
+
+  const startJourney = (id: string) => {
+    setBookingId(id);
+    setJourneyActive(true);
+    setRerouteCount(0);
+  };
+
+  const triggerMissedStop = async (route: RouteOption) => {
+    if (!bookingId || rerouteInFlight) return;
+    setRerouteInFlight(true);
+    try {
+      const pos = await new Promise<GeolocationPosition>((resolve, reject) =>
+        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 8000 }),
+      );
+      const result = await rerouteBooking(bookingId, {
+        currentLocation: {
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+        },
+        reason: 'missed_stop',
+      });
+
+      const count = rerouteCount + 1;
+      setRerouteCount(count);
+
+      if (result.action === 'reroute' && result.newRoute) {
+        const newOpt = toRouteOption(result.newRoute, route.name);
+        setRoutes((prev) => prev.map((r) => (r.id === route.id ? newOpt : r)));
+        toast.success(result.userMessage, { duration: 6000 });
+      } else if (result.action === 'wait_and_continue') {
+        toast.success(result.userMessage, { duration: 6000 });
+      } else {
+        toast.error(result.userMessage, { duration: 8000 });
+        if (result.agentSource === 'cap' || count >= 3) {
+          setJourneyActive(false);
+        }
+      }
+    } catch (err) {
+      if (err instanceof Error && err.name === 'GeolocationPositionError') {
+        toast.error('Location access denied. Please enable location to use this feature.');
+      } else {
+        toast.error('Could not reach the server. Please try again.');
+      }
+    } finally {
+      setRerouteInFlight(false);
+    }
+  };
+
   return {
     origin, setOrigin: handleSetOrigin, destination, setDestination: handleSetDestination,
     originCoords, setOriginCoords, destCoords, setDestCoords,
@@ -519,7 +584,11 @@ export function usePlannerState() {
     preference, setPreference, passengers, setPassengers,
     modes, toggleMode, showAdvanced, setShowAdvanced,
     phase, loading, submitted, selectedRouteId, setSelectedRouteId,
-    routes, submittedTrip,
+    routes, setRoutes, submittedTrip,
+    bookingId, setBookingId,
+    journeyActive, startJourney,
+    rerouteInFlight, rerouteCount,
+    triggerMissedStop,
     swap, submit, reset,
   };
 }
@@ -1184,15 +1253,51 @@ function MiniStat({ label, value, accent }: { label: string; value: string; acce
   );
 }
 
-export function DirectionsPanel({ route }: { route: RouteOption }) {
+type DirectionsPanelProps = {
+  route: RouteOption;
+  journeyActive?: boolean;
+  rerouteInFlight?: boolean;
+  rerouteCount?: number;
+  onStartJourney?: () => void;
+  onMissedStop?: () => void;
+};
+
+export function DirectionsPanel({
+  route,
+  journeyActive = false,
+  rerouteInFlight = false,
+  rerouteCount = 0,
+  onStartJourney,
+  onMissedStop,
+}: DirectionsPanelProps) {
+  const remainingReroutes = Math.max(0, 3 - rerouteCount);
+
   return (
     <div className="theme-card p-6 md:p-8 lg:p-10">
       <div className="flex items-center justify-between">
         <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
-          § Step-by-Step — Directions
+          {journeyActive ? '§ Journey Active — Directions' : '§ Step-by-Step — Directions'}
         </div>
-        <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-muted)' }}>
-          {route.steps.length} stops
+        <div className="flex items-center gap-3">
+          {journeyActive && (
+            <span
+              className="theme-mono-sm flex items-center gap-1.5 rounded-full px-2.5 py-1"
+              style={{
+                background: 'color-mix(in srgb, var(--theme-accent) 15%, transparent)',
+                color: 'var(--theme-accent)',
+                border: '1px solid var(--theme-accent-muted)',
+              }}
+            >
+              <span
+                className="inline-block h-1.5 w-1.5 animate-pulse rounded-full"
+                style={{ background: 'var(--theme-accent)' }}
+              />
+              Live
+            </span>
+          )}
+          <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-muted)' }}>
+            {route.steps.length} stops
+          </div>
         </div>
       </div>
 
@@ -1237,20 +1342,78 @@ export function DirectionsPanel({ route }: { route: RouteOption }) {
         ))}
       </ol>
 
-      <div className="theme-action-bar mt-8">
-        <button className="theme-btn-primary theme-action-bar-primary">
-          <span className="theme-action-label">
-            <span className="sm:hidden">Start</span>
-            <span className="hidden sm:inline">Start journey</span>
-          </span>
-          <ArrowRight size={14} />
-        </button>
-        <div className="theme-action-bar-icons">
-          <button className="theme-btn-ghost h-12 w-12 px-0 sm:w-auto sm:px-6" aria-label="Save route">
-            <span className="theme-action-label hidden sm:inline">Save route</span>
-            <Star className="sm:hidden" size={14} />
-          </button>
-        </div>
+      {/* ── Journey action bar ─────────────────────────────────────────── */}
+      <div className="mt-8 flex flex-col gap-3">
+        {!journeyActive ? (
+          <div className="theme-action-bar">
+            <button
+              type="button"
+              onClick={onStartJourney}
+              disabled={!onStartJourney}
+              className="theme-btn-primary theme-action-bar-primary disabled:opacity-50"
+            >
+              <span className="theme-action-label">
+                <span className="sm:hidden">Start</span>
+                <span className="hidden sm:inline">Start journey</span>
+              </span>
+              <ArrowRight size={14} />
+            </button>
+            <div className="theme-action-bar-icons">
+              <button
+                type="button"
+                className="theme-btn-ghost h-12 w-12 px-0 sm:w-auto sm:px-6"
+                aria-label="Save route"
+              >
+                <span className="theme-action-label hidden sm:inline">Save route</span>
+                <Star className="sm:hidden" size={14} />
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* "I missed my Stop" button */}
+            <motion.button
+              type="button"
+              onClick={onMissedStop}
+              disabled={rerouteInFlight || remainingReroutes === 0}
+              whileHover={!rerouteInFlight && remainingReroutes > 0 ? { scale: 1.01 } : {}}
+              whileTap={!rerouteInFlight && remainingReroutes > 0 ? { scale: 0.98 } : {}}
+              transition={{ duration: 0.2 }}
+              className="flex w-full items-center justify-center gap-2.5 rounded-[14px] px-5 py-3.5 text-[0.95rem] font-medium transition-all disabled:opacity-50"
+              style={{
+                background: rerouteInFlight
+                  ? 'var(--theme-surface-muted)'
+                  : 'color-mix(in srgb, #f59e0b 12%, var(--theme-bg))',
+                color: rerouteInFlight ? 'var(--theme-fg-muted)' : '#d97706',
+                border: `1px solid ${rerouteInFlight ? 'var(--theme-border)' : 'color-mix(in srgb, #f59e0b 35%, transparent)'}`,
+              }}
+              aria-label="I missed my stop"
+            >
+              {rerouteInFlight ? (
+                <>
+                  <RefreshCw size={15} className="animate-spin" />
+                  <span>Asking Gemini for a new route…</span>
+                </>
+              ) : (
+                <>
+                  <AlertTriangle size={15} />
+                  <span>I missed my Stop</span>
+                </>
+              )}
+            </motion.button>
+
+            {/* Reroute usage hint */}
+            {remainingReroutes > 0 ? (
+              <p className="text-center text-[0.75rem]" style={{ color: 'var(--theme-fg-dim)' }}>
+                {remainingReroutes} reroute{remainingReroutes !== 1 ? 's' : ''} remaining
+              </p>
+            ) : (
+              <p className="text-center text-[0.75rem]" style={{ color: 'var(--theme-fg-dim)' }}>
+                Reroute limit reached — contact support if needed.
+              </p>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

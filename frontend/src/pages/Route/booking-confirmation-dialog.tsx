@@ -1,17 +1,21 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 import {
   ArrowRight,
   CalendarClock,
   CircleCheck,
   Leaf,
+  Loader2,
   TicketCheck,
   Users,
   Wallet,
   X,
 } from 'lucide-react';
 
+import { createBooking } from '@/lib/api';
+import { getUserIdFromSession } from '@/lib/session';
 import { createBookingSummary } from './booking-summary';
 import type { PlannerState, RouteOption } from './shared';
 
@@ -28,7 +32,7 @@ type BookingActionBarProps = BookingProps & {
 
 type BookingConfirmationDialogProps = BookingProps & {
   onCancel: () => void;
-  onConfirm: () => void;
+  onConfirm: (bookingId: string) => void;
 };
 
 export function BookingActionBar({ state, route, onBook }: BookingActionBarProps) {
@@ -104,6 +108,21 @@ export function BookingConfirmationDialog({
   onConfirm,
 }: BookingConfirmationDialogProps) {
   const summary = getBookingSummary(state, route);
+  const [booking, setBooking] = useState(false);
+
+  const handleConfirm = async () => {
+    if (booking) return;
+    setBooking(true);
+    try {
+      const userId = getUserIdFromSession() ?? 'guest';
+      const result = await createBooking({ userId, routeId: route.backendRouteId });
+      onConfirm(result.bookingId);
+    } catch {
+      toast.error('Could not create booking. Please try again.');
+    } finally {
+      setBooking(false);
+    }
+  };
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -357,22 +376,33 @@ export function BookingConfirmationDialog({
               >
                 <button
                   type="button"
-                  onClick={onConfirm}
+                  onClick={handleConfirm}
+                  disabled={booking}
                   aria-label="Confirm booking"
-                  className="theme-btn-primary theme-action-bar-primary h-12"
+                  className="theme-btn-primary theme-action-bar-primary h-12 disabled:opacity-70"
                 >
-                  <span className="theme-action-label">
-                    <span className="sm:hidden">Confirm</span>
-                    <span className="hidden sm:inline">Confirm booking</span>
-                  </span>
-                  <CircleCheck size={14} />
+                  {booking ? (
+                    <>
+                      <Loader2 size={14} className="animate-spin" />
+                      <span className="theme-action-label">Booking…</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="theme-action-label">
+                        <span className="sm:hidden">Confirm</span>
+                        <span className="hidden sm:inline">Confirm booking</span>
+                      </span>
+                      <CircleCheck size={14} />
+                    </>
+                  )}
                 </button>
                 <div className="theme-action-bar-icons">
                   <button
                     type="button"
                     onClick={onCancel}
+                    disabled={booking}
                     aria-label="Cancel booking"
-                    className="theme-btn-ghost h-12 w-12 shrink-0 justify-center px-0 sm:w-auto sm:px-6"
+                    className="theme-btn-ghost h-12 w-12 shrink-0 justify-center px-0 disabled:opacity-50 sm:w-auto sm:px-6"
                   >
                     <X size={15} />
                     <span className="theme-action-label hidden sm:inline">Cancel</span>

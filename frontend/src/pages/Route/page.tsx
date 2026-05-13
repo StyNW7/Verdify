@@ -29,7 +29,13 @@ export default function RoutePlannerPage() {
 
   const openBookingDialog = useCallback(() => setBookingDialogOpen(true), []);
   const closeBookingDialog = useCallback(() => setBookingDialogOpen(false), []);
-  const confirmBooking = useCallback(() => setBookingDialogOpen(false), []);
+  const confirmBooking = useCallback(
+    (bookingId: string) => {
+      state.startJourney(bookingId);
+      setBookingDialogOpen(false);
+    },
+    [state],
+  );
 
   useEffect(() => {
     if (state.phase === 'idle') return;
@@ -175,7 +181,14 @@ export default function RoutePlannerPage() {
               transition={{ duration: 0.7, delay: 0.05, ease: [0.2, 0.7, 0.2, 1] }}
               className="mt-12 grid gap-7 sm:mt-20 xl:grid-cols-[1.35fr_0.95fr]"
             >
-              <DirectionsPanel route={selectedRoute} />
+              <DirectionsPanel
+                route={selectedRoute}
+                journeyActive={state.journeyActive}
+                rerouteInFlight={state.rerouteInFlight}
+                rerouteCount={state.rerouteCount}
+                onStartJourney={openBookingDialog}
+                onMissedStop={() => state.triggerMissedStop(selectedRoute)}
+              />
               <ImpactPanel route={selectedRoute} />
             </motion.section>
           )}
