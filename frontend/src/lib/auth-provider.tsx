@@ -16,6 +16,7 @@ import {
 } from 'firebase/auth';
 
 import { getFirebaseAuth, isFirebaseConfigured } from '@/lib/firebase';
+import { parseAuthRequired } from '@/lib/auth-guard';
 import {
   createAuthStore,
   type AuthSeams,
@@ -86,7 +87,21 @@ export function AuthProvider({ children, authInstance, seams }: ProviderProps) {
   const store = useMemo(() => {
     if (seams) return createAuthStore(seams);
     if (authInstance) return createAuthStore(firebaseSeams(authInstance));
-    if (!isFirebaseConfigured()) return createAuthStore(stubSeams());
+    // The env flag is authoritative about which mode we're in. Dev bypass
+    // (VITE_AUTH_REQUIRED unset or "false") never touches the Firebase SDK,
+    // even if VITE_FIREBASE_* happens to be filled in — identity comes
+    // from VITE_DEV_USER_ID via auth-guard.ts.
+    const authRequired = parseAuthRequired(import.meta.env.VITE_AUTH_REQUIRED);
+    if (!authRequired) return createAuthStore(stubSeams());
+    // Real-auth mode: if Firebase config is missing this is a misconfig.
+    // Fall back to stub seams so the app still mounts; the login page
+    // will surface the real error when the user tries to sign in.
+    if (!isFirebaseConfigured()) {
+      console.warn(
+        '[auth] VITE_AUTH_REQUIRED=true but VITE_FIREBASE_API_KEY is empty — sign-in will fail.',
+      );
+      return createAuthStore(stubSeams());
+    }
     return createAuthStore(firebaseSeams(getFirebaseAuth()));
   }, [authInstance, seams]);
 
