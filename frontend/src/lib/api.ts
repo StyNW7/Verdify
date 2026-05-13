@@ -311,6 +311,9 @@ export type UserRecord = {
   totalRedeemed: number;
   createdAt: string;
   presetAvatar?: string;
+  preferredTransport?: string;
+  preferredRouteMode?: string;
+  language?: string;
 };
 
 // UserPatch mirrors the validator's allow-list on the backend. Only fields
@@ -318,6 +321,9 @@ export type UserRecord = {
 export type UserPatch = {
   displayName?: string;
   presetAvatar?: '🌿' | '🦊' | '🌊' | '🌙' | '🐝' | '🪴';
+  preferredTransport?: 'Transit' | 'Cycle' | 'Carpool' | 'Walk';
+  preferredRouteMode?: 'Fastest' | 'Greenest' | 'Cheapest' | 'Balanced';
+  language?: 'en' | 'ms' | 'zh' | 'ta';
 };
 
 export function getUser(userId: string) {
