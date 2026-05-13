@@ -535,3 +535,263 @@ func TestFirestore_GetUser_RoundTripsAllFields(t *testing.T) {
 		t.Fatalf("CreatedAt zero")
 	}
 }
+
+// ─── ListLeaderboard integration tests ───────────────────────────────────────
+
+func TestFirestore_ListLeaderboard_EmptyStore(t *testing.T) {
+	store, cleanup := newEmulatorStore(t)
+	defer cleanup()
+
+	entries, err := store.ListLeaderboard(context.Background(), 50)
+	if err != nil {
+		t.Fatalf("ListLeaderboard: %v", err)
+	}
+	if len(entries) != 0 {
+		t.Fatalf("want empty slice, got len=%d", len(entries))
+	}
+}
+
+func TestFirestore_ListLeaderboard_OrderAndLimit(t *testing.T) {
+	store, cleanup := newEmulatorStore(t)
+	defer cleanup()
+
+	ctx := context.Background()
+	base := time.Now().UTC().Truncate(time.Second)
+
+	// Create 4 users with varying points and controlled createdAt.
+	specs := []struct {
+		uid    string
+		name   string
+		points int
+		offset time.Duration
+	}{
+		{"uid_lb_c", "Charlie", 300, 3 * time.Hour},
+		{"uid_lb_a", "Alpha", 700, 1 * time.Hour},
+		{"uid_lb_b", "Beta", 500, 2 * time.Hour},
+		{"uid_lb_d", "Delta", 100, 4 * time.Hour},
+	}
+	for _, sp := range specs {
+		u, _, err := store.EnsureUser(ctx, sp.uid, models.UserProfile{
+			Email:       sp.uid + "@example.com",
+			DisplayName: sp.name,
+		})
+		if err != nil {
+			t.Fatalf("EnsureUser %s: %v", sp.uid, err)
+		}
+		// Apply a booking to set points.
+		bid := "bk_lb_" + sp.uid
+		if err := store.CreateBooking(ctx, models.Booking{
+			ID:        bid,
+			UserID:    u.ID,
+			Status:    "confirmed",
+			CreatedAt: base.Add(sp.offset),
+		}); err != nil {
+			t.Fatalf("CreateBooking %s: %v", sp.uid, err)
+		}
+		if _, _, err := store.ApplyCompletedTrip(ctx, bid, sp.points, 0, base.Add(sp.offset)); err != nil {
+			t.Fatalf("ApplyCompletedTrip %s: %v", sp.uid, err)
+		}
+	}
+
+	entries, err := store.ListLeaderboard(ctx, 3)
+	if err != nil {
+		t.Fatalf("ListLeaderboard: %v", err)
+	}
+	if len(entries) != 3 {
+		t.Fatalf("want 3 entries (limit=3), got %d", len(entries))
+	}
+	// Top 3 must be Alpha(700), Beta(500), Charlie(300) in that order.
+	wantUIDs := []string{"uid_lb_a", "uid_lb_b", "uid_lb_c"}
+	wantRanks := []int{1, 2, 3}
+	for i, e := range entries {
+		if e.UserID != wantUIDs[i] {
+			t.Errorf("position %d: uid = %q, want %q", i, e.UserID, wantUIDs[i])
+		}
+		if e.Rank != wantRanks[i] {
+			t.Errorf("position %d: rank = %d, want %d", i, e.Rank, wantRanks[i])
+		}
+	}
+}
+
+func TestFirestore_ListLeaderboard_TieBreak(t *testing.T) {
+	store, cleanup := newEmulatorStore(t)
+	defer cleanup()
+
+	ctx := context.Background()
+	base := time.Now().UTC().Truncate(time.Second)
+
+	// Two users with same points but different createdAt.
+	// "older" has an earlier createdAt so must rank first in a tie.
+	for _, sp := range []struct {
+		uid    string
+		offset time.Duration
+	}{
+		{"uid_tie_newer", 2 * time.Hour},
+		{"uid_tie_older", 1 * time.Hour},
+	} {
+		_, _, err := store.EnsureUser(ctx, sp.uid, models.UserProfile{
+			Email:       sp.uid + "@example.com",
+			DisplayName: sp.uid,
+		})
+		if err != nil {
+			t.Fatalf("EnsureUser %s: %v", sp.uid, err)
+		}
+		// Explicitly overwrite createdAt to a deterministic value so the
+		// tie-break is driven by our offsets, not by wall-clock jitter.
+		if _, err := store.users.Doc(sp.uid).Update(ctx, []firestore.Update{
+			{Path: "createdAt", Value: base.Add(sp.offset)},
+		}); err != nil {
+			t.Fatalf("backdoor createdAt update %s: %v", sp.uid, err)
+		}
+		bid := "bk_tie_" + sp.uid
+		if err := store.CreateBooking(ctx, models.Booking{
+			ID:        bid,
+			UserID:    sp.uid,
+			Status:    "confirmed",
+			CreatedAt: base.Add(sp.offset),
+		}); err != nil {
+			t.Fatalf("CreateBooking: %v", err)
+		}
+		if _, _, err := store.ApplyCompletedTrip(ctx, bid, 500, 0, base.Add(sp.offset)); err != nil {
+			t.Fatalf("ApplyCompletedTrip: %v", err)
+		}
+	}
+
+	entries, err := store.ListLeaderboard(ctx, 10)
+	if err != nil {
+		t.Fatalf("ListLeaderboard: %v", err)
+	}
+	if len(entries) != 2 {
+		t.Fatalf("want 2 entries, got %d", len(entries))
+	}
+	if entries[0].UserID != "uid_tie_older" {
+		t.Errorf("rank 1 uid = %q, want uid_tie_older", entries[0].UserID)
+	}
+}
+
+func TestFirestore_GetUserRank_TieBreak(t *testing.T) {
+	store, cleanup := newEmulatorStore(t)
+	defer cleanup()
+
+	ctx := context.Background()
+	base := time.Now().UTC().Truncate(time.Second)
+
+	// Three users with identical greenPointsBalance; tie-break is createdAt asc.
+	users := []struct {
+		uid        string
+		offset     time.Duration
+		wantRank   int
+	}{
+		{"uid_gb_early", 1 * time.Hour, 1},
+		{"uid_gb_mid", 2 * time.Hour, 2},
+		{"uid_gb_late", 3 * time.Hour, 3},
+	}
+	for _, u := range users {
+		_, _, err := store.EnsureUser(ctx, u.uid, models.UserProfile{
+			Email:       u.uid + "@example.com",
+			DisplayName: u.uid,
+		})
+		if err != nil {
+			t.Fatalf("EnsureUser %s: %v", u.uid, err)
+		}
+		// Pin createdAt to a deterministic value.
+		if _, err := store.users.Doc(u.uid).Update(ctx, []firestore.Update{
+			{Path: "createdAt", Value: base.Add(u.offset)},
+		}); err != nil {
+			t.Fatalf("backdoor createdAt update %s: %v", u.uid, err)
+		}
+		bid := "bk_gb_" + u.uid
+		if err := store.CreateBooking(ctx, models.Booking{
+			ID:        bid,
+			UserID:    u.uid,
+			Status:    "confirmed",
+			CreatedAt: base.Add(u.offset),
+		}); err != nil {
+			t.Fatalf("CreateBooking %s: %v", u.uid, err)
+		}
+		if _, _, err := store.ApplyCompletedTrip(ctx, bid, 300, 0, base.Add(u.offset)); err != nil {
+			t.Fatalf("ApplyCompletedTrip %s: %v", u.uid, err)
+		}
+	}
+
+	for _, u := range users {
+		rank, total, err := store.GetUserRank(ctx, u.uid)
+		if err != nil {
+			t.Fatalf("GetUserRank %s: %v", u.uid, err)
+		}
+		if rank != u.wantRank {
+			t.Errorf("uid=%s rank=%d want %d", u.uid, rank, u.wantRank)
+		}
+		if total != 3 {
+			t.Errorf("uid=%s total=%d want 3", u.uid, total)
+		}
+	}
+}
+
+// ─── GetUserRank integration tests ───────────────────────────────────────────
+
+func TestFirestore_GetUserRank_UnknownUID(t *testing.T) {
+	store, cleanup := newEmulatorStore(t)
+	defer cleanup()
+
+	rank, total, err := store.GetUserRank(context.Background(), "uid_ghost_"+uuid.NewString()[:6])
+	if err != nil {
+		t.Fatalf("GetUserRank: %v", err)
+	}
+	if rank != 0 || total != 0 {
+		t.Errorf("want (0,0) for unknown uid, got (%d,%d)", rank, total)
+	}
+}
+
+func TestFirestore_GetUserRank_ThreeUsers(t *testing.T) {
+	store, cleanup := newEmulatorStore(t)
+	defer cleanup()
+
+	ctx := context.Background()
+	base := time.Now().UTC().Truncate(time.Second)
+
+	uids := []string{"uid_rank_top", "uid_rank_mid", "uid_rank_bot"}
+	pts := []int{1000, 500, 100}
+	for i, uid := range uids {
+		_, _, err := store.EnsureUser(ctx, uid, models.UserProfile{
+			Email:       uid + "@example.com",
+			DisplayName: uid,
+		})
+		if err != nil {
+			t.Fatalf("EnsureUser %s: %v", uid, err)
+		}
+		bid := "bk_rank_" + uid
+		if err := store.CreateBooking(ctx, models.Booking{
+			ID:        bid,
+			UserID:    uid,
+			Status:    "confirmed",
+			CreatedAt: base.Add(time.Duration(i) * time.Hour),
+		}); err != nil {
+			t.Fatalf("CreateBooking %s: %v", uid, err)
+		}
+		if _, _, err := store.ApplyCompletedTrip(ctx, bid, pts[i], 0, base.Add(time.Duration(i)*time.Hour)); err != nil {
+			t.Fatalf("ApplyCompletedTrip %s: %v", uid, err)
+		}
+	}
+
+	cases := []struct {
+		uid      string
+		wantRank int
+	}{
+		{"uid_rank_top", 1},
+		{"uid_rank_mid", 2},
+		{"uid_rank_bot", 3},
+	}
+	for _, tc := range cases {
+		rank, total, err := store.GetUserRank(ctx, tc.uid)
+		if err != nil {
+			t.Fatalf("GetUserRank %s: %v", tc.uid, err)
+		}
+		if rank != tc.wantRank {
+			t.Errorf("uid=%s rank=%d want %d", tc.uid, rank, tc.wantRank)
+		}
+		if total != 3 {
+			t.Errorf("uid=%s total=%d want 3", tc.uid, total)
+		}
+	}
+}

@@ -40,13 +40,16 @@ These are one-time steps that must be completed in the Firebase console before G
 
 ### Firestore indexes
 
-`backend/firestore.indexes.json` declares the composite indexes
-`ListUserBookings` needs plus single-field exemptions for long-text
-`routeSnapshot.*` fields that are never queried. Deploy with:
+`backend/firestore.indexes.json` declares the composite indexes required by
+`ListUserBookings` and `ListLeaderboard`, plus single-field exemptions for
+long-text `routeSnapshot.*` fields that are never queried. Deploy with:
 
 ```bash
-firebase deploy --only firestore:indexes
+firebase deploy --only firestore:indexes --project verdify-dbb84
 ```
+
+The leaderboard index covers the `(greenPointsBalance DESC, createdAt ASC)`
+ordering on the `users` collection, required by `GET /api/v1/leaderboard`.
 
 ### Emulator integration tests
 
