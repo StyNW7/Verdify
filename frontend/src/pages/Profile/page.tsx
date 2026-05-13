@@ -104,7 +104,7 @@ function ProfileHeader() {
             color: 'var(--theme-fg-dim)',
           }}
         >
-          Last synced · moments ago
+          Live snapshot
         </span>
       </div>
     </motion.header>
