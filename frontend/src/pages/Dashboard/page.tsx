@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowUpRight,
@@ -13,7 +13,10 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router';
 
-import { useGreenPoints } from '@/hooks/useGreenPoints';
+import { useAuth } from '@/lib/auth-provider';
+import { useUserDoc } from '@/lib/user-doc-provider';
+import { useBookingUserId } from '@/hooks/useBookingUserId';
+import { listUserBookings, type BookingRecord } from '@/lib/api';
 
 type Stat = {
   label: string;
@@ -32,45 +35,43 @@ type Trip = {
   points: number;
 };
 
-const USER_FIRST_NAME = 'Stanley';
-
-function buildStats(greenPoints: number | null, loading: boolean): Stat[] {
-  const greenPointsDisplay =
-    greenPoints === null
-      ? loading
-        ? '—'
-        : '0'
-      : greenPoints.toLocaleString('en-US');
+function buildStats(
+  greenPoints: number,
+  totalTrips: number,
+  totalCarbonSaved: number,
+  totalEarned: number,
+): Stat[] {
   return [
     {
       label: 'Total CO₂ saved',
-      value: '125.4',
+      value: totalCarbonSaved > 0 ? (totalCarbonSaved / 1000).toFixed(1) : '0',
       unit: 'kg',
-      delta: { value: '+12.3', direction: 'up', note: 'vs last month' },
+      delta: { value: '+0', direction: 'flat', note: 'all time' },
       icon: Leaf,
     },
     {
       label: 'Green points',
-      value: greenPointsDisplay,
-      delta: { value: '+180', direction: 'up', note: 'this week' },
+      value: greenPoints.toLocaleString('en-US'),
+      delta: { value: `+${totalEarned}`, direction: 'up', note: 'total earned' },
       icon: Star,
     },
     {
       label: 'Global rank',
-      value: '#42',
-      delta: { value: '+3', direction: 'up', note: 'climbed' },
+      value: '#—',
+      delta: { value: '—', direction: 'flat', note: '' },
       icon: Trophy,
     },
     {
-      label: 'Streak',
-      value: '14',
-      unit: 'days',
-      delta: { value: '+1', direction: 'up', note: 'keep going' },
+      label: 'Trips completed',
+      value: String(totalTrips),
+      unit: '',
+      delta: { value: '+0', direction: 'flat', note: 'keep going' },
       icon: Flame,
     },
   ];
 }
 
+// TODO: weekly carbon aggregation endpoint
 const weeklyTrend: { day: string; kg: number }[] = [
   { day: 'Mon', kg: 3.2 },
   { day: 'Tue', kg: 5.8 },
@@ -81,32 +82,44 @@ const weeklyTrend: { day: string; kg: number }[] = [
   { day: 'Sun', kg: 3.7 },
 ];
 
-const recentTrips: Trip[] = [
-  {
-    when: 'Today · 08:04',
-    from: 'Bukit Indah',
-    to: 'CIQ Johor',
-    mode: 'Transit',
-    co2Saved: '1.24',
-    points: 80,
-  },
-  {
-    when: 'Yesterday · 17:40',
-    from: 'Home',
-    to: 'Office Tower',
-    mode: 'Carpool',
-    co2Saved: '0.82',
-    points: 50,
-  },
-  {
-    when: 'Mon · 07:55',
-    from: 'Taman Molek',
-    to: 'Plaza Pelangi',
-    mode: 'Cycle',
-    co2Saved: '1.60',
-    points: 120,
-  },
-];
+function bookingToTrip(b: BookingRecord): Trip {
+  const snap = b.routeSnapshot;
+  const createdAt = new Date(b.createdAt);
+  const now = new Date();
+  const diffDays = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
+
+  let whenPrefix: string;
+  if (diffDays === 0) whenPrefix = 'Today';
+  else if (diffDays === 1) whenPrefix = 'Yesterday';
+  else {
+    whenPrefix = createdAt.toLocaleDateString('en-US', { weekday: 'short' });
+  }
+  const timeStr = createdAt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+  const when = `${whenPrefix} · ${timeStr}`;
+
+  const steps = snap.steps ?? [];
+  const firstStep = steps[0];
+  const lastStep = steps[steps.length - 1];
+  const from = firstStep?.departureStop || firstStep?.startLocation?.address || 'Origin';
+  const to = lastStep?.arrivalStop || lastStep?.endLocation?.address || 'Destination';
+
+  const modeMap: Record<string, Trip['mode']> = {
+    fast: 'Transit',
+    eco: 'Transit',
+    cheap: 'Transit',
+    transit: 'Transit',
+    cycle: 'Cycle',
+    carpool: 'Carpool',
+    walk: 'Walk',
+  };
+  const mode = modeMap[snap.mode?.toLowerCase() ?? ''] ?? 'Transit';
+
+  const carbonSavedGrams = snap.carbonSavedGrams ?? 0;
+  const co2Saved = carbonSavedGrams > 0 ? (carbonSavedGrams / 1000).toFixed(2) : '0.00';
+  const points = b.actualPoints > 0 ? b.actualPoints : b.estimatedPoints;
+
+  return { when, from, to, mode, co2Saved, points };
+}
 
 type MobileTab = 'overview' | 'trends' | 'trips' | 'impact';
 
@@ -119,8 +132,39 @@ const mobileTabs: { id: MobileTab; num: string; label: string }[] = [
 
 export default function DashboardPage() {
   const [tab, setTab] = useState<MobileTab>('overview');
-  const { currentBalance, loading: pointsLoading } = useGreenPoints();
-  const stats = buildStats(currentBalance, pointsLoading);
+  const { user } = useAuth();
+  const { doc: userDoc } = useUserDoc();
+  const userId = useBookingUserId();
+
+  const firstName = (user?.displayName?.trim().split(/\s+/)[0]) ?? 'there';
+
+  const greenPoints = userDoc?.greenPointsBalance ?? 0;
+  const totalTrips = userDoc?.totalTripsCompleted ?? 0;
+  const totalCarbonSaved = userDoc?.totalCarbonSaved ?? 0;
+  const totalEarned = userDoc?.totalEarned ?? 0;
+
+  const stats = buildStats(greenPoints, totalTrips, totalCarbonSaved, totalEarned);
+
+  const [trips, setTrips] = useState<Trip[]>([]);
+  const [tripsLoading, setTripsLoading] = useState(true);
+
+  useEffect(() => {
+    if (!userId) {
+      setTrips([]);
+      setTripsLoading(false);
+      return;
+    }
+    setTripsLoading(true);
+    listUserBookings(userId, { limit: 3 })
+      .then(({ bookings }) => {
+        setTrips(bookings.map(bookingToTrip));
+        setTripsLoading(false);
+      })
+      .catch(() => {
+        setTrips([]);
+        setTripsLoading(false);
+      });
+  }, [userId]);
 
   return (
     <div
@@ -141,7 +185,7 @@ export default function DashboardPage() {
               className="theme-italic"
               style={{ color: 'var(--theme-accent)' }}
             >
-              {USER_FIRST_NAME}.
+              {firstName}.
             </span>
           </h1>
           <p
@@ -221,7 +265,7 @@ export default function DashboardPage() {
 
       <section className="mt-0 grid grid-cols-1 gap-5 lg:mt-8 lg:grid-cols-[1.1fr_0.9fr]">
         <div className={`${tab === 'trips' ? '' : 'hidden'} lg:!block`}>
-          <RecentTripsCard trips={recentTrips} />
+          <RecentTripsCard trips={trips} loading={tripsLoading} />
         </div>
         <div className={`${tab === 'impact' ? '' : 'hidden'} lg:!block`}>
           <ImpactLedgerCard />
@@ -528,7 +572,7 @@ function AIRecommendationCard() {
           style={{ color: 'var(--theme-accent-muted)' }}
           aria-hidden
         >
-          “
+          "
         </span>
         Leave at{' '}
         <span
@@ -565,7 +609,7 @@ function AIRecommendationCard() {
   );
 }
 
-function RecentTripsCard({ trips }: { trips: Trip[] }) {
+function RecentTripsCard({ trips, loading }: { trips: Trip[]; loading: boolean }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -596,81 +640,97 @@ function RecentTripsCard({ trips }: { trips: Trip[] }) {
         </div>
       </div>
 
-      <ul className="mt-5 flex flex-col gap-3">
-        {trips.map((trip, i) => (
-          <motion.li
-            key={i}
-            initial={{ opacity: 0, x: -8 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.55 + i * 0.08 }}
-            className="group flex items-center gap-4 rounded-[14px] border p-4 transition-colors duration-300 hover:border-[var(--theme-accent-muted)]"
-            style={{
-              borderColor: 'var(--theme-border)',
-              background: 'var(--theme-surface-muted)',
-            }}
-          >
-            <span
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
+      {loading ? (
+        <div className="mt-5 flex items-center justify-center py-8">
+          <div
+            className="h-5 w-5 animate-spin rounded-full"
+            style={{ border: '2px solid var(--theme-border-strong)', borderTopColor: 'var(--theme-accent)' }}
+          />
+        </div>
+      ) : trips.length === 0 ? (
+        <p
+          className="mt-5 py-8 text-center text-[0.9rem]"
+          style={{ color: 'var(--theme-fg-muted)' }}
+        >
+          No trips yet — plan one
+        </p>
+      ) : (
+        <ul className="mt-5 flex flex-col gap-3">
+          {trips.map((trip, i) => (
+            <motion.li
+              key={i}
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.4, delay: 0.55 + i * 0.08 }}
+              className="group flex items-center gap-4 rounded-[14px] border p-4 transition-colors duration-300 hover:border-[var(--theme-accent-muted)]"
               style={{
-                background: 'var(--theme-accent-soft)',
-                color: 'var(--theme-accent)',
-                border: '1px solid var(--theme-accent-muted)',
+                borderColor: 'var(--theme-border)',
+                background: 'var(--theme-surface-muted)',
               }}
             >
-              <MapPin className="h-[15px] w-[15px]" strokeWidth={1.8} />
-            </span>
+              <span
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
+                style={{
+                  background: 'var(--theme-accent-soft)',
+                  color: 'var(--theme-accent)',
+                  border: '1px solid var(--theme-accent-muted)',
+                }}
+              >
+                <MapPin className="h-[15px] w-[15px]" strokeWidth={1.8} />
+              </span>
 
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                <span
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="theme-mono-sm"
+                    style={{ color: 'var(--theme-fg-dim)' }}
+                  >
+                    {trip.when}
+                  </span>
+                  <span
+                    className="theme-mono-sm rounded-full border px-1.5 py-0.5"
+                    style={{
+                      borderColor: 'var(--theme-border)',
+                      color: 'var(--theme-fg-muted)',
+                      fontSize: '0.52rem',
+                    }}
+                  >
+                    {trip.mode}
+                  </span>
+                </div>
+                <p
+                  className="mt-1 truncate text-[0.95rem]"
+                  style={{ color: 'var(--theme-fg)' }}
+                >
+                  {trip.from}{' '}
+                  <span
+                    className="theme-italic mx-1"
+                    style={{ color: 'var(--theme-fg-dim)' }}
+                  >
+                    to
+                  </span>{' '}
+                  {trip.to}
+                </p>
+              </div>
+
+              <div className="text-right">
+                <p
+                  className="text-[0.92rem]"
+                  style={{ color: 'var(--theme-accent)' }}
+                >
+                  {trip.co2Saved} kg
+                </p>
+                <p
                   className="theme-mono-sm"
                   style={{ color: 'var(--theme-fg-dim)' }}
                 >
-                  {trip.when}
-                </span>
-                <span
-                  className="theme-mono-sm rounded-full border px-1.5 py-0.5"
-                  style={{
-                    borderColor: 'var(--theme-border)',
-                    color: 'var(--theme-fg-muted)',
-                    fontSize: '0.52rem',
-                  }}
-                >
-                  {trip.mode}
-                </span>
+                  +{trip.points} pts
+                </p>
               </div>
-              <p
-                className="mt-1 truncate text-[0.95rem]"
-                style={{ color: 'var(--theme-fg)' }}
-              >
-                {trip.from}{' '}
-                <span
-                  className="theme-italic mx-1"
-                  style={{ color: 'var(--theme-fg-dim)' }}
-                >
-                  to
-                </span>{' '}
-                {trip.to}
-              </p>
-            </div>
-
-            <div className="text-right">
-              <p
-                className="text-[0.92rem]"
-                style={{ color: 'var(--theme-accent)' }}
-              >
-                {trip.co2Saved} kg
-              </p>
-              <p
-                className="theme-mono-sm"
-                style={{ color: 'var(--theme-fg-dim)' }}
-              >
-                +{trip.points} pts
-              </p>
-            </div>
-          </motion.li>
-        ))}
-      </ul>
+            </motion.li>
+          ))}
+        </ul>
+      )}
     </motion.div>
   );
 }

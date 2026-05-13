@@ -4,6 +4,8 @@ import { LoadingScreen } from '@/components/loading-screen';
 import { getLastPath } from '@/utility/nav-history';
 import { parseAuthRequired, resolveAuthGuard } from '@/lib/auth-guard';
 import { useAuth } from '@/lib/auth-provider';
+import { UserDocProvider, useUserDoc } from '@/lib/user-doc-provider';
+import { pickAvatar } from '@/lib/avatar-source';
 import { useAuthLoadingFallback } from '@/hooks/useAuthLoadingFallback';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -87,12 +89,17 @@ export default function AuthedLayout() {
   if ('redirectTo' in guard) {
     return <Navigate to={guard.redirectTo} replace />;
   }
-  return <AuthedShell />;
+  return (
+    <UserDocProvider>
+      <AuthedShell />
+    </UserDocProvider>
+  );
 }
 
 function AuthedShell() {
   const { pathname } = useLocation();
   const { user, signOut } = useAuth();
+  const { doc: userDoc } = useUserDoc();
   const [expanded, setExpanded] = useState<boolean>(() => {
     if (typeof window === 'undefined') return true;
     const v = window.localStorage.getItem('verdify:sidebar');
@@ -101,14 +108,8 @@ function AuthedShell() {
 
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
+  const avatar = pickAvatar(user, userDoc);
   const profileName = user?.displayName?.trim() || user?.email || 'Verdify member';
-  const profileInitials = profileName
-    .split(/\s+/)
-    .map((part) => part[0])
-    .filter(Boolean)
-    .slice(0, 2)
-    .join('')
-    .toUpperCase() || 'V';
   const profileSubtitle = user?.email && user.email !== profileName ? user.email : 'Verdify member';
 
   useEffect(() => {
@@ -271,9 +272,9 @@ function AuthedShell() {
               <div
                 className={`flex items-center ${expanded ? 'gap-3 px-2' : 'justify-center'}`}
               >
-                {user?.photoURL ? (
+                {avatar.kind === 'photo' ? (
                   <img
-                    src={user.photoURL}
+                    src={avatar.value}
                     alt=""
                     className="h-9 w-9 shrink-0 rounded-full object-cover"
                     style={{ border: '1px solid var(--theme-accent-muted)' }}
@@ -288,7 +289,11 @@ function AuthedShell() {
                       letterSpacing: '0.04em',
                     }}
                   >
-                    {profileInitials}
+                    {avatar.kind === 'preset' ? (
+                      <span className="text-[1rem] leading-none">{avatar.value}</span>
+                    ) : (
+                      avatar.value
+                    )}
                   </div>
                 )}
                 <AnimatePresence initial={false}>
@@ -506,9 +511,9 @@ function AuthedShell() {
                       style={{ borderColor: 'var(--theme-border)' }}
                     >
                       <div className="flex items-center gap-3">
-                        {user?.photoURL ? (
+                        {avatar.kind === 'photo' ? (
                           <img
-                            src={user.photoURL}
+                            src={avatar.value}
                             alt=""
                             className="h-9 w-9 shrink-0 rounded-full object-cover"
                             style={{ border: '1px solid var(--theme-accent-muted)' }}
@@ -523,7 +528,11 @@ function AuthedShell() {
                               letterSpacing: '0.04em',
                             }}
                           >
-                            {profileInitials}
+                            {avatar.kind === 'preset' ? (
+                              <span className="text-[1rem] leading-none">{avatar.value}</span>
+                            ) : (
+                              avatar.value
+                            )}
                           </div>
                         )}
                         <div className="min-w-0 flex-1">

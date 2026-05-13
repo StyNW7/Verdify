@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router';
 
-import { useGreenPoints } from '@/hooks/useGreenPoints';
+import { useUserDoc } from '@/lib/user-doc-provider';
 
 type Reward = {
   title: string;
@@ -171,8 +171,8 @@ const SERIF_ITALIC = {
 const fmt = (value: number) => Math.abs(value).toLocaleString('en-US');
 
 export default function RewardsPage() {
-  const { currentBalance, loading } = useGreenPoints();
-  const totalPoints = currentBalance ?? 0;
+  const { doc: userDoc, loading } = useUserDoc();
+  const totalPoints = userDoc?.greenPointsBalance ?? 0;
   const tierProgress = Math.min(100, Math.round((totalPoints / NEXT_TIER_POINTS) * 100));
   const readyRewards = rewards.filter((reward) => reward.availability === 'Ready').length;
   const activeChallenges = challenges.filter((challenge) => challenge.status === 'Active').length;
