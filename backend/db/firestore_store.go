@@ -8,6 +8,7 @@ import (
 
 	"cloud.google.com/go/firestore"
 	"github.com/verdify/backend/models"
+	"github.com/verdify/backend/validate"
 	"google.golang.org/api/iterator"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -156,6 +157,39 @@ func (s *FirestoreStore) UpdateUser(ctx context.Context, u models.User) error {
 		return fmt.Errorf("update user %s: %w", u.ID, err)
 	}
 	return nil
+}
+
+// UpdateUserProfile applies only the patched fields to the user doc using a
+// Firestore partial update (MergeAll), so concurrent counter increments from
+// ApplyCompletedTrip are not clobbered. Returns ErrUserNotFound if the doc
+// does not exist.
+func (s *FirestoreStore) UpdateUserProfile(ctx context.Context, uid string, patch validate.ValidatedPatch) (models.User, error) {
+	ref := s.users.Doc(uid)
+	// Build the partial update map — only include fields that were patched.
+	updates := map[string]any{}
+	if patch.DisplayName != nil {
+		updates["displayName"] = *patch.DisplayName
+	}
+	if patch.PresetAvatar != nil {
+		updates["presetAvatar"] = *patch.PresetAvatar
+	}
+	if len(updates) > 0 {
+		if _, err := ref.Set(ctx, updates, firestore.MergeAll); err != nil {
+			if status.Code(err) == codes.NotFound {
+				return models.User{}, ErrUserNotFound
+			}
+			return models.User{}, fmt.Errorf("update user profile %s: %w", uid, err)
+		}
+	}
+	// Read back the updated document.
+	u, ok, err := s.GetUser(ctx, uid)
+	if err != nil {
+		return models.User{}, err
+	}
+	if !ok {
+		return models.User{}, ErrUserNotFound
+	}
+	return u, nil
 }
 
 func (s *FirestoreStore) CreateBooking(ctx context.Context, b models.Booking) error {

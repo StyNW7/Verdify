@@ -2,13 +2,18 @@ package db
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sort"
 	"sync"
 	"time"
 
 	"github.com/verdify/backend/models"
+	"github.com/verdify/backend/validate"
 )
+
+// ErrUserNotFound is returned by UpdateUserProfile when the uid has no doc.
+var ErrUserNotFound = errors.New("user not found")
 
 // Store is the persistence interface. MemoryStore is the default impl;
 // FirestoreStore is selected in production. All methods accept ctx so the
@@ -31,6 +36,12 @@ type Store interface {
 	// only. Counters are owned by ApplyCompletedTrip and not modifiable through
 	// this method.
 	UpdateUser(ctx context.Context, u models.User) error
+
+	// UpdateUserProfile applies only the fields in patch to the user doc.
+	// Counters (greenPointsBalance, totalTripsCompleted, totalCarbonSaved,
+	// totalEarned, totalRedeemed) and createdAt are never modified.
+	// Returns ErrUserNotFound if uid has no doc.
+	UpdateUserProfile(ctx context.Context, uid string, patch validate.ValidatedPatch) (models.User, error)
 
 	CreateBooking(ctx context.Context, b models.Booking) error
 	GetBooking(ctx context.Context, id string) (models.Booking, bool, error)
@@ -113,6 +124,23 @@ func (s *MemoryStore) UpdateUser(_ context.Context, u models.User) error {
 	existing.PhotoURL = u.PhotoURL
 	s.users[u.ID] = existing
 	return nil
+}
+
+func (s *MemoryStore) UpdateUserProfile(_ context.Context, uid string, patch validate.ValidatedPatch) (models.User, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	u, ok := s.users[uid]
+	if !ok {
+		return models.User{}, ErrUserNotFound
+	}
+	if patch.DisplayName != nil {
+		u.DisplayName = *patch.DisplayName
+	}
+	if patch.PresetAvatar != nil {
+		u.PresetAvatar = *patch.PresetAvatar
+	}
+	s.users[uid] = u
+	return u, nil
 }
 
 func (s *MemoryStore) CreateBooking(_ context.Context, b models.Booking) error {
