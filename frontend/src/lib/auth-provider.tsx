@@ -105,7 +105,12 @@ export function AuthProvider({ children, authInstance, seams }: ProviderProps) {
     return createAuthStore(firebaseSeams(getFirebaseAuth()));
   }, [authInstance, seams]);
 
-  useEffect(() => store.dispose, [store]);
+  // start() wires up the seam subscriptions and returns the matching
+  // teardown. Running it from useEffect (instead of inside createAuthStore)
+  // is what makes the store survive Strict Mode's mount → cleanup → remount
+  // dance: if useMemo hands back the same cached store on remount, start()
+  // re-subscribes from scratch instead of the store being a disposed husk.
+  useEffect(() => store.start(), [store]);
 
   const snapshot = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
 

@@ -57,23 +57,26 @@ function fakeUser(uid, token) {
 test('initial snapshot is loading with no user or token', () => {
   const { seams } = makeFakeSeams();
   const store = createAuthStore(seams);
+  const teardown = store.start();
   assert.deepEqual(store.getSnapshot(), { user: null, idToken: null, loading: true });
-  store.dispose();
+  teardown();
 });
 
 test('auth callback firing with null clears loading and leaves user null', () => {
   const harness = makeFakeSeams();
   const store = createAuthStore(harness.seams);
+  const teardown = store.start();
 
   harness.emitAuthState(null);
 
   assert.deepEqual(store.getSnapshot(), { user: null, idToken: null, loading: false });
-  store.dispose();
+  teardown();
 });
 
 test('auth callback firing with a signed-in user populates user', () => {
   const harness = makeFakeSeams();
   const store = createAuthStore(harness.seams);
+  const teardown = store.start();
 
   harness.emitAuthState(fakeUser('uid_abc', 'tok_1'));
 
@@ -85,26 +88,29 @@ test('auth callback firing with a signed-in user populates user', () => {
     photoURL: null,
   });
   assert.equal(snap.loading, false);
-  store.dispose();
+  teardown();
 });
 
 test('id-token callback resolves getIdToken() and exposes the token', async () => {
   const harness = makeFakeSeams();
   const store = createAuthStore(harness.seams);
+  const teardown = store.start();
 
   harness.emitIdToken(fakeUser('uid_abc', 'tok_1'));
   // getIdToken() resolves on a microtask — flush it.
   await new Promise((r) => setImmediate(r));
 
   assert.equal(store.getSnapshot().idToken, 'tok_1');
-  store.dispose();
+  teardown();
 });
 
 test('subsequent id-token events update idToken AND the api.ts token getter', async () => {
   const harness = makeFakeSeams();
   const store = createAuthStore(harness.seams);
+  const teardown = store.start();
 
-  // setTokenGetter must have been installed during createAuthStore.
+  // setTokenGetter is installed at construction time (so the closure that
+  // reads snapshot.idToken is wired before subscriptions fire).
   assert.ok(harness.calls.setTokenGetter >= 1, 'setTokenGetter must be wired on construction');
 
   harness.emitIdToken(fakeUser('uid_abc', 'tok_1'));
@@ -118,23 +124,25 @@ test('subsequent id-token events update idToken AND the api.ts token getter', as
   assert.equal(store.getSnapshot().idToken, 'tok_2');
   assert.equal(harness.readToken(), 'tok_2', 'token rotation must land on the api.ts getter');
 
-  store.dispose();
+  teardown();
 });
 
 test('id-token callback with null clears the token immediately', () => {
   const harness = makeFakeSeams();
   const store = createAuthStore(harness.seams);
+  const teardown = store.start();
 
   harness.emitIdToken(null);
 
   assert.equal(store.getSnapshot().idToken, null);
   assert.equal(harness.readToken(), null);
-  store.dispose();
+  teardown();
 });
 
 test('signOut on the store invokes the seam signOut function', async () => {
   const harness = makeFakeSeams();
   const store = createAuthStore(harness.seams);
+  const teardown = store.start();
 
   await store.signOut();
   assert.equal(harness.calls.signOut, 1);
@@ -145,12 +153,13 @@ test('signOut on the store invokes the seam signOut function', async () => {
   harness.emitAuthState(null);
   assert.deepEqual(store.getSnapshot().user, null);
 
-  store.dispose();
+  teardown();
 });
 
 test('subscribers are notified on each snapshot change', () => {
   const harness = makeFakeSeams();
   const store = createAuthStore(harness.seams);
+  const teardown = store.start();
   let count = 0;
   const unsub = store.subscribe(() => {
     count += 1;
@@ -162,17 +171,62 @@ test('subscribers are notified on each snapshot change', () => {
 
   assert.ok(count >= 3, `expected at least 3 notifications, got ${count}`);
   unsub();
-  store.dispose();
+  teardown();
 });
 
-test('dispose() unsubscribes from both auth and id-token streams', () => {
+test('teardown unsubscribes from both auth and id-token streams', () => {
   const harness = makeFakeSeams();
   const store = createAuthStore(harness.seams);
+  const teardown = store.start();
   assert.deepEqual(harness.isSubscribed(), { auth: true, id: true });
 
-  store.dispose();
+  teardown();
 
   assert.deepEqual(harness.isSubscribed(), { auth: false, id: false });
+});
+
+test('start() is idempotent — calling twice does not double-subscribe', () => {
+  const harness = makeFakeSeams();
+  const store = createAuthStore(harness.seams);
+
+  const teardown1 = store.start();
+  // Capture the only subscriber wired so far.
+  const firstSubscribers = harness.isSubscribed();
+  assert.deepEqual(firstSubscribers, { auth: true, id: true });
+
+  // Second start should be a no-op while already started.
+  const teardown2 = store.start();
+
+  // Both teardown functions are safe to call; only the real teardown
+  // (teardown1) actually unwires the seams.
+  teardown2();
+  assert.deepEqual(harness.isSubscribed(), { auth: true, id: true }, 'no-op teardown must not unsubscribe');
+
+  teardown1();
+  assert.deepEqual(harness.isSubscribed(), { auth: false, id: false });
+});
+
+test('start() after teardown re-subscribes — survives Strict Mode cleanup/remount', () => {
+  const harness = makeFakeSeams();
+  const store = createAuthStore(harness.seams);
+
+  const teardown1 = store.start();
+  assert.deepEqual(harness.isSubscribed(), { auth: true, id: true });
+
+  teardown1();
+  assert.deepEqual(harness.isSubscribed(), { auth: false, id: false });
+
+  // Simulate React 18 Strict Mode: cleanup ran, now the effect runs again
+  // on the same cached store. start() must re-wire the seams instead of
+  // leaving the store as a disposed husk.
+  const teardown2 = store.start();
+  assert.deepEqual(harness.isSubscribed(), { auth: true, id: true }, 'restart must re-subscribe');
+
+  // And the re-wired callbacks actually drive snapshot updates.
+  harness.emitAuthState(fakeUser('uid_after_restart', 'tok'));
+  assert.equal(store.getSnapshot().user?.uid, 'uid_after_restart');
+
+  teardown2();
 });
 
 test('getRedirectResult resolving to a user populates snapshot and token getter', async () => {
@@ -185,6 +239,7 @@ test('getRedirectResult resolving to a user populates snapshot and token getter'
   };
 
   const store = createAuthStore(seamWithRedirect);
+  const teardown = store.start();
 
   // getRedirectResult is async — flush microtasks.
   await new Promise((r) => setImmediate(r));
@@ -200,7 +255,7 @@ test('getRedirectResult resolving to a user populates snapshot and token getter'
   assert.equal(snap.loading, false);
   assert.equal(harness.readToken(), 'tok_redirect', 'api.ts getter must reflect redirect token');
 
-  store.dispose();
+  teardown();
 });
 
 test('getRedirectResult resolving to null leaves snapshot unchanged', async () => {
@@ -212,9 +267,10 @@ test('getRedirectResult resolving to null leaves snapshot unchanged', async () =
   };
 
   const store = createAuthStore(seamWithRedirect);
+  const teardown = store.start();
   await new Promise((r) => setImmediate(r));
 
   assert.deepEqual(store.getSnapshot(), { user: null, idToken: null, loading: true });
 
-  store.dispose();
+  teardown();
 });
