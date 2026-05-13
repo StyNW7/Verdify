@@ -46,6 +46,7 @@ export function BookingActionBar({ state, route, onBook }: BookingActionBarProps
   const bookable = countBookableLegs(route.backendOption);
   const primaryLabel = bookable > 0 ? 'Book route' : 'Save trip';
   const primaryLabelShort = bookable > 0 ? 'Book' : 'Save';
+  const primaryDisabled = !route.backendOption;
 
   return (
     <motion.div
@@ -95,7 +96,9 @@ export function BookingActionBar({ state, route, onBook }: BookingActionBarProps
         <button
           type="button"
           onClick={onBook}
-          className="theme-btn-primary theme-action-bar-primary sm:w-auto"
+          disabled={primaryDisabled}
+          aria-disabled={primaryDisabled || undefined}
+          className="theme-btn-primary theme-action-bar-primary sm:w-auto disabled:cursor-not-allowed disabled:opacity-50"
         >
           <span className="theme-action-label">
             <span className="sm:hidden">{primaryLabelShort}</span>
@@ -664,7 +667,7 @@ function ConfirmedPane({
         </div>
       )}
 
-      <CostSummary breakdown={breakdown} />
+      <CostSummary breakdown={breakdown} grandTotal={booking.routeSnapshot.estimatedCost} />
 
       <div
         className="theme-action-bar sticky bottom-0 -mx-4 mt-auto px-4 py-4 sm:static sm:mx-0 sm:p-0"
@@ -687,7 +690,13 @@ function ConfirmedPane({
   );
 }
 
-function CostSummary({ breakdown }: { breakdown: BookingCostBreakdown }) {
+function CostSummary({
+  breakdown,
+  grandTotal,
+}: {
+  breakdown: BookingCostBreakdown;
+  grandTotal: number;
+}) {
   return (
     <div
       className="flex flex-col gap-2 border-y py-4 sm:py-5"
@@ -709,7 +718,7 @@ function CostSummary({ breakdown }: { breakdown: BookingCostBreakdown }) {
           className="theme-display"
           style={{ color: 'var(--theme-fg)', fontSize: 'clamp(1.6rem, 3.5vw, 2.4rem)' }}
         >
-          RM {breakdown.grandTotal.toFixed(2)}
+          RM {grandTotal.toFixed(2)}
         </span>
       </div>
     </div>
@@ -730,6 +739,6 @@ function buildLegLabel(step: BackendTransportSegment | undefined, fallback: stri
 }
 
 function countBookableLegs(option: BackendRouteOption | undefined): number {
-  if (!option) return 1;
+  if (!option) return 0;
   return option.steps.reduce((acc, step) => (isBookableStep(step.type) ? acc + 1 : acc), 0);
 }
