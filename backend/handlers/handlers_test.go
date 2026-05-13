@@ -4,9 +4,11 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
+	"strings"
 	"testing"
 	"time"
 
@@ -557,5 +559,165 @@ func TestBatchedCalculate_ReturnsThreeOptionsInFixedOrder(t *testing.T) {
 		if o.Mode != want[i] {
 			t.Errorf("position %d mode = %q want %q", i, o.Mode, want[i])
 		}
+	}
+}
+
+func TestPatchUserHandler_ValidPatch_Returns200(t *testing.T) {
+	uid := "uid_patch_happy"
+	app := newAppWithBypassUser(t, uid, "patch@verdify.dev")
+	mux := app.Routes()
+
+	body := `{"displayName":"Patched Name","presetAvatar":"🌿"}`
+	req := httptest.NewRequest(http.MethodPatch, "/api/v1/user/"+uid, bytes.NewBufferString(body))
+	req.Header.Set("Content-Type", "application/json")
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("want 200 got %d body=%s", rr.Code, rr.Body.String())
+	}
+	var env models.APIResponse
+	_ = json.Unmarshal(rr.Body.Bytes(), &env)
+	data, _ := env.Data.(map[string]any)
+	if data == nil {
+		t.Fatalf("no data in response: %s", rr.Body.String())
+	}
+	if gotName, _ := data["displayName"].(string); gotName != "Patched Name" {
+		t.Fatalf("displayName = %q want %q", gotName, "Patched Name")
+	}
+	if gotAvatar, _ := data["presetAvatar"].(string); gotAvatar != "🌿" {
+		t.Fatalf("presetAvatar = %q want 🌿", gotAvatar)
+	}
+}
+
+func TestPatchUserHandler_InvalidPatch_Returns400(t *testing.T) {
+	uid := "uid_patch_bad"
+	app := newAppWithBypassUser(t, uid, "patchbad@verdify.dev")
+	mux := app.Routes()
+
+	// Send PATCH with TWO invalid fields: displayName too long AND presetAvatar not in allow-list.
+	body := `{"displayName":"` + strings.Repeat("X", 61) + `","presetAvatar":"🐉"}`
+	req := httptest.NewRequest(http.MethodPatch, "/api/v1/user/"+uid, bytes.NewBufferString(body))
+	req.Header.Set("Content-Type", "application/json")
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusBadRequest {
+		t.Fatalf("want 400 got %d body=%s", rr.Code, rr.Body.String())
+	}
+	// Decode response and verify the error shape: {errors: [{field, message}, ...]}
+	var envelope struct {
+		Success bool `json:"success"`
+		Data    any  `json:"data"`
+		Error   map[string]any `json:"error"`
+	}
+	if err := json.Unmarshal(rr.Body.Bytes(), &envelope); err != nil {
+		t.Fatalf("response not JSON: %s", rr.Body.String())
+	}
+	if envelope.Error == nil {
+		t.Fatalf("want non-nil error field in 400 response; got %s", rr.Body.String())
+	}
+
+	// Extract the errors array from the Error map.
+	errorsRaw, ok := envelope.Error["errors"]
+	if !ok {
+		t.Fatalf("want 'errors' key in error object; got %v", envelope.Error)
+	}
+	errorsIface, ok := errorsRaw.([]any)
+	if !ok {
+		t.Fatalf("errors is not an array: %T = %v", errorsRaw, errorsRaw)
+	}
+	if len(errorsIface) != 2 {
+		t.Fatalf("want 2 field errors got %d: %v", len(errorsIface), errorsIface)
+	}
+
+	// Verify both errors are present: one for displayName, one for presetAvatar.
+	fieldsSeen := make(map[string]bool)
+	for _, errItem := range errorsIface {
+		errMap, ok := errItem.(map[string]any)
+		if !ok {
+			t.Fatalf("error item is not an object: %T", errItem)
+		}
+		field, _ := errMap["field"].(string)
+		message, _ := errMap["message"].(string)
+		if field == "" {
+			t.Fatalf("error item missing 'field': %v", errMap)
+		}
+		if message == "" {
+			t.Fatalf("error item missing 'message': %v", errMap)
+		}
+		fieldsSeen[field] = true
+	}
+
+	if !fieldsSeen["displayName"] {
+		t.Errorf("want displayName error; saw fields: %v", fieldsSeen)
+	}
+	if !fieldsSeen["presetAvatar"] {
+		t.Errorf("want presetAvatar error; saw fields: %v", fieldsSeen)
+	}
+}
+
+func TestPatchUserHandler_UidMismatch_Returns403(t *testing.T) {
+	// Token uid is "uid_other"; path uid is "uid_target" — middleware rejects.
+	app := New(config.Load())
+	app.Auth = auth.New(&stubVerifier{id: &auth.Identity{UID: "uid_other"}}, "")
+	mux := app.Routes()
+
+	body := `{"displayName":"Hacked"}`
+	req := httptest.NewRequest(http.MethodPatch, "/api/v1/user/uid_target", bytes.NewBufferString(body))
+	req.Header.Set("Authorization", "Bearer fake_token")
+	req.Header.Set("Content-Type", "application/json")
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusForbidden {
+		t.Fatalf("want 403 got %d body=%s", rr.Code, rr.Body.String())
+	}
+}
+
+// readBodyRequest builds an *http.Request whose Body is set to the given
+// reader, suitable for passing directly to readBody.
+func readBodyRequest(body io.Reader) *http.Request {
+	req := httptest.NewRequest(http.MethodPatch, "/", body)
+	return req
+}
+
+func TestReadBody_EmptyBody_ReturnsNil(t *testing.T) {
+	// Zero-byte body: json.Decoder returns io.EOF — must be treated as no-op.
+	req := readBodyRequest(strings.NewReader(""))
+	got, err := readBody(req)
+	if err != nil {
+		t.Fatalf("empty body: want nil err, got %v", err)
+	}
+	if got != nil {
+		t.Fatalf("empty body: want nil bytes, got %q", got)
+	}
+}
+
+func TestReadBody_TruncatedBody_ReturnsError(t *testing.T) {
+	// Truncated JSON: json.Decoder returns io.ErrUnexpectedEOF — must be treated
+	// as a decode error (not an empty-body no-op).
+	req := readBodyRequest(strings.NewReader(`{"display`))
+	_, err := readBody(req)
+	if err == nil {
+		t.Fatal("truncated body: want error, got nil")
+	}
+}
+
+func TestPatchUserHandler_OversizedBody_Returns400Or413(t *testing.T) {
+	uid := "uid_oversize"
+	app := newAppWithBypassUser(t, uid, "oversize@verdify.dev")
+	mux := app.Routes()
+
+	// Body well above the 64 KB limit.
+	bigName := strings.Repeat("A", 200*1024)
+	body := `{"displayName":"` + bigName + `"}`
+	req := httptest.NewRequest(http.MethodPatch, "/api/v1/user/"+uid, strings.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusBadRequest && rr.Code != http.StatusRequestEntityTooLarge {
+		t.Fatalf("want 400 or 413 for oversized body, got %d body=%s", rr.Code, rr.Body.String())
 	}
 }

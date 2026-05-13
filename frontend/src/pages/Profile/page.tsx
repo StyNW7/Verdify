@@ -5,6 +5,7 @@ import {
   Car,
   Check,
   Coins,
+  ExternalLink,
   Footprints,
   Gauge,
   Globe,
@@ -14,9 +15,24 @@ import {
   Train,
   type LucideIcon,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import {
+  sendEmailVerification,
+  sendPasswordResetEmail,
+  updateProfile,
+} from 'firebase/auth';
+
 import { useAuth } from '@/lib/auth-provider';
 import { useUserDoc } from '@/lib/user-doc-provider';
 import { pickAvatar } from '@/lib/avatar-source';
+import { patchUser, type UserPatch } from '@/lib/api';
+import { getFirebaseAuth } from '@/lib/firebase';
+import { getSecurityCardState } from './security-card-state';
+
+// Exported so the backend validator and frontend stay in sync.
+export const PRESET_AVATARS = ['🌿', '🦊', '🌊', '🌙', '🐝', '🪴'] as const;
+export type PresetAvatar = (typeof PRESET_AVATARS)[number];
 
 type Mode = 'Transit' | 'Cycle' | 'Carpool' | 'Walk';
 type Priority = 'Fastest' | 'Greenest' | 'Cheapest' | 'Balanced';
@@ -115,15 +131,103 @@ function IdentityCard() {
   const { user } = useAuth();
   const { doc: userDoc } = useUserDoc();
 
-  const avatar = pickAvatar(user, userDoc);
-  // Always show what the initials would be if no photo/preset existed.
-  const fallbackInitials = pickAvatar(user ? { ...user, photoURL: null } : null, null).value;
+  const savedDisplayName = userDoc?.displayName ?? user?.displayName ?? '';
+  const savedPresetAvatar = userDoc?.presetAvatar ?? '';
 
-  const displayName = user?.displayName?.trim()
-    || user?.email?.split('@')[0]
-    || 'Verdify member';
-  const email = user?.email || '';
+  const [displayName, setDisplayName] = useState(savedDisplayName);
+  const [presetAvatar, setPresetAvatar] = useState(savedPresetAvatar);
+  const [isSaving, setIsSaving] = useState(false);
+  const [nameError, setNameError] = useState('');
+  const [verificationSending, setVerificationSending] = useState(false);
+  const [verificationCooldown, setVerificationCooldown] = useState(0);
+
+  // Sync local state when snapshot arrives (after first load or external change).
+  useEffect(() => {
+    setDisplayName(userDoc?.displayName ?? user?.displayName ?? '');
+  }, [userDoc?.displayName, user?.displayName]);
+  useEffect(() => {
+    setPresetAvatar(userDoc?.presetAvatar ?? '');
+  }, [userDoc?.presetAvatar]);
+
+  // Verification cooldown timer.
+  useEffect(() => {
+    if (verificationCooldown <= 0) return;
+    const timer = setTimeout(() => setVerificationCooldown((v) => v - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [verificationCooldown]);
+
+  const avatar = pickAvatar(
+    user,
+    presetAvatar ? { presetAvatar } : userDoc,
+  );
   const isVerified = user?.emailVerified ?? false;
+  const email = user?.email ?? '';
+
+  const handleSave = async () => {
+    if (!user) return;
+    setNameError('');
+    setIsSaving(true);
+
+    try {
+      const trimmedName = displayName.trim();
+      const nameChanged = trimmedName !== (user.displayName ?? '');
+      const avatarChanged = presetAvatar !== savedPresetAvatar;
+
+      if (nameChanged) {
+        try {
+          const currentUser = getFirebaseAuth().currentUser;
+          if (currentUser) {
+            await updateProfile(currentUser, { displayName: trimmedName });
+          }
+        } catch (err: unknown) {
+          const code = (err as { code?: string }).code;
+          if (code === 'auth/requires-recent-login') {
+            setNameError('Sign in again to change your name');
+            setIsSaving(false);
+            return;
+          }
+          throw err;
+        }
+      }
+
+      // Build patch with only changed fields.
+      const patch: UserPatch = {};
+      if (nameChanged) patch.displayName = trimmedName;
+      if (avatarChanged && presetAvatar) patch.presetAvatar = presetAvatar;
+
+      if (Object.keys(patch).length > 0) {
+        await patchUser(user.uid, patch);
+      }
+
+      toast.success('Profile saved.');
+      // Post-save state comes from the onSnapshot subscription.
+    } catch (err: unknown) {
+      // Surface per-field 400 errors.
+      const apiErr = err as { status?: number; message?: string };
+      if (apiErr.status === 400) {
+        toast.error(apiErr.message ?? 'Validation failed.');
+      } else {
+        toast.error('Could not save profile. Please try again.');
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSendVerification = async () => {
+    const currentUser = getFirebaseAuth().currentUser;
+    if (!currentUser || verificationCooldown > 0) return;
+    setVerificationSending(true);
+    try {
+      await sendEmailVerification(currentUser);
+      toast.success('Verification email sent — check your inbox.');
+      setVerificationCooldown(60);
+    } catch {
+      toast.error('Could not send verification email. Please try again.');
+    } finally {
+      setVerificationSending(false);
+    }
+  };
 
   return (
     <motion.section
@@ -138,16 +242,36 @@ function IdentityCard() {
         <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
           Identity · #01
         </p>
-        <span
-          className="theme-mono-sm rounded-full border px-2 py-1"
-          style={{
-            borderColor: isVerified ? 'var(--theme-accent-muted)' : 'var(--theme-border)',
-            color: isVerified ? 'var(--theme-accent)' : 'var(--theme-fg-dim)',
-            fontSize: '0.56rem',
-          }}
-        >
-          {isVerified ? 'Verified' : 'Unverified'}
-        </span>
+        {isVerified ? (
+          <span
+            className="theme-mono-sm rounded-full border px-2 py-1"
+            style={{
+              borderColor: 'var(--theme-accent-muted)',
+              color: 'var(--theme-accent)',
+              fontSize: '0.56rem',
+            }}
+          >
+            Verified
+          </span>
+        ) : (
+          <button
+            type="button"
+            disabled={verificationSending || verificationCooldown > 0}
+            onClick={handleSendVerification}
+            className="theme-mono-sm rounded-full border px-2 py-1 hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
+            style={{
+              borderColor: 'var(--theme-border)',
+              color: 'var(--theme-fg-dim)',
+              fontSize: '0.56rem',
+            }}
+          >
+            {verificationCooldown > 0
+              ? `Resend in ${verificationCooldown}s`
+              : verificationSending
+                ? 'Sending…'
+                : 'Send verification email'}
+          </button>
+        )}
       </div>
 
       <h3
@@ -191,18 +315,30 @@ function IdentityCard() {
         </div>
 
         <div className="flex-1">
-          <p
-            className="theme-mono-sm"
-            style={{ color: 'var(--theme-fg-dim)' }}
-          >
-            Avatar — editing coming next slice
+          <p className="theme-mono-sm mb-3" style={{ color: 'var(--theme-fg-dim)' }}>
+            Pick an avatar
           </p>
-          <p
-            className="mt-2 text-[0.85rem]"
-            style={{ color: 'var(--theme-fg-muted)' }}
-          >
-            Google profile photo, preset emoji, or initials — in that order.
-          </p>
+          <div className="flex flex-wrap gap-2">
+            {PRESET_AVATARS.map((emoji) => {
+              const active = presetAvatar === emoji;
+              return (
+                <button
+                  key={emoji}
+                  type="button"
+                  onClick={() => setPresetAvatar(active ? '' : emoji)}
+                  className="flex h-10 w-10 items-center justify-center rounded-full text-[1.4rem] leading-none transition-all"
+                  style={{
+                    background: active ? 'var(--theme-accent-soft)' : 'var(--theme-surface-muted)',
+                    border: active ? '2px solid var(--theme-accent-muted)' : '1px solid var(--theme-border)',
+                  }}
+                  aria-pressed={active}
+                  title={emoji}
+                >
+                  {emoji}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -210,33 +346,153 @@ function IdentityCard() {
         className="mt-8 grid grid-cols-1 gap-5 border-t pt-6 sm:grid-cols-2"
         style={{ borderColor: 'var(--theme-border)' }}
       >
-        <ReadOnlyField label="Display name" value={displayName} />
+        {/* Editable display name */}
+        <div>
+          <span className="theme-mono-sm block" style={{ color: 'var(--theme-fg-dim)' }}>
+            Display name
+          </span>
+          <input
+            type="text"
+            value={displayName}
+            onChange={(e) => {
+              setDisplayName(e.target.value);
+              setNameError('');
+            }}
+            maxLength={60}
+            className="mt-2 w-full rounded-[12px] px-3 py-2 text-[0.95rem] outline-none focus:ring-1"
+            style={{
+              background: 'var(--theme-surface-muted)',
+              border: nameError ? '1px solid var(--theme-danger, #e74c3c)' : '1px solid var(--theme-border)',
+              color: 'var(--theme-fg)',
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              '--tw-ring-color': 'var(--theme-accent-muted)',
+            } as React.CSSProperties}
+          />
+          {nameError && (
+            <p className="mt-1 text-[0.78rem]" style={{ color: 'var(--theme-danger, #e74c3c)' }}>
+              {nameError}
+            </p>
+          )}
+        </div>
+
+        {/* Read-only email */}
         <ReadOnlyField label="Email address" value={email} />
       </div>
 
-      <div className="mt-6 flex items-center justify-between">
-        <p
-          className="text-[0.78rem]"
-          style={{ color: 'var(--theme-fg-muted)' }}
-        >
-          Initials fall back to{' '}
-          <span
-            className="theme-italic"
-            style={{ color: 'var(--theme-accent)' }}
-          >
-            {fallbackInitials}
-          </span>{' '}
-          if no avatar is set.
-        </p>
+      <div className="mt-6 flex items-center justify-end">
         <button
           type="button"
-          disabled
-          title="Editing coming next slice"
+          disabled={isSaving}
+          onClick={handleSave}
           className="theme-btn-primary disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Save changes
+          {isSaving ? 'Saving…' : 'Save changes'}
         </button>
       </div>
+    </motion.section>
+  );
+}
+
+function SecurityCard() {
+  const { user } = useAuth();
+  const [phase, setPhase] = useState<'idle' | 'sending' | 'sent'>('idle');
+
+  const providers = user?.providerData?.map((p) => p.providerId) ?? [];
+  const email = user?.email ?? '';
+  const state = getSecurityCardState({ providers, email });
+
+  const handleResetPassword = async () => {
+    if (!email || phase === 'sending') return;
+    setPhase('sending');
+    try {
+      await sendPasswordResetEmail(getFirebaseAuth(), email);
+      setPhase('sent');
+    } catch {
+      toast.error('Could not send reset email. Please try again.');
+      setPhase('idle');
+    }
+  };
+
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.55, delay: 0.24, ease: [0.2, 0.7, 0.2, 1] }}
+      className="theme-card flex flex-col p-6 md:p-7"
+    >
+      <div className="flex items-center justify-between">
+        <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
+          Security · #03
+        </p>
+        <span
+          className="flex items-center gap-1.5 theme-mono-sm"
+          style={{ color: 'var(--theme-fg-dim)' }}
+        >
+          <KeyRound className="h-[11px] w-[11px]" strokeWidth={1.8} />
+          Firebase Auth
+        </span>
+      </div>
+
+      <h3
+        className="theme-display mt-2 text-[1.5rem] leading-tight"
+        style={{ color: 'var(--theme-fg)' }}
+      >
+        Your{' '}
+        <span className="theme-italic" style={{ color: 'var(--theme-accent)' }}>
+          sign-in
+        </span>{' '}
+        method.
+      </h3>
+
+      <div className="mt-5 flex-1">
+        {state.panel === 'reset-password' && phase !== 'sent' && (
+          <div className="flex flex-col gap-4">
+            <p className="text-[0.9rem]" style={{ color: 'var(--theme-fg-muted)' }}>
+              Reset your password via a secure link sent to your email.
+            </p>
+            <button
+              type="button"
+              disabled={phase === 'sending'}
+              onClick={handleResetPassword}
+              className="theme-btn-primary self-start disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {phase === 'sending' ? 'Sending…' : 'Email me a reset link'}
+            </button>
+          </div>
+        )}
+
+        {state.panel === 'reset-password' && phase === 'sent' && (
+          <div className="flex flex-col gap-3">
+            <p className="text-[0.9rem]" style={{ color: 'var(--theme-fg-muted)' }}>
+              Check your email for a link to reset your password — it may take a few minutes to arrive. The link works for 1 hour.
+            </p>
+          </div>
+        )}
+
+        {state.panel === 'google-only' && (
+          <div className="flex flex-col gap-4">
+            <p className="text-[0.9rem]" style={{ color: 'var(--theme-fg-muted)' }}>
+              You're signed in with Google. Your password is managed by Google.
+            </p>
+            <a
+              href="https://myaccount.google.com/security"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="theme-btn-ghost self-start"
+            >
+              Manage at Google
+              <ExternalLink className="ml-1.5 h-[12px] w-[12px]" strokeWidth={1.8} />
+            </a>
+          </div>
+        )}
+      </div>
+
+      <p
+        className="mt-6 border-t pt-4 text-[0.78rem]"
+        style={{ borderColor: 'var(--theme-border)', color: 'var(--theme-fg-dim)' }}
+      >
+        Signed in as {state.email} via {state.providerLabel}.
+      </p>
     </motion.section>
   );
 }
@@ -377,48 +633,6 @@ function TripDefaultsCard() {
           <ArrowUpRight size={12} strokeWidth={1.8} />
         </button>
       </div>
-    </motion.section>
-  );
-}
-
-function SecurityCard() {
-  return (
-    <motion.section
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.55, delay: 0.24, ease: [0.2, 0.7, 0.2, 1] }}
-      className="theme-card flex flex-col p-6 md:p-7"
-    >
-      <div className="flex items-center justify-between">
-        <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
-          Security · #03
-        </p>
-        <span
-          className="flex items-center gap-1.5 theme-mono-sm"
-          style={{ color: 'var(--theme-fg-dim)' }}
-        >
-          <KeyRound className="h-[11px] w-[11px]" strokeWidth={1.8} />
-          Firebase Auth
-        </span>
-      </div>
-
-      <h3
-        className="theme-display mt-2 text-[1.5rem] leading-tight"
-        style={{ color: 'var(--theme-fg)' }}
-      >
-        Your{' '}
-        <span className="theme-italic" style={{ color: 'var(--theme-accent)' }}>
-          sign-in
-        </span>{' '}
-        method.
-      </h3>
-
-      <p
-        className="mt-4 text-[0.9rem]"
-        style={{ color: 'var(--theme-fg-muted)' }}
-      >
-        Password reset and Google sign-in management come in the next slice.
-      </p>
     </motion.section>
   );
 }
@@ -579,3 +793,4 @@ function CornerTicks() {
     </>
   );
 }
+

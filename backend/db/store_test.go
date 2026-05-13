@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/verdify/backend/models"
+	"github.com/verdify/backend/validate"
 )
 
 func TestEnsureUser_CreatesWhenMissing(t *testing.T) {
@@ -178,5 +179,177 @@ func TestEnsureUser_IsIdempotent_PreservesCounters(t *testing.T) {
 	}
 	if u2.Email != "u-renamed@example.com" || u2.DisplayName != "Renamed" {
 		t.Fatalf("profile not refreshed: %+v", u2)
+	}
+}
+
+func strPtr(s string) *string { return &s }
+
+func TestUpdateUserProfile_UpdatesDisplayName(t *testing.T) {
+	s := NewStore()
+	ctx := context.Background()
+	uid := "uid_upd_name"
+	if _, _, err := s.EnsureUser(ctx, uid, models.UserProfile{Email: "upd@example.com", DisplayName: "Original"}); err != nil {
+		t.Fatalf("EnsureUser: %v", err)
+	}
+
+	updated, err := s.UpdateUserProfile(ctx, uid, validate.ValidatedPatch{DisplayName: strPtr("New Name")})
+	if err != nil {
+		t.Fatalf("UpdateUserProfile: %v", err)
+	}
+	if updated.DisplayName != "New Name" {
+		t.Fatalf("DisplayName = %q want %q", updated.DisplayName, "New Name")
+	}
+
+	got, ok, err := s.GetUser(ctx, uid)
+	if err != nil || !ok {
+		t.Fatalf("GetUser: ok=%v err=%v", ok, err)
+	}
+	if got.DisplayName != "New Name" {
+		t.Fatalf("persisted DisplayName = %q want %q", got.DisplayName, "New Name")
+	}
+}
+
+func TestUpdateUserProfile_UpdatesPresetAvatar(t *testing.T) {
+	s := NewStore()
+	ctx := context.Background()
+	uid := "uid_upd_avatar"
+	if _, _, err := s.EnsureUser(ctx, uid, models.UserProfile{Email: "avatar@example.com"}); err != nil {
+		t.Fatalf("EnsureUser: %v", err)
+	}
+
+	updated, err := s.UpdateUserProfile(ctx, uid, validate.ValidatedPatch{PresetAvatar: strPtr("🌿")})
+	if err != nil {
+		t.Fatalf("UpdateUserProfile: %v", err)
+	}
+	if updated.PresetAvatar != "🌿" {
+		t.Fatalf("PresetAvatar = %q want 🌿", updated.PresetAvatar)
+	}
+
+	got, ok, err := s.GetUser(ctx, uid)
+	if err != nil || !ok {
+		t.Fatalf("GetUser: ok=%v err=%v", ok, err)
+	}
+	if got.PresetAvatar != "🌿" {
+		t.Fatalf("persisted PresetAvatar = %q want 🌿", got.PresetAvatar)
+	}
+}
+
+func TestUpdateUserProfile_PreservesCounters(t *testing.T) {
+	s := NewStore()
+	ctx := context.Background()
+	uid := "uid_upd_counters"
+	if _, _, err := s.EnsureUser(ctx, uid, models.UserProfile{Email: "cnt@example.com"}); err != nil {
+		t.Fatalf("EnsureUser: %v", err)
+	}
+	// Award points and redeem some.
+	if err := s.CreateBooking(ctx, models.Booking{
+		ID:              "bk_cnt",
+		UserID:          uid,
+		Status:          "confirmed",
+		EstimatedPoints: 100,
+	}); err != nil {
+		t.Fatalf("CreateBooking: %v", err)
+	}
+	if _, _, err := s.ApplyCompletedTrip(ctx, "bk_cnt", 100, 5000, time.Now().UTC()); err != nil {
+		t.Fatalf("ApplyCompletedTrip: %v", err)
+	}
+	// Seed a non-zero TotalRedeemed so we can verify it's preserved.
+	before, _, err := s.GetUser(ctx, uid)
+	if err != nil {
+		t.Fatalf("GetUser (before): %v", err)
+	}
+	before.TotalRedeemed = 25
+	// Backdoor update to set TotalRedeemed for test purposes.
+	s.users[uid] = before
+
+	_, err = s.UpdateUserProfile(ctx, uid, validate.ValidatedPatch{
+		DisplayName:  strPtr("Updated"),
+		PresetAvatar: strPtr("🦊"),
+	})
+	if err != nil {
+		t.Fatalf("UpdateUserProfile: %v", err)
+	}
+
+	got, ok, err := s.GetUser(ctx, uid)
+	if err != nil || !ok {
+		t.Fatalf("GetUser: ok=%v err=%v", ok, err)
+	}
+	if got.GreenPoints != 100 {
+		t.Fatalf("GreenPoints = %d want 100 (counters must not be touched)", got.GreenPoints)
+	}
+	if got.TotalTrips != 1 {
+		t.Fatalf("TotalTrips = %d want 1", got.TotalTrips)
+	}
+	if got.TotalCarbonSaved != 5000 {
+		t.Fatalf("TotalCarbonSaved = %v want 5000", got.TotalCarbonSaved)
+	}
+	if got.TotalPointsEarned != 100 {
+		t.Fatalf("TotalPointsEarned = %d want 100", got.TotalPointsEarned)
+	}
+	if got.TotalRedeemed != 25 {
+		t.Fatalf("TotalRedeemed = %d want 25 (must not be touched by UpdateUserProfile)", got.TotalRedeemed)
+	}
+}
+
+func TestUpdateUserProfile_RoundTripsAfterGetUser(t *testing.T) {
+	s := NewStore()
+	ctx := context.Background()
+	uid := "uid_upd_rt"
+	if _, _, err := s.EnsureUser(ctx, uid, models.UserProfile{Email: "rt@example.com", DisplayName: "Original"}); err != nil {
+		t.Fatalf("EnsureUser: %v", err)
+	}
+
+	_, err := s.UpdateUserProfile(ctx, uid, validate.ValidatedPatch{
+		DisplayName:  strPtr("Round Trip"),
+		PresetAvatar: strPtr("🌊"),
+	})
+	if err != nil {
+		t.Fatalf("UpdateUserProfile: %v", err)
+	}
+
+	got, ok, err := s.GetUser(ctx, uid)
+	if err != nil || !ok {
+		t.Fatalf("GetUser: ok=%v err=%v", ok, err)
+	}
+	if got.DisplayName != "Round Trip" {
+		t.Fatalf("DisplayName = %q want %q", got.DisplayName, "Round Trip")
+	}
+	if got.PresetAvatar != "🌊" {
+		t.Fatalf("PresetAvatar = %q want 🌊", got.PresetAvatar)
+	}
+	if got.Email != "rt@example.com" {
+		t.Fatalf("Email changed: %q", got.Email)
+	}
+}
+
+func TestUpdateUserProfile_ReturnsNotFoundForUnknownUID(t *testing.T) {
+	s := NewStore()
+	ctx := context.Background()
+	_, err := s.UpdateUserProfile(ctx, "uid_ghost", validate.ValidatedPatch{DisplayName: strPtr("X")})
+	if err == nil {
+		t.Fatal("want error for unknown uid, got nil")
+	}
+	if err != ErrUserNotFound {
+		t.Fatalf("want ErrUserNotFound, got %v", err)
+	}
+}
+
+func TestUpdateUserProfile_NoPatchLeavesDocUnchanged(t *testing.T) {
+	s := NewStore()
+	ctx := context.Background()
+	uid := "uid_noop"
+	if _, _, err := s.EnsureUser(ctx, uid, models.UserProfile{
+		Email:       "noop@example.com",
+		DisplayName: "Same",
+	}); err != nil {
+		t.Fatalf("EnsureUser: %v", err)
+	}
+
+	got, err := s.UpdateUserProfile(ctx, uid, validate.ValidatedPatch{})
+	if err != nil {
+		t.Fatalf("UpdateUserProfile on empty patch: %v", err)
+	}
+	if got.DisplayName != "Same" {
+		t.Fatalf("DisplayName changed on empty patch: %q", got.DisplayName)
 	}
 }

@@ -8,6 +8,7 @@ import (
 
 	"cloud.google.com/go/firestore"
 	"github.com/verdify/backend/models"
+	"github.com/verdify/backend/validate"
 	"google.golang.org/api/iterator"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -156,6 +157,52 @@ func (s *FirestoreStore) UpdateUser(ctx context.Context, u models.User) error {
 		return fmt.Errorf("update user %s: %w", u.ID, err)
 	}
 	return nil
+}
+
+// UpdateUserProfile applies only the patched fields to the user doc using a
+// Firestore transaction that atomically checks existence before writing, so
+// concurrent counter increments from ApplyCompletedTrip are not clobbered and
+// unknown UIDs are never silently upserted. Returns ErrUserNotFound if the doc
+// does not exist.
+func (s *FirestoreStore) UpdateUserProfile(ctx context.Context, uid string, patch validate.ValidatedPatch) (models.User, error) {
+	ref := s.users.Doc(uid)
+
+	// Build the partial update map — only include fields that were patched.
+	updates := map[string]any{}
+	if patch.DisplayName != nil {
+		updates["displayName"] = *patch.DisplayName
+	}
+	if patch.PresetAvatar != nil {
+		updates["presetAvatar"] = *patch.PresetAvatar
+	}
+
+	err := s.client.RunTransaction(ctx, func(ctx context.Context, tx *firestore.Transaction) error {
+		snap, err := tx.Get(ref)
+		if err != nil {
+			if status.Code(err) == codes.NotFound {
+				return ErrUserNotFound
+			}
+			return err
+		}
+		_ = snap // existence confirmed; data read-back happens outside the transaction
+		if len(updates) == 0 {
+			return nil
+		}
+		return tx.Set(ref, updates, firestore.MergeAll)
+	})
+	if err != nil {
+		return models.User{}, err
+	}
+
+	// Read back the updated document outside the transaction.
+	u, ok, err := s.GetUser(ctx, uid)
+	if err != nil {
+		return models.User{}, err
+	}
+	if !ok {
+		return models.User{}, ErrUserNotFound
+	}
+	return u, nil
 }
 
 func (s *FirestoreStore) CreateBooking(ctx context.Context, b models.Booking) error {
