@@ -324,7 +324,7 @@ function LedgerView({
       style={{ borderColor: 'var(--theme-border)' }}
     >
       <div
-        className="hidden md:grid grid-cols-[128px_1fr_160px_220px] items-center gap-4 border-b px-6 py-3"
+        className="hidden md:grid grid-cols-[128px_minmax(0,1fr)_140px_280px] items-center gap-4 border-b px-6 py-3"
         style={{ borderColor: 'var(--theme-border)' }}
       >
         {['DATE', 'ROUTE', 'STATUS', 'REWARD'].map((h, i) => (
@@ -426,7 +426,7 @@ function BookingRow({
         </div>
       </div>
 
-      <div className="hidden md:grid grid-cols-[128px_minmax(0,1fr)_140px_auto] items-center gap-4">
+      <div className="hidden md:grid grid-cols-[128px_minmax(0,1fr)_140px_280px] items-center gap-4">
         <div className="flex flex-col">
           <span
             className="text-[0.92rem]"
