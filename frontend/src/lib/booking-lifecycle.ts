@@ -16,7 +16,7 @@ export type BookingLifecycleDecision = {
   showMarkPaid: boolean;
   showMarkCompleted: boolean;
   showCancel: boolean;
-  content: 'qr' | 'tripDone' | 'cancelled';
+  content: 'draft' | 'qr' | 'tripDone' | 'cancelled';
 };
 
 export function bookingLifecycle(
@@ -46,7 +46,7 @@ export function bookingLifecycle(
       showMarkPaid: false,
       showMarkCompleted: false,
       showCancel: true,
-      content: 'qr',
+      content: 'draft',
     };
   }
   const paid = input.paymentStatus === 'completed';

@@ -177,7 +177,23 @@ func (app *App) getBookingHandler(w http.ResponseWriter, r *http.Request) {
 	if carbonSaved < 0 {
 		carbonSaved = 0
 	}
-	writeOK(w, http.StatusOK, map[string]any{"bookingId": b.ID, "userId": b.UserID, "status": b.Status, "totalDistance": rt.TotalDistance, "actualPoints": b.ActualPoints, "carbonSaved": pricing.Round2(carbonSaved)})
+	writeOK(w, http.StatusOK, map[string]any{
+		"bookingId":        b.ID,
+		"userId":           b.UserID,
+		"routeId":          b.RouteID,
+		"status":           b.Status,
+		"paymentStatus":    b.PaymentStatus,
+		"bookingReference": b.BookingReference,
+		"qrCode":           b.QRCode,
+		"passengers":       b.Passengers,
+		"estimatedPoints":  b.EstimatedPoints,
+		"actualPoints":     b.ActualPoints,
+		"createdAt":        b.CreatedAt,
+		"completedAt":      b.CompletedAt,
+		"routeSnapshot":    b.RouteSnapshot,
+		"totalDistance":    rt.TotalDistance,
+		"carbonSaved":      pricing.Round2(carbonSaved),
+	})
 }
 
 func (app *App) cancelBookingHandler(w http.ResponseWriter, r *http.Request) {

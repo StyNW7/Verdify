@@ -259,3 +259,20 @@ export function cancelBooking(bookingId: string) {
     method: 'POST',
   });
 }
+
+export type UserBookingsResponse = {
+  bookings: BookingRecord[];
+  pagination: { total: number; limit: number; offset: number };
+};
+
+export function listUserBookings(userId: string, opts: { limit?: number; offset?: number } = {}) {
+  const params = new URLSearchParams();
+  if (opts.limit !== undefined) params.set('limit', String(opts.limit));
+  if (opts.offset !== undefined) params.set('offset', String(opts.offset));
+  const qs = params.toString();
+  const suffix = qs ? `?${qs}` : '';
+  return apiRequest<UserBookingsResponse>(
+    `/api/v1/user/${encodeURIComponent(userId)}/bookings${suffix}`,
+    { method: 'GET' },
+  );
+}
