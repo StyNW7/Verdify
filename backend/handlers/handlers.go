@@ -220,7 +220,7 @@ func (app *App) cancelBookingHandler(w http.ResponseWriter, r *http.Request) {
 	writeOK(w, http.StatusOK, b)
 }
 
-func (app *App) getUserGreenPointsHandler(w http.ResponseWriter, r *http.Request) {
+func (app *App) getUserHandler(w http.ResponseWriter, r *http.Request) {
 	userID := r.PathValue("userId")
 	u, ok, err := app.Store.GetUser(r.Context(), userID)
 	if err != nil {
@@ -231,13 +231,7 @@ func (app *App) getUserGreenPointsHandler(w http.ResponseWriter, r *http.Request
 		writeErr(w, http.StatusNotFound, "user not found")
 		return
 	}
-	writeOK(w, http.StatusOK, map[string]any{
-		"userId":            u.ID,
-		"currentBalance":    u.GreenPoints,
-		"totalEarned":       u.TotalPointsEarned,
-		"totalRedeemed":     u.TotalRedeemed,
-		"redeemableOptions": []map[string]any{{"id": "reward_1", "name": "Free EV Ride", "pointsCost": 150}, {"id": "reward_2", "name": "RM 20 Discount", "pointsCost": 200}},
-	})
+	writeOK(w, http.StatusOK, u)
 }
 
 func (app *App) getUserBookingsHandler(w http.ResponseWriter, r *http.Request) {
