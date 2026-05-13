@@ -22,7 +22,7 @@ type RouteRecomputer interface {
 // Per ADR-0004 the agent reads route metadata from the booking's
 // RouteSnapshot instead of fetching a Route document.
 type BookingReader interface {
-	GetBooking(ctx context.Context, id string) (models.Booking, bool)
+	GetBooking(ctx context.Context, id string) (models.Booking, bool, error)
 }
 
 // RerouteInput carries the per-request trigger data.
@@ -92,7 +92,10 @@ func (a *RerouteAgent) Run(ctx context.Context, in RerouteInput) (*RerouteResult
 // decision, then builds the result.
 func (a *RerouteAgent) runGemini(ctx context.Context, in RerouteInput) (*RerouteResult, error) {
 	// ── 1. Pre-fetch booking context ───────────────────────────────────────
-	b, ok := a.store.GetBooking(ctx, in.BookingID)
+	b, ok, err := a.store.GetBooking(ctx, in.BookingID)
+	if err != nil {
+		return nil, fmt.Errorf("booking %s read: %w", in.BookingID, err)
+	}
 	if !ok {
 		return nil, fmt.Errorf("booking %s not found", in.BookingID)
 	}
@@ -207,7 +210,10 @@ func (a *RerouteAgent) buildResult(d *agentDecision, cand *models.RouteCandidate
 
 // fallback is the deterministic path when Vertex is disabled or the agent errors.
 func (a *RerouteAgent) fallback(ctx context.Context, in RerouteInput) (*RerouteResult, error) {
-	b, ok := a.store.GetBooking(ctx, in.BookingID)
+	b, ok, err := a.store.GetBooking(ctx, in.BookingID)
+	if err != nil {
+		return nil, fmt.Errorf("booking %s read: %w", in.BookingID, err)
+	}
 	if !ok {
 		return &RerouteResult{
 			Action:      "abort",

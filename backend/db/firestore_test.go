@@ -111,13 +111,15 @@ func TestFirestore_EnsureUser_SecondCallPreservesCounters(t *testing.T) {
 
 	// Seed a completed booking + apply trip so the user has counters > 0.
 	bid := "bk_seed_" + uuid.NewString()[:6]
-	store.CreateBooking(ctx, models.Booking{
+	if err := store.CreateBooking(ctx, models.Booking{
 		ID:              bid,
 		UserID:          uid,
 		Status:          "confirmed",
 		EstimatedPoints: 50,
 		CreatedAt:       time.Now().UTC(),
-	})
+	}); err != nil {
+		t.Fatalf("create booking: %v", err)
+	}
 	if _, _, err := store.ApplyCompletedTrip(ctx, bid, 50, 1200.0, time.Now().UTC()); err != nil {
 		t.Fatalf("apply trip: %v", err)
 	}
@@ -192,8 +194,13 @@ func TestFirestore_CreateAndGetBooking_PreservesNestedFields(t *testing.T) {
 			},
 		},
 	}
-	store.CreateBooking(ctx, b)
-	got, ok := store.GetBooking(ctx, bid)
+	if err := store.CreateBooking(ctx, b); err != nil {
+		t.Fatalf("create booking: %v", err)
+	}
+	got, ok, err := store.GetBooking(ctx, bid)
+	if err != nil {
+		t.Fatalf("GetBooking err: %v", err)
+	}
 	if !ok {
 		t.Fatalf("booking missing after create")
 	}
@@ -232,10 +239,15 @@ func TestFirestore_ListUserBookings_OrderAndFilter(t *testing.T) {
 			Status:    sp.status,
 			CreatedAt: base.Add(sp.offset),
 		}
-		store.CreateBooking(ctx, b)
+		if err := store.CreateBooking(ctx, b); err != nil {
+			t.Fatalf("create booking: %v", err)
+		}
 	}
 
-	all, total := store.ListUserBookings(ctx, uid, "", 10, 0)
+	all, total, err := store.ListUserBookings(ctx, uid, "", 10, 0)
+	if err != nil {
+		t.Fatalf("list bookings: %v", err)
+	}
 	if total != 4 || len(all) != 4 {
 		t.Fatalf("want 4 total got total=%d len=%d", total, len(all))
 	}
@@ -245,7 +257,10 @@ func TestFirestore_ListUserBookings_OrderAndFilter(t *testing.T) {
 		}
 	}
 
-	completed, ctotal := store.ListUserBookings(ctx, uid, "completed", 10, 0)
+	completed, ctotal, err := store.ListUserBookings(ctx, uid, "completed", 10, 0)
+	if err != nil {
+		t.Fatalf("list completed: %v", err)
+	}
 	if ctotal != 2 || len(completed) != 2 {
 		t.Fatalf("want 2 completed got total=%d len=%d", ctotal, len(completed))
 	}
@@ -256,8 +271,8 @@ func TestFirestore_ListUserBookings_OrderAndFilter(t *testing.T) {
 	}
 
 	// Pagination consistency: page1+page2 reconstructs the full ordered list.
-	page1, _ := store.ListUserBookings(ctx, uid, "", 2, 0)
-	page2, _ := store.ListUserBookings(ctx, uid, "", 2, 2)
+	page1, _, _ := store.ListUserBookings(ctx, uid, "", 2, 0)
+	page2, _, _ := store.ListUserBookings(ctx, uid, "", 2, 2)
 	if len(page1) != 2 || len(page2) != 2 {
 		t.Fatalf("page sizes wrong: p1=%d p2=%d", len(page1), len(page2))
 	}
@@ -280,18 +295,24 @@ func TestFirestore_ApplyCompletedTripTx_IsAtomicAndIdempotent(t *testing.T) {
 	if _, _, err := store.EnsureUser(ctx, uid, models.UserProfile{Email: "a@example.com"}); err != nil {
 		t.Fatalf("ensure: %v", err)
 	}
-	store.CreateBooking(ctx, models.Booking{
+	if err := store.CreateBooking(ctx, models.Booking{
 		ID:              bid,
 		UserID:          uid,
 		Status:          "confirmed",
 		EstimatedPoints: 100,
 		CreatedAt:       time.Now().UTC(),
-	})
+	}); err != nil {
+		t.Fatalf("create booking: %v", err)
+	}
 
+	// Fan out enough goroutines that the optimistic-concurrency retry path in
+	// Firestore actually fires; with only 2 callers the transactions tended to
+	// serialise and the idempotency guard was never exercised.
+	const concurrency = 8
 	var wg sync.WaitGroup
-	wg.Add(2)
+	wg.Add(concurrency)
 	now := time.Now().UTC()
-	for i := 0; i < 2; i++ {
+	for i := 0; i < concurrency; i++ {
 		go func() {
 			defer wg.Done()
 			_, _, _ = store.ApplyCompletedTrip(ctx, bid, 100, 5000, now)
@@ -299,14 +320,20 @@ func TestFirestore_ApplyCompletedTripTx_IsAtomicAndIdempotent(t *testing.T) {
 	}
 	wg.Wait()
 
-	u, ok := store.GetUser(ctx, uid)
+	u, ok, err := store.GetUser(ctx, uid)
+	if err != nil {
+		t.Fatalf("GetUser: %v", err)
+	}
 	if !ok {
 		t.Fatalf("user missing after concurrent apply")
 	}
 	if u.GreenPoints != 100 || u.TotalPointsEarned != 100 || u.TotalTrips != 1 || u.TotalCarbonSaved != 5000 {
-		t.Fatalf("counters not idempotent: %+v", u)
+		t.Fatalf("counters not idempotent under %d-way concurrency: %+v", concurrency, u)
 	}
-	b, _ := store.GetBooking(ctx, bid)
+	b, _, err := store.GetBooking(ctx, bid)
+	if err != nil {
+		t.Fatalf("GetBooking: %v", err)
+	}
 	if b.Status != "completed" {
 		t.Fatalf("booking status = %q want completed", b.Status)
 	}
@@ -315,5 +342,92 @@ func TestFirestore_ApplyCompletedTripTx_IsAtomicAndIdempotent(t *testing.T) {
 	}
 	if b.CompletedAt == nil {
 		t.Fatalf("completedAt nil after apply")
+	}
+}
+
+// TestFirestore_ApplyCompletedTrip_IdempotencyOnAlreadyCompleted seeds a
+// booking that is *already* marked completed and verifies that calling
+// ApplyCompletedTrip is a strict no-op: counters do not move, completedAt is
+// preserved, and the function returns the pre-existing state without error.
+// This directly exercises the idempotency guard without depending on
+// optimistic-concurrency retry timing.
+func TestFirestore_ApplyCompletedTrip_IdempotencyOnAlreadyCompleted(t *testing.T) {
+	store, cleanup := newEmulatorStore(t)
+	defer cleanup()
+
+	ctx := context.Background()
+	uid := "uid_idem_done_" + uuid.NewString()[:6]
+	bid := "bk_idem_done_" + uuid.NewString()[:6]
+
+	if _, _, err := store.EnsureUser(ctx, uid, models.UserProfile{Email: "done@example.com"}); err != nil {
+		t.Fatalf("ensure: %v", err)
+	}
+
+	// Seed the booking already in "completed" state with a fixed completedAt.
+	preCompletedAt := time.Now().UTC().Add(-30 * time.Minute).Truncate(time.Microsecond)
+	if err := store.CreateBooking(ctx, models.Booking{
+		ID:              bid,
+		UserID:          uid,
+		Status:          "completed",
+		EstimatedPoints: 100,
+		ActualPoints:    77,
+		CompletedAt:     &preCompletedAt,
+		CreatedAt:       time.Now().UTC().Add(-time.Hour),
+	}); err != nil {
+		t.Fatalf("create booking: %v", err)
+	}
+
+	// Snapshot user counters before the call (post-EnsureUser they should all
+	// be zero, but read them rather than assume).
+	uBefore, ok, err := store.GetUser(ctx, uid)
+	if err != nil || !ok {
+		t.Fatalf("pre-call GetUser: ok=%v err=%v", ok, err)
+	}
+
+	gotBooking, gotUser, err := store.ApplyCompletedTrip(ctx, bid, 100, 5000, time.Now().UTC())
+	if err != nil {
+		t.Fatalf("ApplyCompletedTrip on already-completed booking returned err: %v", err)
+	}
+
+	// Returned values should reflect the pre-existing state, not the proposed
+	// new values.
+	if gotBooking.Status != "completed" {
+		t.Fatalf("returned booking.Status = %q want completed", gotBooking.Status)
+	}
+	if gotBooking.ActualPoints != 77 {
+		t.Fatalf("returned booking.ActualPoints = %d want 77 (pre-existing)", gotBooking.ActualPoints)
+	}
+	if gotBooking.CompletedAt == nil || !gotBooking.CompletedAt.Equal(preCompletedAt) {
+		t.Fatalf("returned completedAt = %v want %v", gotBooking.CompletedAt, preCompletedAt)
+	}
+
+	// User counters in the returned value must match the pre-call snapshot.
+	if gotUser.GreenPoints != uBefore.GreenPoints ||
+		gotUser.TotalPointsEarned != uBefore.TotalPointsEarned ||
+		gotUser.TotalTrips != uBefore.TotalTrips ||
+		gotUser.TotalCarbonSaved != uBefore.TotalCarbonSaved {
+		t.Fatalf("counters moved through idempotent path: before=%+v after=%+v", uBefore, gotUser)
+	}
+
+	// Re-read from the store and confirm persisted state is unchanged.
+	uAfter, _, err := store.GetUser(ctx, uid)
+	if err != nil {
+		t.Fatalf("post-call GetUser: %v", err)
+	}
+	if uAfter.GreenPoints != uBefore.GreenPoints ||
+		uAfter.TotalPointsEarned != uBefore.TotalPointsEarned ||
+		uAfter.TotalTrips != uBefore.TotalTrips ||
+		uAfter.TotalCarbonSaved != uBefore.TotalCarbonSaved {
+		t.Fatalf("persisted counters drifted: before=%+v after=%+v", uBefore, uAfter)
+	}
+	bAfter, _, err := store.GetBooking(ctx, bid)
+	if err != nil {
+		t.Fatalf("post-call GetBooking: %v", err)
+	}
+	if bAfter.ActualPoints != 77 {
+		t.Fatalf("persisted ActualPoints = %d want 77", bAfter.ActualPoints)
+	}
+	if bAfter.CompletedAt == nil || !bAfter.CompletedAt.Equal(preCompletedAt) {
+		t.Fatalf("persisted completedAt drifted: %v want %v", bAfter.CompletedAt, preCompletedAt)
 	}
 }

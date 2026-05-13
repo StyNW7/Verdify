@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"time"
 
 	"cloud.google.com/go/firestore"
@@ -123,80 +122,85 @@ func (s *FirestoreStore) EnsureUser(ctx context.Context, uid string, p models.Us
 	return out, created, nil
 }
 
-func (s *FirestoreStore) GetUser(ctx context.Context, id string) (models.User, bool) {
+func (s *FirestoreStore) GetUser(ctx context.Context, id string) (models.User, bool, error) {
 	snap, err := s.users.Doc(id).Get(ctx)
 	if err != nil {
-		if status.Code(err) != codes.NotFound {
-			log.Printf("event=firestore_get_user_failed uid=%s err=%v", id, err)
+		if status.Code(err) == codes.NotFound {
+			return models.User{}, false, nil
 		}
-		return models.User{}, false
+		return models.User{}, false, fmt.Errorf("get user %s: %w", id, err)
 	}
 	var u models.User
 	if err := snap.DataTo(&u); err != nil {
-		log.Printf("event=firestore_decode_user_failed uid=%s err=%v", id, err)
-		return models.User{}, false
+		return models.User{}, false, fmt.Errorf("decode user %s: %w", id, err)
 	}
 	u.ID = id
-	return u, true
+	return u, true, nil
 }
 
-// UpdateUser overwrites the user document. Callers must read-modify-write
-// from a previously-fetched user (the existing Store contract); counters
-// owned by ApplyCompletedTrip should not be touched via this path.
-func (s *FirestoreStore) UpdateUser(ctx context.Context, u models.User) {
+// UpdateUser writes only the mutable profile fields (email, displayName,
+// photoURL) via a partial-update merge so concurrent counter increments from
+// ApplyCompletedTrip aren't clobbered by a stale read-modify-write cycle.
+// Counters and CreatedAt are owned by ApplyCompletedTrip / EnsureUser and are
+// not modifiable through this path.
+func (s *FirestoreStore) UpdateUser(ctx context.Context, u models.User) error {
 	if u.ID == "" {
-		log.Printf("event=firestore_update_user_skipped reason=empty_id")
-		return
+		return fmt.Errorf("update user: empty id")
 	}
-	if _, err := s.users.Doc(u.ID).Set(ctx, u); err != nil {
-		log.Printf("event=firestore_update_user_failed uid=%s err=%v", u.ID, err)
+	_, err := s.users.Doc(u.ID).Set(ctx, map[string]any{
+		"email":       u.Email,
+		"displayName": u.DisplayName,
+		"photoURL":    u.PhotoURL,
+	}, firestore.MergeAll)
+	if err != nil {
+		return fmt.Errorf("update user %s: %w", u.ID, err)
 	}
+	return nil
 }
 
-func (s *FirestoreStore) CreateBooking(ctx context.Context, b models.Booking) {
+func (s *FirestoreStore) CreateBooking(ctx context.Context, b models.Booking) error {
 	if b.ID == "" {
-		log.Printf("event=firestore_create_booking_skipped reason=empty_id")
-		return
+		return fmt.Errorf("create booking: empty id")
 	}
 	if _, err := s.books.Doc(b.ID).Set(ctx, b); err != nil {
-		log.Printf("event=firestore_create_booking_failed id=%s err=%v", b.ID, err)
+		return fmt.Errorf("create booking %s: %w", b.ID, err)
 	}
+	return nil
 }
 
-func (s *FirestoreStore) GetBooking(ctx context.Context, id string) (models.Booking, bool) {
+func (s *FirestoreStore) GetBooking(ctx context.Context, id string) (models.Booking, bool, error) {
 	snap, err := s.books.Doc(id).Get(ctx)
 	if err != nil {
-		if status.Code(err) != codes.NotFound {
-			log.Printf("event=firestore_get_booking_failed id=%s err=%v", id, err)
+		if status.Code(err) == codes.NotFound {
+			return models.Booking{}, false, nil
 		}
-		return models.Booking{}, false
+		return models.Booking{}, false, fmt.Errorf("get booking %s: %w", id, err)
 	}
 	var b models.Booking
 	if err := snap.DataTo(&b); err != nil {
-		log.Printf("event=firestore_decode_booking_failed id=%s err=%v", id, err)
-		return models.Booking{}, false
+		return models.Booking{}, false, fmt.Errorf("decode booking %s: %w", id, err)
 	}
 	b.ID = id
-	return b, true
+	return b, true, nil
 }
 
-func (s *FirestoreStore) UpdateBooking(ctx context.Context, b models.Booking) {
+func (s *FirestoreStore) UpdateBooking(ctx context.Context, b models.Booking) error {
 	if b.ID == "" {
-		log.Printf("event=firestore_update_booking_skipped reason=empty_id")
-		return
+		return fmt.Errorf("update booking: empty id")
 	}
 	if _, err := s.books.Doc(b.ID).Set(ctx, b); err != nil {
-		log.Printf("event=firestore_update_booking_failed id=%s err=%v", b.ID, err)
+		return fmt.Errorf("update booking %s: %w", b.ID, err)
 	}
+	return nil
 }
 
 // ListUserBookings runs a (userId, [status], createdAt desc) query backed
 // by the composite indexes declared in firestore.indexes.json. The total
 // count is computed by a parallel count-style query; for the prototype we
 // fetch the same filtered set without limit/offset and use its length.
-func (s *FirestoreStore) ListUserBookings(ctx context.Context, userID, queryStatus string, limit, offset int) ([]models.Booking, int) {
+func (s *FirestoreStore) ListUserBookings(ctx context.Context, userID, queryStatus string, limit, offset int) ([]models.Booking, int, error) {
 	if userID == "" {
-		return []models.Booking{}, 0
+		return []models.Booking{}, 0, nil
 	}
 
 	base := s.books.Query.Where("userId", "==", userID)
@@ -216,8 +220,7 @@ func (s *FirestoreStore) ListUserBookings(ctx context.Context, userID, queryStat
 			break
 		}
 		if err != nil {
-			log.Printf("event=firestore_list_count_failed uid=%s err=%v", userID, err)
-			return []models.Booking{}, 0
+			return []models.Booking{}, 0, fmt.Errorf("list bookings count %s: %w", userID, err)
 		}
 		total++
 	}
@@ -239,18 +242,16 @@ func (s *FirestoreStore) ListUserBookings(ctx context.Context, userID, queryStat
 			break
 		}
 		if err != nil {
-			log.Printf("event=firestore_list_page_failed uid=%s err=%v", userID, err)
-			return out, total
+			return out, total, fmt.Errorf("list bookings page %s: %w", userID, err)
 		}
 		var b models.Booking
 		if err := snap.DataTo(&b); err != nil {
-			log.Printf("event=firestore_list_decode_failed uid=%s id=%s err=%v", userID, snap.Ref.ID, err)
-			continue
+			return out, total, fmt.Errorf("list bookings decode %s/%s: %w", userID, snap.Ref.ID, err)
 		}
 		b.ID = snap.Ref.ID
 		out = append(out, b)
 	}
-	return out, total
+	return out, total, nil
 }
 
 // ApplyCompletedTrip flips the booking to "completed" and increments the

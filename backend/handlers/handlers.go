@@ -57,7 +57,10 @@ func (app *App) createBookingHandler(w http.ResponseWriter, r *http.Request) {
 		writeErr(w, http.StatusForbidden, "userId mismatch")
 		return
 	}
-	if _, ok := app.Store.GetUser(r.Context(), req.UserID); !ok {
+	if _, ok, err := app.Store.GetUser(r.Context(), req.UserID); err != nil {
+		writeErr(w, http.StatusInternalServerError, "user_lookup_failed")
+		return
+	} else if !ok {
 		writeErr(w, http.StatusNotFound, "user not found")
 		return
 	}
@@ -76,7 +79,10 @@ func (app *App) createBookingHandler(w http.ResponseWriter, r *http.Request) {
 		PaymentStatus:    "pending",
 		CreatedAt:        now,
 	}
-	app.Store.CreateBooking(r.Context(), b)
+	if err := app.Store.CreateBooking(r.Context(), b); err != nil {
+		writeErr(w, http.StatusInternalServerError, "booking_persistence_failed")
+		return
+	}
 	writeOK(w, http.StatusCreated, map[string]any{
 		"bookingId":        b.ID,
 		"qrCode":           b.QRCode,
@@ -93,7 +99,11 @@ func (app *App) createBookingHandler(w http.ResponseWriter, r *http.Request) {
 
 func (app *App) payBookingHandler(w http.ResponseWriter, r *http.Request) {
 	bookingID := r.PathValue("id")
-	b, ok := app.Store.GetBooking(r.Context(), bookingID)
+	b, ok, err := app.Store.GetBooking(r.Context(), bookingID)
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, "booking_lookup_failed")
+		return
+	}
 	if !ok {
 		writeErr(w, http.StatusNotFound, "booking not found")
 		return
@@ -107,13 +117,20 @@ func (app *App) payBookingHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	b.PaymentStatus = "completed"
-	app.Store.UpdateBooking(r.Context(), b)
+	if err := app.Store.UpdateBooking(r.Context(), b); err != nil {
+		writeErr(w, http.StatusInternalServerError, "booking_persistence_failed")
+		return
+	}
 	writeOK(w, http.StatusOK, b)
 }
 
 func (app *App) verifyBookingHandler(w http.ResponseWriter, r *http.Request) {
 	bookingID := r.PathValue("id")
-	b, ok := app.Store.GetBooking(r.Context(), bookingID)
+	b, ok, err := app.Store.GetBooking(r.Context(), bookingID)
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, "booking_lookup_failed")
+		return
+	}
 	if !ok {
 		writeErr(w, http.StatusNotFound, "booking not found")
 		return
@@ -147,7 +164,11 @@ func (app *App) verifyBookingHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) getBookingHandler(w http.ResponseWriter, r *http.Request) {
-	b, ok := app.Store.GetBooking(r.Context(), r.PathValue("id"))
+	b, ok, err := app.Store.GetBooking(r.Context(), r.PathValue("id"))
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, "booking_lookup_failed")
+		return
+	}
 	if !ok {
 		writeErr(w, http.StatusNotFound, "booking not found")
 		return
@@ -178,7 +199,11 @@ func (app *App) getBookingHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) cancelBookingHandler(w http.ResponseWriter, r *http.Request) {
-	b, ok := app.Store.GetBooking(r.Context(), r.PathValue("id"))
+	b, ok, err := app.Store.GetBooking(r.Context(), r.PathValue("id"))
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, "booking_lookup_failed")
+		return
+	}
 	if !ok {
 		writeErr(w, http.StatusNotFound, "booking not found")
 		return
@@ -188,13 +213,20 @@ func (app *App) cancelBookingHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	b.Status = "cancelled"
-	app.Store.UpdateBooking(r.Context(), b)
+	if err := app.Store.UpdateBooking(r.Context(), b); err != nil {
+		writeErr(w, http.StatusInternalServerError, "booking_persistence_failed")
+		return
+	}
 	writeOK(w, http.StatusOK, b)
 }
 
 func (app *App) getUserGreenPointsHandler(w http.ResponseWriter, r *http.Request) {
 	userID := r.PathValue("userId")
-	u, ok := app.Store.GetUser(r.Context(), userID)
+	u, ok, err := app.Store.GetUser(r.Context(), userID)
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, "user_lookup_failed")
+		return
+	}
 	if !ok {
 		writeErr(w, http.StatusNotFound, "user not found")
 		return
@@ -210,7 +242,10 @@ func (app *App) getUserGreenPointsHandler(w http.ResponseWriter, r *http.Request
 
 func (app *App) getUserBookingsHandler(w http.ResponseWriter, r *http.Request) {
 	userID := r.PathValue("userId")
-	if _, ok := app.Store.GetUser(r.Context(), userID); !ok {
+	if _, ok, err := app.Store.GetUser(r.Context(), userID); err != nil {
+		writeErr(w, http.StatusInternalServerError, "user_lookup_failed")
+		return
+	} else if !ok {
 		writeErr(w, http.StatusNotFound, "user not found")
 		return
 	}
@@ -218,7 +253,11 @@ func (app *App) getUserBookingsHandler(w http.ResponseWriter, r *http.Request) {
 	limit := parseIntOr(q.Get("limit"), 10)
 	offset := parseIntOr(q.Get("offset"), 0)
 	status := strings.TrimSpace(q.Get("status"))
-	items, total := app.Store.ListUserBookings(r.Context(), userID, status, limit, offset)
+	items, total, err := app.Store.ListUserBookings(r.Context(), userID, status, limit, offset)
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, "bookings_list_failed")
+		return
+	}
 	writeOK(w, http.StatusOK, map[string]any{"bookings": items, "pagination": map[string]int{"total": total, "limit": limit, "offset": offset}})
 }
 

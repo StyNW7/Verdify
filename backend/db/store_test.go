@@ -33,7 +33,10 @@ func TestEnsureUser_CreatesWhenMissing(t *testing.T) {
 		t.Fatalf("CreatedAt must be populated")
 	}
 
-	got, ok := s.GetUser(context.Background(), uid)
+	got, ok, err := s.GetUser(context.Background(), uid)
+	if err != nil {
+		t.Fatalf("GetUser err: %v", err)
+	}
 	if !ok {
 		t.Fatalf("GetUser missing after ensure")
 	}
@@ -52,12 +55,14 @@ func TestEnsureUser_IsIdempotent_PreservesCounters(t *testing.T) {
 	}
 
 	// Award points so we can prove EnsureUser doesn't reset them.
-	s.CreateBooking(ctx, models.Booking{
+	if err := s.CreateBooking(ctx, models.Booking{
 		ID:              "bk_seed",
 		UserID:          uid,
 		Status:          "confirmed",
 		EstimatedPoints: 50,
-	})
+	}); err != nil {
+		t.Fatalf("create booking: %v", err)
+	}
 	if _, _, err := s.ApplyCompletedTrip(ctx, "bk_seed", 50, 1200.0, time.Now().UTC()); err != nil {
 		t.Fatalf("apply completed: %v", err)
 	}

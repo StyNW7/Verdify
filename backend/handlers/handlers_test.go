@@ -131,7 +131,10 @@ func TestCreateBooking_PersistsSnapshotVerbatim(t *testing.T) {
 		t.Fatalf("response missing bookingReference: %s", rr.Body.String())
 	}
 
-	stored, ok := app.Store.GetBooking(context.Background(), bookingID)
+	stored, ok, err := app.Store.GetBooking(context.Background(), bookingID)
+	if err != nil {
+		t.Fatalf("GetBooking err: %v", err)
+	}
 	if !ok {
 		t.Fatalf("booking not persisted under id %s", bookingID)
 	}
@@ -388,7 +391,7 @@ func TestPayBookingHandler_LeavesConfirmedStatusUntouched(t *testing.T) {
 	snap.RouteID = "route_pay_confirmed_xyz"
 	bookingID := createBookingForLifecycle(t, app, mux, "uid_pay_conf", snap)
 
-	before, _ := app.Store.GetBooking(context.Background(), bookingID)
+	before, _, _ := app.Store.GetBooking(context.Background(), bookingID)
 	if before.Status != "confirmed" {
 		t.Fatalf("precondition: want status=confirmed got %q", before.Status)
 	}
@@ -399,7 +402,7 @@ func TestPayBookingHandler_LeavesConfirmedStatusUntouched(t *testing.T) {
 		t.Fatalf("pay want 200 got %d body=%s", rr.Code, rr.Body.String())
 	}
 
-	after, _ := app.Store.GetBooking(context.Background(), bookingID)
+	after, _, _ := app.Store.GetBooking(context.Background(), bookingID)
 	if after.Status != "confirmed" {
 		t.Fatalf("status flipped to %q; pay must leave confirmed untouched", after.Status)
 	}
@@ -416,9 +419,11 @@ func TestPayBookingHandler_RejectsCompletedBooking(t *testing.T) {
 	snap.RouteID = "route_pay_completed_abc"
 	bookingID := createBookingForLifecycle(t, app, mux, "uid_pay_done", snap)
 
-	b, _ := app.Store.GetBooking(context.Background(), bookingID)
+	b, _, _ := app.Store.GetBooking(context.Background(), bookingID)
 	b.Status = "completed"
-	app.Store.UpdateBooking(context.Background(), b)
+	if err := app.Store.UpdateBooking(context.Background(), b); err != nil {
+		t.Fatalf("UpdateBooking: %v", err)
+	}
 
 	rr := httptest.NewRecorder()
 	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/v1/bookings/"+bookingID+"/pay", nil))
@@ -435,9 +440,11 @@ func TestPayBookingHandler_RejectsCancelledBooking(t *testing.T) {
 	snap.RouteID = "route_pay_cancelled_abc"
 	bookingID := createBookingForLifecycle(t, app, mux, "uid_pay_canc", snap)
 
-	b, _ := app.Store.GetBooking(context.Background(), bookingID)
+	b, _, _ := app.Store.GetBooking(context.Background(), bookingID)
 	b.Status = "cancelled"
-	app.Store.UpdateBooking(context.Background(), b)
+	if err := app.Store.UpdateBooking(context.Background(), b); err != nil {
+		t.Fatalf("UpdateBooking: %v", err)
+	}
 
 	rr := httptest.NewRecorder()
 	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/v1/bookings/"+bookingID+"/pay", nil))
@@ -454,9 +461,11 @@ func TestCancelBookingHandler_RejectsCompletedBooking(t *testing.T) {
 	snap.RouteID = "route_cancel_completed_abc"
 	bookingID := createBookingForLifecycle(t, app, mux, "uid_cancel_done", snap)
 
-	b, _ := app.Store.GetBooking(context.Background(), bookingID)
+	b, _, _ := app.Store.GetBooking(context.Background(), bookingID)
 	b.Status = "completed"
-	app.Store.UpdateBooking(context.Background(), b)
+	if err := app.Store.UpdateBooking(context.Background(), b); err != nil {
+		t.Fatalf("UpdateBooking: %v", err)
+	}
 
 	rr := httptest.NewRecorder()
 	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/v1/bookings/"+bookingID+"/cancel", nil))

@@ -35,7 +35,11 @@ func (app *App) rerouteBookingHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Load booking.
-	b, ok := app.Store.GetBooking(r.Context(), bookingID)
+	b, ok, err := app.Store.GetBooking(r.Context(), bookingID)
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, "booking_lookup_failed")
+		return
+	}
 	if !ok {
 		writeErr(w, http.StatusNotFound, "booking_not_found")
 		return
@@ -47,7 +51,9 @@ func (app *App) rerouteBookingHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Hard cap: 3 reroutes per booking.
+	// Hard cap: 3 reroutes per booking. The cap-event is a multi-stage write
+	// that follows a decision; detach from r.Context() so a client disconnect
+	// after the decision doesn't lose the audit trail.
 	if len(b.RerouteHistory) >= 3 {
 		event := models.RerouteEvent{
 			Ts:           services.NowUTC(),
@@ -57,7 +63,11 @@ func (app *App) rerouteBookingHandler(w http.ResponseWriter, r *http.Request) {
 			AgentSource:  "cap",
 		}
 		b.RerouteHistory = append(b.RerouteHistory, event)
-		app.Store.UpdateBooking(r.Context(), b)
+		writeCtx := context.WithoutCancel(r.Context())
+		if err := app.Store.UpdateBooking(writeCtx, b); err != nil {
+			writeErr(w, http.StatusInternalServerError, "booking_persistence_failed")
+			return
+		}
 		writeOK(w, http.StatusOK, map[string]any{
 			"action":      "abort",
 			"userMessage": "Please contact support.",
@@ -116,7 +126,15 @@ func (app *App) rerouteBookingHandler(w http.ResponseWriter, r *http.Request) {
 		NewRouteID:   newRouteID,
 		AgentSource:  result.Source,
 	})
-	app.Store.UpdateBooking(r.Context(), b)
+	// Detach the write context from the HTTP request: the agent decision has
+	// already been made; a client disconnect must not cancel the persistence
+	// of the reroute history. context.WithoutCancel preserves the parent's
+	// values (e.g. tracing) while ignoring its cancellation/deadline.
+	writeCtx := context.WithoutCancel(r.Context())
+	if err := app.Store.UpdateBooking(writeCtx, b); err != nil {
+		writeErr(w, http.StatusInternalServerError, "booking_persistence_failed")
+		return
+	}
 
 	log.Printf("event=reroute booking=%s action=%s source=%s rerouteCount=%d",
 		bookingID, result.Action, result.Source, len(b.RerouteHistory))

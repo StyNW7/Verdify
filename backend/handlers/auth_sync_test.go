@@ -55,7 +55,10 @@ func TestAuthSync_CreatesUserOnFirstCall(t *testing.T) {
 		t.Fatalf("response photoURL=%v", data["photoURL"])
 	}
 
-	stored, ok := app.Store.GetUser(context.Background(), "uid_first")
+	stored, ok, err := app.Store.GetUser(context.Background(), "uid_first")
+	if err != nil {
+		t.Fatalf("GetUser err: %v", err)
+	}
 	if !ok {
 		t.Fatalf("user not persisted")
 	}
@@ -80,12 +83,14 @@ func TestAuthSync_IdempotentPreservesCounters(t *testing.T) {
 	}
 
 	// Award points out-of-band via a seeded booking.
-	app.Store.CreateBooking(context.Background(), models.Booking{
+	if err := app.Store.CreateBooking(context.Background(), models.Booking{
 		ID:              "bk_seed_idem",
 		UserID:          "uid_idem",
 		Status:          "confirmed",
 		EstimatedPoints: 42,
-	})
+	}); err != nil {
+		t.Fatalf("seed booking: %v", err)
+	}
 	if _, _, err := app.Store.ApplyCompletedTrip(context.Background(), "bk_seed_idem", 42, 1200.0, time.Now().UTC()); err != nil {
 		t.Fatalf("seed counters: %v", err)
 	}
@@ -98,7 +103,7 @@ func TestAuthSync_IdempotentPreservesCounters(t *testing.T) {
 	if rr.Code != http.StatusOK {
 		t.Fatalf("second sync want 200 got %d", rr.Code)
 	}
-	got, _ := app.Store.GetUser(context.Background(), "uid_idem")
+	got, _, _ := app.Store.GetUser(context.Background(), "uid_idem")
 	if got.GreenPoints != 42 || got.TotalTrips != 1 {
 		t.Fatalf("counters reset on second sync: %+v", got)
 	}

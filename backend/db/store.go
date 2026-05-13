@@ -16,18 +16,26 @@ import (
 //
 // Routes are not persisted (ADR-0004). The booking's RouteSnapshot is the
 // authoritative copy; Booking.RouteID / ActiveRouteID are opaque lineage tags.
+// Convention for (value, found, err) returns: err != nil means the operation
+// failed (database error); err == nil && !found means clean not-found;
+// err == nil && found means hit. Handlers must check err *before* found.
 type Store interface {
 	// EnsureUser upserts the profile fields onto /users/{uid} without touching
 	// counters. Returns the resulting user and a "created" bool so callers can
 	// log first-sign-in events. Idempotent.
 	EnsureUser(ctx context.Context, uid string, p models.UserProfile) (models.User, bool, error)
 
-	GetUser(ctx context.Context, id string) (models.User, bool)
-	UpdateUser(ctx context.Context, u models.User)
-	CreateBooking(ctx context.Context, b models.Booking)
-	GetBooking(ctx context.Context, id string) (models.Booking, bool)
-	UpdateBooking(ctx context.Context, b models.Booking)
-	ListUserBookings(ctx context.Context, userID, status string, limit, offset int) ([]models.Booking, int)
+	GetUser(ctx context.Context, id string) (models.User, bool, error)
+
+	// UpdateUser updates user profile fields (email, displayName, photoURL)
+	// only. Counters are owned by ApplyCompletedTrip and not modifiable through
+	// this method.
+	UpdateUser(ctx context.Context, u models.User) error
+
+	CreateBooking(ctx context.Context, b models.Booking) error
+	GetBooking(ctx context.Context, id string) (models.Booking, bool, error)
+	UpdateBooking(ctx context.Context, b models.Booking) error
+	ListUserBookings(ctx context.Context, userID, status string, limit, offset int) ([]models.Booking, int, error)
 
 	// ApplyCompletedTrip atomically (a) flips the booking to "completed" with
 	// actualPoints + completedAt, and (b) increments the user's counters.
@@ -83,39 +91,52 @@ func (s *MemoryStore) EnsureUser(_ context.Context, uid string, p models.UserPro
 	return u, true, nil
 }
 
-func (s *MemoryStore) GetUser(_ context.Context, id string) (models.User, bool) {
+func (s *MemoryStore) GetUser(_ context.Context, id string) (models.User, bool, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	u, ok := s.users[id]
-	return u, ok
+	return u, ok, nil
 }
 
-func (s *MemoryStore) UpdateUser(_ context.Context, u models.User) {
+func (s *MemoryStore) UpdateUser(_ context.Context, u models.User) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	s.users[u.ID] = u
+	existing, ok := s.users[u.ID]
+	if !ok {
+		s.users[u.ID] = u
+		return nil
+	}
+	// Only profile fields are writable through UpdateUser. Counters and
+	// CreatedAt are owned by ApplyCompletedTrip / EnsureUser respectively.
+	existing.Email = u.Email
+	existing.DisplayName = u.DisplayName
+	existing.PhotoURL = u.PhotoURL
+	s.users[u.ID] = existing
+	return nil
 }
 
-func (s *MemoryStore) CreateBooking(_ context.Context, b models.Booking) {
+func (s *MemoryStore) CreateBooking(_ context.Context, b models.Booking) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.bookings[b.ID] = b
+	return nil
 }
 
-func (s *MemoryStore) GetBooking(_ context.Context, id string) (models.Booking, bool) {
+func (s *MemoryStore) GetBooking(_ context.Context, id string) (models.Booking, bool, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	b, ok := s.bookings[id]
-	return b, ok
+	return b, ok, nil
 }
 
-func (s *MemoryStore) UpdateBooking(_ context.Context, b models.Booking) {
+func (s *MemoryStore) UpdateBooking(_ context.Context, b models.Booking) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.bookings[b.ID] = b
+	return nil
 }
 
-func (s *MemoryStore) ListUserBookings(_ context.Context, userID, status string, limit, offset int) ([]models.Booking, int) {
+func (s *MemoryStore) ListUserBookings(_ context.Context, userID, status string, limit, offset int) ([]models.Booking, int, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	all := make([]models.Booking, 0)
@@ -133,13 +154,13 @@ func (s *MemoryStore) ListUserBookings(_ context.Context, userID, status string,
 	})
 	total := len(all)
 	if offset >= total {
-		return []models.Booking{}, total
+		return []models.Booking{}, total, nil
 	}
 	end := offset + limit
 	if end > total {
 		end = total
 	}
-	return all[offset:end], total
+	return all[offset:end], total, nil
 }
 
 func (s *MemoryStore) ApplyCompletedTrip(_ context.Context, bookingID string, points int, carbonSaved float64, completedAt time.Time) (models.Booking, models.User, error) {
