@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 
@@ -240,6 +242,10 @@ func (app *App) getUserHandler(w http.ResponseWriter, r *http.Request) {
 func (app *App) patchUserHandler(w http.ResponseWriter, r *http.Request) {
 	userID := r.PathValue("userId")
 
+	// Cap body size before reading. 64 KB is far beyond any valid patch — the
+	// displayName limit is 60 chars and the full patch body is tiny.
+	r.Body = http.MaxBytesReader(w, r.Body, 64*1024)
+
 	// Read body — allow empty body (PATCH no-op semantics).
 	var rawBody []byte
 	if r.Body != nil {
@@ -289,9 +295,10 @@ func readBody(r *http.Request) ([]byte, error) {
 	}
 	var raw json.RawMessage
 	if err := json.NewDecoder(r.Body).Decode(&raw); err != nil {
-		// json.Decoder treats EOF on an empty stream as io.EOF which is not a
-		// JSON syntax error. We surface actual decode errors; empty body is fine.
-		if err.Error() == "EOF" {
+		// json.Decoder returns io.EOF on a genuinely empty stream — not a decode
+		// error. Anything else (including io.ErrUnexpectedEOF for truncated input)
+		// is surfaced as a real error.
+		if errors.Is(err, io.EOF) {
 			return nil, nil
 		}
 		return nil, err
