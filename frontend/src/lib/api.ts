@@ -299,19 +299,22 @@ export type UserBookingsResponse = {
   pagination: { total: number; limit: number; offset: number };
 };
 
-export type UserGreenPointsResponse = {
+export type UserRecord = {
   userId: string;
-  currentBalance: number;
+  email: string;
+  displayName: string;
+  photoURL: string;
+  greenPointsBalance: number;
+  totalTripsCompleted: number;
+  totalCarbonSaved: number;
   totalEarned: number;
   totalRedeemed: number;
-  redeemableOptions: Array<{ id: string; name: string; pointsCost: number }>;
+  createdAt: string;
+  presetAvatar?: string;
 };
 
-export function getUserGreenPoints(userId: string) {
-  return apiRequest<UserGreenPointsResponse>(
-    `/api/v1/user/${encodeURIComponent(userId)}/green-points`,
-    { method: 'GET' },
-  );
+export function getUser(userId: string) {
+  return apiRequest<UserRecord>(`/api/v1/user/${encodeURIComponent(userId)}`, { method: 'GET' });
 }
 
 export function listUserBookings(userId: string, opts: { limit?: number; offset?: number } = {}) {
