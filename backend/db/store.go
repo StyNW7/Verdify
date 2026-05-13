@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"fmt"
 	"sort"
 	"sync"
 	"time"
@@ -27,7 +28,13 @@ type Store interface {
 	GetBooking(ctx context.Context, id string) (models.Booking, bool)
 	UpdateBooking(ctx context.Context, b models.Booking)
 	ListUserBookings(ctx context.Context, userID, status string, limit, offset int) ([]models.Booking, int)
-	ApplyCompletedTrip(ctx context.Context, userID string, points int, carbonSaved float64)
+
+	// ApplyCompletedTrip atomically (a) flips the booking to "completed" with
+	// actualPoints + completedAt, and (b) increments the user's counters.
+	// Idempotent on Booking.Status == "completed" — calling it twice for the
+	// same booking yields a single set of increments. Returns the updated
+	// booking and the updated user.
+	ApplyCompletedTrip(ctx context.Context, bookingID string, points int, carbonSaved float64, completedAt time.Time) (models.Booking, models.User, error)
 }
 
 // MemoryStore is an in-memory implementation of Store. Data resets on restart.
@@ -135,16 +142,31 @@ func (s *MemoryStore) ListUserBookings(_ context.Context, userID, status string,
 	return all[offset:end], total
 }
 
-func (s *MemoryStore) ApplyCompletedTrip(_ context.Context, userID string, points int, carbonSaved float64) {
+func (s *MemoryStore) ApplyCompletedTrip(_ context.Context, bookingID string, points int, carbonSaved float64, completedAt time.Time) (models.Booking, models.User, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	u, ok := s.users[userID]
+	b, ok := s.bookings[bookingID]
 	if !ok {
-		return
+		return models.Booking{}, models.User{}, fmt.Errorf("booking %s not found", bookingID)
+	}
+	if b.Status == "completed" {
+		// Idempotent: counters already applied.
+		return b, s.users[b.UserID], nil
+	}
+	b.Status = "completed"
+	b.ActualPoints = points
+	ca := completedAt
+	b.CompletedAt = &ca
+	s.bookings[bookingID] = b
+
+	u, ok := s.users[b.UserID]
+	if !ok {
+		return b, models.User{}, fmt.Errorf("user %s not found", b.UserID)
 	}
 	u.GreenPoints += points
 	u.TotalPointsEarned += points
 	u.TotalTrips += 1
 	u.TotalCarbonSaved += carbonSaved
 	s.users[u.ID] = u
+	return b, u, nil
 }

@@ -127,19 +127,23 @@ func (app *App) verifyBookingHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rt := b.RouteSnapshot
-	now := services.NowUTC()
-	b.Status = "completed"
-	b.ActualPoints = b.EstimatedPoints
-	b.CompletedAt = &now
-	app.Store.UpdateBooking(r.Context(), b)
-
 	baseline := pricing.BaselineCarbonGrams(rt.TotalDistance)
 	carbonSaved := baseline - rt.CarbonEstimate
 	if carbonSaved < 0 {
 		carbonSaved = 0
 	}
-	app.Store.ApplyCompletedTrip(r.Context(), b.UserID, b.ActualPoints, carbonSaved)
-	writeOK(w, http.StatusOK, map[string]any{"bookingId": b.ID, "status": b.Status, "paymentStatus": b.PaymentStatus, "actualPoints": b.ActualPoints, "carbonSaved": pricing.Round2(carbonSaved)})
+	updated, _, err := app.Store.ApplyCompletedTrip(r.Context(), b.ID, b.EstimatedPoints, carbonSaved, services.NowUTC())
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, "apply_completed_failed")
+		return
+	}
+	writeOK(w, http.StatusOK, map[string]any{
+		"bookingId":     updated.ID,
+		"status":        updated.Status,
+		"paymentStatus": updated.PaymentStatus,
+		"actualPoints":  updated.ActualPoints,
+		"carbonSaved":   pricing.Round2(carbonSaved),
+	})
 }
 
 func (app *App) getBookingHandler(w http.ResponseWriter, r *http.Request) {

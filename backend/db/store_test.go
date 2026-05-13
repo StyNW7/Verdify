@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/verdify/backend/models"
 )
@@ -51,7 +52,15 @@ func TestEnsureUser_IsIdempotent_PreservesCounters(t *testing.T) {
 	}
 
 	// Award points so we can prove EnsureUser doesn't reset them.
-	s.ApplyCompletedTrip(ctx, uid, 50, 1200.0)
+	s.CreateBooking(ctx, models.Booking{
+		ID:              "bk_seed",
+		UserID:          uid,
+		Status:          "confirmed",
+		EstimatedPoints: 50,
+	})
+	if _, _, err := s.ApplyCompletedTrip(ctx, "bk_seed", 50, 1200.0, time.Now().UTC()); err != nil {
+		t.Fatalf("apply completed: %v", err)
+	}
 
 	u2, created, err := s.EnsureUser(ctx, uid, models.UserProfile{
 		Email:       "u-renamed@example.com",

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/verdify/backend/auth"
 	"github.com/verdify/backend/config"
@@ -78,8 +79,16 @@ func TestAuthSync_IdempotentPreservesCounters(t *testing.T) {
 		t.Fatalf("first sync want 200 got %d", rr.Code)
 	}
 
-	// Award points out-of-band.
-	app.Store.ApplyCompletedTrip(context.Background(), "uid_idem", 42, 1200.0)
+	// Award points out-of-band via a seeded booking.
+	app.Store.CreateBooking(context.Background(), models.Booking{
+		ID:              "bk_seed_idem",
+		UserID:          "uid_idem",
+		Status:          "confirmed",
+		EstimatedPoints: 42,
+	})
+	if _, _, err := app.Store.ApplyCompletedTrip(context.Background(), "bk_seed_idem", 42, 1200.0, time.Now().UTC()); err != nil {
+		t.Fatalf("seed counters: %v", err)
+	}
 
 	// Second call must not reset counters.
 	rr = httptest.NewRecorder()
