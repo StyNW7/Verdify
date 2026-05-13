@@ -44,12 +44,13 @@ function makeFakeSeams() {
   };
 }
 
-function fakeUser(uid, token) {
+function fakeUser(uid, token, { emailVerified = false } = {}) {
   return {
     uid,
     email: `${uid}@example.com`,
     displayName: uid,
     photoURL: null,
+    emailVerified,
     getIdToken: async () => token,
   };
 }
@@ -86,6 +87,7 @@ test('auth callback firing with a signed-in user populates user', () => {
     email: 'uid_abc@example.com',
     displayName: 'uid_abc',
     photoURL: null,
+    emailVerified: false,
   });
   assert.equal(snap.loading, false);
   teardown();
@@ -250,6 +252,7 @@ test('getRedirectResult resolving to a user populates snapshot and token getter'
     email: 'uid_google@example.com',
     displayName: 'uid_google',
     photoURL: null,
+    emailVerified: false,
   });
   assert.equal(snap.idToken, 'tok_redirect');
   assert.equal(snap.loading, false);

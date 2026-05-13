@@ -5,6 +5,7 @@ export type AuthUser = {
   email: string | null;
   displayName: string | null;
   photoURL: string | null;
+  emailVerified: boolean;
 };
 
 export type AuthSnapshot = {
@@ -20,6 +21,7 @@ export type AuthSeamUser = {
   email: string | null;
   displayName: string | null;
   photoURL: string | null;
+  emailVerified: boolean;
   getIdToken: () => Promise<string>;
 };
 
@@ -60,6 +62,7 @@ function toAuthUser(u: AuthSeamUser | null): AuthUser | null {
     email: u.email,
     displayName: u.displayName,
     photoURL: u.photoURL,
+    emailVerified: u.emailVerified ?? false,
   };
 }
 

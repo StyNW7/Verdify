@@ -431,3 +431,107 @@ func TestFirestore_ApplyCompletedTrip_IdempotencyOnAlreadyCompleted(t *testing.T
 		t.Fatalf("persisted completedAt drifted: %v want %v", bAfter.CompletedAt, preCompletedAt)
 	}
 }
+
+func TestFirestore_GetUser_SentinelForUnknownUID(t *testing.T) {
+	store, cleanup := newEmulatorStore(t)
+	defer cleanup()
+
+	ctx := context.Background()
+	uid := "uid_unknown_" + uuid.NewString()[:6]
+
+	u, ok, err := store.GetUser(ctx, uid)
+	if err != nil {
+		t.Fatalf("GetUser err: %v", err)
+	}
+	if ok {
+		t.Fatalf("GetUser returned ok=true for unknown uid; want false")
+	}
+	if u.ID != "" {
+		t.Fatalf("GetUser returned non-zero User for unknown uid: %+v", u)
+	}
+}
+
+func TestFirestore_GetUser_ReturnsDocAfterEnsureUser(t *testing.T) {
+	store, cleanup := newEmulatorStore(t)
+	defer cleanup()
+
+	ctx := context.Background()
+	uid := "uid_getafter_" + uuid.NewString()[:6]
+
+	ensured, _, err := store.EnsureUser(ctx, uid, models.UserProfile{
+		Email:       "fs-get@example.com",
+		DisplayName: "FS Get Test",
+		PhotoURL:    "https://example.com/fsget.png",
+	})
+	if err != nil {
+		t.Fatalf("EnsureUser err: %v", err)
+	}
+
+	got, ok, err := store.GetUser(ctx, uid)
+	if err != nil {
+		t.Fatalf("GetUser err: %v", err)
+	}
+	if !ok {
+		t.Fatalf("GetUser returned ok=false after EnsureUser")
+	}
+	if got.ID != uid {
+		t.Fatalf("ID = %q want %q", got.ID, uid)
+	}
+	if got.Email != ensured.Email || got.DisplayName != ensured.DisplayName {
+		t.Fatalf("profile fields mismatch: got=%+v want=%+v", got, ensured)
+	}
+}
+
+func TestFirestore_GetUser_RoundTripsAllFields(t *testing.T) {
+	store, cleanup := newEmulatorStore(t)
+	defer cleanup()
+
+	ctx := context.Background()
+	uid := "uid_fsroundtrip_" + uuid.NewString()[:6]
+
+	_, _, err := store.EnsureUser(ctx, uid, models.UserProfile{
+		Email:       "fsrt@example.com",
+		DisplayName: "FS Round Trip",
+		PhotoURL:    "https://example.com/fsrt.png",
+	})
+	if err != nil {
+		t.Fatalf("EnsureUser err: %v", err)
+	}
+
+	bid := "bk_fsrt_" + uuid.NewString()[:6]
+	if err := store.CreateBooking(ctx, models.Booking{
+		ID:              bid,
+		UserID:          uid,
+		Status:          "confirmed",
+		EstimatedPoints: 180,
+		CreatedAt:       time.Now().UTC(),
+	}); err != nil {
+		t.Fatalf("CreateBooking: %v", err)
+	}
+	if _, _, err := store.ApplyCompletedTrip(ctx, bid, 180, 2800.0, time.Now().UTC()); err != nil {
+		t.Fatalf("ApplyCompletedTrip: %v", err)
+	}
+
+	got, ok, err := store.GetUser(ctx, uid)
+	if err != nil {
+		t.Fatalf("GetUser err: %v", err)
+	}
+	if !ok {
+		t.Fatalf("GetUser not found")
+	}
+	if got.GreenPoints != 180 {
+		t.Fatalf("GreenPoints = %d want 180", got.GreenPoints)
+	}
+	if got.TotalTrips != 1 {
+		t.Fatalf("TotalTrips = %d want 1", got.TotalTrips)
+	}
+	if got.TotalPointsEarned != 180 {
+		t.Fatalf("TotalPointsEarned = %d want 180", got.TotalPointsEarned)
+	}
+	if got.Email != "fsrt@example.com" {
+		t.Fatalf("Email = %q want %q", got.Email, "fsrt@example.com")
+	}
+	if got.CreatedAt.IsZero() {
+		t.Fatalf("CreatedAt zero")
+	}
+}
