@@ -15,7 +15,7 @@ import {
   type User as FirebaseUser,
 } from 'firebase/auth';
 
-import { getFirebaseAuth } from '@/lib/firebase';
+import { getFirebaseAuth, isFirebaseConfigured } from '@/lib/firebase';
 import {
   createAuthStore,
   type AuthSeams,
@@ -34,6 +34,24 @@ export type AuthState = {
 };
 
 const AuthContext = createContext<AuthState | null>(null);
+
+// Stub seams for dev-bypass mode (no Firebase web config present).
+// Resolves the auth state to "signed out, done loading" immediately so the
+// layout's redirect-or-render decision can proceed using VITE_DEV_USER_ID.
+function stubSeams(): AuthSeams {
+  return {
+    subscribeAuthState: (cb) => {
+      cb(null);
+      return () => {};
+    },
+    subscribeIdToken: (cb) => {
+      cb(null);
+      return () => {};
+    },
+    signOut: async () => {},
+    getRedirectResult: async () => null,
+  };
+}
 
 // Production seams: thin adapters over firebase/auth so AuthProvider doesn't
 // need to know about the SDK shape.
@@ -66,8 +84,10 @@ type ProviderProps = {
 
 export function AuthProvider({ children, authInstance, seams }: ProviderProps) {
   const store = useMemo(() => {
-    const resolved = seams ?? firebaseSeams(authInstance ?? getFirebaseAuth());
-    return createAuthStore(resolved);
+    if (seams) return createAuthStore(seams);
+    if (authInstance) return createAuthStore(firebaseSeams(authInstance));
+    if (!isFirebaseConfigured()) return createAuthStore(stubSeams());
+    return createAuthStore(firebaseSeams(getFirebaseAuth()));
   }, [authInstance, seams]);
 
   useEffect(() => store.dispose, [store]);

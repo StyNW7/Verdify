@@ -26,6 +26,14 @@ let cachedApp: FirebaseApp | null = null;
 let cachedAuth: Auth | null = null;
 let cachedGoogleProvider: GoogleAuthProvider | null = null;
 
+// True when the web app has the minimum config needed to talk to Firebase
+// Auth. Dev-bypass mode (VITE_AUTH_REQUIRED=false with no real account) can
+// run with these env vars empty — callers should branch on this rather than
+// blindly calling getFirebaseAuth().
+export function isFirebaseConfigured(): boolean {
+  return Boolean(import.meta.env.VITE_FIREBASE_API_KEY);
+}
+
 export function getFirebaseAuth(): Auth {
   if (cachedAuth) return cachedAuth;
   if (!cachedApp) {
