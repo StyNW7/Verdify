@@ -59,7 +59,7 @@ export function createBookingSummary({
     allowedModesLabel: activeModes.length > 0 ? activeModes.join(', ') : 'No modes selected',
     routeModesLabel: route.modes.join(' + '),
     perPassengerPrice: formatRinggit(route.cost),
-    totalPrice: formatRinggit(route.cost * passengers),
+    totalPrice: formatRinggit(route.cost),
     durationText: route.durationText,
     co2Label: `${route.co2.toFixed(1)} kg CO₂`,
     pointsLabel: `+${route.points} pts`,

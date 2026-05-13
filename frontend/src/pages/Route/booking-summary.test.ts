@@ -3,7 +3,7 @@ import test from 'node:test';
 
 import { createBookingSummary } from './booking-summary.ts';
 
-test('booking summary combines selected route and planner options for confirmation', () => {
+test('booking summary renders the server-provided trip total without multiplying by passengers', () => {
   const summary = createBookingSummary({
     route: {
       name: 'Express',
@@ -38,7 +38,7 @@ test('booking summary combines selected route and planner options for confirmati
     allowedModesLabel: 'RTS Link, Bus, EV Taxi',
     routeModesLabel: 'GrabEV + RTS Link',
     perPassengerPrice: 'RM 18.00',
-    totalPrice: 'RM 54.00',
+    totalPrice: 'RM 18.00',
     durationText: '30m',
     co2Label: '1.2 kg CO₂',
     pointsLabel: '+80 pts',

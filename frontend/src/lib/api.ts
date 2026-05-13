@@ -94,6 +94,7 @@ export type CalculateRoutePayload = {
   origin: BackendLocation;
   destination: BackendLocation;
   mode?: RouteMode;
+  passengers?: number;
 };
 
 export type BackendTransportSegment = {

@@ -92,6 +92,7 @@ type RouteRequest struct {
 	Origin      Location `json:"origin"`
 	Destination Location `json:"destination"`
 	Mode        string   `json:"mode,omitempty"`
+	Passengers  int      `json:"passengers,omitempty"`
 }
 
 type CreateBookingRequest struct {

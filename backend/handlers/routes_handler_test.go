@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"math"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -189,6 +190,104 @@ func TestCalculateRoute_OriginEqualsDestination_400(t *testing.T) {
 	if rr.Code != http.StatusBadRequest {
 		t.Fatalf("want 400 got %d body=%s", rr.Code, rr.Body.String())
 	}
+}
+
+func TestCalculateRoute_Passengers_DefaultsToOne(t *testing.T) {
+	app := newTestApp(&fakeFetcher{}, &fakeRanker{source: "gemini"})
+	mux := app.Routes()
+
+	body, _ := json.Marshal(models.RouteRequest{
+		Origin:      models.Location{Latitude: 3.139, Longitude: 101.687},
+		Destination: models.Location{Latitude: 3.073, Longitude: 101.606},
+	})
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/v1/routes/calculate", bytes.NewReader(body)))
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("want 200 got %d body=%s", rr.Code, rr.Body.String())
+	}
+	var env calcEnvelope
+	_ = json.Unmarshal(rr.Body.Bytes(), &env)
+
+	for _, o := range env.Data.Options {
+		var stepSum float64
+		for _, s := range o.Steps {
+			stepSum += s.EstimatedCost
+		}
+		if math.Abs(o.EstimatedCost-round2(stepSum)) > 0.01 {
+			t.Errorf("%s: option total %v should equal sum of steps %v", o.Mode, o.EstimatedCost, stepSum)
+		}
+	}
+}
+
+func TestCalculateRoute_Passengers_FourFolds_EVTaxiFlatFare(t *testing.T) {
+	app := newTestApp(&fakeFetcher{}, &fakeRanker{source: "gemini"})
+	mux := app.Routes()
+
+	body4, _ := json.Marshal(models.RouteRequest{
+		Origin:      models.Location{Latitude: 3.139, Longitude: 101.687},
+		Destination: models.Location{Latitude: 3.073, Longitude: 101.606},
+		Passengers:  4,
+	})
+	rr4 := httptest.NewRecorder()
+	mux.ServeHTTP(rr4, httptest.NewRequest(http.MethodPost, "/api/v1/routes/calculate", bytes.NewReader(body4)))
+	if rr4.Code != http.StatusOK {
+		t.Fatalf("4-pax: want 200 got %d body=%s", rr4.Code, rr4.Body.String())
+	}
+	var env4 calcEnvelope
+	_ = json.Unmarshal(rr4.Body.Bytes(), &env4)
+
+	body1, _ := json.Marshal(models.RouteRequest{
+		Origin:      models.Location{Latitude: 3.139, Longitude: 101.687},
+		Destination: models.Location{Latitude: 3.073, Longitude: 101.606},
+		Passengers:  1,
+	})
+	rr1 := httptest.NewRecorder()
+	mux.ServeHTTP(rr1, httptest.NewRequest(http.MethodPost, "/api/v1/routes/calculate", bytes.NewReader(body1)))
+	if rr1.Code != http.StatusOK {
+		t.Fatalf("1-pax: want 200 got %d body=%s", rr1.Code, rr1.Body.String())
+	}
+	var env1 calcEnvelope
+	_ = json.Unmarshal(rr1.Body.Bytes(), &env1)
+
+	// For any option whose only non-walking legs are ev_taxi, the 4-pax total must
+	// equal the 1-pax total (one car, flat fare). For per-passenger legs the 4-pax
+	// total must be strictly greater than the 1-pax total.
+	if len(env4.Data.Options) != len(env1.Data.Options) {
+		t.Fatalf("option count differs between 1-pax (%d) and 4-pax (%d)", len(env1.Data.Options), len(env4.Data.Options))
+	}
+	for i, o4 := range env4.Data.Options {
+		o1 := env1.Data.Options[i]
+		onlyEVTaxi := true
+		hasPerPax := false
+		for _, s := range o4.Steps {
+			switch s.Type {
+			case "walking":
+				// neutral
+			case "ev_taxi", "evTaxi":
+				// vehicle leg
+			default:
+				onlyEVTaxi = false
+				if s.Type != "" {
+					hasPerPax = true
+				}
+			}
+		}
+		if onlyEVTaxi {
+			if math.Abs(o4.EstimatedCost-o1.EstimatedCost) > 0.01 {
+				t.Errorf("%s ev_taxi-only: 4-pax total %v should match 1-pax total %v", o4.Mode, o4.EstimatedCost, o1.EstimatedCost)
+			}
+		}
+		if hasPerPax {
+			if o4.EstimatedCost <= o1.EstimatedCost {
+				t.Errorf("%s with per-passenger legs: 4-pax total %v should exceed 1-pax total %v", o4.Mode, o4.EstimatedCost, o1.EstimatedCost)
+			}
+		}
+	}
+}
+
+func round2(v float64) float64 {
+	return math.Round(v*100) / 100
 }
 
 func TestCalculateRoute_InvalidMode_400(t *testing.T) {
