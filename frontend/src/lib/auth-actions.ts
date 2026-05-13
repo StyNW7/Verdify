@@ -1,4 +1,5 @@
 import {
+  sendPasswordResetEmail,
   signInWithPopup,
   signInWithRedirect,
   type UserCredential,
@@ -19,6 +20,35 @@ function firebaseCode(err: unknown): string | null {
     return (err as { code: string }).code;
   }
   return null;
+}
+
+// Sends a Firebase password-reset email to `email`.
+//
+// Resolves silently for both registered and unregistered addresses —
+// Firebase does not reveal whether an account exists on reset, and we
+// follow the same privacy posture by treating auth/user-not-found as success.
+//
+// Rejects with a user-facing Error for auth/invalid-email and network
+// failures so the caller can surface the message inline.
+export async function requestPasswordReset(email: string): Promise<void> {
+  try {
+    await sendPasswordResetEmail(getFirebaseAuth(), email);
+  } catch (err: unknown) {
+    const code = firebaseCode(err);
+
+    if (code === 'auth/user-not-found') {
+      if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
+        console.debug('[auth] requestPasswordReset: user-not-found, treating as success');
+      }
+      return;
+    }
+
+    if (code === 'auth/invalid-email') {
+      throw new Error('Please enter a valid email address.');
+    }
+
+    throw new Error('Unable to send reset email. Please check your connection and try again.');
+  }
 }
 
 // Signs in with Google using popup on desktop, redirect on mobile.
