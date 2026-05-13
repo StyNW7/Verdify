@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/firebase/genkit/go/ai"
@@ -121,6 +122,9 @@ func (r *GeminiRanker) Annotate(ctx context.Context, in RankInput) (*RankResult,
 
 	raw, err := r.llm(ctx, in)
 	if err != nil || raw == nil {
+		if err != nil {
+			log.Printf("event=ranker_llm_err model=%s err=%v", r.model, err)
+		}
 		return r.fullFallback(in), nil
 	}
 

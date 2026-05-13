@@ -108,6 +108,8 @@ export type BackendTransportSegment = {
   headsign?: string;
   stopCount?: number;
   instruction?: string;
+  startLocation?: BackendLocation;
+  endLocation?: BackendLocation;
 };
 
 export type BackendRouteOption = {

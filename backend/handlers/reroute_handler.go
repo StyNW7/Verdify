@@ -11,7 +11,10 @@ import (
 	"github.com/verdify/backend/services/ranker"
 )
 
-const rerouteBudget = 5 * time.Second
+// rerouteBudget gates how long we wait for the agent before falling back.
+// Set to 15s because Vertex p99 under throttling can exceed 10s; below
+// that we 499-cancel a Gemini that would have otherwise responded.
+const rerouteBudget = 15 * time.Second
 
 func (app *App) rerouteBookingHandler(w http.ResponseWriter, r *http.Request) {
 	bookingID := r.PathValue("id")

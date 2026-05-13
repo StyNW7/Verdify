@@ -13,7 +13,7 @@ type Config struct {
 }
 
 func Load() Config {
-	model := getenv("GEMINI_MODEL", "vertexai/gemini-2.0-flash")
+	model := getenv("GEMINI_MODEL", "vertexai/gemini-2.5-flash")
 	if model != "" && !containsSlash(model) {
 		model = "vertexai/" + model
 	}

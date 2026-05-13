@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import {
   AlertCircle,
+  AlertTriangle,
   ArrowRight,
   CircleCheck,
   Leaf,
   Loader2,
+  Navigation,
   RefreshCw,
   TicketCheck,
   Trophy,
@@ -30,8 +32,10 @@ import {
   markBookingPaid,
   markBookingCompleted,
   cancelBooking,
+  type BackendLocation,
   type BackendRouteOption,
   type BackendTransportSegment,
+  type RerouteResult,
 } from '@/lib/api';
 import {
   buildBookingCostBreakdown,
@@ -161,9 +165,29 @@ type BookingDialogProps = {
   booking: Booking;
   onClose: () => void;
   onUpdate?: (next: Booking) => void;
+  // Live route shown in the planner — preferred source for human-readable
+  // step strings, and reflects post-reroute swaps. Optional; History page
+  // opens the dialog without a planner route.
+  liveRoute?: RouteOption | null;
+  rerouteInFlight?: boolean;
+  rerouteCount?: number;
+  onMissedStop?: (currentLocation: BackendLocation) => void;
+  // Latest reroute agent response — rendered as a chat bubble in JourneyPane.
+  lastRerouteResult?: RerouteResult | null;
+  onDismissRerouteResult?: () => void;
 };
 
-export function BookingDialog({ booking, onClose, onUpdate }: BookingDialogProps) {
+export function BookingDialog({
+  booking,
+  onClose,
+  onUpdate,
+  liveRoute = null,
+  rerouteInFlight = false,
+  rerouteCount = 0,
+  onMissedStop,
+  lastRerouteResult = null,
+  onDismissRerouteResult,
+}: BookingDialogProps) {
   const userId = useBookingUserId();
   const [current, setCurrent] = useState<Booking>(booking);
   const [phase, setPhase] = useState<DialogPhase>('idle');
@@ -338,6 +362,12 @@ export function BookingDialog({ booking, onClose, onUpdate }: BookingDialogProps
                   booking={current}
                   onClose={onClose}
                   onUpdate={applyUpdate}
+                  liveRoute={liveRoute}
+                  rerouteInFlight={rerouteInFlight}
+                  rerouteCount={rerouteCount}
+                  onMissedStop={onMissedStop}
+                  lastRerouteResult={lastRerouteResult}
+                  onDismissRerouteResult={onDismissRerouteResult}
                 />
               )}
             </div>
@@ -647,10 +677,22 @@ function PersistedBookingPane({
   booking,
   onClose,
   onUpdate,
+  liveRoute,
+  rerouteInFlight,
+  rerouteCount,
+  onMissedStop,
+  lastRerouteResult,
+  onDismissRerouteResult,
 }: {
   booking: ConfirmedBooking;
   onClose: () => void;
   onUpdate: (next: ConfirmedBooking) => void;
+  liveRoute: RouteOption | null;
+  rerouteInFlight: boolean;
+  rerouteCount: number;
+  onMissedStop?: (currentLocation: BackendLocation) => void;
+  lastRerouteResult: RerouteResult | null;
+  onDismissRerouteResult?: () => void;
 }) {
   const steps = booking.routeSnapshot.steps;
   const breakdown = buildBookingCostBreakdown(steps);
@@ -661,6 +703,11 @@ function PersistedBookingPane({
     booking.paymentStatus === 'completed' ? 'completed' : 'pending'
   ) as BookingLifecyclePaymentStatus;
   const lifecycle = bookingLifecycle({ status, paymentStatus });
+  // Paid + still confirmed = the user is mid-trip. Swap the QR/cost pane
+  // for a step-by-step journey view that gates "Mark trip as completed"
+  // behind reaching the final step, and exposes the "I missed this stop"
+  // affordance per-step. Spec: backend/docs/frontend-integration.md.
+  const inJourney = status === 'confirmed' && paymentStatus === 'completed';
 
   const [busy, setBusy] = useState<LifecycleAction | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -761,7 +808,7 @@ function PersistedBookingPane({
         </div>
       </div>
 
-      {lifecycle.content === 'qr' && hasBookable && (
+      {lifecycle.content === 'qr' && !inJourney && hasBookable && (
         <div className="flex flex-col gap-3">
           <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
             § Bookable legs — show at boarding
@@ -777,7 +824,7 @@ function PersistedBookingPane({
         </div>
       )}
 
-      {lifecycle.content === 'qr' && breakdown.tapIn.length > 0 && (
+      {lifecycle.content === 'qr' && !inJourney && breakdown.tapIn.length > 0 && (
         <div
           className="rounded-[16px] p-4 sm:rounded-[18px] sm:p-5"
           style={{
@@ -805,11 +852,26 @@ function PersistedBookingPane({
         </div>
       )}
 
+      {inJourney && (
+        <JourneyPane
+          booking={booking}
+          liveRoute={liveRoute}
+          rerouteInFlight={rerouteInFlight}
+          rerouteCount={rerouteCount}
+          onMissedStop={onMissedStop}
+          onMarkCompleted={handleMarkCompleted}
+          markCompletedBusy={busy === 'markCompleted'}
+          actionsDisabled={busy !== null}
+          lastRerouteResult={lastRerouteResult}
+          onDismissRerouteResult={onDismissRerouteResult}
+        />
+      )}
+
       {lifecycle.content === 'tripDone' && <TripDoneTile booking={booking} />}
 
       {lifecycle.content === 'cancelled' && <CancelledReceipt booking={booking} />}
 
-      {lifecycle.content === 'qr' && (
+      {lifecycle.content === 'qr' && !inJourney && (
         <CostSummary breakdown={breakdown} grandTotal={booking.routeSnapshot.estimatedCost} />
       )}
 
@@ -855,7 +917,7 @@ function PersistedBookingPane({
               <span className="theme-action-label">Mark as Paid</span>
             </button>
           )}
-          {lifecycle.showMarkCompleted && (
+          {lifecycle.showMarkCompleted && !inJourney && (
             <button
               type="button"
               onClick={handleMarkCompleted}
@@ -937,6 +999,440 @@ function PersistedBookingPane({
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+function describeSnapshotStep(step: BackendTransportSegment): string {
+  const dur = Math.max(1, Math.round(step.duration));
+  if (step.transitLine) {
+    const dest = step.headsign?.trim() || step.arrivalStop?.trim();
+    return dest
+      ? `${step.transitLine} → ${dest} · ${dur} min`
+      : `${step.transitLine} · ${dur} min`;
+  }
+  if (step.type === 'walking') {
+    if (step.instruction) return `${step.instruction} · ${dur} min`;
+    if (step.arrivalStop) return `Walk to ${step.arrivalStop} · ${dur} min`;
+    return `Walk · ${dur} min`;
+  }
+  if (step.type === 'ev_taxi' || step.type === 'evTaxi') {
+    return `EV Taxi · ${dur} min`;
+  }
+  if (step.type === 'bus') return `Bus · ${dur} min`;
+  return `${step.type} · ${dur} min`;
+}
+
+function JourneyPane({
+  booking,
+  liveRoute,
+  rerouteInFlight,
+  rerouteCount,
+  onMissedStop,
+  onMarkCompleted,
+  markCompletedBusy,
+  actionsDisabled,
+  lastRerouteResult,
+  onDismissRerouteResult,
+}: {
+  booking: ConfirmedBooking;
+  liveRoute: RouteOption | null;
+  rerouteInFlight: boolean;
+  rerouteCount: number;
+  onMissedStop?: (currentLocation: BackendLocation) => void;
+  onMarkCompleted: () => void;
+  markCompletedBusy: boolean;
+  actionsDisabled: boolean;
+  lastRerouteResult: RerouteResult | null;
+  onDismissRerouteResult?: () => void;
+}) {
+  // Prefer the planner's already-formatted strings (post-reroute aware).
+  // Fall back to the booking snapshot when the dialog is opened from a
+  // surface that has no live planner state (e.g. History page).
+  const stepLines = useMemo<string[]>(() => {
+    if (liveRoute?.steps && liveRoute.steps.length > 0) return liveRoute.steps;
+    return booking.routeSnapshot.steps.map(describeSnapshotStep);
+  }, [liveRoute, booking.routeSnapshot.steps]);
+
+  // Use the first step text as a stable identity for the current route.
+  // When a reroute swaps the route, this key changes and we restart at 0.
+  const routeKey = stepLines[0] ?? '';
+  const [currentStep, setCurrentStep] = useState(0);
+  useEffect(() => {
+    setCurrentStep(0);
+  }, [routeKey]);
+
+  const total = stepLines.length;
+  const safeIndex = total === 0 ? 0 : Math.min(currentStep, total - 1);
+  const atFinalStep = total > 0 && safeIndex === total - 1;
+  const remainingReroutes = Math.max(0, 3 - rerouteCount);
+  // The location handed to the reroute agent is the current step's start
+  // coordinate by default ("I missed this stop") — but the user can flip to
+  // device GPS ("I'm somewhere else"). Step coords are exposed on
+  // routeSnapshot.steps[i].startLocation.
+  const currentStepLocation: BackendLocation | null =
+    booking.routeSnapshot.steps[safeIndex]?.startLocation ?? null;
+  const [locationSource, setLocationSource] = useState<'stop' | 'gps'>('stop');
+  const [gpsFetching, setGpsFetching] = useState(false);
+  const canMissStop =
+    !!onMissedStop &&
+    !rerouteInFlight &&
+    !gpsFetching &&
+    !actionsDisabled &&
+    remainingReroutes > 0 &&
+    (locationSource === 'gps' || !!currentStepLocation);
+
+  const handleMissedStop = async () => {
+    if (!onMissedStop) return;
+    if (locationSource === 'stop') {
+      if (!currentStepLocation) return;
+      onMissedStop(currentStepLocation);
+      return;
+    }
+    setGpsFetching(true);
+    try {
+      const pos = await new Promise<GeolocationPosition>((resolve, reject) =>
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          timeout: 8000,
+        }),
+      );
+      onMissedStop({
+        latitude: pos.coords.latitude,
+        longitude: pos.coords.longitude,
+      });
+    } catch {
+      // Geolocation errors fall through silently; the parent already toasts
+      // transport errors. Most browsers also surface a permission prompt.
+    } finally {
+      setGpsFetching(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-5">
+      <div className="flex items-center justify-between">
+        <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
+          § Journey — Step {String(safeIndex + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
+        </div>
+        <span
+          className="theme-mono-sm flex items-center gap-1.5 rounded-full px-2.5 py-1"
+          style={{
+            background: 'color-mix(in srgb, var(--theme-accent) 14%, transparent)',
+            color: 'var(--theme-accent)',
+            border: '1px solid var(--theme-accent-muted)',
+          }}
+        >
+          <span
+            className="inline-block h-1.5 w-1.5 animate-pulse rounded-full"
+            style={{ background: 'var(--theme-accent)' }}
+          />
+          Live
+        </span>
+      </div>
+
+      <ol className="flex flex-col gap-3">
+        {stepLines.map((line, i) => {
+          const isPast = i < safeIndex;
+          const isCurrent = i === safeIndex;
+          return (
+            <li
+              key={i}
+              className="flex items-start gap-3 rounded-[14px] px-3 py-3 transition-colors"
+              style={{
+                background: isCurrent ? 'var(--theme-accent-soft)' : 'transparent',
+                border: `1px solid ${isCurrent ? 'var(--theme-accent-muted)' : 'var(--theme-border)'}`,
+              }}
+            >
+              <span
+                className="theme-mono-sm flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
+                style={{
+                  background: isCurrent
+                    ? 'var(--theme-accent)'
+                    : isPast
+                      ? 'var(--theme-surface-muted)'
+                      : 'var(--theme-surface)',
+                  color: isCurrent
+                    ? 'var(--theme-accent-fg)'
+                    : isPast
+                      ? 'var(--theme-fg-muted)'
+                      : 'var(--theme-fg-dim)',
+                  border: `1px solid ${isCurrent ? 'var(--theme-accent)' : 'var(--theme-border)'}`,
+                }}
+              >
+                {isPast ? <CircleCheck size={13} /> : String(i + 1).padStart(2, '0')}
+              </span>
+              <p
+                className="flex-1 pt-0.5 text-[0.95rem] leading-snug"
+                style={{
+                  color: isCurrent
+                    ? 'var(--theme-fg)'
+                    : isPast
+                      ? 'var(--theme-fg-dim)'
+                      : 'var(--theme-fg-muted)',
+                  textDecoration: isPast ? 'line-through' : 'none',
+                }}
+              >
+                {line}
+              </p>
+            </li>
+          );
+        })}
+      </ol>
+
+      <p
+        className="theme-italic text-[0.8rem] leading-snug"
+        style={{ color: 'var(--theme-fg-dim)' }}
+      >
+        Prototype mode — tap Next to simulate moving through the route. Ask
+        Gemini for a reroute only when you actually miss the current stop.
+      </p>
+
+      {(rerouteInFlight || lastRerouteResult) && (
+        <RerouteChat
+          inFlight={rerouteInFlight}
+          result={lastRerouteResult}
+          onDismiss={onDismissRerouteResult}
+        />
+      )}
+
+      {/* Location source picker — only shown when the missed-stop button is
+          available. Defaults to "this stop" because demos / prototypes are
+          typically off-route and device GPS produces nonsense distances. */}
+      {!atFinalStep && onMissedStop && (
+        <div className="flex flex-col gap-2 rounded-[12px] p-3 sm:flex-row sm:items-center sm:justify-between"
+          style={{
+            border: '1px solid var(--theme-border)',
+            background: 'var(--theme-surface-muted)',
+          }}
+        >
+          <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
+            Location for the reroute
+          </div>
+          <div
+            className="grid grid-cols-2 overflow-hidden rounded-full"
+            style={{ border: '1px solid var(--theme-border)' }}
+          >
+            {(['stop', 'gps'] as const).map((opt) => {
+              const active = locationSource === opt;
+              const label = opt === 'stop' ? 'This stop' : 'My GPS';
+              return (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => setLocationSource(opt)}
+                  disabled={rerouteInFlight || gpsFetching}
+                  className="theme-mono-sm whitespace-nowrap px-3 py-1.5 transition-colors disabled:opacity-50"
+                  style={{
+                    background: active ? 'var(--theme-accent)' : 'transparent',
+                    color: active
+                      ? 'var(--theme-accent-fg)'
+                      : 'var(--theme-fg-muted)',
+                  }}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Action row: Next + "I missed this stop" on non-final steps;
+          replaces Next with "Mark trip as completed" on the final step. */}
+      <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
+        {atFinalStep ? (
+          <button
+            type="button"
+            onClick={onMarkCompleted}
+            disabled={actionsDisabled || markCompletedBusy}
+            aria-busy={markCompletedBusy || undefined}
+            className="theme-btn-primary h-12 flex-1 justify-center disabled:opacity-70"
+          >
+            {markCompletedBusy ? (
+              <Loader2 size={14} className="animate-spin" />
+            ) : (
+              <CircleCheck size={14} />
+            )}
+            <span className="theme-action-label">Mark trip as completed</span>
+          </button>
+        ) : (
+          <>
+            <button
+              type="button"
+              onClick={() => setCurrentStep((idx) => Math.min(total - 1, idx + 1))}
+              disabled={actionsDisabled}
+              className="theme-btn-primary h-12 flex-1 justify-center disabled:opacity-70"
+            >
+              <Navigation size={14} />
+              <span className="theme-action-label">Next stop</span>
+              <ArrowRight size={14} />
+            </button>
+            <button
+              type="button"
+              onClick={handleMissedStop}
+              disabled={!canMissStop}
+              aria-busy={rerouteInFlight || gpsFetching || undefined}
+              aria-label="I missed this stop"
+              className="flex h-12 flex-1 items-center justify-center gap-2 rounded-[14px] px-5 text-[0.95rem] font-medium transition-all disabled:opacity-50"
+              style={{
+                background: rerouteInFlight
+                  ? 'var(--theme-surface-muted)'
+                  : 'color-mix(in srgb, #f59e0b 12%, var(--theme-bg))',
+                color: rerouteInFlight ? 'var(--theme-fg-muted)' : '#d97706',
+                border: `1px solid ${
+                  rerouteInFlight
+                    ? 'var(--theme-border)'
+                    : 'color-mix(in srgb, #f59e0b 35%, transparent)'
+                }`,
+              }}
+            >
+              {gpsFetching ? (
+                <>
+                  <RefreshCw size={14} className="animate-spin" />
+                  <span>Locating you…</span>
+                </>
+              ) : rerouteInFlight ? (
+                <>
+                  <RefreshCw size={14} className="animate-spin" />
+                  <span>Asking Gemini…</span>
+                </>
+              ) : (
+                <>
+                  <AlertTriangle size={14} />
+                  <span>I missed this stop</span>
+                </>
+              )}
+            </button>
+          </>
+        )}
+      </div>
+
+      {!atFinalStep && (
+        <p className="text-[0.75rem]" style={{ color: 'var(--theme-fg-dim)' }}>
+          {!onMissedStop
+            ? 'Reroute is only available from the planner page.'
+            : remainingReroutes > 0
+              ? `${remainingReroutes} reroute${remainingReroutes !== 1 ? 's' : ''} remaining`
+              : 'Reroute limit reached — contact support if needed.'}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function RerouteChat({
+  inFlight,
+  result,
+  onDismiss,
+}: {
+  inFlight: boolean;
+  result: RerouteResult | null;
+  onDismiss?: () => void;
+}) {
+  // Color + heading per action. Reasoning is intentionally not surfaced —
+  // it's for logs only (see backend/docs/frontend-integration.md).
+  const palette = (() => {
+    if (inFlight || !result) {
+      return {
+        ring: 'var(--theme-border)',
+        bg: 'var(--theme-surface-muted)',
+        text: 'var(--theme-fg-muted)',
+        dot: 'var(--theme-fg-dim)',
+      };
+    }
+    if (result.action === 'reroute') {
+      return {
+        ring: 'var(--theme-accent-muted)',
+        bg: 'var(--theme-accent-soft)',
+        text: 'var(--theme-fg)',
+        dot: 'var(--theme-accent)',
+      };
+    }
+    if (result.action === 'wait_and_continue') {
+      return {
+        ring: 'color-mix(in srgb, #f59e0b 35%, transparent)',
+        bg: 'color-mix(in srgb, #f59e0b 12%, var(--theme-bg))',
+        text: 'var(--theme-fg)',
+        dot: '#d97706',
+      };
+    }
+    return {
+      ring: 'color-mix(in srgb, #dc2626 35%, transparent)',
+      bg: 'color-mix(in srgb, #dc2626 10%, var(--theme-bg))',
+      text: 'var(--theme-fg)',
+      dot: '#dc2626',
+    };
+  })();
+
+  const heading = inFlight
+    ? 'Gemini is thinking…'
+    : result?.action === 'reroute'
+      ? 'New route ready'
+      : result?.action === 'wait_and_continue'
+        ? 'Stay at this stop'
+        : 'Trip cannot continue';
+
+  return (
+    <div
+      className="rounded-[16px] p-4 sm:p-5"
+      style={{
+        background: palette.bg,
+        border: `1px solid ${palette.ring}`,
+      }}
+    >
+      <div className="flex items-start gap-3">
+        <span
+          className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
+          style={{
+            background: 'color-mix(in srgb, var(--theme-bg) 55%, transparent)',
+            border: `1px solid ${palette.ring}`,
+            color: palette.dot,
+          }}
+        >
+          {inFlight ? (
+            <Loader2 size={13} className="animate-spin" />
+          ) : (
+            <Leaf size={13} />
+          )}
+        </span>
+        <div className="flex-1">
+          <div className="flex items-center justify-between gap-3">
+            <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
+              Gemini · {heading}
+            </div>
+            {!inFlight && result && onDismiss && (
+              <button
+                type="button"
+                onClick={onDismiss}
+                aria-label="Dismiss agent message"
+                className="inline-flex h-6 w-6 items-center justify-center rounded-full transition-colors"
+                style={{
+                  border: '1px solid var(--theme-border)',
+                  color: 'var(--theme-fg-muted)',
+                }}
+              >
+                <X size={12} />
+              </button>
+            )}
+          </div>
+          <p
+            className="mt-1.5 text-[0.95rem] leading-snug"
+            style={{ color: palette.text }}
+          >
+            {inFlight
+              ? 'Locating you and checking what the next vehicle is doing…'
+              : result?.userMessage}
+          </p>
+          {!inFlight && result && result.agentSource === 'fallback' && (
+            <p
+              className="mt-1 theme-italic text-[0.75rem]"
+              style={{ color: 'var(--theme-fg-dim)' }}
+            >
+              Routed without AI assistance (Vertex unavailable).
+            </p>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

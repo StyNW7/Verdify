@@ -38,10 +38,26 @@ export default function RoutePlannerPage() {
     if (draftFromSelection) setActiveBooking(draftFromSelection);
   }, [draftFromSelection]);
   const closeBookingDialog = useCallback(() => {
-    if (activeBooking && activeBooking.status !== 'draft' && activeBooking.bookingId) {
+    // Journey arming now happens in the effect below the moment payment
+    // completes, so reroute works from inside the dialog too. Closing the
+    // dialog just dismisses it.
+    setActiveBooking(null);
+  }, []);
+
+  // Arm the journey state (bookingId + journeyActive) as soon as payment
+  // completes on the active booking. Without this, JourneyPane's "I missed
+  // this stop" call would silently no-op because state.bookingId stays null
+  // until the dialog is closed.
+  useEffect(() => {
+    if (!activeBooking || activeBooking.status === 'draft') return;
+    if (
+      activeBooking.bookingId &&
+      activeBooking.status === 'confirmed' &&
+      activeBooking.paymentStatus === 'completed' &&
+      state.bookingId !== activeBooking.bookingId
+    ) {
       state.startJourney(activeBooking.bookingId);
     }
-    setActiveBooking(null);
   }, [activeBooking, state]);
 
   useEffect(() => {
@@ -190,11 +206,7 @@ export default function RoutePlannerPage() {
             >
               <DirectionsPanel
                 route={selectedRoute}
-                journeyActive={state.journeyActive}
-                rerouteInFlight={state.rerouteInFlight}
-                rerouteCount={state.rerouteCount}
                 onStartJourney={openBookingDialog}
-                onMissedStop={() => state.triggerMissedStop(selectedRoute)}
               />
               <ImpactPanel route={selectedRoute} />
             </motion.section>
@@ -208,6 +220,25 @@ export default function RoutePlannerPage() {
             booking={activeBooking}
             onClose={closeBookingDialog}
             onUpdate={setActiveBooking}
+            liveRoute={
+              activeBooking.status !== 'draft'
+                ? routes.find(
+                    (r) => r.id === activeBooking.routeSnapshot.mode,
+                  ) ?? null
+                : null
+            }
+            rerouteInFlight={state.rerouteInFlight}
+            rerouteCount={state.rerouteCount}
+            lastRerouteResult={state.lastRerouteResult}
+            onDismissRerouteResult={state.clearRerouteResult}
+            onMissedStop={(currentLocation) => {
+              const live = routes.find(
+                (r) =>
+                  activeBooking.status !== 'draft' &&
+                  r.id === activeBooking.routeSnapshot.mode,
+              );
+              if (live) state.triggerMissedStop(live, currentLocation);
+            }}
           />
         )}
       </AnimatePresence>

@@ -22,7 +22,7 @@ type App struct {
 	Cfg          config.Config
 	Store        db.Store
 	Ranker       ranker.Ranker
-	RerouteAgent *ranker.RerouteAgent
+	RerouteAgent ranker.RerouteRunner
 	Builder      *routes.CandidateBuilder
 	RoutesClient *routes.Client
 	Places       places.PlacesAPI
