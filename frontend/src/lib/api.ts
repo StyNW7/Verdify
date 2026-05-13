@@ -328,3 +328,28 @@ export function listUserBookings(userId: string, opts: { limit?: number; offset?
     { method: 'GET' },
   );
 }
+
+// ── Leaderboard ───────────────────────────────────────────────────────────────
+
+export type LeaderboardEntry = {
+  rank: number;
+  uid: string;
+  displayName: string;
+  photoURL: string;
+  greenPointsBalance: number;
+  totalTripsCompleted: number;
+};
+
+export type LeaderboardResponse = {
+  entries: LeaderboardEntry[];
+  me: LeaderboardEntry;
+  totalUsers: number;
+};
+
+export function getLeaderboard(limit?: number) {
+  const params = new URLSearchParams();
+  if (limit !== undefined) params.set('limit', String(limit));
+  const qs = params.toString();
+  const suffix = qs ? `?${qs}` : '';
+  return apiRequest<LeaderboardResponse>(`/api/v1/leaderboard${suffix}`, { method: 'GET' });
+}
