@@ -14,11 +14,20 @@ import (
 
 func main() {
 	_ = godotenv.Load()
+
 	cfg := config.Load()
+
+	// Force frontend origin for production
+	cfg.FrontendOrigin = "https://verdify-frontend-1080742698349.asia-southeast3.run.app"
+
 	app := handlers.New(cfg)
-	mux := withCORS(app.Routes(), cfg.FrontendOrigin)
+
+	// Apply CORS middleware
+	mux := withCORS(app.Routes())
+
 	port := cfg.Port
 
+	// Gemini / Vertex health check
 	if gr, ok := app.Ranker.(*ranker.GeminiRanker); ok && gr.Enabled {
 		if _, err := gr.Ping(context.Background()); err != nil {
 			log.Printf("genkit ping failed, fallback mode active: %v", err)
@@ -26,24 +35,42 @@ func main() {
 	}
 
 	log.Printf("verdify backend listening on :%s", port)
+
 	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func withCORS(next http.Handler, allowedOrigin string) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		origin := r.Header.Get("Origin")
-		if origin == "" {
-			next.ServeHTTP(w, r)
-			return
-		}
+func withCORS(next http.Handler) http.Handler {
 
-		if allowedOrigin == "*" || origin == allowedOrigin {
+	allowedOrigins := map[string]bool{
+		"http://localhost:5173": true,
+		"https://verdify-frontend-1080742698349.asia-southeast3.run.app": true,
+	}
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		origin := r.Header.Get("Origin")
+
+		if allowedOrigins[origin] {
+
 			w.Header().Set("Access-Control-Allow-Origin", origin)
 			w.Header().Set("Vary", "Origin")
-			w.Header().Set("Access-Control-Allow-Methods", "GET,POST,OPTIONS")
-			w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
+
+			w.Header().Set(
+				"Access-Control-Allow-Methods",
+				"GET, POST, PUT, DELETE, OPTIONS",
+			)
+
+			w.Header().Set(
+				"Access-Control-Allow-Headers",
+				"Content-Type, Authorization",
+			)
+
+			w.Header().Set(
+				"Access-Control-Allow-Credentials",
+				"true",
+			)
 		}
 
 		if r.Method == http.MethodOptions {
