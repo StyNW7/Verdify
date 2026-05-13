@@ -29,7 +29,6 @@ export default function RoutePlannerPage() {
 
   const openBookingDialog = useCallback(() => setBookingDialogOpen(true), []);
   const closeBookingDialog = useCallback(() => setBookingDialogOpen(false), []);
-  const confirmBooking = useCallback(() => setBookingDialogOpen(false), []);
 
   useEffect(() => {
     if (state.phase === 'idle') return;
@@ -188,7 +187,6 @@ export default function RoutePlannerPage() {
             state={state}
             route={selectedRoute}
             onCancel={closeBookingDialog}
-            onConfirm={confirmBooking}
           />
         )}
       </AnimatePresence>
