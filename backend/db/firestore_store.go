@@ -175,6 +175,15 @@ func (s *FirestoreStore) UpdateUserProfile(ctx context.Context, uid string, patc
 	if patch.PresetAvatar != nil {
 		updates["presetAvatar"] = *patch.PresetAvatar
 	}
+	if patch.PreferredTransport != nil {
+		updates["preferredTransport"] = *patch.PreferredTransport
+	}
+	if patch.PreferredRouteMode != nil {
+		updates["preferredRouteMode"] = *patch.PreferredRouteMode
+	}
+	if patch.Language != nil {
+		updates["language"] = *patch.Language
+	}
 
 	err := s.client.RunTransaction(ctx, func(ctx context.Context, tx *firestore.Transaction) error {
 		snap, err := tx.Get(ref)

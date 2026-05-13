@@ -90,7 +90,10 @@ type User struct {
 	Email             string    `json:"email" firestore:"email"`
 	DisplayName       string    `json:"displayName" firestore:"displayName"`
 	PhotoURL          string    `json:"photoURL" firestore:"photoURL"`
-	PresetAvatar      string    `json:"presetAvatar,omitempty" firestore:"presetAvatar,omitempty"`
+	PresetAvatar       string    `json:"presetAvatar,omitempty" firestore:"presetAvatar,omitempty"`
+	PreferredTransport string    `json:"preferredTransport,omitempty" firestore:"preferredTransport,omitempty"`
+	PreferredRouteMode string    `json:"preferredRouteMode,omitempty" firestore:"preferredRouteMode,omitempty"`
+	Language           string    `json:"language,omitempty" firestore:"language,omitempty"`
 	GreenPoints       int       `json:"greenPointsBalance" firestore:"greenPointsBalance"`
 	TotalTrips        int       `json:"totalTripsCompleted" firestore:"totalTripsCompleted"`
 	TotalCarbonSaved  float64   `json:"totalCarbonSaved" firestore:"totalCarbonSaved"`
