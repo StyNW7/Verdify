@@ -426,7 +426,7 @@ function BookingRow({
         </div>
       </div>
 
-      <div className="hidden md:grid grid-cols-[128px_1fr_160px_220px] items-center gap-4">
+      <div className="hidden md:grid grid-cols-[128px_minmax(0,1fr)_140px_auto] items-center gap-4">
         <div className="flex flex-col">
           <span
             className="text-[0.92rem]"
@@ -511,7 +511,7 @@ function StatusBadge({ label, tone }: { label: string; tone: Tone }) {
 function RewardPill({ points, co2kg }: { points: number; co2kg: number }) {
   return (
     <span
-      className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[0.85rem]"
+      className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border px-3 py-1 text-[0.85rem]"
       style={{
         borderColor: 'var(--theme-accent-muted)',
         background: 'var(--theme-accent-soft)',

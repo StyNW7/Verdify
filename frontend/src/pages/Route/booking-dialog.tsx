@@ -364,7 +364,9 @@ function DialogAside({
   const pointsLabel =
     booking.status === 'draft'
       ? `+${booking.routeSnapshot.greenPointsEstimate} pts`
-      : `+${booking.actualPoints ?? booking.estimatedPoints} pts`;
+      : booking.status === 'completed'
+        ? `+${booking.actualPoints} pts`
+        : `+${booking.estimatedPoints} pts`;
   const eyebrow =
     booking.status === 'draft'
       ? 'Confirmation'
@@ -940,7 +942,7 @@ function PersistedBookingPane({
 }
 
 function TripDoneTile({ booking }: { booking: ConfirmedBooking }) {
-  const points = booking.actualPoints ?? booking.estimatedPoints;
+  const points = booking.actualPoints || booking.estimatedPoints;
   const carbonKg = (booking.routeSnapshot.carbonSavedGrams ?? 0) / 1000;
   return (
     <div
