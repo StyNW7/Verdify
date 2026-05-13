@@ -10,12 +10,15 @@ import (
 
 func TestValidateUserPatch(t *testing.T) {
 	tests := []struct {
-		name        string
-		body        string
-		wantErr     bool
-		wantFields  []string // error fields that must appear
-		wantDisplay string   // expected trimmed displayName in result
-		wantAvatar  string   // expected presetAvatar in result
+		name           string
+		body           string
+		wantErr        bool
+		wantFields     []string // error fields that must appear
+		wantDisplay    string   // expected trimmed displayName in result
+		wantAvatar     string   // expected presetAvatar in result
+		wantTransport  string   // expected preferredTransport in result
+		wantRouteMode  string   // expected preferredRouteMode in result
+		wantLanguage   string   // expected language in result
 	}{
 		// ── empty / no-op ──────────────────────────────────────────
 		{name: "empty body", body: ``, wantErr: false},
@@ -63,6 +66,51 @@ func TestValidateUserPatch(t *testing.T) {
 			wantErr:    true,
 			wantFields: []string{"displayName", "unknownField"},
 		},
+
+		// ── preferredTransport accept ──────────────────────────────
+		{name: "preferredTransport Transit", body: `{"preferredTransport":"Transit"}`, wantErr: false, wantTransport: "Transit"},
+		{name: "preferredTransport Cycle", body: `{"preferredTransport":"Cycle"}`, wantErr: false, wantTransport: "Cycle"},
+		{name: "preferredTransport Carpool", body: `{"preferredTransport":"Carpool"}`, wantErr: false, wantTransport: "Carpool"},
+		{name: "preferredTransport Walk", body: `{"preferredTransport":"Walk"}`, wantErr: false, wantTransport: "Walk"},
+
+		// ── preferredTransport reject ──────────────────────────────
+		{name: "preferredTransport lowercase transit rejected", body: `{"preferredTransport":"transit"}`, wantErr: true, wantFields: []string{"preferredTransport"}},
+		{name: "preferredTransport Drive not in allow-list", body: `{"preferredTransport":"Drive"}`, wantErr: true, wantFields: []string{"preferredTransport"}},
+		{name: "preferredTransport empty string rejected", body: `{"preferredTransport":""}`, wantErr: true, wantFields: []string{"preferredTransport"}},
+
+		// ── preferredRouteMode accept ──────────────────────────────
+		{name: "preferredRouteMode Fastest", body: `{"preferredRouteMode":"Fastest"}`, wantErr: false, wantRouteMode: "Fastest"},
+		{name: "preferredRouteMode Greenest", body: `{"preferredRouteMode":"Greenest"}`, wantErr: false, wantRouteMode: "Greenest"},
+		{name: "preferredRouteMode Cheapest", body: `{"preferredRouteMode":"Cheapest"}`, wantErr: false, wantRouteMode: "Cheapest"},
+		{name: "preferredRouteMode Balanced", body: `{"preferredRouteMode":"Balanced"}`, wantErr: false, wantRouteMode: "Balanced"},
+
+		// ── preferredRouteMode reject ──────────────────────────────
+		{name: "preferredRouteMode fast (lowercase) rejected", body: `{"preferredRouteMode":"fast"}`, wantErr: true, wantFields: []string{"preferredRouteMode"}},
+		{name: "preferredRouteMode fastest rejected", body: `{"preferredRouteMode":"fastest"}`, wantErr: true, wantFields: []string{"preferredRouteMode"}},
+		{name: "preferredRouteMode empty string rejected", body: `{"preferredRouteMode":""}`, wantErr: true, wantFields: []string{"preferredRouteMode"}},
+
+		// ── language accept ────────────────────────────────────────
+		{name: "language en", body: `{"language":"en"}`, wantErr: false, wantLanguage: "en"},
+		{name: "language ms", body: `{"language":"ms"}`, wantErr: false, wantLanguage: "ms"},
+		{name: "language zh", body: `{"language":"zh"}`, wantErr: false, wantLanguage: "zh"},
+		{name: "language ta", body: `{"language":"ta"}`, wantErr: false, wantLanguage: "ta"},
+
+		// ── language reject ────────────────────────────────────────
+		{name: "language EN uppercase rejected", body: `{"language":"EN"}`, wantErr: true, wantFields: []string{"language"}},
+		{name: "language fr not in allow-list", body: `{"language":"fr"}`, wantErr: true, wantFields: []string{"language"}},
+		{name: "language empty string rejected", body: `{"language":""}`, wantErr: true, wantFields: []string{"language"}},
+
+		// ── combined all five valid fields ─────────────────────────
+		{
+			name:          "all five valid fields accepted",
+			body:          `{"displayName":"Alice","presetAvatar":"🌿","preferredTransport":"Transit","preferredRouteMode":"Greenest","language":"en"}`,
+			wantErr:       false,
+			wantDisplay:   "Alice",
+			wantAvatar:    "🌿",
+			wantTransport: "Transit",
+			wantRouteMode: "Greenest",
+			wantLanguage:  "en",
+		},
 	}
 
 	for _, tc := range tests {
@@ -101,6 +149,21 @@ func TestValidateUserPatch(t *testing.T) {
 			if tc.wantAvatar != "" {
 				if patch.PresetAvatar == nil || *patch.PresetAvatar != tc.wantAvatar {
 					t.Errorf("PresetAvatar = %v, want %q", patch.PresetAvatar, tc.wantAvatar)
+				}
+			}
+			if tc.wantTransport != "" {
+				if patch.PreferredTransport == nil || *patch.PreferredTransport != tc.wantTransport {
+					t.Errorf("PreferredTransport = %v, want %q", patch.PreferredTransport, tc.wantTransport)
+				}
+			}
+			if tc.wantRouteMode != "" {
+				if patch.PreferredRouteMode == nil || *patch.PreferredRouteMode != tc.wantRouteMode {
+					t.Errorf("PreferredRouteMode = %v, want %q", patch.PreferredRouteMode, tc.wantRouteMode)
+				}
+			}
+			if tc.wantLanguage != "" {
+				if patch.Language == nil || *patch.Language != tc.wantLanguage {
+					t.Errorf("Language = %v, want %q", patch.Language, tc.wantLanguage)
 				}
 			}
 		})
