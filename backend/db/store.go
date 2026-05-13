@@ -148,6 +148,15 @@ func (s *MemoryStore) UpdateUserProfile(_ context.Context, uid string, patch val
 	if patch.PresetAvatar != nil {
 		u.PresetAvatar = *patch.PresetAvatar
 	}
+	if patch.PreferredTransport != nil {
+		u.PreferredTransport = *patch.PreferredTransport
+	}
+	if patch.PreferredRouteMode != nil {
+		u.PreferredRouteMode = *patch.PreferredRouteMode
+	}
+	if patch.Language != nil {
+		u.Language = *patch.Language
+	}
 	s.users[uid] = u
 	return u, nil
 }

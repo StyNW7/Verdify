@@ -353,3 +353,117 @@ func TestUpdateUserProfile_NoPatchLeavesDocUnchanged(t *testing.T) {
 		t.Fatalf("DisplayName changed on empty patch: %q", got.DisplayName)
 	}
 }
+
+func TestUpdateUserProfile_UpdatesPreferredTransport(t *testing.T) {
+	s := NewStore()
+	ctx := context.Background()
+	uid := "uid_upd_transport"
+	if _, _, err := s.EnsureUser(ctx, uid, models.UserProfile{Email: "tr@example.com"}); err != nil {
+		t.Fatalf("EnsureUser: %v", err)
+	}
+
+	updated, err := s.UpdateUserProfile(ctx, uid, validate.ValidatedPatch{PreferredTransport: strPtr("Cycle")})
+	if err != nil {
+		t.Fatalf("UpdateUserProfile: %v", err)
+	}
+	if updated.PreferredTransport != "Cycle" {
+		t.Fatalf("PreferredTransport = %q want %q", updated.PreferredTransport, "Cycle")
+	}
+
+	got, ok, err := s.GetUser(ctx, uid)
+	if err != nil || !ok {
+		t.Fatalf("GetUser: ok=%v err=%v", ok, err)
+	}
+	if got.PreferredTransport != "Cycle" {
+		t.Fatalf("persisted PreferredTransport = %q want %q", got.PreferredTransport, "Cycle")
+	}
+}
+
+func TestUpdateUserProfile_UpdatesPreferredRouteMode(t *testing.T) {
+	s := NewStore()
+	ctx := context.Background()
+	uid := "uid_upd_routemode"
+	if _, _, err := s.EnsureUser(ctx, uid, models.UserProfile{Email: "rm@example.com"}); err != nil {
+		t.Fatalf("EnsureUser: %v", err)
+	}
+
+	updated, err := s.UpdateUserProfile(ctx, uid, validate.ValidatedPatch{PreferredRouteMode: strPtr("Fastest")})
+	if err != nil {
+		t.Fatalf("UpdateUserProfile: %v", err)
+	}
+	if updated.PreferredRouteMode != "Fastest" {
+		t.Fatalf("PreferredRouteMode = %q want %q", updated.PreferredRouteMode, "Fastest")
+	}
+
+	got, ok, err := s.GetUser(ctx, uid)
+	if err != nil || !ok {
+		t.Fatalf("GetUser: ok=%v err=%v", ok, err)
+	}
+	if got.PreferredRouteMode != "Fastest" {
+		t.Fatalf("persisted PreferredRouteMode = %q want %q", got.PreferredRouteMode, "Fastest")
+	}
+}
+
+func TestUpdateUserProfile_UpdatesLanguage(t *testing.T) {
+	s := NewStore()
+	ctx := context.Background()
+	uid := "uid_upd_lang"
+	if _, _, err := s.EnsureUser(ctx, uid, models.UserProfile{Email: "lang@example.com"}); err != nil {
+		t.Fatalf("EnsureUser: %v", err)
+	}
+
+	updated, err := s.UpdateUserProfile(ctx, uid, validate.ValidatedPatch{Language: strPtr("ms")})
+	if err != nil {
+		t.Fatalf("UpdateUserProfile: %v", err)
+	}
+	if updated.Language != "ms" {
+		t.Fatalf("Language = %q want %q", updated.Language, "ms")
+	}
+
+	got, ok, err := s.GetUser(ctx, uid)
+	if err != nil || !ok {
+		t.Fatalf("GetUser: ok=%v err=%v", ok, err)
+	}
+	if got.Language != "ms" {
+		t.Fatalf("persisted Language = %q want %q", got.Language, "ms")
+	}
+}
+
+func TestUpdateUserProfile_PatchingOnePreferenceDoesNotClearOthers(t *testing.T) {
+	s := NewStore()
+	ctx := context.Background()
+	uid := "uid_prefs_isolation"
+	if _, _, err := s.EnsureUser(ctx, uid, models.UserProfile{Email: "iso@example.com"}); err != nil {
+		t.Fatalf("EnsureUser: %v", err)
+	}
+
+	// Set all three preference fields.
+	_, err := s.UpdateUserProfile(ctx, uid, validate.ValidatedPatch{
+		PreferredTransport: strPtr("Walk"),
+		PreferredRouteMode: strPtr("Greenest"),
+		Language:           strPtr("zh"),
+	})
+	if err != nil {
+		t.Fatalf("initial UpdateUserProfile: %v", err)
+	}
+
+	// Patch only language; transport and route mode must survive.
+	_, err = s.UpdateUserProfile(ctx, uid, validate.ValidatedPatch{Language: strPtr("ta")})
+	if err != nil {
+		t.Fatalf("second UpdateUserProfile: %v", err)
+	}
+
+	got, ok, err := s.GetUser(ctx, uid)
+	if err != nil || !ok {
+		t.Fatalf("GetUser: ok=%v err=%v", ok, err)
+	}
+	if got.PreferredTransport != "Walk" {
+		t.Fatalf("PreferredTransport changed unexpectedly: %q", got.PreferredTransport)
+	}
+	if got.PreferredRouteMode != "Greenest" {
+		t.Fatalf("PreferredRouteMode changed unexpectedly: %q", got.PreferredRouteMode)
+	}
+	if got.Language != "ta" {
+		t.Fatalf("Language = %q want %q", got.Language, "ta")
+	}
+}
