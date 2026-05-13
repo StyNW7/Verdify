@@ -318,12 +318,6 @@ Besides that, you can also check the backend/docs/ for more documentation for th
     <tr>
         <td width="1%" align="center">Leaderboard - Community Green Competition</td>
     </tr>
-    <tr>
-        <td width="1%" align="center"><img height="370" src="./images/screenshots/booking.png"/></td>
-    </tr>
-    <tr>
-        <td width="1%" align="center">Booking Confirmation - QR Code Ticket</td>
-    </tr>
 </table>
 
 ---
