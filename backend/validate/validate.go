@@ -18,14 +18,23 @@ var AllowedPresetAvatars = []string{"🌿", "🦊", "🌊", "🌙", "🐝", "�
 // frontend mirrors this list via lib/preferences.ts.
 var AllowedTransports = []string{"Transit", "Cycle", "Carpool", "Walk"}
 
-// AllowedRouteModes is the user-preference vocabulary surfaced in the Profile
-// UI. It is intentionally distinct from the route-calculation API's lowercase
-// short-form mode codes ("fast" / "eco" / "cheap") consumed by
-// POST /api/v1/routes/calculate. The frontend translates between the two at
-// frontend/src/pages/Route/planner-phase.ts (routeModeToPreference).
-// "Balanced" has no current API equivalent — it falls through to the route
-// service's default behaviour because the planner omits the mode parameter
-// entirely when the preference maps to the eco default.
+// AllowedRouteModes is the user-preference vocabulary surfaced in the
+// Profile UI. It is intentionally distinct from the route-calculation
+// API's lowercase short-form mode codes ("fast" / "eco" / "cheap")
+// accepted by services/helpers.go:NormalizeMode and consumed by
+// POST /api/v1/routes/calculate.
+//
+// Today the planner does NOT forward `mode` to the route API at all —
+// every route request goes through Gemini's batched ranker regardless
+// of the user's stored preference (see shared.tsx). The translation in
+// planner-phase.ts:routeModeToPreference is the planner's internal
+// preference type, not an API-bound value.
+//
+// When mode forwarding is wired up: "Fastest" → "fast", "Greenest" →
+// "eco", "Cheapest" → "cheap" are the natural mappings. "Balanced" has
+// no current API counterpart — it must either be mapped to one of the
+// three accepted codes (today's frontend maps it to "eco") or
+// NormalizeMode must be extended to accept "balanced".
 var AllowedRouteModes = []string{"Fastest", "Greenest", "Cheapest", "Balanced"}
 
 // AllowedLanguages is the allow-list for User.Language.
