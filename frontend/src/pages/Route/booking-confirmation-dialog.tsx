@@ -9,6 +9,7 @@ import {
   Loader2,
   RefreshCw,
   TicketCheck,
+  Trophy,
   Users,
   Wallet,
   X,
@@ -18,12 +19,25 @@ import { createBookingSummary } from './booking-summary';
 import { QrCard } from './qr-card';
 import type { PlannerState, RouteOption } from './shared';
 import { createBookingDraft, type ConfirmedBooking } from '@/lib/booking-draft';
-import { createBooking, ApiError, type BackendRouteOption, type BackendTransportSegment } from '@/lib/api';
+import {
+  createBooking,
+  ApiError,
+  markBookingPaid,
+  markBookingCompleted,
+  cancelBooking,
+  type BackendRouteOption,
+  type BackendTransportSegment,
+} from '@/lib/api';
 import {
   buildBookingCostBreakdown,
   isBookableStep,
   type BookingCostBreakdown,
 } from '@/lib/booking-cost-breakdown';
+import {
+  bookingLifecycle,
+  type BookingLifecyclePaymentStatus,
+  type BookingLifecycleStatus,
+} from '@/lib/booking-lifecycle';
 import { useBookingUserId } from '@/hooks/useBookingUserId';
 
 const EASE = [0.2, 0.7, 0.2, 1] as const;
@@ -347,7 +361,11 @@ export function BookingConfirmationDialog({
 
             <div className="flex flex-1 flex-col gap-4 px-4 pb-0 pt-4 sm:gap-7 sm:px-7 sm:pb-8 sm:pt-6 md:px-10 md:pb-10 md:pt-8">
               {phase === 'confirmed' && confirmed ? (
-                <ConfirmedPane booking={confirmed} onClose={onCancel} />
+                <ConfirmedPane
+                  booking={confirmed}
+                  onClose={onCancel}
+                  onUpdate={setConfirmed}
+                />
               ) : (
                 <>
                   <div>
@@ -586,16 +604,83 @@ function PlainDetail({ label, value }: { label: string; value: string }) {
   );
 }
 
+type LifecycleAction = 'markPaid' | 'markCompleted' | 'cancel';
+
 function ConfirmedPane({
   booking,
   onClose,
+  onUpdate,
 }: {
   booking: ConfirmedBooking;
   onClose: () => void;
+  onUpdate: (next: ConfirmedBooking) => void;
 }) {
   const steps = booking.routeSnapshot.steps;
   const breakdown = buildBookingCostBreakdown(steps);
   const hasBookable = breakdown.reserved.length > 0;
+
+  const status = booking.status as BookingLifecycleStatus;
+  const paymentStatus = (
+    booking.paymentStatus === 'completed' ? 'completed' : 'pending'
+  ) as BookingLifecyclePaymentStatus;
+  const lifecycle = bookingLifecycle({ status, paymentStatus });
+
+  const [busy, setBusy] = useState<LifecycleAction | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [confirmingCancel, setConfirmingCancel] = useState(false);
+
+  const runAction = async (
+    action: LifecycleAction,
+    runner: () => Promise<ConfirmedBooking>,
+  ) => {
+    setActionError(null);
+    setBusy(action);
+    try {
+      const next = await runner();
+      onUpdate(next);
+      setConfirmingCancel(false);
+    } catch (error) {
+      const message =
+        error instanceof ApiError || error instanceof Error
+          ? error.message
+          : 'Action failed. Please try again.';
+      setActionError(message);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const handleMarkPaid = () =>
+    runAction('markPaid', async () => {
+      const record = await markBookingPaid(booking.bookingId);
+      return {
+        ...booking,
+        status: record.status as ConfirmedBooking['status'],
+        paymentStatus: record.paymentStatus,
+        actualPoints: record.actualPoints ?? booking.actualPoints,
+      };
+    });
+
+  const handleMarkCompleted = () =>
+    runAction('markCompleted', async () => {
+      const result = await markBookingCompleted(booking.bookingId);
+      return {
+        ...booking,
+        status: result.status as ConfirmedBooking['status'],
+        paymentStatus: result.paymentStatus || booking.paymentStatus,
+        actualPoints: result.actualPoints,
+      };
+    });
+
+  const handleCancel = () =>
+    runAction('cancel', async () => {
+      const record = await cancelBooking(booking.bookingId);
+      return {
+        ...booking,
+        status: record.status as ConfirmedBooking['status'],
+        paymentStatus: record.paymentStatus,
+      };
+    });
 
   return (
     <div className="flex flex-1 flex-col gap-6">
@@ -603,16 +688,32 @@ function ConfirmedPane({
         <span
           className="flex h-10 w-10 items-center justify-center rounded-full"
           style={{
-            background: 'var(--theme-accent-soft)',
-            color: 'var(--theme-accent)',
+            background:
+              lifecycle.content === 'cancelled'
+                ? 'color-mix(in srgb, var(--theme-accent-warm) 22%, transparent)'
+                : 'var(--theme-accent-soft)',
+            color:
+              lifecycle.content === 'cancelled'
+                ? 'var(--theme-accent-warm)'
+                : 'var(--theme-accent)',
             border: '1px solid var(--theme-accent-muted)',
           }}
         >
-          <CircleCheck size={18} />
+          {lifecycle.content === 'cancelled' ? (
+            <X size={18} />
+          ) : lifecycle.content === 'tripDone' ? (
+            <Trophy size={18} />
+          ) : (
+            <CircleCheck size={18} />
+          )}
         </span>
         <div>
           <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
-            Booking reference
+            {lifecycle.content === 'cancelled'
+              ? 'Cancelled booking'
+              : lifecycle.content === 'tripDone'
+                ? 'Trip completed'
+                : 'Booking reference'}
           </div>
           <div
             className="theme-display mt-1"
@@ -623,7 +724,7 @@ function ConfirmedPane({
         </div>
       </div>
 
-      {hasBookable && (
+      {lifecycle.content === 'qr' && hasBookable && (
         <div className="flex flex-col gap-3">
           <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
             § Bookable legs — show at boarding
@@ -639,7 +740,7 @@ function ConfirmedPane({
         </div>
       )}
 
-      {breakdown.tapIn.length > 0 && (
+      {lifecycle.content === 'qr' && breakdown.tapIn.length > 0 && (
         <div
           className="rounded-[16px] p-4 sm:rounded-[18px] sm:p-5"
           style={{
@@ -667,25 +768,192 @@ function ConfirmedPane({
         </div>
       )}
 
-      <CostSummary breakdown={breakdown} grandTotal={booking.routeSnapshot.estimatedCost} />
+      {lifecycle.content === 'tripDone' && <TripDoneTile booking={booking} />}
 
-      <div
-        className="theme-action-bar sticky bottom-0 -mx-4 mt-auto px-4 py-4 sm:static sm:mx-0 sm:p-0"
-        style={{
-          background:
-            'linear-gradient(180deg, color-mix(in srgb, var(--theme-bg) 82%, transparent) 0%, var(--theme-bg) 38%)',
-        }}
-      >
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Close confirmation"
-          className="theme-btn-primary theme-action-bar-primary h-12"
+      {lifecycle.content === 'cancelled' && <CancelledReceipt booking={booking} />}
+
+      {lifecycle.content === 'qr' && (
+        <CostSummary breakdown={breakdown} grandTotal={booking.routeSnapshot.estimatedCost} />
+      )}
+
+      {actionError && (
+        <div
+          role="alert"
+          className="flex items-start gap-3 rounded-[14px] p-3 sm:p-4"
+          style={{
+            background: 'color-mix(in srgb, var(--theme-accent-warm) 14%, transparent)',
+            border: '1px solid var(--theme-border-strong)',
+            color: 'var(--theme-fg)',
+          }}
         >
-          <span className="theme-action-label">Close</span>
-          <ArrowRight size={14} />
-        </button>
+          <AlertCircle size={16} style={{ color: 'var(--theme-accent-warm)' }} />
+          <div className="flex-1 text-[0.9rem] leading-snug">{actionError}</div>
+        </div>
+      )}
+
+      {(lifecycle.showMarkPaid ||
+        lifecycle.showMarkCompleted ||
+        lifecycle.showCancel ||
+        lifecycle.content !== 'qr') && (
+        <div
+          className="theme-action-bar sticky bottom-0 -mx-4 mt-auto flex-col items-stretch gap-3 px-4 py-4 sm:static sm:mx-0 sm:flex-row sm:items-center sm:gap-3 sm:p-0"
+          style={{
+            background:
+              'linear-gradient(180deg, color-mix(in srgb, var(--theme-bg) 82%, transparent) 0%, var(--theme-bg) 38%)',
+          }}
+        >
+          {lifecycle.showMarkPaid && (
+            <button
+              type="button"
+              onClick={handleMarkPaid}
+              disabled={busy !== null}
+              aria-busy={busy === 'markPaid' || undefined}
+              className="theme-btn-primary theme-action-bar-primary h-12 disabled:opacity-70"
+            >
+              {busy === 'markPaid' ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <Wallet size={14} />
+              )}
+              <span className="theme-action-label">Mark as Paid</span>
+            </button>
+          )}
+          {lifecycle.showMarkCompleted && (
+            <button
+              type="button"
+              onClick={handleMarkCompleted}
+              disabled={busy !== null}
+              aria-busy={busy === 'markCompleted' || undefined}
+              className="theme-btn-primary theme-action-bar-primary h-12 disabled:opacity-70"
+            >
+              {busy === 'markCompleted' ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <CircleCheck size={14} />
+              )}
+              <span className="theme-action-label">Mark trip as completed</span>
+            </button>
+          )}
+          {lifecycle.showCancel &&
+            (confirmingCancel ? (
+              <div
+                className="flex w-full flex-col gap-3 rounded-[14px] p-3 sm:flex-row sm:items-center sm:p-4"
+                style={{
+                  border: '1px solid var(--theme-border-strong)',
+                  background: 'var(--theme-surface-muted)',
+                }}
+              >
+                <p
+                  className="text-[0.88rem] leading-snug sm:flex-1"
+                  style={{ color: 'var(--theme-fg)' }}
+                >
+                  Cancel this booking? Points won't be awarded. Operator payments
+                  are non-refundable through Verdify.
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setConfirmingCancel(false)}
+                    disabled={busy !== null}
+                    className="theme-btn-ghost h-10 px-3 disabled:opacity-50"
+                  >
+                    <span className="theme-action-label">Keep</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCancel}
+                    disabled={busy !== null}
+                    aria-busy={busy === 'cancel' || undefined}
+                    className="theme-btn-primary h-10 px-3 disabled:opacity-70"
+                  >
+                    {busy === 'cancel' ? (
+                      <Loader2 size={14} className="animate-spin" />
+                    ) : (
+                      <X size={14} />
+                    )}
+                    <span className="theme-action-label">Cancel booking</span>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setConfirmingCancel(true)}
+                disabled={busy !== null}
+                aria-label="Cancel booking"
+                className="theme-btn-ghost h-12 shrink-0 justify-center px-3 disabled:opacity-50 sm:w-auto sm:px-6"
+              >
+                <X size={15} />
+                <span className="theme-action-label">Cancel booking</span>
+              </button>
+            ))}
+          {lifecycle.content !== 'qr' && !lifecycle.showCancel && (
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close"
+              className="theme-btn-primary theme-action-bar-primary h-12"
+            >
+              <span className="theme-action-label">Close</span>
+              <ArrowRight size={14} />
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TripDoneTile({ booking }: { booking: ConfirmedBooking }) {
+  const points = booking.actualPoints ?? booking.estimatedPoints;
+  const carbonKg = (booking.routeSnapshot.carbonSavedGrams ?? 0) / 1000;
+  return (
+    <div
+      className="rounded-[18px] p-5 sm:p-6"
+      style={{
+        background: 'var(--theme-accent-soft)',
+        border: '1px solid var(--theme-accent-muted)',
+      }}
+    >
+      <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
+        Trip done
       </div>
+      <div
+        className="theme-display mt-2"
+        style={{ color: 'var(--theme-fg)', fontSize: 'clamp(1.6rem, 5vw, 2.4rem)' }}
+      >
+        +{points} pts · {carbonKg.toFixed(1)} kg CO₂ saved
+      </div>
+      <p className="mt-2 text-[0.92rem]" style={{ color: 'var(--theme-fg-muted)' }}>
+        Your green points balance has been updated. Thanks for travelling lower-carbon.
+      </p>
+    </div>
+  );
+}
+
+function CancelledReceipt({ booking }: { booking: ConfirmedBooking }) {
+  const paidOperator = booking.paymentStatus === 'completed';
+  return (
+    <div
+      className="rounded-[18px] p-5 sm:p-6"
+      style={{
+        background: 'var(--theme-surface-muted)',
+        border: '1px solid var(--theme-border)',
+      }}
+    >
+      <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
+        Booking cancelled
+      </div>
+      <p className="mt-2 text-[0.95rem] leading-snug" style={{ color: 'var(--theme-fg)' }}>
+        This reservation has been cancelled. No green points will be awarded.
+      </p>
+      {paidOperator && (
+        <p className="mt-2 text-[0.88rem] leading-snug" style={{ color: 'var(--theme-fg-muted)' }}>
+          You marked the operator as paid before cancelling. Verdify does not
+          process operator payments — refunds, if any, are handled directly by
+          the operator.
+        </p>
+      )}
     </div>
   );
 }

@@ -319,6 +319,95 @@ func TestGetBookingHandler_ReadsFromSnapshotNotStoreGetRoute(t *testing.T) {
 	}
 }
 
+func TestPayBookingHandler_LeavesConfirmedStatusUntouched(t *testing.T) {
+	app := New(config.Load())
+	mux := app.Routes()
+	userID := registerTestUser(t, mux, "pay-confirmed@verdify.dev")
+
+	snap := sampleRouteSnapshot()
+	snap.RouteID = "route_pay_confirmed_xyz"
+	bookingID := createBookingForLifecycle(t, app, mux, userID, snap)
+
+	before, _ := app.Store.GetBooking(bookingID)
+	if before.Status != "confirmed" {
+		t.Fatalf("precondition: want status=confirmed got %q", before.Status)
+	}
+
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/v1/bookings/"+bookingID+"/pay", nil))
+	if rr.Code != http.StatusOK {
+		t.Fatalf("pay want 200 got %d body=%s", rr.Code, rr.Body.String())
+	}
+
+	after, _ := app.Store.GetBooking(bookingID)
+	if after.Status != "confirmed" {
+		t.Fatalf("status flipped to %q; pay must leave confirmed untouched", after.Status)
+	}
+	if after.PaymentStatus != "completed" {
+		t.Fatalf("paymentStatus = %q want completed", after.PaymentStatus)
+	}
+}
+
+func TestPayBookingHandler_RejectsCompletedBooking(t *testing.T) {
+	app := New(config.Load())
+	mux := app.Routes()
+	userID := registerTestUser(t, mux, "pay-completed@verdify.dev")
+
+	snap := sampleRouteSnapshot()
+	snap.RouteID = "route_pay_completed_abc"
+	bookingID := createBookingForLifecycle(t, app, mux, userID, snap)
+
+	b, _ := app.Store.GetBooking(bookingID)
+	b.Status = "completed"
+	app.Store.UpdateBooking(b)
+
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/v1/bookings/"+bookingID+"/pay", nil))
+	if rr.Code != http.StatusConflict {
+		t.Fatalf("pay on completed want 409 got %d body=%s", rr.Code, rr.Body.String())
+	}
+}
+
+func TestPayBookingHandler_RejectsCancelledBooking(t *testing.T) {
+	app := New(config.Load())
+	mux := app.Routes()
+	userID := registerTestUser(t, mux, "pay-cancelled@verdify.dev")
+
+	snap := sampleRouteSnapshot()
+	snap.RouteID = "route_pay_cancelled_abc"
+	bookingID := createBookingForLifecycle(t, app, mux, userID, snap)
+
+	b, _ := app.Store.GetBooking(bookingID)
+	b.Status = "cancelled"
+	app.Store.UpdateBooking(b)
+
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/v1/bookings/"+bookingID+"/pay", nil))
+	if rr.Code != http.StatusConflict {
+		t.Fatalf("pay on cancelled want 409 got %d body=%s", rr.Code, rr.Body.String())
+	}
+}
+
+func TestCancelBookingHandler_RejectsCompletedBooking(t *testing.T) {
+	app := New(config.Load())
+	mux := app.Routes()
+	userID := registerTestUser(t, mux, "cancel-completed@verdify.dev")
+
+	snap := sampleRouteSnapshot()
+	snap.RouteID = "route_cancel_completed_abc"
+	bookingID := createBookingForLifecycle(t, app, mux, userID, snap)
+
+	b, _ := app.Store.GetBooking(bookingID)
+	b.Status = "completed"
+	app.Store.UpdateBooking(b)
+
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/v1/bookings/"+bookingID+"/cancel", nil))
+	if rr.Code != http.StatusConflict {
+		t.Fatalf("cancel on completed want 409 got %d body=%s", rr.Code, rr.Body.String())
+	}
+}
+
 func TestBatchedCalculate_ReturnsThreeOptionsInFixedOrder(t *testing.T) {
 	app := New(config.Load())
 	mux := app.Routes()

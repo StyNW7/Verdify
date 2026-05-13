@@ -216,3 +216,46 @@ export function createBooking(payload: CreateBookingPayload) {
     body: JSON.stringify(payload),
   });
 }
+
+export type BookingRecord = {
+  bookingId: string;
+  userId: string;
+  routeId: string;
+  routeSnapshot: BackendRouteOption;
+  passengers: number;
+  status: string;
+  qrCode: string;
+  bookingReference: string;
+  estimatedPoints: number;
+  actualPoints: number;
+  paymentStatus: string;
+  createdAt: string;
+  completedAt?: string;
+};
+
+export function markBookingPaid(bookingId: string) {
+  return apiRequest<BookingRecord>(`/api/v1/bookings/${encodeURIComponent(bookingId)}/pay`, {
+    method: 'POST',
+  });
+}
+
+export type MarkCompletedResponse = {
+  bookingId: string;
+  status: string;
+  paymentStatus: string;
+  actualPoints: number;
+  carbonSaved: number;
+};
+
+export function markBookingCompleted(bookingId: string) {
+  return apiRequest<MarkCompletedResponse>(
+    `/api/v1/bookings/${encodeURIComponent(bookingId)}/verify`,
+    { method: 'POST' },
+  );
+}
+
+export function cancelBooking(bookingId: string) {
+  return apiRequest<BookingRecord>(`/api/v1/bookings/${encodeURIComponent(bookingId)}/cancel`, {
+    method: 'POST',
+  });
+}

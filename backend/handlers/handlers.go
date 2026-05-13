@@ -125,18 +125,13 @@ func (app *App) payBookingHandler(w http.ResponseWriter, r *http.Request) {
 		writeErr(w, http.StatusConflict, "booking cancelled")
 		return
 	}
-	b.PaymentStatus = "completed"
-	if b.Status == "pending" {
-		b.Status = "confirmed"
+	if b.Status == "completed" {
+		writeErr(w, http.StatusConflict, "booking already completed")
+		return
 	}
+	b.PaymentStatus = "completed"
 	app.Store.UpdateBooking(b)
-	writeOK(w, http.StatusOK, map[string]any{
-		"bookingId":     b.ID,
-		"paymentStatus": b.PaymentStatus,
-		"amount":        15.50,
-		"currency":      "MYR",
-		"transactionId": "TXN_" + newID(""),
-	})
+	writeOK(w, http.StatusOK, b)
 }
 
 func (app *App) verifyBookingHandler(w http.ResponseWriter, r *http.Request) {
@@ -147,7 +142,11 @@ func (app *App) verifyBookingHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if b.Status == "completed" {
-		writeOK(w, http.StatusOK, map[string]any{"bookingId": b.ID, "status": b.Status, "actualPoints": b.ActualPoints, "carbonSaved": 0})
+		writeOK(w, http.StatusOK, map[string]any{"bookingId": b.ID, "status": b.Status, "paymentStatus": b.PaymentStatus, "actualPoints": b.ActualPoints, "carbonSaved": 0})
+		return
+	}
+	if b.Status == "cancelled" {
+		writeErr(w, http.StatusConflict, "booking cancelled")
 		return
 	}
 	rt := b.RouteSnapshot
@@ -163,7 +162,7 @@ func (app *App) verifyBookingHandler(w http.ResponseWriter, r *http.Request) {
 		carbonSaved = 0
 	}
 	app.Store.ApplyCompletedTrip(b.UserID, b.ActualPoints, carbonSaved)
-	writeOK(w, http.StatusOK, map[string]any{"bookingId": b.ID, "status": b.Status, "actualPoints": b.ActualPoints, "carbonSaved": pricing.Round2(carbonSaved)})
+	writeOK(w, http.StatusOK, map[string]any{"bookingId": b.ID, "status": b.Status, "paymentStatus": b.PaymentStatus, "actualPoints": b.ActualPoints, "carbonSaved": pricing.Round2(carbonSaved)})
 }
 
 func (app *App) getBookingHandler(w http.ResponseWriter, r *http.Request) {
@@ -193,7 +192,7 @@ func (app *App) cancelBookingHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	b.Status = "cancelled"
 	app.Store.UpdateBooking(b)
-	writeOK(w, http.StatusOK, map[string]any{"bookingId": b.ID, "status": b.Status, "refundAmount": 15.50})
+	writeOK(w, http.StatusOK, b)
 }
 
 func (app *App) getUserGreenPointsHandler(w http.ResponseWriter, r *http.Request) {
