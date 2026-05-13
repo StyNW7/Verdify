@@ -19,11 +19,12 @@ import {
   EyeOff,
   Loader2,
 } from 'lucide-react';
-import { useNavigate, useSearchParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 
 import { signInWithGoogle } from '@/lib/auth-actions';
 import { syncAuthProfile } from '@/lib/api';
 import { getFirebaseAuth } from '@/lib/firebase';
+import { usePostSignInNavigate } from '@/hooks/usePostSignInNavigate';
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -617,8 +618,7 @@ function LoginForm({
   onDone: () => void;
   onSwitch: () => void;
 }) {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const navigateAfterSignIn = usePostSignInNavigate(onDone);
   const firstFieldRef = useRef<HTMLInputElement | null>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -645,12 +645,12 @@ function LoginForm({
       const cred = await signInWithEmailAndPassword(getFirebaseAuth(), email.trim(), password);
       const idToken = await cred.user.getIdToken();
       await syncAuthProfile(idToken);
-      onDone();
-      navigate(searchParams.get('next') || '/dashboard');
+      // Leave loading=true so the form stays disabled until the
+      // AuthProvider settles and usePostSignInNavigate fires.
+      navigateAfterSignIn(cred.user.uid);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unable to sign in.';
       toast.error(message);
-    } finally {
       setLoading(false);
     }
   };
@@ -662,12 +662,10 @@ function LoginForm({
       if (!cred) return; // redirect flow; the page will reload
       const idToken = await cred.user.getIdToken();
       await syncAuthProfile(idToken);
-      onDone();
-      navigate(searchParams.get('next') || '/dashboard');
+      navigateAfterSignIn(cred.user.uid);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Google sign-in failed.';
       toast.error(message);
-    } finally {
       setLoading(false);
     }
   };
@@ -779,8 +777,7 @@ function RegisterForm({
   onDone: () => void;
   onSwitch: () => void;
 }) {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const navigateAfterSignIn = usePostSignInNavigate(onDone);
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -827,12 +824,10 @@ function RegisterForm({
       }
       const idToken = await cred.user.getIdToken();
       await syncAuthProfile(idToken);
-      onDone();
-      navigate(searchParams.get('next') || '/dashboard');
+      navigateAfterSignIn(cred.user.uid);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unable to create account.';
       toast.error(message);
-    } finally {
       setLoading(false);
     }
   };
@@ -844,12 +839,10 @@ function RegisterForm({
       if (!cred) return;
       const idToken = await cred.user.getIdToken();
       await syncAuthProfile(idToken);
-      onDone();
-      navigate(searchParams.get('next') || '/dashboard');
+      navigateAfterSignIn(cred.user.uid);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Google sign-in failed.';
       toast.error(message);
-    } finally {
       setLoading(false);
     }
   };

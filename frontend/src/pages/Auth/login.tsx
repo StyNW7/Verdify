@@ -3,18 +3,17 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
-import { useNavigate, useSearchParams } from 'react-router';
 import toast from 'react-hot-toast';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
 import { getFirebaseAuth } from '@/lib/firebase';
 import { syncAuthProfile } from '@/lib/api';
 import { signInWithGoogle } from '@/lib/auth-actions';
+import { usePostSignInNavigate } from '@/hooks/usePostSignInNavigate';
 
 export default function LoginPage() {
 
-  const navigate = useNavigate();
-  const [params] = useSearchParams();
+  const navigateAfterSignIn = usePostSignInNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -34,13 +33,11 @@ export default function LoginPage() {
       if (!cred) return; // redirect path — page is navigating away
       const idToken = await cred.user.getIdToken();
       await syncAuthProfile(idToken);
-      const next = params.get('next');
-      navigate(next || '/dashboard');
+      navigateAfterSignIn(cred.user.uid);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : 'Unable to sign in with Google. Please try again.';
       toast.error(message);
-    } finally {
       setIsGoogleLoading(false);
     }
   };
@@ -94,13 +91,11 @@ export default function LoginPage() {
       await syncAuthProfile(idToken);
 
       toast.success('Signed in successfully');
-      const next = params.get('next');
-      navigate(next || '/dashboard');
+      navigateAfterSignIn(cred.user.uid);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : 'Unable to sign in. Please try again.';
       toast.error(message);
-    } finally {
       setIsLoading(false);
     }
   };

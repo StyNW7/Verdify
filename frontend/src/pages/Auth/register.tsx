@@ -10,17 +10,17 @@ import {
   ArrowRight,
   User,
 } from 'lucide-react';
-import { useNavigate } from 'react-router';
 import toast from 'react-hot-toast';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 
 import { getFirebaseAuth } from '@/lib/firebase';
 import { syncAuthProfile } from '@/lib/api';
 import { signInWithGoogle } from '@/lib/auth-actions';
+import { usePostSignInNavigate } from '@/hooks/usePostSignInNavigate';
 
 export default function RegisterPage() {
 
-  const navigate = useNavigate();
+  const navigateAfterSignIn = usePostSignInNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -45,12 +45,11 @@ export default function RegisterPage() {
       if (!cred) return; // redirect path — page is navigating away
       const idToken = await cred.user.getIdToken();
       await syncAuthProfile(idToken);
-      navigate('/dashboard');
+      navigateAfterSignIn(cred.user.uid);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : 'Unable to sign in with Google. Please try again.';
       toast.error(message);
-    } finally {
       setIsGoogleLoading(false);
     }
   };
@@ -118,12 +117,11 @@ export default function RegisterPage() {
       await syncAuthProfile(idToken);
 
       toast.success('Account created successfully');
-      navigate('/dashboard');
+      navigateAfterSignIn(cred.user.uid);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : 'Unable to register. Please try again.';
       toast.error(message);
-    } finally {
       setIsLoading(false);
     }
   };
