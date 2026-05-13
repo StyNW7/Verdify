@@ -10,6 +10,7 @@ import { doc, onSnapshot, getFirestore, type Firestore } from 'firebase/firestor
 
 import { parseAuthRequired } from '@/lib/auth-guard';
 import { useAuth } from '@/lib/auth-provider';
+import { createUserDocStore, type FirestoreSeams, type UserDocStore } from '@/lib/user-doc-store';
 
 export type UserDoc = {
   userId: string;
@@ -38,67 +39,52 @@ type ProviderProps = {
   firestoreInstance?: Firestore;
 };
 
+function makeFirestoreSeams(firestoreInstance?: Firestore): FirestoreSeams {
+  const db = firestoreInstance ?? getFirestore();
+  return {
+    makeDocRef: (uid: string) => doc(db, 'users', uid) as unknown as import('@/lib/user-doc-store').DocRef,
+    onSnapshot: (ref, onNext, onError) =>
+      onSnapshot(
+        ref as unknown as Parameters<typeof onSnapshot>[0],
+        onNext as Parameters<typeof onSnapshot>[1],
+        onError,
+      ),
+  };
+}
+
 export function UserDocProvider({ children, firestoreInstance }: ProviderProps) {
   const { user } = useAuth();
-  const [state, setState] = useState<UserDocState>({ doc: null, loading: true, error: null });
+  const authRequired = parseAuthRequired(import.meta.env.VITE_AUTH_REQUIRED);
 
-  // Hold a ref to the latest unsubscribe so we can clean up before starting a
-  // new subscription when the auth user changes.
-  const unsubRef = useRef<(() => void) | null>(null);
+  // Create the store once. We build the seams lazily so that getFirestore()
+  // is only called when the component first renders (Firebase is initialized
+  // by then via FirebaseApp in the tree above).
+  const storeRef = useRef<UserDocStore | null>(null);
+  if (!storeRef.current) {
+    storeRef.current = createUserDocStore(makeFirestoreSeams(firestoreInstance));
+  }
+  const store = storeRef.current;
+
+  const [state, setState] = useState<UserDocState>(() => store.getSnapshot());
 
   useEffect(() => {
-    const authRequired = parseAuthRequired(import.meta.env.VITE_AUTH_REQUIRED);
+    // Subscribe to store updates.
+    const unsub = store.subscribe(() => {
+      setState(store.getSnapshot());
+    });
 
-    // Dev-bypass mode: no Firestore subscription. Components must tolerate
-    // null doc and apply their own defaults.
-    if (!authRequired) {
-      setState({ doc: null, loading: false, error: null });
-      return;
-    }
+    // Wire the Firestore subscription for the current user.
+    const teardown = store.start({ uid: user?.uid ?? null, authRequired });
 
-    // No signed-in user yet: stay in loading state until auth settles.
-    if (!user) {
-      setState({ doc: null, loading: true, error: null });
-      return;
-    }
-
-    // Tear down any previous subscription before starting a new one.
-    if (unsubRef.current) {
-      unsubRef.current();
-      unsubRef.current = null;
-    }
-
-    setState({ doc: null, loading: true, error: null });
-
-    let db: Firestore;
-    try {
-      db = firestoreInstance ?? getFirestore();
-    } catch (err) {
-      setState({ doc: null, loading: false, error: err instanceof Error ? err : new Error(String(err)) });
-      return;
-    }
-
-    const unsub = onSnapshot(
-      doc(db, 'users', user.uid),
-      (snapshot) => {
-        if (snapshot.exists()) {
-          setState({ doc: snapshot.data() as UserDoc, loading: false, error: null });
-        } else {
-          setState({ doc: null, loading: false, error: null });
-        }
-      },
-      (err) => {
-        setState({ doc: null, loading: false, error: err });
-      },
-    );
-
-    unsubRef.current = unsub;
+    // Sync immediately in case start() changed the snapshot synchronously
+    // before subscribe() had a chance to fire.
+    setState(store.getSnapshot());
 
     return () => {
       unsub();
-      unsubRef.current = null;
+      teardown();
     };
-  }, [user, firestoreInstance]);
+  }, [user, authRequired, store]);
 
   return <UserDocContext.Provider value={state}>{children}</UserDocContext.Provider>;
 }
