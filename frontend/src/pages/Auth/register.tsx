@@ -93,7 +93,10 @@ export default function RegisterPage() {
       if (trimmedName) {
         await updateProfile(cred.user, { displayName: trimmedName });
       }
-      await syncAuthProfile();
+      // Read the id token straight from the credential to avoid racing the
+      // onIdTokenChanged → auth-store → api.ts tokenGetter handoff.
+      const idToken = await cred.user.getIdToken();
+      await syncAuthProfile(idToken);
 
       toast.success('Account created successfully');
       navigate('/dashboard');

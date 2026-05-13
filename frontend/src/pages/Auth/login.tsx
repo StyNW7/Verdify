@@ -62,15 +62,16 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      await signInWithEmailAndPassword(
+      const cred = await signInWithEmailAndPassword(
         getFirebaseAuth(),
         formData.email.trim().toLowerCase(),
         formData.password,
       );
-      // Give AuthProvider a tick to plumb the token into api.ts before /auth/sync.
-      // onIdTokenChanged is synchronous so by the time the await above resolves
-      // the next setAuthTokenGetter call has fired.
-      await syncAuthProfile();
+      // Pull the id token straight from the credential so we don't race the
+      // onIdTokenChanged → auth-store → api.ts tokenGetter handoff (which
+      // bridges an additional microtask for getIdToken()).
+      const idToken = await cred.user.getIdToken();
+      await syncAuthProfile(idToken);
 
       toast.success('Signed in successfully');
       const next = params.get('next');

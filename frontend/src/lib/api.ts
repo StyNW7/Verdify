@@ -33,8 +33,19 @@ export function setAuthTokenGetter(getter: () => string | null) {
   tokenGetter = getter;
 }
 
-async function apiRequest<T>(path: string, init: RequestInit): Promise<T> {
-  const token = tokenGetter();
+type ApiRequestOptions = {
+  // Explicit bearer token. Bypasses the AuthProvider-installed getter; used by
+  // login/register where the new credential is in hand before onIdTokenChanged
+  // has plumbed it into the store.
+  bearerToken?: string;
+};
+
+async function apiRequest<T>(
+  path: string,
+  init: RequestInit,
+  opts: ApiRequestOptions = {},
+): Promise<T> {
+  const token = opts.bearerToken ?? tokenGetter();
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(init.headers as Record<string, string> | undefined ?? {}),
@@ -72,9 +83,12 @@ export type SyncedUser = {
   createdAt: string;
 };
 
-// /auth/sync upserts the User row from the verified Firebase claims.
-export function syncAuthProfile() {
-  return apiRequest<SyncedUser>('/auth/sync', { method: 'POST' });
+// /auth/sync upserts the User row from the verified Firebase claims. The
+// optional bearerToken arg lets login/register pass the id token straight
+// from the UserCredential, sidestepping the onIdTokenChanged → store →
+// tokenGetter handoff race.
+export function syncAuthProfile(bearerToken?: string) {
+  return apiRequest<SyncedUser>('/auth/sync', { method: 'POST' }, { bearerToken });
 }
 
 // ── Routes ───────────────────────────────────────────────────────────────────

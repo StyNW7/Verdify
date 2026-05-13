@@ -1,6 +1,7 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, type Auth } from 'firebase/auth';
 
+
 type FirebaseEnv = {
   apiKey: string;
   authDomain: string;
@@ -23,6 +24,7 @@ function readEnv(): FirebaseEnv {
 
 let cachedApp: FirebaseApp | null = null;
 let cachedAuth: Auth | null = null;
+let cachedGoogleProvider: GoogleAuthProvider | null = null;
 
 export function getFirebaseAuth(): Auth {
   if (cachedAuth) return cachedAuth;
@@ -33,6 +35,9 @@ export function getFirebaseAuth(): Auth {
   return cachedAuth;
 }
 
-// Lazy export: slice 03 uses googleProvider; surfacing it here keeps
-// the wiring in one place.
-export const googleProvider = new GoogleAuthProvider();
+export function getGoogleProvider(): GoogleAuthProvider {
+  if (!cachedGoogleProvider) {
+    cachedGoogleProvider = new GoogleAuthProvider();
+  }
+  return cachedGoogleProvider;
+}

@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -12,6 +13,8 @@ import (
 	"github.com/verdify/backend/models"
 )
 
+var errFakeVerifier = errors.New("fake verifier: empty token")
+
 // stubVerifier returns a fixed identity for any non-empty token.
 type stubVerifier struct {
 	id *auth.Identity
@@ -19,7 +22,7 @@ type stubVerifier struct {
 
 func (s *stubVerifier) VerifyIDToken(_ context.Context, token string) (*auth.Identity, error) {
 	if token == "" {
-		return nil, http.ErrAbortHandler
+		return nil, errFakeVerifier
 	}
 	return s.id, nil
 }
