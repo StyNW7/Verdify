@@ -3,7 +3,6 @@ import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import {
   ArrowRight,
-  CalendarClock,
   CircleCheck,
   Leaf,
   TicketCheck,
@@ -66,13 +65,11 @@ export function BookingActionBar({ state, route, onBook }: BookingActionBarProps
             </span>
           </div>
           <div className="mt-2 flex flex-wrap gap-2">
-            {[summary.passengerLabel, summary.departureLabel, summary.routeModesLabel].map(
-              (item) => (
-                <span key={item} className="theme-chip">
-                  {item}
-                </span>
-              ),
-            )}
+            {[summary.passengerLabel, summary.routeModesLabel].map((item) => (
+              <span key={item} className="theme-chip">
+                {item}
+              </span>
+            ))}
           </div>
         </div>
       </div>
@@ -302,7 +299,6 @@ export function BookingConfirmationDialog({
 
               <div className="grid gap-2 sm:grid-cols-2 sm:gap-3">
                 <DetailTile icon={Users} label="Passenger info" value={summary.passengerLabel} />
-                <DetailTile icon={CalendarClock} label="Departure" value={summary.departureLabel} />
                 <DetailTile icon={TicketCheck} label="Booking option" value={summary.routeLabel} />
                 <DetailTile icon={Leaf} label="Route modes" value={summary.routeModesLabel} />
               </div>
@@ -395,9 +391,6 @@ function getBookingSummary(state: PlannerState, route: RouteOption) {
     destination: state.destination,
     passengers: state.passengers,
     preference: state.preference,
-    dateSlot: state.dateSlot,
-    pickedDate: state.pickedDate,
-    time: state.time,
     modes: state.modes,
   });
 }

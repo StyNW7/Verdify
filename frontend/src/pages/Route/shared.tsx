@@ -4,7 +4,6 @@ import toast from 'react-hot-toast';
 import {
   MapPin,
   ArrowUpDown,
-  Clock,
   Leaf,
   Zap,
   Wallet,
@@ -37,7 +36,6 @@ import { usePlacesAutocomplete } from '@/hooks/usePlacesAutocomplete';
 
 export type Preference = PlannerPreference;
 export type ModeKey = 'rts' | 'lrt' | 'bus' | 'walking' | 'biking' | 'evTaxi';
-export type DateSlot = 'now' | 'today' | 'tomorrow' | 'pick';
 
 export type RouteOption = {
   id: PlannerRouteId;
@@ -391,9 +389,6 @@ export function usePlannerState() {
   const [destination, setDestination] = useState('');
   const [originCoords, setOriginCoords] = useState<ResolvedCoords>(null);
   const [destCoords, setDestCoords] = useState<ResolvedCoords>(null);
-  const [dateSlot, setDateSlot] = useState<DateSlot>('now');
-  const [pickedDate, setPickedDate] = useState<string>('');
-  const [time, setTime] = useState<string>('');
   const [preference, setPreference] = useState<Preference>('eco');
   const [passengers, setPassengers] = useState(1);
   const [modes, setModes] = useState<Record<ModeKey, boolean>>({
@@ -515,7 +510,6 @@ export function usePlannerState() {
   return {
     origin, setOrigin: handleSetOrigin, destination, setDestination: handleSetDestination,
     originCoords, setOriginCoords, destCoords, setDestCoords,
-    dateSlot, setDateSlot, pickedDate, setPickedDate, time, setTime,
     preference, setPreference, passengers, setPassengers,
     modes, toggleMode, showAdvanced, setShowAdvanced,
     phase, loading, submitted, selectedRouteId, setSelectedRouteId,
@@ -690,74 +684,6 @@ export function SwapButton({ onClick, disabled }: { onClick: () => void; disable
     >
       <ArrowUpDown size={16} />
     </motion.button>
-  );
-}
-
-export function DateTimeField({
-  dateSlot, setDateSlot, pickedDate, setPickedDate, time, setTime,
-}: Pick<PlannerState, 'dateSlot' | 'setDateSlot' | 'pickedDate' | 'setPickedDate' | 'time' | 'setTime'>) {
-  const chips: { key: DateSlot; label: string; shortLabel?: string }[] = [
-    { key: 'now', label: 'Now' },
-    { key: 'today', label: 'Today' },
-    { key: 'tomorrow', label: 'Tomorrow', shortLabel: 'Tmr' },
-    { key: 'pick', label: 'Pick date', shortLabel: 'Pick' },
-  ];
-  return (
-    <div className="w-full">
-      <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
-        Departure
-      </div>
-      <div className="mt-3 flex flex-wrap items-center gap-2">
-        {chips.map(c => {
-          const active = dateSlot === c.key;
-          return (
-            <button
-              key={c.key}
-              type="button"
-              onClick={() => setDateSlot(c.key)}
-              aria-label={c.label}
-              className="theme-mono-sm relative whitespace-nowrap rounded-full px-3 py-2 transition-colors sm:px-4"
-              style={{
-                background: active ? 'var(--theme-accent)' : 'transparent',
-                color: active ? 'var(--theme-accent-fg)' : 'var(--theme-fg-muted)',
-                border: `1px solid ${active ? 'var(--theme-accent)' : 'var(--theme-border)'}`,
-              }}
-            >
-              <span className="sm:hidden">{c.shortLabel ?? c.label}</span>
-              <span className="hidden sm:inline">{c.label}</span>
-            </button>
-          );
-        })}
-        {dateSlot === 'pick' && (
-          <input
-            type="date"
-            value={pickedDate}
-            onChange={(e) => setPickedDate(e.target.value)}
-            className="theme-mono-sm bg-transparent px-3 py-2 outline-none"
-            style={{
-              color: 'var(--theme-fg)',
-              border: '1px solid var(--theme-border)',
-              borderRadius: 999,
-            }}
-          />
-        )}
-        {dateSlot !== 'now' && (
-          <div
-            className="flex items-center gap-2 rounded-full px-3.5 py-2"
-            style={{ border: '1px solid var(--theme-border)' }}
-          >
-            <Clock size={12} style={{ color: 'var(--theme-fg-dim)' }} />
-            <input
-              type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              className="theme-mono-sm bg-transparent outline-none"
-              style={{ color: 'var(--theme-fg)' }}
-            />
-          </div>
-        )}
-      </div>
-    </div>
   );
 }
 
