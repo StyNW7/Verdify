@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from 'react';
 import {
+  getRedirectResult,
   onAuthStateChanged,
   onIdTokenChanged,
   signOut as fbSignOut,
@@ -20,6 +21,7 @@ import {
   type AuthSeams,
   type AuthSeamUser,
   type AuthUser,
+  type RedirectResult,
 } from '@/lib/auth-store';
 
 export type { AuthUser } from '@/lib/auth-store';
@@ -43,6 +45,12 @@ function firebaseSeams(auth: Auth): AuthSeams {
     subscribeAuthState: (cb) => onAuthStateChanged(auth, adapt(cb)),
     subscribeIdToken: (cb) => onIdTokenChanged(auth, adapt(cb)),
     signOut: () => fbSignOut(auth),
+    getRedirectResult: async (): Promise<RedirectResult | null> => {
+      const result = await getRedirectResult(auth);
+      if (!result) return null;
+      const idToken = await result.user.getIdToken();
+      return { user: result.user as AuthSeamUser, idToken };
+    },
   };
 }
 
