@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -671,5 +672,52 @@ func TestPatchUserHandler_UidMismatch_Returns403(t *testing.T) {
 
 	if rr.Code != http.StatusForbidden {
 		t.Fatalf("want 403 got %d body=%s", rr.Code, rr.Body.String())
+	}
+}
+
+// readBodyRequest builds an *http.Request whose Body is set to the given
+// reader, suitable for passing directly to readBody.
+func readBodyRequest(body io.Reader) *http.Request {
+	req := httptest.NewRequest(http.MethodPatch, "/", body)
+	return req
+}
+
+func TestReadBody_EmptyBody_ReturnsNil(t *testing.T) {
+	// Zero-byte body: json.Decoder returns io.EOF — must be treated as no-op.
+	req := readBodyRequest(strings.NewReader(""))
+	got, err := readBody(req)
+	if err != nil {
+		t.Fatalf("empty body: want nil err, got %v", err)
+	}
+	if got != nil {
+		t.Fatalf("empty body: want nil bytes, got %q", got)
+	}
+}
+
+func TestReadBody_TruncatedBody_ReturnsError(t *testing.T) {
+	// Truncated JSON: json.Decoder returns io.ErrUnexpectedEOF — must be treated
+	// as a decode error (not an empty-body no-op).
+	req := readBodyRequest(strings.NewReader(`{"display`))
+	_, err := readBody(req)
+	if err == nil {
+		t.Fatal("truncated body: want error, got nil")
+	}
+}
+
+func TestPatchUserHandler_OversizedBody_Returns400Or413(t *testing.T) {
+	uid := "uid_oversize"
+	app := newAppWithBypassUser(t, uid, "oversize@verdify.dev")
+	mux := app.Routes()
+
+	// Body well above the 64 KB limit.
+	bigName := strings.Repeat("A", 200*1024)
+	body := `{"displayName":"` + bigName + `"}`
+	req := httptest.NewRequest(http.MethodPatch, "/api/v1/user/"+uid, strings.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusBadRequest && rr.Code != http.StatusRequestEntityTooLarge {
+		t.Fatalf("want 400 or 413 for oversized body, got %d body=%s", rr.Code, rr.Body.String())
 	}
 }
