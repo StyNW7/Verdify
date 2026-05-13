@@ -26,7 +26,7 @@ import {
 import { useAuth } from '@/lib/auth-provider';
 import { useUserDoc } from '@/lib/user-doc-provider';
 import { pickAvatar } from '@/lib/avatar-source';
-import { patchUser } from '@/lib/api';
+import { patchUser, type UserPatch } from '@/lib/api';
 import { getFirebaseAuth } from '@/lib/firebase';
 import { getSecurityCardState } from './security-card-state';
 
@@ -191,8 +191,8 @@ function IdentityCard() {
       }
 
       // Build patch with only changed fields.
-      const patch: Record<string, string> = {};
-      if (nameChanged) patch.displayName = displayName.trim();
+      const patch: UserPatch = {};
+      if (nameChanged) patch.displayName = trimmedName;
       if (avatarChanged && presetAvatar) patch.presetAvatar = presetAvatar;
 
       if (Object.keys(patch).length > 0) {
