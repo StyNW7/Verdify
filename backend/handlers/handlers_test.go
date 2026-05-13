@@ -149,7 +149,11 @@ func TestCreateBooking_PersistsSnapshotVerbatim(t *testing.T) {
 	}
 }
 
-func TestCreateBooking_DoesNotCallGetRoute(t *testing.T) {
+func TestCreateBooking_SucceedsWithoutAnyRouteLookup(t *testing.T) {
+	// Per ADR-0004 the booking handler must not touch any routes collection
+	// (the Store interface no longer has Save/GetRoute). This test fakes a
+	// brand-new RouteID that has never been "seen" by anything and asserts
+	// the handler still creates a booking from the snapshot.
 	app := newAppWithBypassUser(t, "uid_noroute", "noroute@verdify.dev")
 	mux := app.Routes()
 
@@ -165,10 +169,6 @@ func TestCreateBooking_DoesNotCallGetRoute(t *testing.T) {
 	rr := postCreateBooking(t, mux, body)
 	if rr.Code != http.StatusCreated {
 		t.Fatalf("want 201 got %d body=%s", rr.Code, rr.Body.String())
-	}
-
-	if _, ok := app.Store.GetRoute(context.Background(), snap.RouteID); ok {
-		t.Fatalf("handler must not write to routes store; GetRoute(%q) found something", snap.RouteID)
 	}
 }
 
@@ -225,9 +225,6 @@ func createBookingForLifecycle(t *testing.T, app *App, mux http.Handler, userID 
 	bookingID, _ := env.Data.(map[string]any)["bookingId"].(string)
 	if bookingID == "" {
 		t.Fatalf("create booking missing bookingId: %s", rr.Body.String())
-	}
-	if _, ok := app.Store.GetRoute(context.Background(), snap.RouteID); ok {
-		t.Fatalf("precondition failed: route %q already seeded in store", snap.RouteID)
 	}
 	return bookingID
 }

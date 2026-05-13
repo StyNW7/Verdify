@@ -68,14 +68,8 @@ func (app *App) rerouteBookingHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Resolve destination from the booking's active route.
-	activeRouteID := b.ActiveRouteID
-	if activeRouteID == "" {
-		activeRouteID = b.RouteID
-	}
-	activeRoute, hasRoute := app.Store.GetRoute(r.Context(), activeRouteID)
-
-	// Run agent with a hard timeout.
+	// Run agent with a hard timeout. Per ADR-0004 the agent reads its mode +
+	// destination off b.RouteSnapshot, so no separate route lookup happens here.
 	ctx, cancel := context.WithTimeout(r.Context(), rerouteBudget)
 	defer cancel()
 
@@ -90,7 +84,9 @@ func (app *App) rerouteBookingHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// If rerouting, persist the new route and update activeRouteId.
+	// If rerouting, build the new option in-memory and tag the booking's
+	// activeRouteId with a fresh opaque lineage marker. The option is *not*
+	// persisted to any routes collection (ADR-0004).
 	var newRouteOpt *models.RouteOption
 	var newRouteID string
 
@@ -101,19 +97,14 @@ func (app *App) rerouteBookingHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		opt := buildOption(*result.NewCandidate, ann, b.Passengers)
 
-		origin := req.CurrentLocation
-		dest := models.Location{}
-		if hasRoute {
-			dest = activeRoute.Destination
-		}
-		rt := optionToRoute(origin, dest, opt, result.NewCandidate.Steps)
-		app.Store.SaveRoute(r.Context(), rt)
-
-		opt.RouteID = rt.ID
-		opt.CreatedAt = rt.CreatedAt
+		newRouteID = newID("route_")
+		opt.RouteID = newRouteID
+		opt.CreatedAt = services.NowUTC()
 		newRouteOpt = &opt
-		newRouteID = rt.ID
-		b.ActiveRouteID = rt.ID
+		b.ActiveRouteID = newRouteID
+		// Refresh the snapshot so subsequent reroutes/handlers see the latest
+		// remaining trip.
+		b.RouteSnapshot = opt
 	}
 
 	// Append history entry.

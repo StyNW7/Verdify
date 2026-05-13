@@ -19,9 +19,10 @@ type RouteRecomputer interface {
 }
 
 // BookingReader is the read-only slice of db.Store used by the agent.
+// Per ADR-0004 the agent reads route metadata from the booking's
+// RouteSnapshot instead of fetching a Route document.
 type BookingReader interface {
 	GetBooking(ctx context.Context, id string) (models.Booking, bool)
-	GetRoute(ctx context.Context, id string) (models.Route, bool)
 }
 
 // RerouteInput carries the per-request trigger data.
@@ -95,16 +96,11 @@ func (a *RerouteAgent) runGemini(ctx context.Context, in RerouteInput) (*Reroute
 	if !ok {
 		return nil, fmt.Errorf("booking %s not found", in.BookingID)
 	}
-	activeID := b.ActiveRouteID
-	if activeID == "" {
-		activeID = b.RouteID
-	}
-	rt, _ := a.store.GetRoute(ctx, activeID)
-	mode := rt.Mode
+	mode := b.RouteSnapshot.Mode
 	if mode == "" {
 		mode = "eco"
 	}
-	dest := rt.Destination
+	dest := snapshotDestination(b.RouteSnapshot)
 
 	// ── 2. Speculatively recompute a route from current location ───────────
 	var recomputedSummary string
@@ -122,7 +118,7 @@ func (a *RerouteAgent) runGemini(ctx context.Context, in RerouteInput) (*Reroute
 
 	// ── 3. Build remaining steps summary ──────────────────────────────────
 	var stepsDesc strings.Builder
-	for i, s := range rt.Steps {
+	for i, s := range b.RouteSnapshot.Steps {
 		mins := int(time.Until(s.Departure).Minutes())
 		depDesc := ""
 		if mins > 0 && mins < 60 {
@@ -219,17 +215,13 @@ func (a *RerouteAgent) fallback(ctx context.Context, in RerouteInput) (*RerouteR
 			Source:      "fallback",
 		}, nil
 	}
-	activeID := b.ActiveRouteID
-	if activeID == "" {
-		activeID = b.RouteID
-	}
-	rt, _ := a.store.GetRoute(ctx, activeID)
-	mode := rt.Mode
+	mode := b.RouteSnapshot.Mode
 	if mode == "" {
 		mode = "eco"
 	}
+	dest := snapshotDestination(b.RouteSnapshot)
 
-	cand, err := a.routes.Recompute(ctx, in.CurrentLocation, rt.Destination, mode)
+	cand, err := a.routes.Recompute(ctx, in.CurrentLocation, dest, mode)
 	if err != nil || cand == nil {
 		return &RerouteResult{
 			Action:      "abort",
@@ -243,6 +235,16 @@ func (a *RerouteAgent) fallback(ctx context.Context, in RerouteInput) (*RerouteR
 		NewCandidate: cand,
 		Source:       "fallback",
 	}, nil
+}
+
+// snapshotDestination returns the trip endpoint from the booking's route
+// snapshot — the last step's EndLocation. Zero value if the snapshot has no
+// steps (callers treat that as "destination unknown").
+func snapshotDestination(rs models.RouteOption) models.Location {
+	if n := len(rs.Steps); n > 0 {
+		return rs.Steps[n-1].EndLocation
+	}
+	return models.Location{}
 }
 
 func defaultMessage(action string) string {

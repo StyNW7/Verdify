@@ -10,8 +10,11 @@ import (
 )
 
 // Store is the persistence interface. MemoryStore is the default impl;
-// FirestoreStore arrives in slice 02. All methods accept ctx so the Firestore
-// impl can honour cancellation; MemoryStore ignores it.
+// FirestoreStore is selected in production. All methods accept ctx so the
+// Firestore impl can honour cancellation; MemoryStore ignores it.
+//
+// Routes are not persisted (ADR-0004). The booking's RouteSnapshot is the
+// authoritative copy; Booking.RouteID / ActiveRouteID are opaque lineage tags.
 type Store interface {
 	// EnsureUser upserts the profile fields onto /users/{uid} without touching
 	// counters. Returns the resulting user and a "created" bool so callers can
@@ -20,8 +23,6 @@ type Store interface {
 
 	GetUser(ctx context.Context, id string) (models.User, bool)
 	UpdateUser(ctx context.Context, u models.User)
-	SaveRoute(ctx context.Context, r models.Route)
-	GetRoute(ctx context.Context, id string) (models.Route, bool)
 	CreateBooking(ctx context.Context, b models.Booking)
 	GetBooking(ctx context.Context, id string) (models.Booking, bool)
 	UpdateBooking(ctx context.Context, b models.Booking)
@@ -33,14 +34,12 @@ type Store interface {
 type MemoryStore struct {
 	mu       sync.RWMutex
 	users    map[string]models.User
-	routes   map[string]models.Route
 	bookings map[string]models.Booking
 }
 
 func NewMemoryStore() *MemoryStore {
 	return &MemoryStore{
 		users:    map[string]models.User{},
-		routes:   map[string]models.Route{},
 		bookings: map[string]models.Booking{},
 	}
 }
@@ -88,19 +87,6 @@ func (s *MemoryStore) UpdateUser(_ context.Context, u models.User) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.users[u.ID] = u
-}
-
-func (s *MemoryStore) SaveRoute(_ context.Context, r models.Route) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	s.routes[r.ID] = r
-}
-
-func (s *MemoryStore) GetRoute(_ context.Context, id string) (models.Route, bool) {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-	r, ok := s.routes[id]
-	return r, ok
 }
 
 func (s *MemoryStore) CreateBooking(_ context.Context, b models.Booking) {
