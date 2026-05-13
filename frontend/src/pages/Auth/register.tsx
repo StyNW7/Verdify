@@ -9,15 +9,13 @@ import {
   EyeOff,
   ArrowRight,
   User,
-  MapPin,
-  Home,
-  Phone,
 } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import toast from 'react-hot-toast';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 
-import { registerUser } from '@/lib/api';
-import { saveAuthSession } from '@/lib/session';
+import { getFirebaseAuth } from '@/lib/firebase';
+import { syncAuthProfile } from '@/lib/api';
 
 export default function RegisterPage() {
 
@@ -26,20 +24,14 @@ export default function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    fullName: '',
+    displayName: '',
     email: '',
-    city: '',
-    address: '',
-    phoneNumber: '',
     password: '',
     confirmPassword: '',
   });
   const [errors, setErrors] = useState({
-    fullName: '',
+    displayName: '',
     email: '',
-    city: '',
-    address: '',
-    phoneNumber: '',
     password: '',
     confirmPassword: '',
   });
@@ -53,46 +45,17 @@ export default function RegisterPage() {
   const validateForm = () => {
     let isValid = true;
     const newErrors = {
-      fullName: '',
+      displayName: '',
       email: '',
-      city: '',
-      address: '',
-      phoneNumber: '',
       password: '',
       confirmPassword: '',
     };
-
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = 'Full name is required';
-      isValid = false;
-    } else if (formData.fullName.length < 3) {
-      newErrors.fullName = 'Name must be at least 3 characters';
-      isValid = false;
-    }
 
     if (!formData.email) {
       newErrors.email = 'Email is required';
       isValid = false;
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Please enter a valid email';
-      isValid = false;
-    }
-
-    if (!formData.city) {
-      newErrors.city = 'City is required';
-      isValid = false;
-    }
-
-    if (!formData.address) {
-      newErrors.address = 'Address is required';
-      isValid = false;
-    }
-
-    if (!formData.phoneNumber) {
-      newErrors.phoneNumber = 'Phone number is required';
-      isValid = false;
-    } else if (!/^[0-9]{10,11}$/.test(formData.phoneNumber.replace(/\D/g, ''))) {
-      newErrors.phoneNumber = 'Please enter a valid phone number (10-11 digits)';
       isValid = false;
     }
 
@@ -120,18 +83,17 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      const result = await registerUser({
-        email: formData.email.trim().toLowerCase(),
-        password: formData.password,
-        phone: formData.phoneNumber.trim(),
-      });
-
-      saveAuthSession({
-        userId: result.userId,
-        token: result.token,
-        email: result.email,
-        name: formData.fullName.trim(),
-      });
+      const auth = getFirebaseAuth();
+      const cred = await createUserWithEmailAndPassword(
+        auth,
+        formData.email.trim().toLowerCase(),
+        formData.password,
+      );
+      const trimmedName = formData.displayName.trim();
+      if (trimmedName) {
+        await updateProfile(cred.user, { displayName: trimmedName });
+      }
+      await syncAuthProfile();
 
       toast.success('Account created successfully');
       navigate('/dashboard');
@@ -178,25 +140,25 @@ export default function RegisterPage() {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Full Name
+            Display Name (optional)
           </label>
           <div className="relative">
             <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
               type="text"
-              name="fullName"
-              value={formData.fullName}
+              name="displayName"
+              value={formData.displayName}
               onChange={handleChange}
-              placeholder="John Doe"
+              placeholder="What should we call you?"
               className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 ${
-                errors.fullName
+                errors.displayName
                   ? 'border-red-500 focus:ring-red-500'
                   : 'border-gray-200 focus:ring-emerald-500 focus:border-emerald-500'
               }`}
             />
           </div>
-          {errors.fullName && (
-            <p className="mt-1 text-sm text-red-500">{errors.fullName}</p>
+          {errors.displayName && (
+            <p className="mt-1 text-sm text-red-500">{errors.displayName}</p>
           )}
         </div>
 
@@ -221,80 +183,6 @@ export default function RegisterPage() {
           </div>
           {errors.email && (
             <p className="mt-1 text-sm text-red-500">{errors.email}</p>
-          )}
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              City
-            </label>
-            <div className="relative">
-              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                name="city"
-                value={formData.city}
-                onChange={handleChange}
-                placeholder="Johor Bahru"
-                className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 ${
-                  errors.city
-                    ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-200 focus:ring-emerald-500 focus:border-emerald-500'
-                }`}
-              />
-            </div>
-            {errors.city && (
-              <p className="mt-1 text-sm text-red-500">{errors.city}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Phone Number
-            </label>
-            <div className="relative">
-              <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="tel"
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                placeholder="0123456789"
-                className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 ${
-                  errors.phoneNumber
-                    ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-200 focus:ring-emerald-500 focus:border-emerald-500'
-                }`}
-              />
-            </div>
-            {errors.phoneNumber && (
-              <p className="mt-1 text-sm text-red-500">{errors.phoneNumber}</p>
-            )}
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Address
-          </label>
-          <div className="relative">
-            <Home className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              placeholder="Jalan Bukit Indah, 81200"
-              className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 ${
-                errors.address
-                  ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-200 focus:ring-emerald-500 focus:border-emerald-500'
-              }`}
-            />
-          </div>
-          {errors.address && (
-            <p className="mt-1 text-sm text-red-500">{errors.address}</p>
           )}
         </div>
 
@@ -324,7 +212,7 @@ export default function RegisterPage() {
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
-          
+
           {formData.password && (
             <div className="mt-2">
               <div className="flex gap-1">

@@ -21,14 +21,25 @@ export class ApiError extends Error {
   }
 }
 
+// AuthProvider plugs a getter in via setAuthTokenGetter. We hold a function,
+// not a value, so token rotations land on the next request without any
+// re-wiring.
+let tokenGetter: () => string | null = () => null;
+
+export function setAuthTokenGetter(getter: () => string | null) {
+  tokenGetter = getter;
+}
+
 async function apiRequest<T>(path: string, init: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(init.headers ?? {}),
-    },
-  });
+  const token = tokenGetter();
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(init.headers as Record<string, string> | undefined ?? {}),
+  };
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  const response = await fetch(`${API_BASE_URL}${path}`, { ...init, headers });
 
   const body = (await response.json().catch(() => null)) as ApiEnvelope<T> | null;
   const errorMessage =
@@ -43,44 +54,27 @@ async function apiRequest<T>(path: string, init: RequestInit): Promise<T> {
   return body.data;
 }
 
-export type RegisterPayload = {
-  email: string;
-  password: string;
-  phone: string;
-};
+// ── Auth ─────────────────────────────────────────────────────────────────────
 
-export type RegisterResult = {
+export type SyncedUser = {
   userId: string;
   email: string;
-  phone: string;
-  token: string;
+  displayName: string;
+  photoURL: string;
+  greenPointsBalance: number;
+  totalTripsCompleted: number;
+  totalCarbonSaved: number;
+  totalEarned: number;
+  totalRedeemed: number;
   createdAt: string;
 };
 
-export function registerUser(payload: RegisterPayload) {
-  return apiRequest<RegisterResult>('/api/v1/auth/register', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  });
+// /auth/sync upserts the User row from the verified Firebase claims.
+export function syncAuthProfile() {
+  return apiRequest<SyncedUser>('/auth/sync', { method: 'POST' });
 }
 
-export type LoginPayload = {
-  email: string;
-  password: string;
-};
-
-export type LoginResult = {
-  userId: string;
-  token: string;
-  expiresIn: number;
-};
-
-export function loginUser(payload: LoginPayload) {
-  return apiRequest<LoginResult>('/api/v1/auth/login', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  });
-}
+// ── Routes ───────────────────────────────────────────────────────────────────
 
 export type BackendLocation = {
   latitude: number;
@@ -168,7 +162,6 @@ export function rerouteBooking(bookingId: string, payload: ReroutePayload) {
 
 // ── Geocode / Places ──────────────────────────────────────────────────────────
 
-// Legacy geocode endpoint — still supported as a fallback for the autocomplete hook.
 export type GeocodeSuggestion = {
   formattedAddress: string;
   latitude: number;

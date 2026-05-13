@@ -3,7 +3,7 @@ import { Link, Navigate, NavLink, Outlet, useLocation } from 'react-router';
 import { LoadingScreen } from '@/components/loading-screen';
 import { getLastPath } from '@/utility/nav-history';
 import { parseAuthRequired, resolveAuthGuard } from '@/lib/auth-guard';
-import { getUserIdFromSession } from '@/lib/session';
+import { useAuth } from '@/lib/auth-provider';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ChevronsLeft,
@@ -57,9 +57,13 @@ const isAuthedPath = (p: string) =>
 
 export default function AuthedLayout() {
   const { pathname, search } = useLocation();
+  const { user, loading } = useAuth();
+  if (loading) {
+    return null;
+  }
   const guard = resolveAuthGuard({
     authRequired: parseAuthRequired(import.meta.env.VITE_AUTH_REQUIRED),
-    sessionUserId: getUserIdFromSession(),
+    sessionUserId: user?.uid ?? null,
     devUserId: import.meta.env.VITE_DEV_USER_ID ?? '',
     pathname: pathname + search,
   });

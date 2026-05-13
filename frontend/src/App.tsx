@@ -8,6 +8,7 @@ import Layout from "@/layouts/root-layout";
 import AuthedLayout from "@/layouts/authed-layout";
 import { LoadingScreen } from "@/components/loading-screen";
 import { NavHistoryTracker } from "@/utility/nav-history";
+import { AuthProvider } from "@/lib/auth-provider";
 
 import ScrollToTop from "./utility/ScrollToTop";
 import ScrollToTopFunction from "./utility/ScrollToTopFunction";
@@ -37,6 +38,7 @@ function App() {
 
   return (
     <APIProvider apiKey={googleMapsApiKey}>
+    <AuthProvider>
     <BrowserRouter>
       {!introDone && (
         <LoadingScreen
@@ -91,6 +93,7 @@ function App() {
 
       <Toaster position="top-center" />
     </BrowserRouter>
+    </AuthProvider>
     </APIProvider>
   );
 }

@@ -1,12 +1,13 @@
 import { useLocation } from 'react-router';
 import { resolveAuthGuard, parseAuthRequired } from '@/lib/auth-guard';
-import { getUserIdFromSession } from '@/lib/session';
+import { useAuth } from '@/lib/auth-provider';
 
 export function useBookingUserId(): string | null {
   const { pathname, search } = useLocation();
+  const { user } = useAuth();
   const authRequired = parseAuthRequired(import.meta.env.VITE_AUTH_REQUIRED);
   const devUserId = import.meta.env.VITE_DEV_USER_ID ?? '';
-  const sessionUserId = getUserIdFromSession();
+  const sessionUserId = user?.uid ?? null;
 
   const result = resolveAuthGuard({
     authRequired,

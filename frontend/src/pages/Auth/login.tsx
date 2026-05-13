@@ -3,15 +3,17 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import toast from 'react-hot-toast';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
-import { loginUser } from '@/lib/api';
-import { saveAuthSession } from '@/lib/session';
+import { getFirebaseAuth } from '@/lib/firebase';
+import { syncAuthProfile } from '@/lib/api';
 
 export default function LoginPage() {
 
   const navigate = useNavigate();
+  const [params] = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -60,19 +62,19 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const result = await loginUser({
-        email: formData.email.trim().toLowerCase(),
-        password: formData.password,
-      });
-
-      saveAuthSession({
-        userId: result.userId,
-        token: result.token,
-        email: formData.email.trim().toLowerCase(),
-      });
+      await signInWithEmailAndPassword(
+        getFirebaseAuth(),
+        formData.email.trim().toLowerCase(),
+        formData.password,
+      );
+      // Give AuthProvider a tick to plumb the token into api.ts before /auth/sync.
+      // onIdTokenChanged is synchronous so by the time the await above resolves
+      // the next setAuthTokenGetter call has fired.
+      await syncAuthProfile();
 
       toast.success('Signed in successfully');
-      navigate('/dashboard');
+      const next = params.get('next');
+      navigate(next || '/dashboard');
     } catch (error) {
       const message =
         error instanceof Error ? error.message : 'Unable to sign in. Please try again.';
@@ -175,22 +177,7 @@ export default function LoginPage() {
         </motion.button>
       </form>
 
-      <div className="relative my-8">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200" />
-        </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="px-4 bg-white text-gray-500">or</span>
-        </div>
-      </div>
-
-      <div className="bg-emerald-50 rounded-xl p-4 mb-6">
-        <p className="text-sm text-emerald-800 text-center">
-          🎉 Demo Account: demo@verdify.com / demo123
-        </p>
-      </div>
-
-      <p className="text-center text-gray-600">
+      <p className="text-center text-gray-600 mt-8">
         Don't have an account?{' '}
         <a
           href="/auth/register"
