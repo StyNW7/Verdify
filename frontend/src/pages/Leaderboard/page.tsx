@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Crown, MoreHorizontal } from 'lucide-react';
 
@@ -49,6 +49,16 @@ function EntryAvatar({
     );
   }
 
+  const innerStyle: React.CSSProperties =
+    src.kind === 'preset'
+      ? { fontSize: size * 0.5 }
+      : {
+          color: 'var(--theme-fg)',
+          fontWeight: 600,
+          fontSize: size * 0.38,
+          letterSpacing: '0.02em',
+        };
+
   return (
     <span
       className="relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full"
@@ -57,16 +67,7 @@ function EntryAvatar({
         background: 'color-mix(in srgb, var(--theme-accent) 25%, var(--theme-surface-muted))',
       }}
     >
-      <span
-        style={{
-          color: 'var(--theme-fg)',
-          fontWeight: 600,
-          fontSize: size * 0.38,
-          letterSpacing: '0.02em',
-        }}
-      >
-        {src.value}
-      </span>
+      <span style={innerStyle}>{src.value}</span>
     </span>
   );
 }
@@ -80,7 +81,7 @@ export default function LeaderboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchLeaderboard = () => {
+  const fetchLeaderboard = useCallback(() => {
     setLoading(true);
     setError(null);
     getLeaderboard()
@@ -94,11 +95,11 @@ export default function LeaderboardPage() {
         setError('Leaderboard unavailable');
         setLoading(false);
       });
-  };
+  }, []);
 
   useEffect(() => {
     fetchLeaderboard();
-  }, []);
+  }, [fetchLeaderboard]);
 
   const top3 = entries.slice(0, 3);
 
@@ -213,6 +214,8 @@ function ErrorState({ message, onRetry }: { message: string; onRetry: () => void
 // ─── Podium ───────────────────────────────────────────────────────────────────
 
 function Podium({ top3 }: { top3: LeaderboardEntry[] }) {
+  if (top3.length === 0) return null;
+
   const first = top3.find((e) => e.rank === 1) ?? top3[0];
   const second = top3.find((e) => e.rank === 2) ?? top3[1];
   const third = top3.find((e) => e.rank === 3) ?? top3[2];
