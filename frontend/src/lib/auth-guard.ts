@@ -17,7 +17,12 @@ export function resolveAuthGuard(input: AuthGuardInput): AuthGuardResult {
   }
 
   if (authRequired) {
-    return { redirectTo: `/auth/login?next=${encodeURIComponent(pathname)}` };
+    // Redirect to the landing page; the AuthModalProvider watches for
+    // ?openAuth=login and pops the modal after a short delay so the user
+    // sees the landing context behind it instead of a bare login page.
+    return {
+      redirectTo: `/?openAuth=login&next=${encodeURIComponent(pathname)}`,
+    };
   }
 
   return { userId: devUserId };

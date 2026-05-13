@@ -19,7 +19,17 @@ import {
   EyeOff,
   Loader2,
 } from 'lucide-react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
+
+import { signInWithGoogle } from '@/lib/auth-actions';
+import { syncAuthProfile } from '@/lib/api';
+import { getFirebaseAuth } from '@/lib/firebase';
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from 'firebase/auth';
+import toast from 'react-hot-toast';
 
 type AuthMode = 'login' | 'register';
 
@@ -36,9 +46,12 @@ export function useAuthModal() {
   return ctx;
 }
 
+const AUTO_OPEN_DELAY_MS = 5;
+
 export function AuthModalProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<AuthMode>('login');
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const open = useCallback((next: AuthMode = 'login') => {
     setMode(next);
@@ -47,6 +60,26 @@ export function AuthModalProvider({ children }: { children: ReactNode }) {
   const close = useCallback(() => setIsOpen(false), []);
 
   const value = useMemo(() => ({ open, close }), [open, close]);
+
+  // Open the modal automatically when an auth-gated page redirects here
+  // with ?openAuth=login (see auth-guard.ts). A short delay lets the
+  // landing page paint behind the modal so the transition reads as
+  // "here's where you are, now sign in" instead of a bare modal.
+  const requested = searchParams.get('openAuth');
+  useEffect(() => {
+    if (requested !== 'login' && requested !== 'register') return;
+    const id = window.setTimeout(() => {
+      setMode(requested);
+      setIsOpen(true);
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.delete('openAuth');
+      setSearchParams(nextParams, { replace: true });
+    }, AUTO_OPEN_DELAY_MS);
+    return () => window.clearTimeout(id);
+    // setSearchParams is stable; searchParams identity changes each render
+    // but `requested` captures the meaningful trigger.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [requested]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -481,21 +514,43 @@ function Field({
   );
 }
 
-function SocialRow() {
+function SocialRow({
+  onGoogle,
+  disabled,
+}: {
+  onGoogle: () => void;
+  disabled?: boolean;
+}) {
   return (
-    <div className="grid grid-cols-2 gap-3">
-      <SocialButton label="Google" glyph={<GoogleGlyph />} />
-      <SocialButton label="GitHub" glyph={<GithubGlyph />} />
+    <div className="grid grid-cols-1 gap-3">
+      <SocialButton
+        label="Google"
+        glyph={<GoogleGlyph />}
+        onClick={onGoogle}
+        disabled={disabled}
+      />
     </div>
   );
 }
 
-function SocialButton({ label, glyph }: { label: string; glyph: ReactNode }) {
+function SocialButton({
+  label,
+  glyph,
+  onClick,
+  disabled,
+}: {
+  label: string;
+  glyph: ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+}) {
   return (
     <button
       type="button"
+      onClick={onClick}
+      disabled={disabled}
       aria-label={`Continue with ${label}`}
-      className="group inline-flex h-11 min-w-0 items-center justify-center gap-2.5 overflow-hidden whitespace-nowrap rounded-full px-3 transition-all"
+      className="group inline-flex h-11 min-w-0 items-center justify-center gap-2.5 overflow-hidden whitespace-nowrap rounded-full px-3 transition-all disabled:cursor-not-allowed disabled:opacity-60"
       style={{
         border: '1px solid var(--theme-border-strong)',
         color: 'var(--theme-fg)',
@@ -549,13 +604,6 @@ function GoogleGlyph() {
   );
 }
 
-function GithubGlyph() {
-  return (
-    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden fill="currentColor">
-      <path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.07c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
-    </svg>
-  );
-}
 
 function useSubmittable() {
   const [loading, setLoading] = useState(false);
@@ -570,6 +618,7 @@ function LoginForm({
   onSwitch: () => void;
 }) {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const firstFieldRef = useRef<HTMLInputElement | null>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -582,7 +631,7 @@ function LoginForm({
     requestAnimationFrame(() => firstFieldRef.current?.focus());
   }, []);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const next: typeof errs = {};
     if (!email) next.email = 'required';
@@ -592,13 +641,35 @@ function LoginForm({
     setErrs(next);
     if (Object.keys(next).length) return;
     setLoading(true);
-    setTimeout(() => {
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('userEmail', email);
-      setLoading(false);
+    try {
+      const cred = await signInWithEmailAndPassword(getFirebaseAuth(), email.trim(), password);
+      const idToken = await cred.user.getIdToken();
+      await syncAuthProfile(idToken);
       onDone();
-      navigate('/route');
-    }, 900);
+      navigate(searchParams.get('next') || '/dashboard');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Unable to sign in.';
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogle = async () => {
+    setLoading(true);
+    try {
+      const cred = await signInWithGoogle();
+      if (!cred) return; // redirect flow; the page will reload
+      const idToken = await cred.user.getIdToken();
+      await syncAuthProfile(idToken);
+      onDone();
+      navigate(searchParams.get('next') || '/dashboard');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Google sign-in failed.';
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -680,7 +751,7 @@ function LoginForm({
 
         <Divider label="or" />
 
-        <SocialRow />
+        <SocialRow onGoogle={handleGoogle} disabled={loading} />
       </div>
 
       <p
@@ -709,6 +780,7 @@ function RegisterForm({
   onSwitch: () => void;
 }) {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -735,7 +807,7 @@ function RegisterForm({
 
   const strengthLabel = ['—', 'weak', 'fair', 'good', 'strong'][strength];
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const next: typeof errs = {};
     if (!fullName.trim()) next.fullName = 'required';
@@ -748,14 +820,38 @@ function RegisterForm({
     setErrs(next);
     if (Object.keys(next).length) return;
     setLoading(true);
-    setTimeout(() => {
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('userEmail', email);
-      localStorage.setItem('userName', fullName);
-      setLoading(false);
+    try {
+      const cred = await createUserWithEmailAndPassword(getFirebaseAuth(), email.trim(), password);
+      if (fullName.trim()) {
+        await updateProfile(cred.user, { displayName: fullName.trim() });
+      }
+      const idToken = await cred.user.getIdToken();
+      await syncAuthProfile(idToken);
       onDone();
-      navigate('/route');
-    }, 900);
+      navigate(searchParams.get('next') || '/dashboard');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Unable to create account.';
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogle = async () => {
+    setLoading(true);
+    try {
+      const cred = await signInWithGoogle();
+      if (!cred) return;
+      const idToken = await cred.user.getIdToken();
+      await syncAuthProfile(idToken);
+      onDone();
+      navigate(searchParams.get('next') || '/dashboard');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Google sign-in failed.';
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -893,7 +989,7 @@ function RegisterForm({
 
         <Divider label="or" />
 
-        <SocialRow />
+        <SocialRow onGoogle={handleGoogle} disabled={loading} />
       </div>
 
       <p
