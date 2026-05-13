@@ -299,6 +299,21 @@ export type UserBookingsResponse = {
   pagination: { total: number; limit: number; offset: number };
 };
 
+export type UserGreenPointsResponse = {
+  userId: string;
+  currentBalance: number;
+  totalEarned: number;
+  totalRedeemed: number;
+  redeemableOptions: Array<{ id: string; name: string; pointsCost: number }>;
+};
+
+export function getUserGreenPoints(userId: string) {
+  return apiRequest<UserGreenPointsResponse>(
+    `/api/v1/user/${encodeURIComponent(userId)}/green-points`,
+    { method: 'GET' },
+  );
+}
+
 export function listUserBookings(userId: string, opts: { limit?: number; offset?: number } = {}) {
   const params = new URLSearchParams();
   if (opts.limit !== undefined) params.set('limit', String(opts.limit));

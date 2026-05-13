@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router';
 
+import { useGreenPoints } from '@/hooks/useGreenPoints';
+
 type Stat = {
   label: string;
   value: string;
@@ -32,34 +34,42 @@ type Trip = {
 
 const USER_FIRST_NAME = 'Stanley';
 
-const stats: Stat[] = [
-  {
-    label: 'Total CO₂ saved',
-    value: '125.4',
-    unit: 'kg',
-    delta: { value: '+12.3', direction: 'up', note: 'vs last month' },
-    icon: Leaf,
-  },
-  {
-    label: 'Green points',
-    value: '2,450',
-    delta: { value: '+180', direction: 'up', note: 'this week' },
-    icon: Star,
-  },
-  {
-    label: 'Global rank',
-    value: '#42',
-    delta: { value: '+3', direction: 'up', note: 'climbed' },
-    icon: Trophy,
-  },
-  {
-    label: 'Streak',
-    value: '14',
-    unit: 'days',
-    delta: { value: '+1', direction: 'up', note: 'keep going' },
-    icon: Flame,
-  },
-];
+function buildStats(greenPoints: number | null, loading: boolean): Stat[] {
+  const greenPointsDisplay =
+    greenPoints === null
+      ? loading
+        ? '—'
+        : '0'
+      : greenPoints.toLocaleString('en-US');
+  return [
+    {
+      label: 'Total CO₂ saved',
+      value: '125.4',
+      unit: 'kg',
+      delta: { value: '+12.3', direction: 'up', note: 'vs last month' },
+      icon: Leaf,
+    },
+    {
+      label: 'Green points',
+      value: greenPointsDisplay,
+      delta: { value: '+180', direction: 'up', note: 'this week' },
+      icon: Star,
+    },
+    {
+      label: 'Global rank',
+      value: '#42',
+      delta: { value: '+3', direction: 'up', note: 'climbed' },
+      icon: Trophy,
+    },
+    {
+      label: 'Streak',
+      value: '14',
+      unit: 'days',
+      delta: { value: '+1', direction: 'up', note: 'keep going' },
+      icon: Flame,
+    },
+  ];
+}
 
 const weeklyTrend: { day: string; kg: number }[] = [
   { day: 'Mon', kg: 3.2 },
@@ -109,6 +119,8 @@ const mobileTabs: { id: MobileTab; num: string; label: string }[] = [
 
 export default function DashboardPage() {
   const [tab, setTab] = useState<MobileTab>('overview');
+  const { currentBalance, loading: pointsLoading } = useGreenPoints();
+  const stats = buildStats(currentBalance, pointsLoading);
 
   return (
     <div
