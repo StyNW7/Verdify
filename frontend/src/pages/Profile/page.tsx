@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowUpRight,
@@ -117,22 +116,14 @@ function IdentityCard() {
   const { doc: userDoc } = useUserDoc();
 
   const avatar = pickAvatar(user, userDoc);
+  // Always show what the initials would be if no photo/preset existed.
+  const fallbackInitials = pickAvatar(user ? { ...user, photoURL: null } : null, null).value;
 
   const displayName = user?.displayName?.trim()
     || user?.email?.split('@')[0]
     || 'Verdify member';
   const email = user?.email || '';
   const isVerified = user?.emailVerified ?? false;
-
-  const initials = useMemo(() => {
-    return (user?.displayName ?? '')
-      .trim()
-      .split(/\s+/)
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((s) => s[0]?.toUpperCase() ?? '')
-      .join('') || 'VD';
-  }, [user?.displayName]);
 
   return (
     <motion.section
@@ -233,7 +224,7 @@ function IdentityCard() {
             className="theme-italic"
             style={{ color: 'var(--theme-accent)' }}
           >
-            {initials}
+            {fallbackInitials}
           </span>{' '}
           if no avatar is set.
         </p>
