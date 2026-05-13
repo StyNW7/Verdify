@@ -15,7 +15,7 @@ import {
   Train,
   type LucideIcon,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import {
   sendEmailVerification,
@@ -29,6 +29,7 @@ import { pickAvatar } from '@/lib/avatar-source';
 import { patchUser, type UserPatch } from '@/lib/api';
 import { getFirebaseAuth } from '@/lib/firebase';
 import { getSecurityCardState } from './security-card-state';
+import { getInitialTripDefaults } from './trip-defaults-state';
 import { TRANSPORTS, ROUTE_MODES, LANGUAGES as LANGUAGE_IDS, type Transport, type RouteMode, type Language } from '@/lib/preferences';
 
 // Exported so the backend validator and frontend stay in sync.
@@ -504,24 +505,31 @@ function TripDefaultsCard() {
   const { user } = useAuth();
   const { doc: userDoc } = useUserDoc();
 
+  // Seed transport/routeMode once from the first non-null doc snapshot.
+  // After the user interacts with any button, snapshot updates are ignored
+  // so an in-progress selection cannot be silently reverted before Apply.
+  const seededRef = useRef(false);
+  const [transport, setTransport] = useState<Transport>(
+    () => getInitialTripDefaults(userDoc).transport,
+  );
+  const [routeMode, setRouteMode] = useState<RouteMode>(
+    () => getInitialTripDefaults(userDoc).routeMode,
+  );
+  const [isSaving, setIsSaving] = useState(false);
+  const [userHasInteracted, setUserHasInteracted] = useState(false);
+
+  // Persisted values used for the dirty check in handleApply.
   const savedTransport = (userDoc?.preferredTransport as Transport | undefined) ?? 'Transit';
   const savedRouteMode = (userDoc?.preferredRouteMode as RouteMode | undefined) ?? 'Greenest';
 
-  const [transport, setTransport] = useState<Transport>(savedTransport);
-  const [routeMode, setRouteMode] = useState<RouteMode>(savedRouteMode);
-  const [isSaving, setIsSaving] = useState(false);
-
-  // Sync initial state when snapshot arrives after first load.
+  // One-shot seed: apply the first non-null doc snapshot if the user hasn't
+  // interacted yet and the component mounted before the doc was ready.
   useEffect(() => {
-    if (userDoc?.preferredTransport) {
-      setTransport(userDoc.preferredTransport as Transport);
-    }
-  }, [userDoc?.preferredTransport]);
-  useEffect(() => {
-    if (userDoc?.preferredRouteMode) {
-      setRouteMode(userDoc.preferredRouteMode as RouteMode);
-    }
-  }, [userDoc?.preferredRouteMode]);
+    if (userHasInteracted || seededRef.current || !userDoc) return;
+    seededRef.current = true;
+    setTransport((userDoc.preferredTransport as Transport | undefined) ?? 'Transit');
+    setRouteMode((userDoc.preferredRouteMode as RouteMode | undefined) ?? 'Greenest');
+  }, [userDoc, userHasInteracted]);
 
   const handleApply = async () => {
     if (!user) return;
@@ -585,7 +593,7 @@ function TripDefaultsCard() {
               <button
                 key={id}
                 type="button"
-                onClick={() => setTransport(id)}
+                onClick={() => { setUserHasInteracted(true); setTransport(id); }}
                 className="group relative flex flex-col items-start gap-2 rounded-[14px] p-3 text-left transition-all"
                 style={{
                   background: active ? 'var(--theme-accent-soft)' : 'var(--theme-surface-muted)',
@@ -634,7 +642,7 @@ function TripDefaultsCard() {
               <button
                 key={id}
                 type="button"
-                onClick={() => setRouteMode(id)}
+                onClick={() => { setUserHasInteracted(true); setRouteMode(id); }}
                 className="flex items-center gap-3 rounded-[12px] p-3 text-left transition-all"
                 style={{
                   background: active ? 'var(--theme-accent-soft)' : 'transparent',
