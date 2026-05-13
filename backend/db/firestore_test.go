@@ -14,6 +14,7 @@ import (
 	"cloud.google.com/go/firestore"
 	"github.com/google/uuid"
 	"github.com/verdify/backend/models"
+	"github.com/verdify/backend/validate"
 	"google.golang.org/api/iterator"
 )
 
@@ -536,6 +537,146 @@ func TestFirestore_GetUser_RoundTripsAllFields(t *testing.T) {
 	}
 }
 
+func fsStrPtr(s string) *string { return &s }
+
+// ─── UpdateUserProfile integration tests ─────────────────────────────────────
+
+func TestFirestore_UpdateUserProfile_UpdatesDisplayName(t *testing.T) {
+	store, cleanup := newEmulatorStore(t)
+	defer cleanup()
+
+	ctx := context.Background()
+	uid := "uid_upd_dn_" + uuid.NewString()[:6]
+	if _, _, err := store.EnsureUser(ctx, uid, models.UserProfile{Email: "dn@example.com", DisplayName: "Original"}); err != nil {
+		t.Fatalf("EnsureUser: %v", err)
+	}
+
+	updated, err := store.UpdateUserProfile(ctx, uid, validate.ValidatedPatch{DisplayName: fsStrPtr("New Name")})
+	if err != nil {
+		t.Fatalf("UpdateUserProfile: %v", err)
+	}
+	if updated.DisplayName != "New Name" {
+		t.Fatalf("DisplayName = %q want %q", updated.DisplayName, "New Name")
+	}
+
+	got, ok, err := store.GetUser(ctx, uid)
+	if err != nil || !ok {
+		t.Fatalf("GetUser: ok=%v err=%v", ok, err)
+	}
+	if got.DisplayName != "New Name" {
+		t.Fatalf("persisted DisplayName = %q want %q", got.DisplayName, "New Name")
+	}
+}
+
+func TestFirestore_UpdateUserProfile_UpdatesPresetAvatar(t *testing.T) {
+	store, cleanup := newEmulatorStore(t)
+	defer cleanup()
+
+	ctx := context.Background()
+	uid := "uid_upd_av_" + uuid.NewString()[:6]
+	if _, _, err := store.EnsureUser(ctx, uid, models.UserProfile{Email: "av@example.com"}); err != nil {
+		t.Fatalf("EnsureUser: %v", err)
+	}
+
+	updated, err := store.UpdateUserProfile(ctx, uid, validate.ValidatedPatch{PresetAvatar: fsStrPtr("🌿")})
+	if err != nil {
+		t.Fatalf("UpdateUserProfile: %v", err)
+	}
+	if updated.PresetAvatar != "🌿" {
+		t.Fatalf("PresetAvatar = %q want 🌿", updated.PresetAvatar)
+	}
+
+	got, ok, err := store.GetUser(ctx, uid)
+	if err != nil || !ok {
+		t.Fatalf("GetUser: ok=%v err=%v", ok, err)
+	}
+	if got.PresetAvatar != "🌿" {
+		t.Fatalf("persisted PresetAvatar = %q want 🌿", got.PresetAvatar)
+	}
+}
+
+func TestFirestore_UpdateUserProfile_PreservesCounters(t *testing.T) {
+	store, cleanup := newEmulatorStore(t)
+	defer cleanup()
+
+	ctx := context.Background()
+	uid := "uid_upd_cnt_" + uuid.NewString()[:6]
+	if _, _, err := store.EnsureUser(ctx, uid, models.UserProfile{Email: "cnt@example.com"}); err != nil {
+		t.Fatalf("EnsureUser: %v", err)
+	}
+	bid := "bk_cnt_" + uuid.NewString()[:6]
+	if err := store.CreateBooking(ctx, models.Booking{
+		ID:              bid,
+		UserID:          uid,
+		Status:          "confirmed",
+		EstimatedPoints: 80,
+		CreatedAt:       time.Now().UTC(),
+	}); err != nil {
+		t.Fatalf("CreateBooking: %v", err)
+	}
+	if _, _, err := store.ApplyCompletedTrip(ctx, bid, 80, 3000.0, time.Now().UTC()); err != nil {
+		t.Fatalf("ApplyCompletedTrip: %v", err)
+	}
+
+	// Seed a non-zero TotalRedeemed before UpdateUserProfile.
+	_, err := store.users.Doc(uid).Update(ctx, []firestore.Update{
+		{Path: "totalRedeemed", Value: 35},
+	})
+	if err != nil {
+		t.Fatalf("backdoor update TotalRedeemed: %v", err)
+	}
+
+	_, err = store.UpdateUserProfile(ctx, uid, validate.ValidatedPatch{
+		DisplayName:  fsStrPtr("Updated"),
+		PresetAvatar: fsStrPtr("🦊"),
+	})
+	if err != nil {
+		t.Fatalf("UpdateUserProfile: %v", err)
+	}
+
+	got, ok, err := store.GetUser(ctx, uid)
+	if err != nil || !ok {
+		t.Fatalf("GetUser: ok=%v err=%v", ok, err)
+	}
+	if got.GreenPoints != 80 {
+		t.Fatalf("GreenPoints = %d want 80 (counter must not be touched)", got.GreenPoints)
+	}
+	if got.TotalTrips != 1 {
+		t.Fatalf("TotalTrips = %d want 1", got.TotalTrips)
+	}
+	if got.TotalCarbonSaved != 3000.0 {
+		t.Fatalf("TotalCarbonSaved = %v want 3000.0", got.TotalCarbonSaved)
+	}
+	if got.TotalPointsEarned != 80 {
+		t.Fatalf("TotalPointsEarned = %d want 80", got.TotalPointsEarned)
+	}
+	if got.TotalRedeemed != 35 {
+		t.Fatalf("TotalRedeemed = %d want 35 (must not be touched by UpdateUserProfile)", got.TotalRedeemed)
+	}
+}
+
+func TestFirestore_UpdateUserProfile_ReturnsNotFoundForUnknownUID(t *testing.T) {
+	store, cleanup := newEmulatorStore(t)
+	defer cleanup()
+
+	ctx := context.Background()
+	uid := "uid_ghost_" + uuid.NewString()[:6]
+
+	_, err := store.UpdateUserProfile(ctx, uid, validate.ValidatedPatch{DisplayName: fsStrPtr("X")})
+	if err == nil {
+		t.Fatal("want error for unknown uid, got nil")
+	}
+	if err != ErrUserNotFound {
+		t.Fatalf("want ErrUserNotFound, got %v", err)
+	}
+
+	// Ghost-doc regression: the failed call must not have created a partial doc.
+	snap, getErr := store.users.Doc(uid).Get(ctx)
+	if getErr == nil && snap.Exists() {
+		t.Fatal("UpdateUserProfile created a ghost doc for unknown uid; want no doc")
+	}
+}
+
 // ─── ListLeaderboard integration tests ───────────────────────────────────────
 
 func TestFirestore_ListLeaderboard_EmptyStore(t *testing.T) {
@@ -578,7 +719,6 @@ func TestFirestore_ListLeaderboard_OrderAndLimit(t *testing.T) {
 		if err != nil {
 			t.Fatalf("EnsureUser %s: %v", sp.uid, err)
 		}
-		// Apply a booking to set points.
 		bid := "bk_lb_" + sp.uid
 		if err := store.CreateBooking(ctx, models.Booking{
 			ID:        bid,
@@ -600,7 +740,6 @@ func TestFirestore_ListLeaderboard_OrderAndLimit(t *testing.T) {
 	if len(entries) != 3 {
 		t.Fatalf("want 3 entries (limit=3), got %d", len(entries))
 	}
-	// Top 3 must be Alpha(700), Beta(500), Charlie(300) in that order.
 	wantUIDs := []string{"uid_lb_a", "uid_lb_b", "uid_lb_c"}
 	wantRanks := []int{1, 2, 3}
 	for i, e := range entries {
@@ -676,11 +815,10 @@ func TestFirestore_GetUserRank_TieBreak(t *testing.T) {
 	ctx := context.Background()
 	base := time.Now().UTC().Truncate(time.Second)
 
-	// Three users with identical greenPointsBalance; tie-break is createdAt asc.
 	users := []struct {
-		uid        string
-		offset     time.Duration
-		wantRank   int
+		uid      string
+		offset   time.Duration
+		wantRank int
 	}{
 		{"uid_gb_early", 1 * time.Hour, 1},
 		{"uid_gb_mid", 2 * time.Hour, 2},
@@ -694,7 +832,6 @@ func TestFirestore_GetUserRank_TieBreak(t *testing.T) {
 		if err != nil {
 			t.Fatalf("EnsureUser %s: %v", u.uid, err)
 		}
-		// Pin createdAt to a deterministic value.
 		if _, err := store.users.Doc(u.uid).Update(ctx, []firestore.Update{
 			{Path: "createdAt", Value: base.Add(u.offset)},
 		}); err != nil {

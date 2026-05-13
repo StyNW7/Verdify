@@ -1,14 +1,19 @@
 package handlers
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 
 	"github.com/verdify/backend/auth"
+	"github.com/verdify/backend/db"
 	"github.com/verdify/backend/models"
 	"github.com/verdify/backend/services"
 	"github.com/verdify/backend/services/pricing"
+	"github.com/verdify/backend/validate"
 )
 
 func (app *App) healthHandler(w http.ResponseWriter, _ *http.Request) {
@@ -232,6 +237,73 @@ func (app *App) getUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeOK(w, http.StatusOK, u)
+}
+
+func (app *App) patchUserHandler(w http.ResponseWriter, r *http.Request) {
+	userID := r.PathValue("userId")
+
+	// Cap body size before reading. 64 KB is far beyond any valid patch — the
+	// displayName limit is 60 chars and the full patch body is tiny.
+	r.Body = http.MaxBytesReader(w, r.Body, 64*1024)
+
+	// Read body — allow empty body (PATCH no-op semantics).
+	var rawBody []byte
+	if r.Body != nil {
+		var err error
+		rawBody, err = readBody(r)
+		if err != nil {
+			writeErr(w, http.StatusBadRequest, "failed to read request body")
+			return
+		}
+	}
+
+	patch, err := validate.ValidateUserPatch(rawBody)
+	if err != nil {
+		ve, ok := err.(*validate.ValidationError)
+		if !ok {
+			writeErr(w, http.StatusBadRequest, err.Error())
+			return
+		}
+		// Return structured validation errors.
+		writeJSON(w, http.StatusBadRequest, models.APIResponse{
+			Success: false,
+			Data:    nil,
+			Error:   map[string]any{"errors": ve.Errors},
+			Metadata: models.APIMeta{
+				Timestamp: services.NowUTC().Format("2006-01-02T15:04:05Z07:00"),
+				Version:   "v1",
+			},
+		})
+		return
+	}
+
+	u, err := app.Store.UpdateUserProfile(r.Context(), userID, patch)
+	if err != nil {
+		if err == db.ErrUserNotFound {
+			writeErr(w, http.StatusNotFound, "user not found")
+			return
+		}
+		writeErr(w, http.StatusInternalServerError, "user update failed")
+		return
+	}
+	writeOK(w, http.StatusOK, u)
+}
+
+func readBody(r *http.Request) ([]byte, error) {
+	if r.Body == nil {
+		return nil, nil
+	}
+	var raw json.RawMessage
+	if err := json.NewDecoder(r.Body).Decode(&raw); err != nil {
+		// json.Decoder returns io.EOF on a genuinely empty stream — not a decode
+		// error. Anything else (including io.ErrUnexpectedEOF for truncated input)
+		// is surfaced as a real error.
+		if errors.Is(err, io.EOF) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return raw, nil
 }
 
 func (app *App) getUserBookingsHandler(w http.ResponseWriter, r *http.Request) {

@@ -313,8 +313,22 @@ export type UserRecord = {
   presetAvatar?: string;
 };
 
+// UserPatch mirrors the validator's allow-list on the backend. Only fields
+// included here are permitted by PATCH /api/v1/user/{userId}.
+export type UserPatch = {
+  displayName?: string;
+  presetAvatar?: '🌿' | '🦊' | '🌊' | '🌙' | '🐝' | '🪴';
+};
+
 export function getUser(userId: string) {
   return apiRequest<UserRecord>(`/api/v1/user/${encodeURIComponent(userId)}`, { method: 'GET' });
+}
+
+export function patchUser(userId: string, patch: UserPatch) {
+  return apiRequest<UserRecord>(`/api/v1/user/${encodeURIComponent(userId)}`, {
+    method: 'PATCH',
+    body: JSON.stringify(patch),
+  });
 }
 
 export function listUserBookings(userId: string, opts: { limit?: number; offset?: number } = {}) {

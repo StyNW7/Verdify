@@ -90,6 +90,7 @@ type User struct {
 	Email             string    `json:"email" firestore:"email"`
 	DisplayName       string    `json:"displayName" firestore:"displayName"`
 	PhotoURL          string    `json:"photoURL" firestore:"photoURL"`
+	PresetAvatar      string    `json:"presetAvatar,omitempty" firestore:"presetAvatar,omitempty"`
 	GreenPoints       int       `json:"greenPointsBalance" firestore:"greenPointsBalance"`
 	TotalTrips        int       `json:"totalTripsCompleted" firestore:"totalTripsCompleted"`
 	TotalCarbonSaved  float64   `json:"totalCarbonSaved" firestore:"totalCarbonSaved"`
