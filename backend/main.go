@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/verdify/backend/config"
 	"github.com/verdify/backend/handlers"
@@ -22,7 +23,14 @@ func main() {
 
 	app := handlers.New(cfg)
 
-	// Apply CORS middleware
+	if devUserID := os.Getenv("DEV_USER_ID"); devUserID != "" {
+		if err := app.Store.SeedDevUser(devUserID); err != nil {
+			log.Printf("seed dev user %q failed: %v", devUserID, err)
+		} else {
+			log.Printf("seeded dev user %q", devUserID)
+		}
+	}
+
 	mux := withCORS(app.Routes())
 
 	port := cfg.Port

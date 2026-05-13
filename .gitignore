@@ -1,2 +1,5 @@
 /docs
 **/.env
+
+# Hidden from public repo (shared internally via Discord/WhatsApp)
+backend/docs/

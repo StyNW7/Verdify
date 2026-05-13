@@ -94,6 +94,7 @@ export type CalculateRoutePayload = {
   origin: BackendLocation;
   destination: BackendLocation;
   mode?: RouteMode;
+  passengers?: number;
 };
 
 export type BackendTransportSegment = {
@@ -143,6 +144,30 @@ export function calculateRoute(payload: CalculateRoutePayload) {
   });
 }
 
+// ── Reroute ───────────────────────────────────────────────────────────────────
+
+export type ReroutePayload = {
+  currentLocation: { latitude: number; longitude: number };
+  reason?: 'missed_stop' | 'missed_connection' | 'stuck';
+};
+
+export type RerouteResult = {
+  action: 'reroute' | 'wait_and_continue' | 'abort';
+  userMessage: string;
+  newRoute: BackendRouteOption | null;
+  reasoning: string;
+  agentSource: 'gemini' | 'fallback' | 'cap';
+};
+
+export function rerouteBooking(bookingId: string, payload: ReroutePayload) {
+  return apiRequest<RerouteResult>(`/api/v1/bookings/${encodeURIComponent(bookingId)}/reroute`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
+// ── Geocode / Places ──────────────────────────────────────────────────────────
+
 // Legacy geocode endpoint — still supported as a fallback for the autocomplete hook.
 export type GeocodeSuggestion = {
   formattedAddress: string;
@@ -185,6 +210,93 @@ export type PlaceDetailsResponse = {
 export function placeDetails(placeId: string, sessionToken: string) {
   return apiRequest<PlaceDetailsResponse>(
     `/api/v1/places/details?placeId=${encodeURIComponent(placeId)}&sessionToken=${encodeURIComponent(sessionToken)}`,
+    { method: 'GET' },
+  );
+}
+
+export type CreateBookingPayload = {
+  userId: string;
+  routeId: string;
+  routeSnapshot: BackendRouteOption;
+  passengers: number;
+};
+
+export type CreateBookingResponse = {
+  bookingId: string;
+  bookingReference: string;
+  estimatedPoints: number;
+  status: string;
+  paymentStatus: string;
+  routeSnapshot: BackendRouteOption;
+  passengers: number;
+  qrCode?: string;
+  createdAt?: string;
+  expiresAt?: string;
+};
+
+export function createBooking(payload: CreateBookingPayload) {
+  return apiRequest<CreateBookingResponse>('/api/v1/bookings/create', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
+export type BookingRecord = {
+  bookingId: string;
+  userId: string;
+  routeId: string;
+  routeSnapshot: BackendRouteOption;
+  passengers: number;
+  status: string;
+  qrCode: string;
+  bookingReference: string;
+  estimatedPoints: number;
+  actualPoints: number;
+  paymentStatus: string;
+  createdAt: string;
+  completedAt?: string;
+};
+
+export function markBookingPaid(bookingId: string) {
+  return apiRequest<BookingRecord>(`/api/v1/bookings/${encodeURIComponent(bookingId)}/pay`, {
+    method: 'POST',
+  });
+}
+
+export type MarkCompletedResponse = {
+  bookingId: string;
+  status: string;
+  paymentStatus: string;
+  actualPoints: number;
+  carbonSaved: number;
+};
+
+export function markBookingCompleted(bookingId: string) {
+  return apiRequest<MarkCompletedResponse>(
+    `/api/v1/bookings/${encodeURIComponent(bookingId)}/verify`,
+    { method: 'POST' },
+  );
+}
+
+export function cancelBooking(bookingId: string) {
+  return apiRequest<BookingRecord>(`/api/v1/bookings/${encodeURIComponent(bookingId)}/cancel`, {
+    method: 'POST',
+  });
+}
+
+export type UserBookingsResponse = {
+  bookings: BookingRecord[];
+  pagination: { total: number; limit: number; offset: number };
+};
+
+export function listUserBookings(userId: string, opts: { limit?: number; offset?: number } = {}) {
+  const params = new URLSearchParams();
+  if (opts.limit !== undefined) params.set('limit', String(opts.limit));
+  if (opts.offset !== undefined) params.set('offset', String(opts.offset));
+  const qs = params.toString();
+  const suffix = qs ? `?${qs}` : '';
+  return apiRequest<UserBookingsResponse>(
+    `/api/v1/user/${encodeURIComponent(userId)}/bookings${suffix}`,
     { method: 'GET' },
   );
 }

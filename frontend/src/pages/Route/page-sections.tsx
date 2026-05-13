@@ -11,7 +11,6 @@ import {
   type RouteOption,
   LOCATION_SUGGESTIONS,
   AdvancedOptions,
-  DateTimeField,
   PreferenceSelector,
   SubmitButton,
   SwapButton,
@@ -71,15 +70,6 @@ export function PlannerForm({
           <SwapButton onClick={state.swap} />
         </div>
       </div>
-
-      <DateTimeField
-        dateSlot={state.dateSlot}
-        setDateSlot={state.setDateSlot}
-        pickedDate={state.pickedDate}
-        setPickedDate={state.setPickedDate}
-        time={state.time}
-        setTime={state.setTime}
-      />
 
       <PreferenceSelector
         preference={state.preference}

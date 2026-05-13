@@ -41,6 +41,25 @@ var modeOrder = []modeSpec{
 	}},
 }
 
+// Recompute fetches a single route candidate for the given mode from a new
+// starting location. Used by the reroute agent. Falls back to a synthetic
+// candidate on Routes API failure (never errors).
+func (cb *CandidateBuilder) Recompute(ctx context.Context, from, to models.Location, mode string) (*models.RouteCandidate, error) {
+	var idx int
+	var spec modeSpec
+	switch mode {
+	case "eco", "ecoboost":
+		idx, spec = 1, modeOrder[1]
+	case "cheap", "smart":
+		idx, spec = 2, modeOrder[2]
+	default: // "fast", "flowing"
+		idx, spec = 0, modeOrder[0]
+	}
+	synth := SyntheticCandidates(from, to)
+	c := cb.buildOne(ctx, from, to, spec, synth[idx])
+	return &c, nil
+}
+
 // Build returns 3 candidates in fixed order. Per-mode Routes failures fall
 // back to SyntheticCandidates for that mode only. Returns an error only when
 // the synthetic fallback itself errors (which it currently never does).
