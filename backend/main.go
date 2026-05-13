@@ -4,9 +4,11 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/verdify/backend/auth"
 	"github.com/verdify/backend/config"
+	"github.com/verdify/backend/db"
 	fbpkg "github.com/verdify/backend/firebase"
 	"github.com/verdify/backend/handlers"
 	"github.com/verdify/backend/models"
@@ -23,16 +25,52 @@ func main() {
 	// Force frontend origin for production
 	cfg.FrontendOrigin = "https://verdify-frontend-1080742698349.asia-southeast3.run.app"
 
-	app := handlers.New(cfg)
+	ctx := context.Background()
 
-	// Wire Firebase Admin SDK -> auth middleware. Dev bypass takes precedence
-	// when DEV_USER_ID is set; in that mode Firebase init is best-effort.
+	// Firebase client. Initialised eagerly when the auth path or the
+	// firestore driver needs it; skipped only when dev-bypass + memory
+	// driver are both selected.
+	driver := strings.ToLower(strings.TrimSpace(cfg.DBDriver))
+	if driver == "" {
+		driver = "firestore"
+	}
+	var fb *fbpkg.Client
+	needsFirebase := cfg.DevUserID == "" || driver == "firestore"
+	if needsFirebase {
+		var err error
+		fb, err = fbpkg.Init(ctx, cfg.FirebaseCredentialsJSON)
+		if err != nil {
+			log.Fatalf("firebase init: %v", err)
+		}
+	}
+
+	// Persistence backend.
+	var store db.Store
+	switch driver {
+	case "memory":
+		log.Printf("event=store_init driver=memory")
+		store = db.NewMemoryStore()
+	case "firestore":
+		fs, err := fb.Firestore(ctx)
+		if err != nil {
+			log.Fatalf("firestore client: %v", err)
+		}
+		log.Printf("event=store_init driver=firestore")
+		store = db.NewFirestoreStore(fs)
+	default:
+		log.Fatalf("unknown DB_DRIVER=%q (expected firestore or memory)", driver)
+	}
+
+	app := handlers.NewWithStore(cfg, store)
+
+	// Wire auth middleware. Dev bypass takes precedence; otherwise verify
+	// Firebase ID tokens.
 	if cfg.DevUserID != "" {
 		log.Printf("WARN: dev bypass active, DO NOT USE IN PROD (DEV_USER_ID=%s)", cfg.DevUserID)
 		app.Auth = auth.New(nil, cfg.DevUserID)
 
 		// Seed the dev user so booking/handler code finds it.
-		if _, _, err := app.Store.EnsureUser(context.Background(), cfg.DevUserID, models.UserProfile{
+		if _, _, err := app.Store.EnsureUser(ctx, cfg.DevUserID, models.UserProfile{
 			Email:       "dev@verdify.local",
 			DisplayName: "Dev User",
 		}); err != nil {
@@ -41,10 +79,6 @@ func main() {
 			log.Printf("seeded dev user %q", cfg.DevUserID)
 		}
 	} else {
-		fb, err := fbpkg.Init(context.Background(), cfg.FirebaseCredentialsJSON)
-		if err != nil {
-			log.Fatalf("firebase init: %v", err)
-		}
 		app.Auth = auth.New(auth.NewFirebaseVerifier(fb.Auth()), "")
 	}
 

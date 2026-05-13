@@ -32,10 +32,19 @@ type App struct {
 	StartTime    time.Time
 }
 
+// New wires an App with the default in-memory store (suitable for tests and
+// the dev-bypass path). Production startup uses NewWithStore so it can plug
+// in a FirestoreStore.
 func New(cfg config.Config) *App {
+	return NewWithStore(cfg, db.NewMemoryStore())
+}
+
+// NewWithStore lets the caller inject a db.Store implementation (Firestore
+// in prod, MemoryStore in tests). This is the seam that backs the
+// DB_DRIVER env var.
+func NewWithStore(cfg config.Config, store db.Store) *App {
 	routesClient := routes.NewClient(cfg.GoogleMapsAPIKey)
 	builder := routes.NewCandidateBuilder(routesClient)
-	store := db.NewMemoryStore()
 	geminiRanker := ranker.New(cfg)
 	app := &App{
 		Cfg:          cfg,

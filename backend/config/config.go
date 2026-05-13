@@ -15,6 +15,10 @@ type Config struct {
 	// has matching frontend semantics in ADR-0003.
 	DevUserID                string
 	FirebaseCredentialsJSON  string
+	// DBDriver selects the persistence backend. "firestore" (default) uses
+	// the Firebase Firestore Admin SDK; "memory" uses the in-process map
+	// store and is intended for tests and short-lived demos.
+	DBDriver string
 }
 
 func Load() Config {
@@ -37,6 +41,7 @@ func Load() Config {
 		GoogleMapsAPIKey:        getenv("GOOGLE_MAPS_API_KEY", ""),
 		DevUserID:               getenv("DEV_USER_ID", ""),
 		FirebaseCredentialsJSON: getenv("FIREBASE_CREDENTIALS_JSON", ""),
+		DBDriver:                getenv("DB_DRIVER", "firestore"),
 	}
 }
 
