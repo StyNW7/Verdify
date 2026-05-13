@@ -594,6 +594,7 @@ func TestPatchUserHandler_InvalidPatch_Returns400(t *testing.T) {
 	app := newAppWithBypassUser(t, uid, "patchbad@verdify.dev")
 	mux := app.Routes()
 
+	// Send PATCH with TWO invalid fields: displayName too long AND presetAvatar not in allow-list.
 	body := `{"displayName":"` + strings.Repeat("X", 61) + `","presetAvatar":"🐉"}`
 	req := httptest.NewRequest(http.MethodPatch, "/api/v1/user/"+uid, bytes.NewBufferString(body))
 	req.Header.Set("Content-Type", "application/json")
@@ -603,18 +604,55 @@ func TestPatchUserHandler_InvalidPatch_Returns400(t *testing.T) {
 	if rr.Code != http.StatusBadRequest {
 		t.Fatalf("want 400 got %d body=%s", rr.Code, rr.Body.String())
 	}
-	// Check that errors array is present.
+	// Decode response and verify the error shape: {errors: [{field, message}, ...]}
 	var envelope struct {
 		Success bool `json:"success"`
 		Data    any  `json:"data"`
-		Error   any  `json:"error"`
+		Error   map[string]any `json:"error"`
 	}
 	if err := json.Unmarshal(rr.Body.Bytes(), &envelope); err != nil {
 		t.Fatalf("response not JSON: %s", rr.Body.String())
 	}
-	// The error field should contain validation details.
 	if envelope.Error == nil {
 		t.Fatalf("want non-nil error field in 400 response; got %s", rr.Body.String())
+	}
+
+	// Extract the errors array from the Error map.
+	errorsRaw, ok := envelope.Error["errors"]
+	if !ok {
+		t.Fatalf("want 'errors' key in error object; got %v", envelope.Error)
+	}
+	errorsIface, ok := errorsRaw.([]any)
+	if !ok {
+		t.Fatalf("errors is not an array: %T = %v", errorsRaw, errorsRaw)
+	}
+	if len(errorsIface) != 2 {
+		t.Fatalf("want 2 field errors got %d: %v", len(errorsIface), errorsIface)
+	}
+
+	// Verify both errors are present: one for displayName, one for presetAvatar.
+	fieldsSeen := make(map[string]bool)
+	for _, errItem := range errorsIface {
+		errMap, ok := errItem.(map[string]any)
+		if !ok {
+			t.Fatalf("error item is not an object: %T", errItem)
+		}
+		field, _ := errMap["field"].(string)
+		message, _ := errMap["message"].(string)
+		if field == "" {
+			t.Fatalf("error item missing 'field': %v", errMap)
+		}
+		if message == "" {
+			t.Fatalf("error item missing 'message': %v", errMap)
+		}
+		fieldsSeen[field] = true
+	}
+
+	if !fieldsSeen["displayName"] {
+		t.Errorf("want displayName error; saw fields: %v", fieldsSeen)
+	}
+	if !fieldsSeen["presetAvatar"] {
+		t.Errorf("want presetAvatar error; saw fields: %v", fieldsSeen)
 	}
 }
 

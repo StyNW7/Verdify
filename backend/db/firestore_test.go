@@ -616,7 +616,16 @@ func TestFirestore_UpdateUserProfile_PreservesCounters(t *testing.T) {
 		t.Fatalf("ApplyCompletedTrip: %v", err)
 	}
 
-	_, err := store.UpdateUserProfile(ctx, uid, validate.ValidatedPatch{
+	// Seed a non-zero TotalRedeemed before UpdateUserProfile.
+	// Update the user doc directly to set TotalRedeemed for test purposes.
+	_, err := store.users.Doc(uid).Update(ctx, []firestore.Update{
+		{Path: "totalRedeemed", Value: 35},
+	})
+	if err != nil {
+		t.Fatalf("backdoor update TotalRedeemed: %v", err)
+	}
+
+	_, err = store.UpdateUserProfile(ctx, uid, validate.ValidatedPatch{
 		DisplayName:  fsStrPtr("Updated"),
 		PresetAvatar: fsStrPtr("🦊"),
 	})
@@ -633,6 +642,15 @@ func TestFirestore_UpdateUserProfile_PreservesCounters(t *testing.T) {
 	}
 	if got.TotalTrips != 1 {
 		t.Fatalf("TotalTrips = %d want 1", got.TotalTrips)
+	}
+	if got.TotalCarbonSaved != 3000.0 {
+		t.Fatalf("TotalCarbonSaved = %v want 3000.0", got.TotalCarbonSaved)
+	}
+	if got.TotalPointsEarned != 80 {
+		t.Fatalf("TotalPointsEarned = %d want 80", got.TotalPointsEarned)
+	}
+	if got.TotalRedeemed != 35 {
+		t.Fatalf("TotalRedeemed = %d want 35 (must not be touched by UpdateUserProfile)", got.TotalRedeemed)
 	}
 }
 

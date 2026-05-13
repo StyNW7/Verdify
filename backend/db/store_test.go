@@ -241,7 +241,7 @@ func TestUpdateUserProfile_PreservesCounters(t *testing.T) {
 	if _, _, err := s.EnsureUser(ctx, uid, models.UserProfile{Email: "cnt@example.com"}); err != nil {
 		t.Fatalf("EnsureUser: %v", err)
 	}
-	// Award points.
+	// Award points and redeem some.
 	if err := s.CreateBooking(ctx, models.Booking{
 		ID:              "bk_cnt",
 		UserID:          uid,
@@ -253,8 +253,16 @@ func TestUpdateUserProfile_PreservesCounters(t *testing.T) {
 	if _, _, err := s.ApplyCompletedTrip(ctx, "bk_cnt", 100, 5000, time.Now().UTC()); err != nil {
 		t.Fatalf("ApplyCompletedTrip: %v", err)
 	}
+	// Seed a non-zero TotalRedeemed so we can verify it's preserved.
+	before, _, err := s.GetUser(ctx, uid)
+	if err != nil {
+		t.Fatalf("GetUser (before): %v", err)
+	}
+	before.TotalRedeemed = 25
+	// Backdoor update to set TotalRedeemed for test purposes.
+	s.users[uid] = before
 
-	_, err := s.UpdateUserProfile(ctx, uid, validate.ValidatedPatch{
+	_, err = s.UpdateUserProfile(ctx, uid, validate.ValidatedPatch{
 		DisplayName:  strPtr("Updated"),
 		PresetAvatar: strPtr("🦊"),
 	})
@@ -277,6 +285,9 @@ func TestUpdateUserProfile_PreservesCounters(t *testing.T) {
 	}
 	if got.TotalPointsEarned != 100 {
 		t.Fatalf("TotalPointsEarned = %d want 100", got.TotalPointsEarned)
+	}
+	if got.TotalRedeemed != 25 {
+		t.Fatalf("TotalRedeemed = %d want 25 (must not be touched by UpdateUserProfile)", got.TotalRedeemed)
 	}
 }
 
