@@ -179,7 +179,7 @@ export default function GoogleRouteMap({
         gestureHandling="cooperative"
         disableDefaultUI
         zoomControl
-        mapId={import.meta.env.VITE_GOOGLE_MAP_ID || 'DEMO_MAP_ID'}
+        mapId={import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'DEMO_MAP_ID'}
         styles={styles}
         style={{ width: '100%', height: '100%' }}
       >
