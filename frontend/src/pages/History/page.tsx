@@ -1,143 +1,175 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import * as Dialog from '@radix-ui/react-dialog';
 import {
-  Bike,
-  Bus,
-  Car,
-  CircleDot,
-  Clock,
-  Filter,
-  Flag,
-  Footprints,
   Leaf,
-  MapPin,
   Navigation,
-  Route,
+  Route as RouteIcon,
   Sparkles,
-  Train,
-  TrendingUp,
-  X,
-  Zap,
+  TicketCheck,
 } from 'lucide-react';
 
-type Mode = 'bike' | 'walk' | 'transit' | 'train' | 'carpool' | 'ev';
-
-type Trip = {
-  id: string;
-  date: string;
-  durationMin: number;
-  origin: string;
-  destination: string;
-  mode: Mode;
-  distanceKm: number;
-  co2SavedKg: number;
-  points: number;
-  note?: string;
-  waypoints?: string[];
-};
-
-const TRIPS: Trip[] = [
-  { id: 't-001', date: '2026-04-22T07:42:00', durationMin: 24, origin: 'Bangsar South', destination: 'KLCC Tower',
-    mode: 'bike', distanceKm: 6.8, co2SavedKg: 1.42, points: 184, note: 'Morning commute via the park loop.',
-    waypoints: ['Kerinchi LRT', 'Midvalley Underpass', 'KL Eco City', 'Persiaran Hampshire'] },
-  { id: 't-002', date: '2026-04-21T18:05:00', durationMin: 36, origin: 'KLCC Tower', destination: 'Bangsar South',
-    mode: 'transit', distanceKm: 7.1, co2SavedKg: 1.12, points: 140, waypoints: ['KLCC → Masjid Jamek', 'Transfer at Pasar Seni', 'Kerinchi LRT'] },
-  { id: 't-003', date: '2026-04-21T08:14:00', durationMin: 21, origin: 'Bangsar South', destination: 'KL Sentral',
-    mode: 'train', distanceKm: 3.4, co2SavedKg: 0.52, points: 72, waypoints: ['Platform 4', 'KTM Komuter northbound'] },
-  { id: 't-004', date: '2026-04-20T12:40:00', durationMin: 14, origin: 'Pavilion KL', destination: 'Bukit Bintang',
-    mode: 'walk', distanceKm: 1.2, co2SavedKg: 0.28, points: 42, note: 'Lunch stroll with Daniyal.' },
-  { id: 't-005', date: '2026-04-19T09:02:00', durationMin: 48, origin: 'TTDI', destination: 'Sunway Pyramid',
-    mode: 'carpool', distanceKm: 18.4, co2SavedKg: 2.80, points: 210, note: 'Shared with 3 riders.' },
-  { id: 't-006', date: '2026-04-17T07:58:00', durationMin: 27, origin: 'Mont Kiara', destination: 'Menara Maxis',
-    mode: 'ev', distanceKm: 9.2, co2SavedKg: 1.88, points: 154 },
-  { id: 't-007', date: '2026-04-14T17:22:00', durationMin: 32, origin: 'Cheras', destination: 'Bangsar',
-    mode: 'bike', distanceKm: 11.4, co2SavedKg: 2.24, points: 242, note: 'Golden-hour ride. Tail-wind.' },
-  { id: 't-008', date: '2026-04-11T08:30:00', durationMin: 19, origin: 'Subang Jaya', destination: 'KL Sentral',
-    mode: 'train', distanceKm: 14.8, co2SavedKg: 2.05, points: 190 },
-  { id: 't-009', date: '2026-03-28T11:10:00', durationMin: 52, origin: 'Shah Alam', destination: 'Damansara',
-    mode: 'carpool', distanceKm: 24.6, co2SavedKg: 3.40, points: 260 },
-  { id: 't-010', date: '2026-03-18T15:45:00', durationMin: 11, origin: 'Office', destination: 'Coffee Shop',
-    mode: 'walk', distanceKm: 0.9, co2SavedKg: 0.22, points: 28 },
-  { id: 't-011', date: '2026-02-09T09:12:00', durationMin: 38, origin: 'Petaling Jaya', destination: 'Cyberjaya',
-    mode: 'transit', distanceKm: 22.4, co2SavedKg: 3.15, points: 295 },
-];
-
-const MODE_META: Record<
-  Mode,
-  { label: string; icon: typeof Bike; tone: 'green' | 'warm' | 'ink' }
-> = {
-  bike:    { label: 'Bike',      icon: Bike,       tone: 'green' },
-  walk:    { label: 'Walk',      icon: Footprints, tone: 'green' },
-  transit: { label: 'Bus',       icon: Bus,        tone: 'ink'   },
-  train:   { label: 'Rail',      icon: Train,      tone: 'ink'   },
-  carpool: { label: 'Carpool',   icon: Car,        tone: 'warm'  },
-  ev:      { label: 'EV',        icon: Zap,        tone: 'warm'  },
-};
-
-type TimeKey = 'all' | 'week' | 'month' | 'quarter';
-const TIME_OPTIONS: { key: TimeKey; label: string }[] = [
-  { key: 'week',    label: 'This week' },
-  { key: 'month',   label: 'This month' },
-  { key: 'quarter', label: 'Last 90 days' },
-  { key: 'all',     label: 'All time' },
-];
-
-const ALL_MODES: Mode[] = ['bike', 'walk', 'transit', 'train', 'carpool', 'ev'];
-
-const NOW = new Date('2026-04-22T23:59:00');
+import {
+  ApiError,
+  listUserBookings,
+  type BookingRecord,
+} from '@/lib/api';
+import { useBookingUserId } from '@/hooks/useBookingUserId';
+import { BookingDialog } from '@/pages/Route/booking-dialog';
+import type { Booking, ConfirmedBooking } from '@/lib/booking-draft';
 
 const fmt = (n: number) => n.toLocaleString('en-US');
-const kg  = (n: number) => `${n.toFixed(2)} kg`;
-const km  = (n: number) => `${n.toFixed(1)} km`;
 
-function withinTime(dateStr: string, key: TimeKey) {
-  if (key === 'all') return true;
-  const d = new Date(dateStr).getTime();
-  const now = NOW.getTime();
-  const days = key === 'week' ? 7 : key === 'month' ? 31 : 90;
-  return now - d <= days * 86_400_000;
+function bookingToConfirmed(record: BookingRecord): ConfirmedBooking {
+  return {
+    status: record.status as ConfirmedBooking['status'],
+    bookingId: record.bookingId,
+    bookingReference: record.bookingReference,
+    routeId: record.routeId,
+    routeSnapshot: record.routeSnapshot,
+    passengers: record.passengers,
+    estimatedPoints: record.estimatedPoints,
+    actualPoints: record.actualPoints,
+    paymentStatus: record.paymentStatus,
+    createdAt: record.createdAt,
+  };
 }
 
-function formatDate(iso: string, opts?: Intl.DateTimeFormatOptions) {
-  return new Date(iso).toLocaleDateString('en-GB', opts ?? { day: '2-digit', month: 'short', year: 'numeric' });
-}
-function formatTime(iso: string) {
-  return new Date(iso).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+function carbonSavedKg(record: BookingRecord): number {
+  const grams = record.routeSnapshot?.carbonSavedGrams ?? 0;
+  return grams / 1000;
 }
 
-function toneColor(t: 'green' | 'warm' | 'ink') {
-  return t === 'green' ? 'var(--theme-accent)'
-    : t === 'warm'   ? 'var(--theme-accent-warm)'
-    : 'var(--theme-fg)';
+function pointsFor(record: BookingRecord): number {
+  if (record.actualPoints && record.actualPoints > 0) return record.actualPoints;
+  return record.estimatedPoints ?? record.routeSnapshot?.greenPointsEstimate ?? 0;
+}
+
+function originFromSnapshot(record: BookingRecord): string {
+  const first = record.routeSnapshot?.steps?.[0];
+  return first?.departureStop?.trim() || 'Origin';
+}
+
+function destinationFromSnapshot(record: BookingRecord): string {
+  const steps = record.routeSnapshot?.steps ?? [];
+  for (let i = steps.length - 1; i >= 0; i--) {
+    const s = steps[i];
+    const end = s.arrivalStop?.trim() || s.headsign?.trim();
+    if (end) return end;
+  }
+  return 'Destination';
+}
+
+function corridorLabel(record: BookingRecord): { from: string; to: string } {
+  return { from: originFromSnapshot(record), to: destinationFromSnapshot(record) };
+}
+
+type Tone = 'green' | 'warm' | 'ink' | 'muted';
+
+function statusBadge(status: string): { label: string; tone: Tone } {
+  switch (status) {
+    case 'completed':
+      return { label: 'Completed', tone: 'green' };
+    case 'cancelled':
+      return { label: 'Cancelled', tone: 'warm' };
+    case 'confirmed':
+      return { label: 'Confirmed', tone: 'ink' };
+    default:
+      return { label: status || 'Pending', tone: 'muted' };
+  }
+}
+
+function toneColor(tone: Tone): string {
+  if (tone === 'green') return 'var(--theme-accent)';
+  if (tone === 'warm') return 'var(--theme-accent-warm)';
+  if (tone === 'muted') return 'var(--theme-fg-dim)';
+  return 'var(--theme-fg)';
+}
+
+function formatTripDate(iso?: string): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
 export default function HistoryPage() {
-  const [timeKey, setTimeKey] = useState<TimeKey>('month');
-  const [modes, setModes] = useState<Set<Mode>>(new Set(ALL_MODES));
-  const [active, setActive] = useState<Trip | null>(null);
+  const userId = useBookingUserId();
+  const [bookings, setBookings] = useState<BookingRecord[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [active, setActive] = useState<Booking | null>(null);
 
-  const trips = useMemo(() => {
-    return TRIPS
-      .filter((t) => withinTime(t.date, timeKey))
-      .filter((t) => modes.has(t.mode))
-      .sort((a, b) => +new Date(b.date) - +new Date(a.date));
-  }, [timeKey, modes]);
+  useEffect(() => {
+    if (!userId) {
+      setBookings([]);
+      return;
+    }
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    listUserBookings(userId, { limit: 100, offset: 0 })
+      .then((res) => {
+        if (cancelled) return;
+        setBookings(res.bookings ?? []);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        const message =
+          err instanceof ApiError || err instanceof Error
+            ? err.message
+            : 'Failed to load bookings';
+        setError(message);
+        setBookings([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
+
+  const sorted = useMemo(() => {
+    return [...bookings].sort(
+      (a, b) => +new Date(b.createdAt) - +new Date(a.createdAt),
+    );
+  }, [bookings]);
 
   const totals = useMemo(() => {
-    const co2 = trips.reduce((s, t) => s + t.co2SavedKg, 0);
-    const pts = trips.reduce((s, t) => s + t.points, 0);
-    const dist = trips.reduce((s, t) => s + t.distanceKm, 0);
-    return { co2, pts, dist, count: trips.length };
-  }, [trips]);
+    let count = 0;
+    let co2 = 0;
+    let dist = 0;
+    let pts = 0;
+    for (const b of sorted) {
+      if (b.status === 'cancelled') continue;
+      count += 1;
+      co2 += carbonSavedKg(b);
+      dist += b.routeSnapshot?.totalDistance ?? 0;
+      pts += pointsFor(b);
+    }
+    return { count, co2, dist, pts };
+  }, [sorted]);
 
-  const toggleMode = (m: Mode) => {
-    setModes((prev) => {
-      const next = new Set(prev);
-      if (next.has(m)) next.delete(m); else next.add(m);
-      if (next.size === 0) return new Set(ALL_MODES);
-      return next;
-    });
+  const handleRowClick = (record: BookingRecord) => {
+    setActive(bookingToConfirmed(record));
+  };
+
+  const handleDialogUpdate = (next: Booking) => {
+    if (next.status === 'draft') return;
+    const updated = next as ConfirmedBooking;
+    setActive(updated);
+    setBookings((prev) =>
+      prev.map((b) =>
+        b.bookingId === updated.bookingId
+          ? {
+              ...b,
+              status: updated.status,
+              paymentStatus: updated.paymentStatus,
+              actualPoints: updated.actualPoints ?? b.actualPoints,
+            }
+          : b,
+      ),
+    );
   };
 
   return (
@@ -147,19 +179,39 @@ export default function HistoryPage() {
     >
       <div className="flex flex-col gap-6 sm:gap-8">
         <Header totals={totals} />
-        <Filters
-          timeKey={timeKey}
-          onTime={setTimeKey}
-          modes={modes}
-          onToggleMode={toggleMode}
-        />
 
-        <LedgerView trips={trips} onOpen={setActive} />
+        {error && (
+          <div
+            role="alert"
+            className="rounded-[14px] border px-4 py-3 text-[0.92rem]"
+            style={{
+              borderColor: 'var(--theme-border-strong)',
+              background: 'color-mix(in srgb, var(--theme-accent-warm) 14%, transparent)',
+              color: 'var(--theme-fg)',
+            }}
+          >
+            {error}
+          </div>
+        )}
 
-        {trips.length === 0 && <EmptyState />}
+        {loading && bookings.length === 0 ? (
+          <LoadingTile />
+        ) : sorted.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <LedgerView bookings={sorted} onOpen={handleRowClick} />
+        )}
       </div>
 
-      <TripDialog trip={active} onClose={() => setActive(null)} />
+      <AnimatePresence>
+        {active && (
+          <BookingDialog
+            booking={active}
+            onClose={() => setActive(null)}
+            onUpdate={handleDialogUpdate}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 }
@@ -194,8 +246,8 @@ function Header({ totals }: { totals: { co2: number; pts: number; dist: number; 
           </em>
         </h1>
         <p className="mt-3 max-w-xl text-[0.98rem]" style={{ color: 'var(--theme-fg-muted)' }}>
-          A running archive of your lower-carbon commutes — filter by time or
-          transport, open any trip to see the full route.
+          A running archive of your lower-carbon commutes — open any trip to see the
+          full route, QR codes, and lifecycle actions.
         </p>
       </div>
 
@@ -206,9 +258,9 @@ function Header({ totals }: { totals: { co2: number; pts: number; dist: number; 
 
 function SummaryStrip({ totals }: { totals: { co2: number; pts: number; dist: number; count: number } }) {
   const items = [
-    { label: 'TRIPS LOGGED', value: fmt(totals.count), tail: 'entries', icon: Route },
-    { label: 'CO₂ SAVED',     value: totals.co2.toFixed(2), tail: 'kg', icon: Leaf },
-    { label: 'DISTANCE',      value: totals.dist.toFixed(1), tail: 'km', icon: Navigation },
+    { label: 'TRIPS LOGGED', value: fmt(totals.count), tail: 'entries', icon: RouteIcon },
+    { label: 'CO₂ SAVED', value: totals.co2.toFixed(2), tail: 'kg', icon: Leaf },
+    { label: 'DISTANCE', value: totals.dist.toFixed(1), tail: 'km', icon: Navigation },
     { label: 'POINTS EARNED', value: fmt(totals.pts), tail: 'pts', icon: Sparkles },
   ];
   return (
@@ -259,109 +311,23 @@ function SummaryStrip({ totals }: { totals: { co2: number; pts: number; dist: nu
   );
 }
 
-function Filters({
-  timeKey,
-  onTime,
-  modes,
-  onToggleMode,
+function LedgerView({
+  bookings,
+  onOpen,
 }: {
-  timeKey: TimeKey;
-  onTime: (k: TimeKey) => void;
-  modes: Set<Mode>;
-  onToggleMode: (m: Mode) => void;
+  bookings: BookingRecord[];
+  onOpen: (b: BookingRecord) => void;
 }) {
-  return (
-    <div
-      className="flex flex-col gap-4 rounded-[20px] border px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-5 sm:px-5"
-      style={{
-        borderColor: 'var(--theme-border)',
-        background: 'var(--theme-surface)',
-        backdropFilter: 'blur(14px)',
-      }}
-    >
-      <div className="flex flex-col gap-2">
-        <span
-          className="theme-mono-sm inline-flex items-center gap-2"
-          style={{ color: 'var(--theme-fg-dim)', letterSpacing: '0.2em' }}
-        >
-          <Clock className="h-3.5 w-3.5" strokeWidth={1.8} />
-          WINDOW
-        </span>
-        <div className="flex flex-wrap gap-2">
-          {TIME_OPTIONS.map((o) => {
-            const active = timeKey === o.key;
-            return (
-              <button
-                key={o.key}
-                type="button"
-                onClick={() => onTime(o.key)}
-                className="rounded-full border px-3 py-1.5 text-[0.8rem] transition-all"
-                style={{
-                  borderColor: active ? 'var(--theme-accent)' : 'var(--theme-border)',
-                  background: active ? 'var(--theme-accent-soft)' : 'var(--theme-surface-muted)',
-                  color: active ? 'var(--theme-accent)' : 'var(--theme-fg-muted)',
-                }}
-              >
-                {o.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <div
-        className="hidden h-12 w-px sm:block"
-        style={{ background: 'var(--theme-border)' }}
-      />
-
-      <div className="flex flex-col gap-2">
-        <span
-          className="theme-mono-sm inline-flex items-center gap-2"
-          style={{ color: 'var(--theme-fg-dim)', letterSpacing: '0.2em' }}
-        >
-          <Filter className="h-3.5 w-3.5" strokeWidth={1.8} />
-          TRANSPORT
-        </span>
-        <div className="flex flex-wrap gap-2">
-          {ALL_MODES.map((m) => {
-            const meta = MODE_META[m];
-            const Icon = meta.icon;
-            const active = modes.has(m);
-            return (
-              <button
-                key={m}
-                type="button"
-                onClick={() => onToggleMode(m)}
-                className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[0.8rem] transition-all"
-                style={{
-                  borderColor: active ? 'var(--theme-accent)' : 'var(--theme-border)',
-                  background: active ? 'var(--theme-accent-soft)' : 'var(--theme-surface-muted)',
-                  color: active ? 'var(--theme-accent)' : 'var(--theme-fg-muted)',
-                  opacity: active ? 1 : 0.65,
-                }}
-              >
-                <Icon className="h-3.5 w-3.5" strokeWidth={1.8} />
-                {meta.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function LedgerView({ trips, onOpen }: { trips: Trip[]; onOpen: (t: Trip) => void }) {
   return (
     <div
       className="theme-card relative overflow-hidden rounded-[24px]"
       style={{ borderColor: 'var(--theme-border)' }}
     >
       <div
-        className="hidden md:grid grid-cols-[96px_72px_1fr_120px_120px_72px] items-center gap-4 border-b px-6 py-3"
+        className="hidden md:grid grid-cols-[128px_1fr_160px_220px] items-center gap-4 border-b px-6 py-3"
         style={{ borderColor: 'var(--theme-border)' }}
       >
-        {['DATE', 'TIME', 'ROUTE', 'CO₂ SAVED', 'POINTS', ''].map((h, i) => (
+        {['DATE', 'ROUTE', 'STATUS', 'REWARD'].map((h, i) => (
           <span
             key={i}
             className="theme-mono-sm"
@@ -372,148 +338,193 @@ function LedgerView({ trips, onOpen }: { trips: Trip[]; onOpen: (t: Trip) => voi
         ))}
       </div>
       <ul>
-        {trips.map((t, i) => {
-          const meta = MODE_META[t.mode];
-          const Icon = meta.icon;
-          return (
-            <motion.li
-              key={t.id}
-              initial={{ opacity: 0, x: -8 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.03 * i, duration: 0.35 }}
-              className="group relative cursor-pointer border-b px-4 py-4 last:border-b-0 transition-colors hover:bg-[var(--theme-surface-muted)] md:px-6"
-              style={{ borderColor: 'var(--theme-border)' }}
-              onClick={() => onOpen(t)}
-            >
-              <span
-                className="absolute left-0 top-0 h-full w-[2px] opacity-0 transition-opacity group-hover:opacity-100"
-                style={{ background: toneColor(meta.tone) }}
-              />
-
-              <div className="flex flex-col gap-3 md:hidden">
-                <div className="flex items-start gap-3">
-                  <span
-                    className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border"
-                    style={{
-                      borderColor: 'var(--theme-border-strong)',
-                      background: 'var(--theme-surface-muted)',
-                      color: toneColor(meta.tone),
-                    }}
-                  >
-                    <Icon className="h-4 w-4" strokeWidth={1.8} />
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p
-                      className="truncate text-[0.95rem]"
-                      style={{ color: 'var(--theme-fg)', fontFamily: 'var(--theme-font-display)' }}
-                    >
-                      {t.origin}{' '}
-                      <span
-                        className="italic"
-                        style={{ fontFamily: 'var(--theme-font-italic)', color: 'var(--theme-fg-dim)' }}
-                      >
-                        to
-                      </span>{' '}
-                      {t.destination}
-                    </p>
-                    <p className="theme-mono-sm truncate" style={{ color: 'var(--theme-fg-dim)' }}>
-                      {new Date(t.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })} · {formatTime(t.date)} · {meta.label.toUpperCase()}
-                    </p>
-                  </div>
-                </div>
-                <div
-                  className="flex items-center justify-between gap-3 border-t pt-3"
-                  style={{ borderColor: 'var(--theme-border)' }}
-                >
-                  <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
-                    {km(t.distanceKm)} · {t.durationMin} MIN
-                  </span>
-                  <div className="flex items-center gap-3">
-                    <span
-                      className="text-[0.95rem] tabular-nums"
-                      style={{ fontFamily: 'var(--theme-font-display)', color: 'var(--theme-accent)', fontWeight: 500 }}
-                    >
-                      −{kg(t.co2SavedKg)}
-                    </span>
-                    <span
-                      className="text-[0.95rem] tabular-nums"
-                      style={{ fontFamily: 'var(--theme-font-display)', color: 'var(--theme-fg)', fontWeight: 500 }}
-                    >
-                      +{fmt(t.points)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="hidden md:grid grid-cols-[96px_72px_1fr_120px_120px_72px] items-center gap-4">
-                <div className="flex flex-col">
-                  <span
-                    className="text-[0.92rem]"
-                    style={{ color: 'var(--theme-fg)', fontFamily: 'var(--theme-font-display)' }}
-                  >
-                    {new Date(t.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
-                  </span>
-                  <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
-                    {new Date(t.date).getFullYear()}
-                  </span>
-                </div>
-                <span className="theme-mono-sm" style={{ color: 'var(--theme-fg)' }}>
-                  {formatTime(t.date)}
-                </span>
-                <div className="flex min-w-0 items-center gap-3">
-                  <span
-                    className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border"
-                    style={{
-                      borderColor: 'var(--theme-border-strong)',
-                      background: 'var(--theme-surface-muted)',
-                      color: toneColor(meta.tone),
-                    }}
-                  >
-                    <Icon className="h-4 w-4" strokeWidth={1.8} />
-                  </span>
-                  <div className="min-w-0">
-                    <p
-                      className="truncate text-[0.95rem]"
-                      style={{ color: 'var(--theme-fg)', fontFamily: 'var(--theme-font-display)' }}
-                    >
-                      {t.origin}{' '}
-                      <span
-                        className="italic"
-                        style={{ fontFamily: 'var(--theme-font-italic)', color: 'var(--theme-fg-dim)' }}
-                      >
-                        to
-                      </span>{' '}
-                      {t.destination}
-                    </p>
-                    <p className="theme-mono-sm truncate" style={{ color: 'var(--theme-fg-dim)' }}>
-                      {meta.label.toUpperCase()} · {km(t.distanceKm)} · {t.durationMin} MIN
-                    </p>
-                  </div>
-                </div>
-                <span
-                  className="text-right text-[1.02rem] tabular-nums"
-                  style={{ fontFamily: 'var(--theme-font-display)', color: 'var(--theme-accent)', fontWeight: 500 }}
-                >
-                  −{kg(t.co2SavedKg)}
-                </span>
-                <span
-                  className="text-right text-[1.02rem] tabular-nums"
-                  style={{ fontFamily: 'var(--theme-font-display)', color: 'var(--theme-fg)', fontWeight: 500 }}
-                >
-                  +{fmt(t.points)}
-                </span>
-                <span
-                  className="justify-self-end text-[0.75rem] italic opacity-0 transition-opacity group-hover:opacity-100"
-                  style={{ fontFamily: 'var(--theme-font-italic)', color: 'var(--theme-accent)' }}
-                >
-                  open →
-                </span>
-              </div>
-            </motion.li>
-          );
-        })}
+        {bookings.map((b, i) => (
+          <BookingRow key={b.bookingId} record={b} index={i} onOpen={() => onOpen(b)} />
+        ))}
       </ul>
     </div>
+  );
+}
+
+function BookingRow({
+  record,
+  index,
+  onOpen,
+}: {
+  record: BookingRecord;
+  index: number;
+  onOpen: () => void;
+}) {
+  const corridor = corridorLabel(record);
+  const badge = statusBadge(record.status);
+  const isCompleted = record.status === 'completed';
+  const isCancelled = record.status === 'cancelled';
+  const points = pointsFor(record);
+  const co2kg = carbonSavedKg(record);
+
+  return (
+    <motion.li
+      initial={{ opacity: 0, x: -8 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 0.03 * index, duration: 0.35 }}
+      className="group relative cursor-pointer border-b px-4 py-4 last:border-b-0 transition-colors hover:bg-[var(--theme-surface-muted)] md:px-6"
+      style={{ borderColor: 'var(--theme-border)' }}
+      onClick={onOpen}
+    >
+      <span
+        className="absolute left-0 top-0 h-full w-[2px] opacity-0 transition-opacity group-hover:opacity-100"
+        style={{ background: toneColor(badge.tone) }}
+      />
+
+      <div className="flex flex-col gap-3 md:hidden">
+        <div className="flex items-start gap-3">
+          <span
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border"
+            style={{
+              borderColor: 'var(--theme-border-strong)',
+              background: 'var(--theme-surface-muted)',
+              color: toneColor(badge.tone),
+            }}
+          >
+            <TicketCheck className="h-4 w-4" strokeWidth={1.8} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p
+              className="truncate text-[0.95rem]"
+              style={{ color: 'var(--theme-fg)', fontFamily: 'var(--theme-font-display)' }}
+            >
+              {corridor.from}{' '}
+              <span
+                className="italic"
+                style={{ fontFamily: 'var(--theme-font-italic)', color: 'var(--theme-fg-dim)' }}
+              >
+                to
+              </span>{' '}
+              {corridor.to}
+            </p>
+            <p className="theme-mono-sm truncate" style={{ color: 'var(--theme-fg-dim)' }}>
+              {formatTripDate(record.createdAt)} · {record.bookingReference}
+            </p>
+          </div>
+        </div>
+        <div
+          className="flex items-center justify-between gap-3 border-t pt-3"
+          style={{ borderColor: 'var(--theme-border)' }}
+        >
+          <StatusBadge label={badge.label} tone={badge.tone} />
+          {isCompleted ? (
+            <RewardPill points={points} co2kg={co2kg} />
+          ) : isCancelled ? (
+            <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
+              No points
+            </span>
+          ) : (
+            <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-muted)' }}>
+              +{fmt(points)} pts est.
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div className="hidden md:grid grid-cols-[128px_1fr_160px_220px] items-center gap-4">
+        <div className="flex flex-col">
+          <span
+            className="text-[0.92rem]"
+            style={{ color: 'var(--theme-fg)', fontFamily: 'var(--theme-font-display)' }}
+          >
+            {formatTripDate(record.createdAt)}
+          </span>
+          <span className="theme-mono-sm truncate" style={{ color: 'var(--theme-fg-dim)' }}>
+            {record.bookingReference}
+          </span>
+        </div>
+        <div className="flex min-w-0 items-center gap-3">
+          <span
+            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border"
+            style={{
+              borderColor: 'var(--theme-border-strong)',
+              background: 'var(--theme-surface-muted)',
+              color: toneColor(badge.tone),
+            }}
+          >
+            <TicketCheck className="h-4 w-4" strokeWidth={1.8} />
+          </span>
+          <div className="min-w-0">
+            <p
+              className="truncate text-[0.95rem]"
+              style={{ color: 'var(--theme-fg)', fontFamily: 'var(--theme-font-display)' }}
+            >
+              {corridor.from}{' '}
+              <span
+                className="italic"
+                style={{ fontFamily: 'var(--theme-font-italic)', color: 'var(--theme-fg-dim)' }}
+              >
+                to
+              </span>{' '}
+              {corridor.to}
+            </p>
+            <p className="theme-mono-sm truncate" style={{ color: 'var(--theme-fg-dim)' }}>
+              {(record.routeSnapshot?.steps?.length ?? 0)} stops · RM{' '}
+              {(record.routeSnapshot?.estimatedCost ?? 0).toFixed(2)}
+            </p>
+          </div>
+        </div>
+        <StatusBadge label={badge.label} tone={badge.tone} />
+        {isCompleted ? (
+          <RewardPill points={points} co2kg={co2kg} />
+        ) : isCancelled ? (
+          <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
+            No points awarded
+          </span>
+        ) : (
+          <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-muted)' }}>
+            +{fmt(points)} pts estimated
+          </span>
+        )}
+      </div>
+    </motion.li>
+  );
+}
+
+function StatusBadge({ label, tone }: { label: string; tone: Tone }) {
+  const color = toneColor(tone);
+  return (
+    <span
+      className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[0.72rem] uppercase tracking-[0.18em]"
+      style={{
+        borderColor: color,
+        color,
+        background:
+          tone === 'green'
+            ? 'var(--theme-accent-soft)'
+            : tone === 'warm'
+              ? 'color-mix(in srgb, var(--theme-accent-warm) 14%, transparent)'
+              : 'var(--theme-surface-muted)',
+        fontFamily: 'var(--theme-font-mono)',
+      }}
+    >
+      {label}
+    </span>
+  );
+}
+
+function RewardPill({ points, co2kg }: { points: number; co2kg: number }) {
+  return (
+    <span
+      className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[0.85rem]"
+      style={{
+        borderColor: 'var(--theme-accent-muted)',
+        background: 'var(--theme-accent-soft)',
+        color: 'var(--theme-fg)',
+        fontFamily: 'var(--theme-font-mono)',
+      }}
+    >
+      <Sparkles className="h-3.5 w-3.5" strokeWidth={1.8} style={{ color: 'var(--theme-accent)' }} />
+      <span>+{fmt(points)} pts</span>
+      <span style={{ color: 'var(--theme-fg-dim)' }}>·</span>
+      <Leaf className="h-3.5 w-3.5" strokeWidth={1.8} style={{ color: 'var(--theme-accent)' }} />
+      <span>{co2kg.toFixed(2)} kg CO₂</span>
+    </span>
   );
 }
 
@@ -527,7 +538,7 @@ function EmptyState() {
         className="theme-mono-sm"
         style={{ color: 'var(--theme-fg-dim)', letterSpacing: '0.24em' }}
       >
-        NOTHING IN WINDOW
+        NO TRIPS YET
       </span>
       <p
         className="mt-3 italic text-[1.6rem]"
@@ -536,288 +547,24 @@ function EmptyState() {
           color: 'var(--theme-fg)',
         }}
       >
-        No trips match these filters.
+        Plan and book a route to get started.
       </p>
       <p className="mt-1 text-[0.92rem]" style={{ color: 'var(--theme-fg-muted)' }}>
-        Widen the window or turn a few transport chips back on.
+        Confirmed bookings, completed trips, and cancellations all land here.
       </p>
     </div>
   );
 }
 
-function TripDialog({ trip, onClose }: { trip: Trip | null; onClose: () => void }) {
-  const open = !!trip;
-  return (
-    <Dialog.Root open={open} onOpenChange={(v) => !v && onClose()}>
-      <AnimatePresence>
-        {open && trip && (
-          <Dialog.Portal forceMount>
-            <Dialog.Overlay asChild>
-              <motion.div
-                className="fixed inset-0 z-[90]"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.25 }}
-                style={{
-                  background: 'color-mix(in srgb, var(--theme-bg) 60%, rgba(0,0,0,0.55))',
-                  backdropFilter: 'blur(6px)',
-                }}
-              />
-            </Dialog.Overlay>
-            <Dialog.Content asChild>
-              <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                <motion.div
-                  className="w-[min(720px,92vw)] max-h-[92vh] overflow-auto"
-                  initial={{ opacity: 0, y: 16, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 12, scale: 0.98 }}
-                  transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <TripDetailCard trip={trip} onClose={onClose} />
-                </motion.div>
-              </div>
-            </Dialog.Content>
-          </Dialog.Portal>
-        )}
-      </AnimatePresence>
-    </Dialog.Root>
-  );
-}
-
-function TripDetailCard({ trip, onClose }: { trip: Trip; onClose: () => void }) {
-  const meta = MODE_META[trip.mode];
-  const Icon = meta.icon;
-  const tone = toneColor(meta.tone);
-
-  const avgSpeed = trip.distanceKm > 0 ? (trip.distanceKm / (trip.durationMin / 60)).toFixed(1) : '0';
-
+function LoadingTile() {
   return (
     <div
-      className="relative overflow-hidden rounded-[26px] border"
-      style={{
-        borderColor: 'var(--theme-border)',
-        background: 'var(--theme-bg-soft)',
-        boxShadow: '0 40px 100px -40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08)',
-      }}
+      className="theme-card flex items-center justify-center rounded-[24px] px-6 py-12"
+      style={{ borderColor: 'var(--theme-border)' }}
     >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full"
-        style={{ background: `radial-gradient(closest-side, ${tone}33, transparent 70%)`, filter: 'blur(10px)' }}
-      />
-
-      <div className="relative flex items-start justify-between gap-4 border-b px-5 py-5 sm:gap-6 sm:px-7 sm:py-6" style={{ borderColor: 'var(--theme-border)' }}>
-        <div>
-          <div className="flex items-center gap-2.5">
-            <span
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full"
-              style={{ background: 'var(--theme-surface)', color: tone, border: '1px solid var(--theme-border-strong)' }}
-            >
-              <Icon className="h-4.5 w-4.5" strokeWidth={1.8} />
-            </span>
-            <span
-              className="theme-mono-sm"
-              style={{ color: 'var(--theme-fg-dim)', letterSpacing: '0.22em' }}
-            >
-              TRIP · {trip.id.toUpperCase()}
-            </span>
-          </div>
-          <h2
-            className="mt-3 text-[1.35rem] leading-[1.08] tracking-[-0.025em] sm:text-[1.85rem] sm:leading-[1.05]"
-            style={{ color: 'var(--theme-fg)', fontFamily: 'var(--theme-font-display)' }}
-          >
-            {trip.origin}{' '}
-            <em
-              style={{
-                fontFamily: 'var(--theme-font-italic)',
-                fontStyle: 'italic',
-                color: 'var(--theme-fg-dim)',
-              }}
-            >
-              to
-            </em>{' '}
-            {trip.destination}
-          </h2>
-          <p className="mt-1 text-[0.88rem]" style={{ color: 'var(--theme-fg-muted)' }}>
-            {formatDate(trip.date, { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' })} · {formatTime(trip.date)}
-          </p>
-        </div>
-
-        <Dialog.Close asChild>
-          <button
-            type="button"
-            onClick={onClose}
-            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-colors hover:bg-[var(--theme-surface-muted)]"
-            style={{ borderColor: 'var(--theme-border)', color: 'var(--theme-fg-muted)' }}
-            aria-label="Close"
-          >
-            <X className="h-4 w-4" strokeWidth={1.8} />
-          </button>
-        </Dialog.Close>
-      </div>
-
-      <div className="relative grid grid-cols-2 gap-0 border-b md:grid-cols-4" style={{ borderColor: 'var(--theme-border)' }}>
-        {[
-          { label: 'CO₂ SAVED',  value: `−${trip.co2SavedKg.toFixed(2)}`, tail: 'KG', accent: tone },
-          { label: 'POINTS',     value: `+${fmt(trip.points)}`,            tail: 'PTS' },
-          { label: 'DISTANCE',   value: trip.distanceKm.toFixed(1),        tail: 'KM' },
-          { label: 'AVG SPEED',  value: avgSpeed,                          tail: 'KM/H' },
-        ].map((s, i) => (
-          <div
-            key={s.label}
-            className={[
-              'px-4 py-3.5 sm:px-5 sm:py-4',
-              (i === 1 || i === 3) && 'border-l',
-              i === 2 && 'border-t md:border-t-0 md:border-l',
-              i === 0 ? '' : 'md:border-l',
-            ].filter(Boolean).join(' ')}
-            style={{ borderColor: 'var(--theme-border)' }}
-          >
-            <span
-              className="theme-mono-sm"
-              style={{ color: 'var(--theme-fg-dim)', letterSpacing: '0.18em', fontSize: '0.62rem' }}
-            >
-              {s.label}
-            </span>
-            <p
-              className="theme-number mt-1 text-[1.2rem] leading-none tracking-[-0.03em] sm:text-[1.55rem]"
-              style={{ fontWeight: 500, color: s.accent ?? 'var(--theme-fg)' }}
-            >
-              {s.value}
-              <span
-                className="ml-1 text-[0.7rem]"
-                style={{ fontFamily: 'var(--theme-font-mono)', color: 'var(--theme-fg-dim)' }}
-              >
-                {s.tail}
-              </span>
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <div className="relative grid grid-cols-1 gap-5 px-5 py-5 sm:gap-6 sm:px-7 sm:py-6 md:grid-cols-[1.2fr_1fr]">
-        <div>
-          <span
-            className="theme-mono-sm"
-            style={{ color: 'var(--theme-fg-dim)', letterSpacing: '0.2em' }}
-          >
-            ROUTE
-          </span>
-          <ol className="mt-3 flex flex-col">
-            <RouteNode icon={<CircleDot className="h-3.5 w-3.5" strokeWidth={2} />} label="Origin" value={trip.origin} tone="var(--theme-accent)" />
-            {(trip.waypoints ?? []).map((w, i) => (
-              <RouteNode key={i} icon={<MapPin className="h-3.5 w-3.5" strokeWidth={2} />} label={`Waypoint ${String(i + 1).padStart(2, '0')}`} value={w} />
-            ))}
-            <RouteNode icon={<Flag className="h-3.5 w-3.5" strokeWidth={2} />} label="Destination" value={trip.destination} tone="var(--theme-accent-warm)" last />
-          </ol>
-        </div>
-
-        <div className="flex flex-col gap-4">
-          <div
-            className="rounded-[16px] border p-4"
-            style={{ borderColor: 'var(--theme-border)', background: 'var(--theme-surface)' }}
-          >
-            <span
-              className="theme-mono-sm inline-flex items-center gap-2"
-              style={{ color: 'var(--theme-fg-dim)', letterSpacing: '0.2em' }}
-            >
-              <TrendingUp className="h-3.5 w-3.5" strokeWidth={1.8} /> IMPACT
-            </span>
-            <p
-              className="mt-2 text-[0.95rem] leading-snug"
-              style={{ color: 'var(--theme-fg)', fontFamily: 'var(--theme-font-display)' }}
-            >
-              Equivalent to{' '}
-              <em
-                style={{
-                  fontFamily: 'var(--theme-font-italic)',
-                  fontStyle: 'italic',
-                  color: 'var(--theme-accent)',
-                }}
-              >
-                {Math.round(trip.co2SavedKg * 5.5)} smartphone charges
-              </em>{' '}
-              of electricity, or a tree absorbing for{' '}
-              {Math.max(1, Math.round(trip.co2SavedKg * 12))} days.
-            </p>
-          </div>
-
-          {trip.note && (
-            <div
-              className="rounded-[16px] border p-4"
-              style={{ borderColor: 'var(--theme-border)', background: 'var(--theme-surface-muted)' }}
-            >
-              <span
-                className="theme-mono-sm"
-                style={{ color: 'var(--theme-fg-dim)', letterSpacing: '0.2em' }}
-              >
-                NOTE
-              </span>
-              <p
-                className="mt-2 italic text-[1.05rem] leading-snug"
-                style={{ fontFamily: 'var(--theme-font-italic)', color: 'var(--theme-fg)' }}
-              >
-                “{trip.note}”
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function RouteNode({
-  icon,
-  label,
-  value,
-  tone,
-  last,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  tone?: string;
-  last?: boolean;
-}) {
-  const color = tone ?? 'var(--theme-fg)';
-  return (
-    <li className="relative flex items-start gap-3 pb-4 last:pb-0">
-      {!last && (
-        <span
-          aria-hidden
-          className="absolute left-[11px] top-7 h-[calc(100%-1.5rem)] w-px"
-          style={{
-            background:
-              'repeating-linear-gradient(180deg, var(--theme-border-strong) 0 3px, transparent 3px 7px)',
-          }}
-        />
-      )}
-      <span
-        className="relative z-[1] mt-[2px] flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full border"
-        style={{
-          background: 'var(--theme-bg-soft)',
-          color,
-          borderColor: color === 'var(--theme-fg)' ? 'var(--theme-border-strong)' : color,
-        }}
-      >
-        {icon}
+      <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
+        Loading bookings…
       </span>
-      <div className="min-w-0">
-        <span
-          className="theme-mono-sm"
-          style={{ color: 'var(--theme-fg-dim)', letterSpacing: '0.16em' }}
-        >
-          {label.toUpperCase()}
-        </span>
-        <p
-          className="truncate text-[0.98rem]"
-          style={{ color: 'var(--theme-fg)', fontFamily: 'var(--theme-font-display)' }}
-        >
-          {value}
-        </p>
-      </div>
-    </li>
+    </div>
   );
 }

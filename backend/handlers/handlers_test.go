@@ -319,6 +319,86 @@ func TestGetBookingHandler_ReadsFromSnapshotNotStoreGetRoute(t *testing.T) {
 	}
 }
 
+func TestGetBookingHandler_EmbedsRouteSnapshotInResponse(t *testing.T) {
+	app := New(config.Load())
+	mux := app.Routes()
+	userID := registerTestUser(t, mux, "get-embed-snap@verdify.dev")
+
+	snap := sampleRouteSnapshot()
+	snap.RouteID = "route_ephemeral_embed_xyz"
+
+	bookingID := createBookingForLifecycle(t, app, mux, userID, snap)
+
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodGet, "/api/v1/bookings/"+bookingID, nil))
+	if rr.Code != http.StatusOK {
+		t.Fatalf("get want 200 got %d body=%s", rr.Code, rr.Body.String())
+	}
+
+	var env models.APIResponse
+	_ = json.Unmarshal(rr.Body.Bytes(), &env)
+	data, _ := env.Data.(map[string]any)
+	if data == nil {
+		t.Fatalf("get response has no data envelope: %s", rr.Body.String())
+	}
+
+	embed, ok := data["routeSnapshot"].(map[string]any)
+	if !ok || embed == nil {
+		t.Fatalf("response must embed routeSnapshot; got body=%s", rr.Body.String())
+	}
+	if gotRouteID, _ := embed["routeId"].(string); gotRouteID != snap.RouteID {
+		t.Fatalf("embedded routeSnapshot.routeId = %q want %q", gotRouteID, snap.RouteID)
+	}
+	steps, _ := embed["steps"].([]any)
+	if len(steps) != len(snap.Steps) {
+		t.Fatalf("embedded routeSnapshot.steps len = %d want %d", len(steps), len(snap.Steps))
+	}
+	if ref, _ := data["bookingReference"].(string); ref == "" {
+		t.Fatalf("response must include bookingReference for dialog rendering; body=%s", rr.Body.String())
+	}
+	if _, ok := data["paymentStatus"].(string); !ok {
+		t.Fatalf("response must include paymentStatus for lifecycle decisions; body=%s", rr.Body.String())
+	}
+}
+
+func TestGetUserBookingsHandler_EmbedsRouteSnapshotPerItem(t *testing.T) {
+	app := New(config.Load())
+	mux := app.Routes()
+	userID := registerTestUser(t, mux, "list-embed-snap@verdify.dev")
+
+	snap := sampleRouteSnapshot()
+	snap.RouteID = "route_ephemeral_list_xyz"
+	_ = createBookingForLifecycle(t, app, mux, userID, snap)
+
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodGet, "/api/v1/user/"+userID+"/bookings", nil))
+	if rr.Code != http.StatusOK {
+		t.Fatalf("list want 200 got %d body=%s", rr.Code, rr.Body.String())
+	}
+
+	var env models.APIResponse
+	_ = json.Unmarshal(rr.Body.Bytes(), &env)
+	data, _ := env.Data.(map[string]any)
+	if data == nil {
+		t.Fatalf("list response has no data envelope: %s", rr.Body.String())
+	}
+	items, _ := data["bookings"].([]any)
+	if len(items) == 0 {
+		t.Fatalf("list response has no bookings: %s", rr.Body.String())
+	}
+	first, _ := items[0].(map[string]any)
+	if first == nil {
+		t.Fatalf("first booking entry has unexpected shape: %s", rr.Body.String())
+	}
+	embed, ok := first["routeSnapshot"].(map[string]any)
+	if !ok || embed == nil {
+		t.Fatalf("each booking must embed routeSnapshot; first=%v", first)
+	}
+	if gotRouteID, _ := embed["routeId"].(string); gotRouteID != snap.RouteID {
+		t.Fatalf("embedded routeSnapshot.routeId = %q want %q", gotRouteID, snap.RouteID)
+	}
+}
+
 func TestPayBookingHandler_LeavesConfirmedStatusUntouched(t *testing.T) {
 	app := New(config.Load())
 	mux := app.Routes()

@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import {
   BookingActionBar,
-  BookingConfirmationDialog,
-} from './booking-confirmation-dialog';
+  BookingDialog,
+  buildDraftForPlanner,
+} from './booking-dialog';
+import type { Booking } from '@/lib/booking-draft';
 import {
   DirectionsPanel,
   ImpactPanel,
@@ -25,10 +27,17 @@ export default function RoutePlannerPage() {
   const state = usePlannerState();
   const { mapVariant, routes, selectedRoute } = useRoutePlannerScene(state);
   const formSectionRef = useRef<HTMLElement | null>(null);
-  const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
+  const [activeBooking, setActiveBooking] = useState<Booking | null>(null);
 
-  const openBookingDialog = useCallback(() => setBookingDialogOpen(true), []);
-  const closeBookingDialog = useCallback(() => setBookingDialogOpen(false), []);
+  const draftFromSelection = useMemo(
+    () => buildDraftForPlanner(state, selectedRoute),
+    [state, selectedRoute],
+  );
+
+  const openBookingDialog = useCallback(() => {
+    if (draftFromSelection) setActiveBooking(draftFromSelection);
+  }, [draftFromSelection]);
+  const closeBookingDialog = useCallback(() => setActiveBooking(null), []);
 
   useEffect(() => {
     if (state.phase === 'idle') return;
@@ -182,11 +191,11 @@ export default function RoutePlannerPage() {
       </main>
 
       <AnimatePresence>
-        {bookingDialogOpen && (
-          <BookingConfirmationDialog
-            state={state}
-            route={selectedRoute}
-            onCancel={closeBookingDialog}
+        {activeBooking && (
+          <BookingDialog
+            booking={activeBooking}
+            onClose={closeBookingDialog}
+            onUpdate={setActiveBooking}
           />
         )}
       </AnimatePresence>
