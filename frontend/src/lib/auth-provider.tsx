@@ -1,10 +1,9 @@
 import {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useMemo,
-  useState,
+  useSyncExternalStore,
   type ReactNode,
 } from 'react';
 import {
@@ -16,14 +15,14 @@ import {
 } from 'firebase/auth';
 
 import { getFirebaseAuth } from '@/lib/firebase';
-import { setAuthTokenGetter } from '@/lib/api';
+import {
+  createAuthStore,
+  type AuthSeams,
+  type AuthSeamUser,
+  type AuthUser,
+} from '@/lib/auth-store';
 
-export type AuthUser = {
-  uid: string;
-  email: string | null;
-  displayName: string | null;
-  photoURL: string | null;
-};
+export type { AuthUser } from '@/lib/auth-store';
 
 export type AuthState = {
   user: AuthUser | null;
@@ -34,64 +33,47 @@ export type AuthState = {
 
 const AuthContext = createContext<AuthState | null>(null);
 
-function toAuthUser(u: FirebaseUser | null): AuthUser | null {
-  if (!u) return null;
+// Production seams: thin adapters over firebase/auth so AuthProvider doesn't
+// need to know about the SDK shape.
+function firebaseSeams(auth: Auth): AuthSeams {
+  const adapt = (cb: (user: AuthSeamUser | null) => void) => (u: FirebaseUser | null) => {
+    cb(u as AuthSeamUser | null);
+  };
   return {
-    uid: u.uid,
-    email: u.email,
-    displayName: u.displayName,
-    photoURL: u.photoURL,
+    subscribeAuthState: (cb) => onAuthStateChanged(auth, adapt(cb)),
+    subscribeIdToken: (cb) => onIdTokenChanged(auth, adapt(cb)),
+    signOut: () => fbSignOut(auth),
   };
 }
 
 type ProviderProps = {
   children: ReactNode;
-  // Injectable for tests; defaults to the lazily-initialised browser instance.
+  // Injectable for integration tests / Storybook; defaults to the
+  // lazily-initialised browser instance.
   authInstance?: Auth;
+  // Lower-level injection point: bypass the firebase adapters entirely.
+  // Used by unit tests of the store wiring.
+  seams?: AuthSeams;
 };
 
-export function AuthProvider({ children, authInstance }: ProviderProps) {
-  const auth = useMemo(() => authInstance ?? getFirebaseAuth(), [authInstance]);
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [idToken, setIdToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+export function AuthProvider({ children, authInstance, seams }: ProviderProps) {
+  const store = useMemo(() => {
+    const resolved = seams ?? firebaseSeams(authInstance ?? getFirebaseAuth());
+    return createAuthStore(resolved);
+  }, [authInstance, seams]);
 
-  useEffect(() => {
-    const unsubAuth = onAuthStateChanged(auth, (next) => {
-      setUser(toAuthUser(next));
-      setLoading(false);
-    });
-    const unsubToken = onIdTokenChanged(auth, async (next) => {
-      if (!next) {
-        setIdToken(null);
-        return;
-      }
-      try {
-        const token = await next.getIdToken();
-        setIdToken(token);
-      } catch {
-        setIdToken(null);
-      }
-    });
-    return () => {
-      unsubAuth();
-      unsubToken();
-    };
-  }, [auth]);
+  useEffect(() => store.dispose, [store]);
 
-  // Keep the api.ts fetch wrapper supplied with the latest token.
-  useEffect(() => {
-    setAuthTokenGetter(() => idToken);
-    return () => setAuthTokenGetter(() => null);
-  }, [idToken]);
-
-  const signOut = useCallback(async () => {
-    await fbSignOut(auth);
-  }, [auth]);
+  const snapshot = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
 
   const value = useMemo<AuthState>(
-    () => ({ user, idToken, loading, signOut }),
-    [user, idToken, loading, signOut],
+    () => ({
+      user: snapshot.user,
+      idToken: snapshot.idToken,
+      loading: snapshot.loading,
+      signOut: store.signOut,
+    }),
+    [snapshot, store],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

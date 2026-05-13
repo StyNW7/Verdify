@@ -1,4 +1,7 @@
-const rawBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080';
+// Guard against import.meta.env being undefined in non-Vite runtimes
+// (e.g. `node --test` loading this module transitively).
+const rawBaseUrl = (import.meta as { env?: Record<string, string> }).env?.VITE_API_BASE_URL
+  ?? 'http://localhost:8080';
 const API_BASE_URL = rawBaseUrl.replace(/\/+$/, '');
 
 type ApiEnvelope<T> = {
