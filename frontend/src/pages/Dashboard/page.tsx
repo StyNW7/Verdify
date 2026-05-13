@@ -147,14 +147,17 @@ export default function DashboardPage() {
 
   const [trips, setTrips] = useState<Trip[]>([]);
   const [tripsLoading, setTripsLoading] = useState(true);
+  const [tripsError, setTripsError] = useState(false);
 
   useEffect(() => {
     if (!userId) {
       setTrips([]);
       setTripsLoading(false);
+      setTripsError(false);
       return;
     }
     setTripsLoading(true);
+    setTripsError(false);
     listUserBookings(userId, { limit: 3 })
       .then(({ bookings }) => {
         setTrips(bookings.map(bookingToTrip));
@@ -163,6 +166,7 @@ export default function DashboardPage() {
       .catch(() => {
         setTrips([]);
         setTripsLoading(false);
+        setTripsError(true);
       });
   }, [userId]);
 
@@ -265,7 +269,7 @@ export default function DashboardPage() {
 
       <section className="mt-0 grid grid-cols-1 gap-5 lg:mt-8 lg:grid-cols-[1.1fr_0.9fr]">
         <div className={`${tab === 'trips' ? '' : 'hidden'} lg:!block`}>
-          <RecentTripsCard trips={trips} loading={tripsLoading} />
+          <RecentTripsCard trips={trips} loading={tripsLoading} error={tripsError} />
         </div>
         <div className={`${tab === 'impact' ? '' : 'hidden'} lg:!block`}>
           <ImpactLedgerCard />
@@ -609,7 +613,7 @@ function AIRecommendationCard() {
   );
 }
 
-function RecentTripsCard({ trips, loading }: { trips: Trip[]; loading: boolean }) {
+function RecentTripsCard({ trips, loading, error }: { trips: Trip[]; loading: boolean; error: boolean }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -647,6 +651,13 @@ function RecentTripsCard({ trips, loading }: { trips: Trip[]; loading: boolean }
             style={{ border: '2px solid var(--theme-border-strong)', borderTopColor: 'var(--theme-accent)' }}
           />
         </div>
+      ) : error ? (
+        <p
+          className="mt-5 py-8 text-center text-[0.9rem]"
+          style={{ color: 'var(--theme-fg-muted)' }}
+        >
+          Couldn't load recent trips
+        </p>
       ) : trips.length === 0 ? (
         <p
           className="mt-5 py-8 text-center text-[0.9rem]"
