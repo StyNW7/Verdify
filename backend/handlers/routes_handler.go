@@ -41,6 +41,11 @@ func (app *App) calculateRouteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	passengers := req.Passengers
+	if passengers < 1 {
+		passengers = 1
+	}
+
 	ctx, cancel := context.WithTimeout(r.Context(), totalBudget)
 	defer cancel()
 
@@ -54,7 +59,7 @@ func (app *App) calculateRouteHandler(w http.ResponseWriter, r *http.Request) {
 
 	peak := pricing.IsPeakHour(services.NowMY())
 
-	rankIn := buildRankInput(mode, peak, candidates)
+	rankIn := buildRankInput(mode, peak, passengers, candidates)
 	annCtx, acancel := context.WithTimeout(ctx, rankerBudget)
 	result, rerr := app.Ranker.Annotate(annCtx, rankIn)
 	acancel()
@@ -64,8 +69,8 @@ func (app *App) calculateRouteHandler(w http.ResponseWriter, r *http.Request) {
 
 	opts := make([]models.RouteOption, 0, len(candidates))
 	for i, c := range candidates {
-		opt := buildOption(c, result.Items[i])
-		rt := optionToRoute(req.Origin, req.Destination, opt, c.Steps)
+		opt := buildOption(c, result.Items[i], passengers)
+		rt := optionToRoute(req.Origin, req.Destination, opt, opt.Steps)
 		app.Store.SaveRoute(rt)
 		opt.RouteID = rt.ID
 		opt.CreatedAt = rt.CreatedAt
@@ -97,7 +102,7 @@ func tooClose(a, b models.Location) bool {
 	return dist < minDistKM
 }
 
-func buildRankInput(userMode string, peak bool, cs []models.RouteCandidate) ranker.RankInput {
+func buildRankInput(userMode string, peak bool, passengers int, cs []models.RouteCandidate) ranker.RankInput {
 	rcs := make([]ranker.RankCandidate, 0, len(cs))
 	for _, c := range cs {
 		steps := make([]string, 0, len(c.Steps))
@@ -111,7 +116,7 @@ func buildRankInput(userMode string, peak bool, cs []models.RouteCandidate) rank
 			DistanceKM:  c.TotalDistance,
 			DurationMin: c.TotalDuration,
 			CarbonGrams: c.TotalCarbon,
-			CostMYR:     totalStepCost(c),
+			CostMYR:     totalStepCost(c, passengers),
 			Steps:       steps,
 			DataSource:  c.DataSource,
 		})
@@ -145,14 +150,14 @@ func templatedResult(in ranker.RankInput) *ranker.RankResult {
 	return &ranker.RankResult{Items: items, Source: src}
 }
 
-func buildOption(c models.RouteCandidate, ann ranker.Annotation) models.RouteOption {
+func buildOption(c models.RouteCandidate, ann ranker.Annotation, passengers int) models.RouteOption {
 	baseline := pricing.BaselineCarbonGrams(c.TotalDistance)
 	pts := pricing.PointsEstimate(c.TotalDistance, baseline, c.TotalCarbon)
 
 	stepsWithCost := make([]models.TransportSegment, len(c.Steps))
 	var totalCost float64
 	for i, step := range c.Steps {
-		step.EstimatedCost = pricing.Round2(pricing.EstimateStepCost(step.Type, step.Distance))
+		step.EstimatedCost = pricing.Round2(pricing.EstimateStepCostForParty(step.Type, step.Distance, passengers))
 		stepsWithCost[i] = step
 		totalCost += step.EstimatedCost
 	}
@@ -207,10 +212,10 @@ func optionToRoute(origin, dest models.Location, opt models.RouteOption, steps [
 	}
 }
 
-func totalStepCost(c models.RouteCandidate) float64 {
+func totalStepCost(c models.RouteCandidate, passengers int) float64 {
 	var t float64
 	for _, s := range c.Steps {
-		t += pricing.EstimateStepCost(s.Type, s.Distance)
+		t += pricing.EstimateStepCostForParty(s.Type, s.Distance, passengers)
 	}
 	return pricing.Round2(t)
 }

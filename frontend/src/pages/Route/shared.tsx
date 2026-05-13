@@ -448,6 +448,7 @@ export function usePlannerState() {
         origin: resolvedOrigin,
         destination: resolvedDestination,
         mode: userMode,
+        passengers,
       });
       // Build a short, human-friendly destination label for step rendering.
       // Prefer the user's typed value (which Places autocomplete fills with

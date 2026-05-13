@@ -23,6 +23,51 @@ func EstimateStepCost(stepType string, distanceKM float64) float64 {
 	}
 }
 
+const (
+	evTaxiStandardCapacity = 4
+	evTaxiXLCapacity       = 6
+	evTaxiXLMultiplier     = 1.5
+)
+
+// EstimateStepCostForParty returns the total estimated fare in MYR for a
+// single transport segment carrying `passengers` riders.
+//
+// Per-passenger leg types (bus, lrt, mrt, rts, ferry, unknown) multiply the
+// single-rider fare by the party size. The ev_taxi (per-vehicle) leg applies
+// a capacity rule: one standard car for ≤4 pax, one XL car (1.5× fare) for
+// 5-6 pax, and a split into ⌈pax/4⌉ standard cars for ≥7 pax. Walking is
+// always 0. A non-positive `passengers` value normalises to 1.
+func EstimateStepCostForParty(stepType string, distanceKM float64, passengers int) float64 {
+	if passengers < 1 {
+		passengers = 1
+	}
+	if stepType == "walking" {
+		return 0
+	}
+	perVehicle := EstimateStepCost(stepType, distanceKM)
+	if stepType == "ev_taxi" || stepType == "evTaxi" {
+		return perVehicle * evTaxiVehicleMultiplier(passengers)
+	}
+	return perVehicle * float64(passengers)
+}
+
+// evTaxiVehicleMultiplier returns how many "standard-car fares" worth of
+// charge the requested party costs, per the capacity rule above.
+func evTaxiVehicleMultiplier(passengers int) float64 {
+	switch {
+	case passengers <= evTaxiStandardCapacity:
+		return 1
+	case passengers <= evTaxiXLCapacity:
+		return evTaxiXLMultiplier
+	default:
+		cars := passengers / evTaxiStandardCapacity
+		if passengers%evTaxiStandardCapacity != 0 {
+			cars++
+		}
+		return float64(cars)
+	}
+}
+
 // BaselineCarbonGrams returns the carbon a solo-drive baseline would emit
 // for the given distance (200 g CO2/km).
 func BaselineCarbonGrams(distanceKM float64) float64 {
