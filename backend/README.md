@@ -41,12 +41,13 @@ firebase deploy --only firestore:indexes
 ### Emulator integration tests
 
 The `firestore_integration` build tag covers `db.FirestoreStore` against a
-local Firestore emulator. Default `go test ./...` skips these. To run:
+local Firestore emulator. Default `go test ./...` skips these. Run from
+`backend/`:
 
 ```bash
 firebase emulators:start --only firestore        # in another terminal
 export FIRESTORE_EMULATOR_HOST=localhost:8080
-go test -tags=firestore_integration ./backend/db/
+go test -tags=firestore_integration ./db/
 ```
 
 ## Stack

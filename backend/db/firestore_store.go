@@ -265,35 +265,37 @@ func (s *FirestoreStore) ApplyCompletedTrip(ctx context.Context, bookingID strin
 		updatedUser    models.User
 	)
 	err := s.client.RunTransaction(ctx, func(ctx context.Context, tx *firestore.Transaction) error {
-		snap, err := tx.Get(bookingRef)
+		// ---- READS ---- (Firestore transactions forbid reads after writes.)
+		bsnap, err := tx.Get(bookingRef)
 		if err != nil {
 			return err
 		}
 		var b models.Booking
-		if err := snap.DataTo(&b); err != nil {
+		if err := bsnap.DataTo(&b); err != nil {
 			return fmt.Errorf("decode booking: %w", err)
 		}
-		b.ID = snap.Ref.ID
+		b.ID = bsnap.Ref.ID
 
 		userRef := s.users.Doc(b.UserID)
+		usnap, err := tx.Get(userRef)
+		if err != nil {
+			return err
+		}
+		var u models.User
+		if err := usnap.DataTo(&u); err != nil {
+			return fmt.Errorf("decode user: %w", err)
+		}
+		u.ID = b.UserID
 
+		// ---- IDEMPOTENCY GUARD ----
 		if b.Status == "completed" {
-			// Idempotent: counters already applied. Re-read user to return the
-			// caller a consistent snapshot.
-			usnap, err := tx.Get(userRef)
-			if err != nil {
-				return err
-			}
-			var u models.User
-			if err := usnap.DataTo(&u); err != nil {
-				return fmt.Errorf("decode user: %w", err)
-			}
-			u.ID = b.UserID
+			// Counters already applied; return the existing snapshot.
 			updatedBooking = b
 			updatedUser = u
 			return nil
 		}
 
+		// ---- WRITES ----
 		ca := completedAt
 		if err := tx.Update(bookingRef, []firestore.Update{
 			{Path: "status", Value: "completed"},
@@ -310,26 +312,16 @@ func (s *FirestoreStore) ApplyCompletedTrip(ctx context.Context, bookingID strin
 		}); err != nil {
 			return err
 		}
-		// Reflect the writes back into the local copies for the caller.
+
+		// ---- LOCAL APPLY for return value ----
 		b.Status = "completed"
 		b.ActualPoints = points
 		b.CompletedAt = &ca
-		updatedBooking = b
-
-		usnap, err := tx.Get(userRef)
-		if err != nil {
-			return err
-		}
-		var u models.User
-		if err := usnap.DataTo(&u); err != nil {
-			return fmt.Errorf("decode user: %w", err)
-		}
-		u.ID = b.UserID
-		// usnap reflects pre-update values inside the txn; apply increments locally.
 		u.GreenPoints += points
 		u.TotalPointsEarned += points
 		u.TotalTrips += 1
 		u.TotalCarbonSaved += carbonSaved
+		updatedBooking = b
 		updatedUser = u
 		return nil
 	})
