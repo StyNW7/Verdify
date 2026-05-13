@@ -160,24 +160,26 @@ test('subscribers are notified on each snapshot change', () => {
   unsub();
 });
 
-test('sign-out then sign-in: second subscription uses new uid', () => {
+test('sign-out then sign-in: same store transitions uid_a → null → uid_b', () => {
   const harness = makeFakeSeams();
   const store = createUserDocStore(harness.seams);
 
-  const teardown1 = store.start({ uid: 'uid_a', authRequired: true });
+  // Sign-in as uid_a.
+  store.start({ uid: 'uid_a', authRequired: true });
   harness.emitSnapshot({ userId: 'uid_a', greenPointsBalance: 10 });
   assert.equal(store.getSnapshot().doc?.userId, 'uid_a');
+  assert.equal(harness.unsubCalled, 0);
 
-  // Sign-out: uid becomes null
-  teardown1();
+  // Sign-out: uid becomes null — old subscription torn down, store resets.
   store.start({ uid: null, authRequired: true });
+  assert.equal(harness.unsubCalled, 1, 'uid_a subscription must be torn down on sign-out');
   assert.deepEqual(store.getSnapshot(), { doc: null, loading: true, error: null });
 
-  // Sign-in with a new user
-  const harness2 = makeFakeSeams();
-  // Swap seams to simulate a new subscription context by starting with new uid
-  const store2 = createUserDocStore(harness2.seams);
-  store2.start({ uid: 'uid_b', authRequired: true });
-  harness2.emitSnapshot({ userId: 'uid_b', greenPointsBalance: 200 });
-  assert.equal(store2.getSnapshot().doc?.userId, 'uid_b');
+  // Sign-in as uid_b on the same store. The null-uid path left no active
+  // subscription, so no additional unsub fires here. The harness's fake only
+  // tracks one subscription at a time — same as production.
+  store.start({ uid: 'uid_b', authRequired: true });
+  assert.equal(harness.unsubCalled, 1, 'no double-unsub: null path has no subscription to tear down');
+  harness.emitSnapshot({ userId: 'uid_b', greenPointsBalance: 200 });
+  assert.equal(store.getSnapshot().doc?.userId, 'uid_b');
 });
