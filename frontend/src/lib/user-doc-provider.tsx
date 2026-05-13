@@ -24,6 +24,9 @@ export type UserDoc = {
   totalRedeemed: number;
   createdAt: string;
   presetAvatar?: string;
+  preferredTransport?: string;
+  preferredRouteMode?: string;
+  language?: string;
 };
 
 export type UserDocState = {
