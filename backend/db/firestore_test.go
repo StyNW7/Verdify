@@ -932,3 +932,126 @@ func TestFirestore_GetUserRank_ThreeUsers(t *testing.T) {
 		}
 	}
 }
+
+// ─── Preference fields integration tests ─────────────────────────────────────
+
+func TestFirestore_UpdateUserProfile_RoundTripsPreferredTransport(t *testing.T) {
+	store, cleanup := newEmulatorStore(t)
+	defer cleanup()
+
+	ctx := context.Background()
+	uid := "uid_tr_" + uuid.NewString()[:6]
+	if _, _, err := store.EnsureUser(ctx, uid, models.UserProfile{Email: "tr@example.com"}); err != nil {
+		t.Fatalf("EnsureUser: %v", err)
+	}
+
+	updated, err := store.UpdateUserProfile(ctx, uid, validate.ValidatedPatch{PreferredTransport: fsStrPtr("Cycle")})
+	if err != nil {
+		t.Fatalf("UpdateUserProfile: %v", err)
+	}
+	if updated.PreferredTransport != "Cycle" {
+		t.Fatalf("PreferredTransport = %q want Cycle", updated.PreferredTransport)
+	}
+
+	got, ok, err := store.GetUser(ctx, uid)
+	if err != nil || !ok {
+		t.Fatalf("GetUser: ok=%v err=%v", ok, err)
+	}
+	if got.PreferredTransport != "Cycle" {
+		t.Fatalf("persisted PreferredTransport = %q want Cycle", got.PreferredTransport)
+	}
+}
+
+func TestFirestore_UpdateUserProfile_RoundTripsPreferredRouteMode(t *testing.T) {
+	store, cleanup := newEmulatorStore(t)
+	defer cleanup()
+
+	ctx := context.Background()
+	uid := "uid_rm_" + uuid.NewString()[:6]
+	if _, _, err := store.EnsureUser(ctx, uid, models.UserProfile{Email: "rm@example.com"}); err != nil {
+		t.Fatalf("EnsureUser: %v", err)
+	}
+
+	updated, err := store.UpdateUserProfile(ctx, uid, validate.ValidatedPatch{PreferredRouteMode: fsStrPtr("Fastest")})
+	if err != nil {
+		t.Fatalf("UpdateUserProfile: %v", err)
+	}
+	if updated.PreferredRouteMode != "Fastest" {
+		t.Fatalf("PreferredRouteMode = %q want Fastest", updated.PreferredRouteMode)
+	}
+
+	got, ok, err := store.GetUser(ctx, uid)
+	if err != nil || !ok {
+		t.Fatalf("GetUser: ok=%v err=%v", ok, err)
+	}
+	if got.PreferredRouteMode != "Fastest" {
+		t.Fatalf("persisted PreferredRouteMode = %q want Fastest", got.PreferredRouteMode)
+	}
+}
+
+func TestFirestore_UpdateUserProfile_RoundTripsLanguage(t *testing.T) {
+	store, cleanup := newEmulatorStore(t)
+	defer cleanup()
+
+	ctx := context.Background()
+	uid := "uid_lang_" + uuid.NewString()[:6]
+	if _, _, err := store.EnsureUser(ctx, uid, models.UserProfile{Email: "lang@example.com"}); err != nil {
+		t.Fatalf("EnsureUser: %v", err)
+	}
+
+	updated, err := store.UpdateUserProfile(ctx, uid, validate.ValidatedPatch{Language: fsStrPtr("ms")})
+	if err != nil {
+		t.Fatalf("UpdateUserProfile: %v", err)
+	}
+	if updated.Language != "ms" {
+		t.Fatalf("Language = %q want ms", updated.Language)
+	}
+
+	got, ok, err := store.GetUser(ctx, uid)
+	if err != nil || !ok {
+		t.Fatalf("GetUser: ok=%v err=%v", ok, err)
+	}
+	if got.Language != "ms" {
+		t.Fatalf("persisted Language = %q want ms", got.Language)
+	}
+}
+
+func TestFirestore_UpdateUserProfile_PatchingOnePreferenceDoesNotClearOthers(t *testing.T) {
+	store, cleanup := newEmulatorStore(t)
+	defer cleanup()
+
+	ctx := context.Background()
+	uid := "uid_pref_iso_" + uuid.NewString()[:6]
+	if _, _, err := store.EnsureUser(ctx, uid, models.UserProfile{Email: "iso@example.com"}); err != nil {
+		t.Fatalf("EnsureUser: %v", err)
+	}
+
+	_, err := store.UpdateUserProfile(ctx, uid, validate.ValidatedPatch{
+		PreferredTransport: fsStrPtr("Walk"),
+		PreferredRouteMode: fsStrPtr("Greenest"),
+		Language:           fsStrPtr("zh"),
+	})
+	if err != nil {
+		t.Fatalf("initial UpdateUserProfile: %v", err)
+	}
+
+	// Patch only language; transport and route mode must survive.
+	_, err = store.UpdateUserProfile(ctx, uid, validate.ValidatedPatch{Language: fsStrPtr("ta")})
+	if err != nil {
+		t.Fatalf("second UpdateUserProfile: %v", err)
+	}
+
+	got, ok, err := store.GetUser(ctx, uid)
+	if err != nil || !ok {
+		t.Fatalf("GetUser: ok=%v err=%v", ok, err)
+	}
+	if got.PreferredTransport != "Walk" {
+		t.Fatalf("PreferredTransport changed unexpectedly: %q", got.PreferredTransport)
+	}
+	if got.PreferredRouteMode != "Greenest" {
+		t.Fatalf("PreferredRouteMode changed unexpectedly: %q", got.PreferredRouteMode)
+	}
+	if got.Language != "ta" {
+		t.Fatalf("Language = %q want ta", got.Language)
+	}
+}
