@@ -18,10 +18,14 @@ var AllowedPresetAvatars = []string{"🌿", "🦊", "🌊", "🌙", "🐝", "�
 // frontend mirrors this list via lib/preferences.ts.
 var AllowedTransports = []string{"Transit", "Cycle", "Carpool", "Walk"}
 
-// AllowedRouteModes is the allow-list for User.PreferredRouteMode. These
-// values are the same vocabulary as the existing Route.Mode enum consumed by
-// POST /api/v1/routes/calculate?mode=... so the planner can pass the value
-// through without translation.
+// AllowedRouteModes is the user-preference vocabulary surfaced in the Profile
+// UI. It is intentionally distinct from the route-calculation API's lowercase
+// short-form mode codes ("fast" / "eco" / "cheap") consumed by
+// POST /api/v1/routes/calculate. The frontend translates between the two at
+// frontend/src/pages/Route/planner-phase.ts (routeModeToPreference).
+// "Balanced" has no current API equivalent — it falls through to the route
+// service's default behaviour because the planner omits the mode parameter
+// entirely when the preference maps to the eco default.
 var AllowedRouteModes = []string{"Fastest", "Greenest", "Cheapest", "Balanced"}
 
 // AllowedLanguages is the allow-list for User.Language.
