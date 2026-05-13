@@ -401,12 +401,12 @@ export type SubmittedTrip = {
   destCoords: ResolvedCoords;
 } | null;
 
-export function usePlannerState() {
+export function usePlannerState(initialPreference: Preference = 'eco') {
   const [origin, setOrigin] = useState('');
   const [destination, setDestination] = useState('');
   const [originCoords, setOriginCoords] = useState<ResolvedCoords>(null);
   const [destCoords, setDestCoords] = useState<ResolvedCoords>(null);
-  const [preference, setPreference] = useState<Preference>('eco');
+  const [preference, setPreference] = useState<Preference>(initialPreference);
   const [passengers, setPassengers] = useState(1);
   const [modes, setModes] = useState<Record<ModeKey, boolean>>({
     rts: true, lrt: true, bus: true, walking: true, biking: true, evTaxi: true,
