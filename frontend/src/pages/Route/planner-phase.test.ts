@@ -5,7 +5,9 @@ import {
   deriveSelectedRouteId,
   startPlannerSubmission,
   finishPlannerSubmission,
-} from './planner-phase.js';
+  routeModeToPreference,
+  initialPreferenceFromDoc,
+} from './planner-phase.ts';
 
 test('planner submission selects the preferred route before results render', () => {
   const loadingState = startPlannerSubmission({
@@ -36,4 +38,42 @@ test('preferred route selection follows the active preference', () => {
   assert.equal(deriveSelectedRouteId('eco'), 'eco');
   assert.equal(deriveSelectedRouteId('fast'), 'fast');
   assert.equal(deriveSelectedRouteId('cheap'), 'cheap');
+});
+
+// ─── routeModeToPreference ────────────────────────────────────────────────────
+
+test('routeModeToPreference maps Greenest to eco', () => {
+  assert.equal(routeModeToPreference('Greenest'), 'eco');
+});
+
+test('routeModeToPreference maps Fastest to fast', () => {
+  assert.equal(routeModeToPreference('Fastest'), 'fast');
+});
+
+test('routeModeToPreference maps Cheapest to cheap', () => {
+  assert.equal(routeModeToPreference('Cheapest'), 'cheap');
+});
+
+test('routeModeToPreference maps Balanced to eco', () => {
+  assert.equal(routeModeToPreference('Balanced'), 'eco');
+});
+
+test('routeModeToPreference returns null for unknown or empty values', () => {
+  assert.equal(routeModeToPreference(''), null);
+  assert.equal(routeModeToPreference('greenest'), null);
+  assert.equal(routeModeToPreference('unknown'), null);
+});
+
+// ─── initialPreferenceFromDoc ─────────────────────────────────────────────────
+
+test('initialPreferenceFromDoc returns preference from doc when set', () => {
+  const doc = { preferredRouteMode: 'Greenest' };
+  assert.equal(initialPreferenceFromDoc(doc), 'eco');
+});
+
+test('initialPreferenceFromDoc returns default eco when doc has no preferredRouteMode', () => {
+  assert.equal(initialPreferenceFromDoc(null), 'eco');
+  assert.equal(initialPreferenceFromDoc(undefined), 'eco');
+  assert.equal(initialPreferenceFromDoc({}), 'eco');
+  assert.equal(initialPreferenceFromDoc({ preferredRouteMode: '' }), 'eco');
 });
