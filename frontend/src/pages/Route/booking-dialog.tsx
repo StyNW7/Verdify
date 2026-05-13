@@ -554,7 +554,7 @@ function DraftReviewPane({
               Price
             </div>
             <div className="text-[0.9rem]" style={{ color: 'var(--theme-fg-muted)' }}>
-              {totalPrice} per passenger
+              {totalPrice} for {passengers} {passengers === 1 ? 'passenger' : 'passengers'}
             </div>
           </div>
         </div>

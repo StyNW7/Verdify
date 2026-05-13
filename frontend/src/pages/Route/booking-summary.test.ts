@@ -37,7 +37,6 @@ test('booking summary renders the server-provided trip total without multiplying
     preferenceLabel: 'Fastest',
     allowedModesLabel: 'RTS Link, Bus, EV Taxi',
     routeModesLabel: 'GrabEV + RTS Link',
-    perPassengerPrice: 'RM 18.00',
     totalPrice: 'RM 18.00',
     durationText: '30m',
     co2Label: '1.2 kg CO₂',
