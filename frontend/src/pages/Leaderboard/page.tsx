@@ -1,182 +1,106 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  ArrowDownRight,
-  ArrowUpRight,
-  Crown,
-  Flame,
-  MapPin,
-  Minus,
-  MoreHorizontal,
-} from 'lucide-react';
+import { Crown, MoreHorizontal } from 'lucide-react';
 
-type Player = {
-  rank: number;
-  name: string;
-  handle: string;
-  location: Location;
-  points: number;
-  streak: number;
-  trend: 'up' | 'down' | 'flat';
-  delta: number;
-  emoji: string;
-};
-
-type Location = 'Global' | 'Johor Bahru' | 'Kuala Lumpur' | 'Penang' | 'Singapore';
-
-const LOCATIONS: Location[] = ['Global', 'Johor Bahru', 'Kuala Lumpur', 'Penang', 'Singapore'];
-
-const PLAYERS: Player[] = [
-  { rank: 1, name: 'Stanley W.', handle: 'stanley.w', location: 'Kuala Lumpur', points: 12450, streak: 41, trend: 'up', delta: 210, emoji: '🌟' },
-  { rank: 2, name: 'Siti N.', handle: 'siti.n', location: 'Singapore', points: 11200, streak: 33, trend: 'up', delta: 180, emoji: '🚀' },
-  { rank: 3, name: 'Tan W.L.', handle: 'tan.wl', location: 'Penang', points: 10850, streak: 28, trend: 'down', delta: 40, emoji: '💪' },
-  { rank: 4, name: 'Daniyal R.', handle: 'daniyal', location: 'Kuala Lumpur', points: 9210, streak: 21, trend: 'up', delta: 120, emoji: '🌿' },
-  { rank: 5, name: 'Imani O.', handle: 'imani.o', location: 'Singapore', points: 8980, streak: 19, trend: 'flat', delta: 0, emoji: '🚲' },
-  { rank: 6, name: 'Wei Ling C.', handle: 'weiling', location: 'Johor Bahru', points: 7412, streak: 24, trend: 'up', delta: 92, emoji: '🍃' },
-  { rank: 7, name: 'Kasper L.', handle: 'kasper.l', location: 'Penang', points: 6980, streak: 14, trend: 'up', delta: 78, emoji: '⚡' },
-  { rank: 8, name: 'Farah I.', handle: 'farah_i', location: 'Kuala Lumpur', points: 5702, streak: 17, trend: 'down', delta: 30, emoji: '🌱' },
-  { rank: 9, name: 'Ravi S.', handle: 'ravi.s', location: 'Johor Bahru', points: 5440, streak: 12, trend: 'flat', delta: 0, emoji: '🛴' },
-  { rank: 10, name: 'Hana I.', handle: 'hanai', location: 'Singapore', points: 4198, streak: 16, trend: 'up', delta: 55, emoji: '🌳' },
-  { rank: 41, name: 'Eitan Cohen', handle: 'eitan.c', location: 'Singapore', points: 2488, streak: 7, trend: 'flat', delta: 0, emoji: '🌾' },
-  { rank: 42, name: 'Sarah Rashid', handle: 'sarah.r', location: 'Johor Bahru', points: 2450, streak: 14, trend: 'up', delta: 180, emoji: '🟢' },
-  { rank: 43, name: 'Theo Brandt', handle: 'theo', location: 'Kuala Lumpur', points: 2402, streak: 6, trend: 'down', delta: 12, emoji: '🌰' },
-];
-
-const CURRENT_USER_HANDLE = 'stanley.w';
+import { getLeaderboard, type LeaderboardEntry } from '@/lib/api';
+import { pickAvatar } from '@/lib/avatar-source';
 
 const fmt = (n: number) => n.toLocaleString('en-US');
 
-function initialsOf(name: string) {
-  return name
-    .replace(/[.·]/g, '')
-    .split(' ')
-    .map((p) => p[0])
-    .filter(Boolean)
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
-}
+// ─── Avatar ───────────────────────────────────────────────────────────────────
 
-function hueFor(handle: string) {
-  let h = 0;
-  for (let i = 0; i < handle.length; i++) h = (h * 31 + handle.charCodeAt(i)) % 360;
-  return h;
-}
-
-function Avatar({
-  player,
+function EntryAvatar({
+  entry,
   size = 40,
   ring,
 }: {
-  player: Player;
+  entry: LeaderboardEntry;
   size?: number;
   ring?: string;
 }) {
-  const hue = hueFor(player.handle);
+  // The leaderboard endpoint returns photoURL and displayName but no
+  // presetAvatar (server-mediated; we only have what the public endpoint
+  // provides). We map to the pickAvatar signature with a synthetic authUser.
+  const src = pickAvatar(
+    { photoURL: entry.photoURL || null, displayName: entry.displayName || null },
+    null,
+  );
+
+  const frameStyle: React.CSSProperties = {
+    width: size,
+    height: size,
+    boxShadow: ring
+      ? `0 0 0 2px ${ring}, 0 0 0 3px var(--theme-bg)`
+      : 'inset 0 0 0 1px rgba(255,255,255,0.25)',
+  };
+
+  if (src.kind === 'photo') {
+    return (
+      <span
+        className="relative inline-flex shrink-0 overflow-hidden rounded-full"
+        style={frameStyle}
+      >
+        <img
+          src={src.value}
+          alt={entry.displayName}
+          className="h-full w-full object-cover"
+        />
+      </span>
+    );
+  }
+
   return (
     <span
       className="relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full"
       style={{
-        width: size,
-        height: size,
-        background: `conic-gradient(from 140deg, hsl(${hue} 60% 58%), hsl(${(hue + 60) % 360} 55% 48%), hsl(${(hue + 180) % 360} 70% 55%), hsl(${hue} 60% 58%))`,
-        boxShadow: ring
-          ? `0 0 0 2px ${ring}, 0 0 0 3px var(--theme-bg)`
-          : 'inset 0 0 0 1px rgba(255,255,255,0.25)',
+        ...frameStyle,
+        background: 'color-mix(in srgb, var(--theme-accent) 25%, var(--theme-surface-muted))',
       }}
     >
       <span
-        className="flex h-full w-full items-center justify-center"
         style={{
-          background: 'color-mix(in srgb, var(--theme-bg) 35%, transparent)',
-          backdropFilter: 'blur(4px)',
-          color: 'white',
+          color: 'var(--theme-fg)',
           fontWeight: 600,
-          fontSize: size * 0.36,
+          fontSize: size * 0.38,
           letterSpacing: '0.02em',
-          textShadow: '0 1px 2px rgba(0,0,0,0.3)',
         }}
       >
-        {initialsOf(player.name)}
+        {src.value}
       </span>
     </span>
   );
 }
 
-function TrendPill({ trend, delta }: { trend: Player['trend']; delta: number }) {
-  if (trend === 'flat')
-    return (
-      <span
-        className="inline-flex items-center gap-1 text-[0.72rem]"
-        style={{ color: 'var(--theme-fg-dim)' }}
-      >
-        <Minus className="h-3 w-3" /> —
-      </span>
-    );
-  const isUp = trend === 'up';
-  return (
-    <span
-      className="inline-flex items-center gap-1 rounded-full px-2 py-[2px] text-[0.72rem] font-medium"
-      style={{
-        background: isUp
-          ? 'var(--theme-accent-soft)'
-          : 'color-mix(in srgb, var(--theme-accent-warm) 14%, transparent)',
-        color: isUp ? 'var(--theme-accent)' : 'var(--theme-accent-warm)',
-      }}
-    >
-      {isUp ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
-      {delta}
-    </span>
-  );
-}
-
-function LocationFilter({
-  value,
-  onChange,
-}: {
-  value: Location;
-  onChange: (l: Location) => void;
-}) {
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      {LOCATIONS.map((loc) => {
-        const active = value === loc;
-        return (
-          <button
-            key={loc}
-            type="button"
-            onClick={() => onChange(loc)}
-            className="group inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[0.8rem] transition-all"
-            style={{
-              borderColor: active ? 'var(--theme-accent)' : 'var(--theme-border)',
-              background: active ? 'var(--theme-accent-soft)' : 'var(--theme-surface-muted)',
-              color: active ? 'var(--theme-accent)' : 'var(--theme-fg-muted)',
-            }}
-          >
-            <MapPin className="h-3 w-3" strokeWidth={1.8} />
-            {loc}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function LeaderboardPage() {
-  const [location, setLocation] = useState<Location>('Global');
+  const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
+  const [me, setMe] = useState<LeaderboardEntry | null>(null);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const filtered = useMemo(() => {
-    const list =
-      location === 'Global'
-        ? PLAYERS
-        : PLAYERS.filter(
-          (p) => p.location === location || p.handle === CURRENT_USER_HANDLE,
-        );
-    return [...list].sort((a, b) => a.rank - b.rank);
-  }, [location]);
+  const fetchLeaderboard = () => {
+    setLoading(true);
+    setError(null);
+    getLeaderboard()
+      .then((data) => {
+        setEntries(data.entries);
+        setMe(data.me);
+        setTotalUsers(data.totalUsers);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError('Leaderboard unavailable');
+        setLoading(false);
+      });
+  };
 
-  const me = useMemo(() => PLAYERS.find((p) => p.handle === CURRENT_USER_HANDLE)!, []);
-  const top3 = filtered.filter((p) => p.rank <= 3).slice(0, 3);
+  useEffect(() => {
+    fetchLeaderboard();
+  }, []);
+
+  const top3 = entries.slice(0, 3);
 
   return (
     <section
@@ -191,7 +115,7 @@ export default function LeaderboardPage() {
               className="theme-mono-sm"
               style={{ color: 'var(--theme-fg-dim)', letterSpacing: '0.24em' }}
             >
-              LEADERBOARD / SEASON 04
+              LEADERBOARD / ALL-TIME
             </span>
           </div>
 
@@ -210,7 +134,7 @@ export default function LeaderboardPage() {
               >
                 greener
               </em>{' '}
-              this week.
+              since launch.
             </h1>
             <p
               className="mt-3 max-w-xl text-[0.98rem]"
@@ -220,51 +144,78 @@ export default function LeaderboardPage() {
               transit, carpool, and every kilogram of CO₂ kept out of the air.
             </p>
           </div>
-
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <LocationFilter value={location} onChange={setLocation} />
-            <MeBadge me={me} />
-          </div>
         </div>
 
-        <Podium top3={top3} />
-        <YouRow me={me} />
-        <Ledger players={filtered} me={me} />
+        {loading && <LoadingSkeleton />}
+
+        {!loading && error && (
+          <ErrorState message={error} onRetry={fetchLeaderboard} />
+        )}
+
+        {!loading && !error && (
+          <>
+            <Podium top3={top3} />
+            {me && <YouRow me={me} totalUsers={totalUsers} />}
+            {me && <Ledger entries={entries} me={me} />}
+          </>
+        )}
       </div>
     </section>
   );
 }
 
-function MeBadge({ me }: { me: Player }) {
+// ─── Loading / Error states ───────────────────────────────────────────────────
+
+function LoadingSkeleton() {
   return (
-    <div
-      className="inline-flex items-center gap-3 rounded-full border px-3 py-2"
-      style={{
-        borderColor: 'var(--theme-border)',
-        background: 'var(--theme-surface)',
-        backdropFilter: 'blur(14px)',
-      }}
-    >
-      <Avatar player={me} size={32} ring="var(--theme-accent)" />
-      <div className="flex flex-col leading-tight">
-        <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
-          YOU · #{me.rank}
-        </span>
-        <span className="text-[0.88rem] font-medium" style={{ color: 'var(--theme-fg)' }}>
-          {fmt(me.points)} pts
-        </span>
-      </div>
-      <TrendPill trend={me.trend} delta={me.delta} />
+    <div className="flex flex-col gap-4 animate-pulse">
+      <div
+        className="rounded-[28px] h-64"
+        style={{ background: 'var(--theme-surface-muted)' }}
+      />
+      <div
+        className="rounded-[20px] h-24"
+        style={{ background: 'var(--theme-surface-muted)' }}
+      />
+      <div
+        className="rounded-[24px] h-48"
+        style={{ background: 'var(--theme-surface-muted)' }}
+      />
     </div>
   );
 }
 
-function Podium({ top3 }: { top3: Player[] }) {
-  const [first, second, third] = [
-    top3.find((p) => p.rank === 1) ?? top3[0],
-    top3.find((p) => p.rank === 2) ?? top3[1],
-    top3.find((p) => p.rank === 3) ?? top3[2],
-  ];
+function ErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
+  return (
+    <div
+      className="flex flex-col items-center gap-4 rounded-[24px] border px-6 py-12 text-center"
+      style={{ borderColor: 'var(--theme-border)', background: 'var(--theme-surface)' }}
+    >
+      <p className="text-[1rem]" style={{ color: 'var(--theme-fg-muted)' }}>
+        {message}
+      </p>
+      <button
+        type="button"
+        onClick={onRetry}
+        className="rounded-full border px-4 py-2 text-[0.88rem] transition-colors"
+        style={{
+          borderColor: 'var(--theme-accent)',
+          color: 'var(--theme-accent)',
+          background: 'var(--theme-accent-soft)',
+        }}
+      >
+        Retry
+      </button>
+    </div>
+  );
+}
+
+// ─── Podium ───────────────────────────────────────────────────────────────────
+
+function Podium({ top3 }: { top3: LeaderboardEntry[] }) {
+  const first = top3.find((e) => e.rank === 1) ?? top3[0];
+  const second = top3.find((e) => e.rank === 2) ?? top3[1];
+  const third = top3.find((e) => e.rank === 3) ?? top3[2];
 
   return (
     <div
@@ -294,26 +245,26 @@ function Podium({ top3 }: { top3: Player[] }) {
             color: 'var(--theme-fg)',
           }}
         >
-          Champions of the month.
+          Champions of all time.
         </h2>
       </div>
 
       <div className="relative mt-10 grid grid-cols-3 items-end gap-4 sm:gap-8">
-        {second && <PodiumPillar player={second} place={2} height="132px" />}
-        {first && <PodiumPillar player={first} place={1} height="176px" crowned />}
-        {third && <PodiumPillar player={third} place={3} height="96px" />}
+        {second && <PodiumPillar entry={second} place={2} height="132px" />}
+        {first && <PodiumPillar entry={first} place={1} height="176px" crowned />}
+        {third && <PodiumPillar entry={third} place={3} height="96px" />}
       </div>
     </div>
   );
 }
 
 function PodiumPillar({
-  player,
+  entry,
   place,
   height,
   crowned,
 }: {
-  player: Player;
+  entry: LeaderboardEntry;
   place: 1 | 2 | 3;
   height: string;
   crowned?: boolean;
@@ -339,21 +290,18 @@ function PodiumPillar({
             strokeWidth={1.8}
           />
         )}
-        <Avatar player={player} size={place === 1 ? 84 : 64} ring={accent} />
+        <EntryAvatar entry={entry} size={place === 1 ? 84 : 64} ring={accent} />
         <p
           className="mt-3 text-center text-[0.95rem] font-medium leading-tight"
           style={{ color: 'var(--theme-fg)' }}
         >
-          {player.name}
-        </p>
-        <p className="theme-mono-sm mt-0.5" style={{ color: 'var(--theme-fg-dim)' }}>
-          @{player.handle}
+          {entry.displayName || 'Verdify User'}
         </p>
         <p
           className="theme-number mt-2 text-[clamp(1.2rem,2vw,1.6rem)] tracking-[-0.03em]"
           style={{ fontWeight: 500 }}
         >
-          {fmt(player.points)}
+          {fmt(entry.greenPointsBalance)}
         </p>
       </div>
       <div
@@ -386,7 +334,17 @@ function PodiumPillar({
   );
 }
 
-function YouRow({ me }: { me: Player }) {
+// ─── YouRow ───────────────────────────────────────────────────────────────────
+
+function YouRow({ me, totalUsers }: { me: LeaderboardEntry; totalUsers: number }) {
+  const hasRank = me.rank > 0;
+
+  // Compute the next round-number bracket below current rank.
+  const nextBracketThreshold = hasRank
+    ? Math.floor((me.rank - 1) / 10) * 10
+    : 0;
+  const spotsToClimb = hasRank && nextBracketThreshold > 0 ? me.rank - nextBracketThreshold : 0;
+
   return (
     <div
       className="relative overflow-hidden rounded-[20px] border"
@@ -403,7 +361,7 @@ function YouRow({ me }: { me: Player }) {
       />
       <div className="relative flex flex-col items-start justify-between gap-4 px-4 py-4 sm:gap-5 sm:flex-row sm:items-center sm:px-6 sm:py-5">
         <div className="flex items-center gap-3 sm:gap-4">
-          <Avatar player={me} size={48} ring="var(--theme-accent)" />
+          <EntryAvatar entry={me} size={48} ring="var(--theme-accent)" />
           <div>
             <span
               className="theme-mono-sm"
@@ -412,62 +370,98 @@ function YouRow({ me }: { me: Player }) {
               YOUR STANDING
             </span>
             <p className="text-[1rem] font-medium sm:text-[1.1rem]" style={{ color: 'var(--theme-fg)' }}>
-              Stanley Wijaya{' '}
-              <span style={{ color: 'var(--theme-fg-dim)' }}>· @{me.handle}</span>
+              {me.displayName || 'You'}
             </p>
-            <p className="mt-1 text-[0.82rem] sm:text-[0.85rem]" style={{ color: 'var(--theme-fg-muted)' }}>
-              Climb <span style={{ color: 'var(--theme-accent)' }}>4 spots</span> this week to
-              break the top 40.
-            </p>
+            {!hasRank ? (
+              <p className="mt-1 text-[0.82rem] sm:text-[0.85rem]" style={{ color: 'var(--theme-fg-muted)' }}>
+                Complete your first trip to land on the board.
+              </p>
+            ) : spotsToClimb > 0 ? (
+              <p className="mt-1 text-[0.82rem] sm:text-[0.85rem]" style={{ color: 'var(--theme-fg-muted)' }}>
+                Climb{' '}
+                <span style={{ color: 'var(--theme-accent)' }}>{spotsToClimb} spots</span> to
+                break the top {nextBracketThreshold}.
+              </p>
+            ) : (
+              <p className="mt-1 text-[0.82rem] sm:text-[0.85rem]" style={{ color: 'var(--theme-fg-muted)' }}>
+                You're in the top {me.rank} of {totalUsers.toLocaleString('en-US')} users.
+              </p>
+            )}
           </div>
         </div>
-        <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:gap-6">
-          <div className="text-right">
-            <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
-              RANK
-            </span>
-            <p
-              className="theme-number text-[1.6rem] tracking-[-0.03em] sm:text-[2.2rem]"
-              style={{ fontWeight: 500 }}
-            >
-              #{me.rank}
-            </p>
+        {hasRank && (
+          <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:gap-6">
+            <div className="text-right">
+              <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
+                RANK
+              </span>
+              <p
+                className="theme-number text-[1.6rem] tracking-[-0.03em] sm:text-[2.2rem]"
+                style={{ fontWeight: 500 }}
+              >
+                #{me.rank}
+              </p>
+            </div>
+            <div className="h-10 w-px sm:h-12" style={{ background: 'var(--theme-border)' }} />
+            <div className="text-right">
+              <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
+                POINTS / ALL-TIME
+              </span>
+              <p
+                className="theme-number text-[1.6rem] tracking-[-0.03em] sm:text-[2.2rem]"
+                style={{ fontWeight: 500 }}
+              >
+                {fmt(me.greenPointsBalance)}
+              </p>
+            </div>
           </div>
-          <div className="h-10 w-px sm:h-12" style={{ background: 'var(--theme-border)' }} />
-          <div className="text-right">
-            <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
-              POINTS
-            </span>
-            <p
-              className="theme-number text-[1.6rem] tracking-[-0.03em] sm:text-[2.2rem]"
-              style={{ fontWeight: 500 }}
-            >
-              {fmt(me.points)}
-            </p>
-          </div>
-          <TrendPill trend={me.trend} delta={me.delta} />
-        </div>
+        )}
       </div>
     </div>
   );
 }
 
-function Ledger({ players, me }: { players: Player[]; me: Player }) {
-  const top3 = players.filter((p) => p.rank <= 3).slice(0, 3);
-  const above = players.find((p) => p.rank === me.rank - 1);
-  const below = players.find((p) => p.rank === me.rank + 1);
+// ─── Ledger ───────────────────────────────────────────────────────────────────
+
+function Ledger({ entries, me }: { entries: LeaderboardEntry[]; me: LeaderboardEntry }) {
+  const top3 = entries.filter((e) => e.rank <= 3);
+  const meRank = me.rank;
+  const above = meRank > 0 ? entries.find((e) => e.rank === meRank - 1) : undefined;
+  const meEntry = meRank > 0 ? entries.find((e) => e.rank === meRank) : undefined;
+  const below = meRank > 0 ? entries.find((e) => e.rank === meRank + 1) : undefined;
 
   type Row =
-    | { kind: 'player'; player: Player; crown?: boolean }
+    | { kind: 'entry'; entry: LeaderboardEntry; crown?: boolean; isMe?: boolean }
     | { kind: 'ellipsis'; key: string; label: string };
 
   const rows: Row[] = [];
-  top3.forEach((p, i) => rows.push({ kind: 'player', player: p, crown: i === 0 }));
-  rows.push({ kind: 'ellipsis', key: 'ell-1', label: `skipping to your neighborhood · rank 4 — ${me.rank - 2}` });
-  if (above) rows.push({ kind: 'player', player: above });
-  rows.push({ kind: 'player', player: me });
-  if (below) rows.push({ kind: 'player', player: below });
-  rows.push({ kind: 'ellipsis', key: 'ell-2', label: 'and many more below' });
+  top3.forEach((e, i) => rows.push({ kind: 'entry', entry: e, crown: i === 0 }));
+
+  // Only add the neighbourhood section if the caller has a rank and isn't
+  // already visible in the top 3.
+  if (meRank > 3) {
+    const gapStart = 4;
+    const gapEnd = meRank - 2;
+    if (gapEnd >= gapStart) {
+      rows.push({
+        kind: 'ellipsis',
+        key: 'ell-1',
+        label: `skipping to your neighborhood · rank ${gapStart} — ${gapEnd}`,
+      });
+    }
+    if (above) rows.push({ kind: 'entry', entry: above });
+    if (meEntry) rows.push({ kind: 'entry', entry: meEntry, isMe: true });
+    else rows.push({ kind: 'entry', entry: me, isMe: true });
+    if (below) rows.push({ kind: 'entry', entry: below });
+    rows.push({ kind: 'ellipsis', key: 'ell-2', label: 'and many more below' });
+  } else if (meRank > 0 && meRank <= 3) {
+    // Already in top 3 — mark the row as "you".
+    for (const row of rows) {
+      if (row.kind === 'entry' && row.entry.rank === meRank) {
+        row.isMe = true;
+      }
+    }
+  }
 
   return (
     <div
@@ -485,7 +479,7 @@ function Ledger({ players, me }: { players: Player[]; me: Player }) {
           THE LEDGER · TOP 3 + YOUR RANGE
         </span>
         <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
-          POINTS / 7D
+          POINTS / ALL-TIME
         </span>
       </div>
       <ul>
@@ -495,11 +489,11 @@ function Ledger({ players, me }: { players: Player[]; me: Player }) {
           }
           return (
             <LedgerRow
-              key={row.player.handle}
-              player={row.player}
+              key={row.entry.uid}
+              entry={row.entry}
               index={idx}
               crown={row.crown}
-              isMe={row.player.handle === CURRENT_USER_HANDLE}
+              isMe={row.isMe}
             />
           );
         })}
@@ -509,12 +503,12 @@ function Ledger({ players, me }: { players: Player[]; me: Player }) {
 }
 
 function LedgerRow({
-  player,
+  entry,
   index,
   crown,
   isMe,
 }: {
-  player: Player;
+  entry: LeaderboardEntry;
   index: number;
   crown?: boolean;
   isMe?: boolean;
@@ -548,10 +542,10 @@ function LedgerRow({
             fontWeight: isMe ? 600 : 400,
           }}
         >
-          #{String(player.rank).padStart(2, '0')}
+          #{String(entry.rank).padStart(2, '0')}
         </span>
-        <Avatar
-          player={player}
+        <EntryAvatar
+          entry={entry}
           size={34}
           ring={isMe ? 'var(--theme-accent)' : undefined}
         />
@@ -560,7 +554,7 @@ function LedgerRow({
             className="flex items-center gap-1.5 truncate text-[0.92rem] font-medium"
             style={{ color: 'var(--theme-fg)' }}
           >
-            {isMe ? 'You' : player.name}
+            {isMe ? 'You' : (entry.displayName || 'Verdify User')}
             {crown && <span aria-hidden>👑</span>}
             {isMe && (
               <span
@@ -577,23 +571,9 @@ function LedgerRow({
               </span>
             )}
           </p>
-          <p
-            className="theme-mono-sm truncate"
-            style={{ color: 'var(--theme-fg-dim)' }}
-          >
-            @{player.handle} · {player.location}
-          </p>
         </div>
       </div>
       <div className="flex items-center gap-2 sm:gap-4">
-        <span
-          className="hidden items-center gap-1 sm:inline-flex"
-          style={{ color: 'var(--theme-accent-warm)' }}
-        >
-          <Flame className="h-3.5 w-3.5" strokeWidth={1.8} />
-          <span className="theme-mono-sm">{player.streak}d</span>
-        </span>
-        <TrendPill trend={player.trend} delta={player.delta} />
         <span
           className="shrink-0 text-right text-[0.95rem] tabular-nums sm:text-[1.05rem]"
           style={{
@@ -604,7 +584,7 @@ function LedgerRow({
             color: 'var(--theme-fg)',
           }}
         >
-          {fmt(player.points)}
+          {fmt(entry.greenPointsBalance)}
         </span>
       </div>
     </motion.li>
