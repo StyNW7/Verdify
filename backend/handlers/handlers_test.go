@@ -211,6 +211,114 @@ func TestCreateBooking_RejectsMissingFields(t *testing.T) {
 	}
 }
 
+// createBookingForLifecycle posts a booking whose RouteID is never seeded
+// into the routes map. Returns the bookingID. If the lifecycle handlers
+// still consulted Store.GetRoute, they'd 404 (verify) or return zeros (get)
+// for this booking — so any non-zero derived value can only come from the
+// snapshot.
+func createBookingForLifecycle(t *testing.T, app *App, mux http.Handler, userID string, snap models.RouteOption) string {
+	t.Helper()
+	body, _ := json.Marshal(models.CreateBookingRequest{
+		UserID:        userID,
+		RouteID:       snap.RouteID,
+		RouteSnapshot: snap,
+		Passengers:    1,
+	})
+	rr := postCreateBooking(t, mux, body)
+	if rr.Code != http.StatusCreated {
+		t.Fatalf("create booking want 201 got %d body=%s", rr.Code, rr.Body.String())
+	}
+	var env models.APIResponse
+	_ = json.Unmarshal(rr.Body.Bytes(), &env)
+	bookingID, _ := env.Data.(map[string]any)["bookingId"].(string)
+	if bookingID == "" {
+		t.Fatalf("create booking missing bookingId: %s", rr.Body.String())
+	}
+	// Sanity: the route is genuinely absent from the routes map. If this
+	// fails, the test no longer proves what it claims to.
+	if _, ok := app.Store.GetRoute(snap.RouteID); ok {
+		t.Fatalf("precondition failed: route %q already seeded in store", snap.RouteID)
+	}
+	return bookingID
+}
+
+func TestVerifyBookingHandler_ReadsFromSnapshotNotStoreGetRoute(t *testing.T) {
+	app := New(config.Load())
+	mux := app.Routes()
+	userID := registerTestUser(t, mux, "verify-snapshot@verdify.dev")
+
+	snap := sampleRouteSnapshot()
+	snap.RouteID = "route_ephemeral_verify_abc"
+	// TotalDistance=24.7 -> baseline=4940g; CarbonEstimate=820 ->
+	// carbonSaved = 4940 - 820 = 4120g (then Round2).
+	snap.TotalDistance = 24.7
+	snap.CarbonEstimate = 820.0
+	snap.GreenPointsEstimate = 150
+
+	bookingID := createBookingForLifecycle(t, app, mux, userID, snap)
+
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/v1/bookings/"+bookingID+"/verify", nil))
+	if rr.Code != http.StatusOK {
+		t.Fatalf("verify want 200 got %d body=%s", rr.Code, rr.Body.String())
+	}
+
+	var env models.APIResponse
+	_ = json.Unmarshal(rr.Body.Bytes(), &env)
+	data, _ := env.Data.(map[string]any)
+	if data == nil {
+		t.Fatalf("verify response has no data envelope: %s", rr.Body.String())
+	}
+
+	gotPoints, _ := data["actualPoints"].(float64)
+	if int(gotPoints) != snap.GreenPointsEstimate {
+		t.Fatalf("actualPoints = %v want %d (must come from snapshot)", gotPoints, snap.GreenPointsEstimate)
+	}
+
+	wantCarbonSaved := 24.7*200 - 820.0 // baseline - estimate = 4120
+	gotCarbonSaved, _ := data["carbonSaved"].(float64)
+	if gotCarbonSaved != wantCarbonSaved {
+		t.Fatalf("carbonSaved = %v want %v (must derive from snapshot, not zero)", gotCarbonSaved, wantCarbonSaved)
+	}
+}
+
+func TestGetBookingHandler_ReadsFromSnapshotNotStoreGetRoute(t *testing.T) {
+	app := New(config.Load())
+	mux := app.Routes()
+	userID := registerTestUser(t, mux, "get-snapshot@verdify.dev")
+
+	snap := sampleRouteSnapshot()
+	snap.RouteID = "route_ephemeral_get_xyz"
+	snap.TotalDistance = 18.0
+	snap.CarbonEstimate = 600.0
+
+	bookingID := createBookingForLifecycle(t, app, mux, userID, snap)
+
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodGet, "/api/v1/bookings/"+bookingID, nil))
+	if rr.Code != http.StatusOK {
+		t.Fatalf("get want 200 got %d body=%s", rr.Code, rr.Body.String())
+	}
+
+	var env models.APIResponse
+	_ = json.Unmarshal(rr.Body.Bytes(), &env)
+	data, _ := env.Data.(map[string]any)
+	if data == nil {
+		t.Fatalf("get response has no data envelope: %s", rr.Body.String())
+	}
+
+	gotDistance, _ := data["totalDistance"].(float64)
+	if gotDistance != snap.TotalDistance {
+		t.Fatalf("totalDistance = %v want %v (must come from snapshot)", gotDistance, snap.TotalDistance)
+	}
+
+	wantCarbonSaved := 18.0*200 - 600.0 // baseline - estimate = 3000
+	gotCarbonSaved, _ := data["carbonSaved"].(float64)
+	if gotCarbonSaved != wantCarbonSaved {
+		t.Fatalf("carbonSaved = %v want %v (must derive from snapshot, not zero)", gotCarbonSaved, wantCarbonSaved)
+	}
+}
+
 func TestBatchedCalculate_ReturnsThreeOptionsInFixedOrder(t *testing.T) {
 	app := New(config.Load())
 	mux := app.Routes()
