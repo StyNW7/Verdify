@@ -76,13 +76,12 @@ func (app *App) createBookingHandler(w http.ResponseWriter, r *http.Request) {
 		writeErr(w, http.StatusBadRequest, "userId and routeId required")
 		return
 	}
-	if _, ok := app.Store.GetUser(req.UserID); !ok {
-		writeErr(w, http.StatusNotFound, "user not found")
+	if req.RouteSnapshot.RouteID == "" || len(req.RouteSnapshot.Steps) == 0 {
+		writeErr(w, http.StatusBadRequest, "routeSnapshot required")
 		return
 	}
-	rt, ok := app.Store.GetRoute(req.RouteID)
-	if !ok {
-		writeErr(w, http.StatusNotFound, "route not found")
+	if _, ok := app.Store.GetUser(req.UserID); !ok {
+		writeErr(w, http.StatusNotFound, "user not found")
 		return
 	}
 
@@ -91,10 +90,12 @@ func (app *App) createBookingHandler(w http.ResponseWriter, r *http.Request) {
 		ID:               newID("booking_"),
 		UserID:           req.UserID,
 		RouteID:          req.RouteID,
-		Status:           "pending",
+		RouteSnapshot:    req.RouteSnapshot,
+		Passengers:       req.Passengers,
+		Status:           "confirmed",
 		QRCode:           "VERDIFY_" + newID(""),
 		BookingReference: fmt.Sprintf("VERD-%d", now.Unix()),
-		EstimatedPoints:  rt.GreenPointsEstimate,
+		EstimatedPoints:  req.RouteSnapshot.GreenPointsEstimate,
 		PaymentStatus:    "pending",
 		CreatedAt:        now,
 	}
@@ -104,6 +105,11 @@ func (app *App) createBookingHandler(w http.ResponseWriter, r *http.Request) {
 		"qrCode":           b.QRCode,
 		"bookingReference": b.BookingReference,
 		"estimatedPoints":  b.EstimatedPoints,
+		"status":           b.Status,
+		"paymentStatus":    b.PaymentStatus,
+		"routeSnapshot":    b.RouteSnapshot,
+		"passengers":       b.Passengers,
+		"createdAt":        b.CreatedAt,
 		"expiresAt":        bookingExpiresAt(now),
 	})
 }
@@ -144,11 +150,7 @@ func (app *App) verifyBookingHandler(w http.ResponseWriter, r *http.Request) {
 		writeOK(w, http.StatusOK, map[string]any{"bookingId": b.ID, "status": b.Status, "actualPoints": b.ActualPoints, "carbonSaved": 0})
 		return
 	}
-	rt, ok := app.Store.GetRoute(b.RouteID)
-	if !ok {
-		writeErr(w, http.StatusNotFound, "route not found")
-		return
-	}
+	rt := b.RouteSnapshot
 	now := services.NowUTC()
 	b.Status = "completed"
 	b.ActualPoints = b.EstimatedPoints
@@ -170,7 +172,7 @@ func (app *App) getBookingHandler(w http.ResponseWriter, r *http.Request) {
 		writeErr(w, http.StatusNotFound, "booking not found")
 		return
 	}
-	rt, _ := app.Store.GetRoute(b.RouteID)
+	rt := b.RouteSnapshot
 	baseline := pricing.BaselineCarbonGrams(rt.TotalDistance)
 	carbonSaved := baseline - rt.CarbonEstimate
 	if carbonSaved < 0 {

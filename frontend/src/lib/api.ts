@@ -189,3 +189,30 @@ export function placeDetails(placeId: string, sessionToken: string) {
     { method: 'GET' },
   );
 }
+
+export type CreateBookingPayload = {
+  userId: string;
+  routeId: string;
+  routeSnapshot: BackendRouteOption;
+  passengers: number;
+};
+
+export type CreateBookingResponse = {
+  bookingId: string;
+  bookingReference: string;
+  estimatedPoints: number;
+  status: string;
+  paymentStatus: string;
+  routeSnapshot: BackendRouteOption;
+  passengers: number;
+  qrCode?: string;
+  createdAt?: string;
+  expiresAt?: string;
+};
+
+export function createBooking(payload: CreateBookingPayload) {
+  return apiRequest<CreateBookingResponse>('/api/v1/bookings/create', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}

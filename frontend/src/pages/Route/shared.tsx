@@ -60,6 +60,10 @@ export type RouteOption = {
   // the leader card lists the IDs it absorbed. Absorbed cards are filtered
   // out of the grid by groupConvergent().
   convergesWith?: PlannerRouteId[];
+  // The original backend payload, kept verbatim so booking confirmation can
+  // POST the route snapshot without round-tripping through the volatile
+  // server-side routes map. Absent for mock routes.
+  backendOption?: BackendRouteOption;
 };
 
 export const LOCATION_SUGGESTIONS = [
@@ -336,6 +340,7 @@ function toRouteOption(option: BackendRouteOption, destinationLabel?: string): R
     reasoning: option.reasoning,
     recommendedFor: option.recommendedFor,
     dataSource: option.dataSource,
+    backendOption: option,
   };
 }
 

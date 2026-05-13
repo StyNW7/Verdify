@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
+	"time"
 
 	"github.com/verdify/backend/config"
 	"github.com/verdify/backend/models"
@@ -26,11 +28,9 @@ type calcEnvelopeForLegacy struct {
 	Data    models.RouteCalculateResponse `json:"data"`
 }
 
-func TestRouteAndBookingFlow(t *testing.T) {
-	app := New(config.Load())
-	mux := app.Routes()
-
-	reg := models.AuthRegisterRequest{Email: "demo@verdify.dev", Password: "pass123", Phone: "+601234"}
+func registerTestUser(t *testing.T, mux http.Handler, email string) string {
+	t.Helper()
+	reg := models.AuthRegisterRequest{Email: email, Password: "pass123", Phone: "+601234"}
 	body, _ := json.Marshal(reg)
 	rr := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/register", bytes.NewReader(body))
@@ -38,48 +38,284 @@ func TestRouteAndBookingFlow(t *testing.T) {
 	if rr.Code != http.StatusCreated {
 		t.Fatalf("register want 201 got %d body=%s", rr.Code, rr.Body.String())
 	}
-
 	var regResp models.APIResponse
 	_ = json.Unmarshal(rr.Body.Bytes(), &regResp)
-	userID := regResp.Data.(map[string]any)["userId"].(string)
+	return regResp.Data.(map[string]any)["userId"].(string)
+}
 
-	routeReq := models.RouteRequest{
-		Origin:      models.Location{Latitude: 1.4854, Longitude: 103.7618},
-		Destination: models.Location{Latitude: 1.3521, Longitude: 103.8198},
-		// mode omitted on purpose
+func sampleRouteSnapshot() models.RouteOption {
+	now := time.Date(2026, 5, 13, 9, 0, 0, 0, time.UTC)
+	return models.RouteOption{
+		RouteID:              "route_test_123",
+		Mode:                 "eco",
+		TotalDistance:        24.7,
+		TotalDuration:        45,
+		CarbonEstimate:       820.0,
+		CarbonBaseline:       5400.0,
+		CarbonSavedGrams:     4580.0,
+		CarbonSavingsPercent: 85,
+		CarbonEstimateKg:     0.82,
+		EstimatedCost:        12.50,
+		GreenPointsEstimate:  150,
+		Steps: []models.TransportSegment{
+			{
+				Type:          "walking",
+				StartLocation: models.Location{Latitude: 1.4838, Longitude: 103.6604},
+				EndLocation:   models.Location{Latitude: 1.484, Longitude: 103.661},
+				Distance:      0.3,
+				Duration:      5,
+				CarbonPerKm:   0,
+				TotalCarbon:   0,
+				EstimatedCost: 0,
+				Departure:     now,
+				Arrival:       now.Add(5 * time.Minute),
+			},
+			{
+				Type:          "rts",
+				StartLocation: models.Location{Latitude: 1.484, Longitude: 103.661},
+				EndLocation:   models.Location{Latitude: 1.4482, Longitude: 103.7857},
+				Distance:      24.0,
+				Duration:      35,
+				CarbonPerKm:   34,
+				TotalCarbon:   816.0,
+				EstimatedCost: 12.50,
+				Departure:     now.Add(5 * time.Minute),
+				Arrival:       now.Add(40 * time.Minute),
+				TransitLine:   "RTS Link",
+				DepartureStop: "Bukit Chagar",
+				ArrivalStop:   "Woodlands North",
+			},
+		},
+		Polyline:       "abc123",
+		Reasoning:      "Lowest CO2 corridor",
+		RecommendedFor: []string{"carbon-conscious"},
+		Recommended:    true,
+		DataSource:     "google_routes",
+		CreatedAt:      now,
 	}
-	body, _ = json.Marshal(routeReq)
-	rr = httptest.NewRecorder()
-	req = httptest.NewRequest(http.MethodPost, "/api/v1/routes/calculate", bytes.NewReader(body))
+}
+
+func postCreateBooking(t *testing.T, mux http.Handler, body []byte) *httptest.ResponseRecorder {
+	t.Helper()
+	rr := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/bookings/create", bytes.NewReader(body))
 	mux.ServeHTTP(rr, req)
-	if rr.Code != http.StatusOK {
-		t.Fatalf("route want 200 got %d body=%s", rr.Code, rr.Body.String())
-	}
+	return rr
+}
 
-	var calcEnv calcEnvelopeForLegacy
-	_ = json.Unmarshal(rr.Body.Bytes(), &calcEnv)
-	if len(calcEnv.Data.Options) != 3 {
-		t.Fatalf("want 3 options got %d", len(calcEnv.Data.Options))
-	}
-	// book the recommended option
-	var routeID string
-	for _, o := range calcEnv.Data.Options {
-		if o.Recommended {
-			routeID = o.RouteID
-			break
-		}
-	}
-	if routeID == "" {
-		t.Fatal("no recommended option found")
-	}
+func TestCreateBooking_PersistsSnapshotVerbatim(t *testing.T) {
+	app := New(config.Load())
+	mux := app.Routes()
+	userID := registerTestUser(t, mux, "snapshot@verdify.dev")
+	snap := sampleRouteSnapshot()
 
-	bReq := models.CreateBookingRequest{UserID: userID, RouteID: routeID}
-	body, _ = json.Marshal(bReq)
-	rr = httptest.NewRecorder()
-	req = httptest.NewRequest(http.MethodPost, "/api/v1/bookings/create", bytes.NewReader(body))
-	mux.ServeHTTP(rr, req)
+	body, _ := json.Marshal(models.CreateBookingRequest{
+		UserID:        userID,
+		RouteID:       snap.RouteID,
+		RouteSnapshot: snap,
+		Passengers:    2,
+	})
+	rr := postCreateBooking(t, mux, body)
+
 	if rr.Code != http.StatusCreated {
-		t.Fatalf("booking want 201 got %d body=%s", rr.Code, rr.Body.String())
+		t.Fatalf("want 201 got %d body=%s", rr.Code, rr.Body.String())
+	}
+
+	var env models.APIResponse
+	_ = json.Unmarshal(rr.Body.Bytes(), &env)
+	data := env.Data.(map[string]any)
+	bookingID, _ := data["bookingId"].(string)
+	if bookingID == "" {
+		t.Fatalf("response missing bookingId: %s", rr.Body.String())
+	}
+	if ref, _ := data["bookingReference"].(string); ref == "" {
+		t.Fatalf("response missing bookingReference: %s", rr.Body.String())
+	}
+
+	stored, ok := app.Store.GetBooking(bookingID)
+	if !ok {
+		t.Fatalf("booking not persisted under id %s", bookingID)
+	}
+	if !reflect.DeepEqual(stored.RouteSnapshot, snap) {
+		t.Fatalf("snapshot not persisted verbatim\nwant: %+v\n got: %+v", snap, stored.RouteSnapshot)
+	}
+	if stored.Status != "confirmed" {
+		t.Fatalf("status = %q want %q", stored.Status, "confirmed")
+	}
+	if stored.PaymentStatus != "pending" {
+		t.Fatalf("paymentStatus = %q want %q", stored.PaymentStatus, "pending")
+	}
+	if stored.RouteID != snap.RouteID {
+		t.Fatalf("routeID lineage = %q want %q", stored.RouteID, snap.RouteID)
+	}
+}
+
+func TestCreateBooking_DoesNotCallGetRoute(t *testing.T) {
+	app := New(config.Load())
+	mux := app.Routes()
+	userID := registerTestUser(t, mux, "noroute@verdify.dev")
+
+	// Snapshot has a RouteID that the in-memory routes map has never seen.
+	// If the handler still consulted Store.GetRoute, this would 404.
+	snap := sampleRouteSnapshot()
+	snap.RouteID = "route_never_seeded_xyz"
+
+	body, _ := json.Marshal(models.CreateBookingRequest{
+		UserID:        userID,
+		RouteID:       snap.RouteID,
+		RouteSnapshot: snap,
+		Passengers:    1,
+	})
+	rr := postCreateBooking(t, mux, body)
+	if rr.Code != http.StatusCreated {
+		t.Fatalf("want 201 got %d body=%s", rr.Code, rr.Body.String())
+	}
+
+	if _, ok := app.Store.GetRoute(snap.RouteID); ok {
+		t.Fatalf("handler must not write to routes store; GetRoute(%q) found something", snap.RouteID)
+	}
+}
+
+func TestCreateBooking_RejectsMissingFields(t *testing.T) {
+	app := New(config.Load())
+	mux := app.Routes()
+	userID := registerTestUser(t, mux, "reject@verdify.dev")
+	snap := sampleRouteSnapshot()
+
+	cases := []struct {
+		name    string
+		req     models.CreateBookingRequest
+		wantMsg string
+	}{
+		{
+			name: "missing userId",
+			req:  models.CreateBookingRequest{RouteID: snap.RouteID, RouteSnapshot: snap, Passengers: 1},
+		},
+		{
+			name: "missing routeId",
+			req:  models.CreateBookingRequest{UserID: userID, RouteSnapshot: snap, Passengers: 1},
+		},
+		{
+			name: "empty routeSnapshot",
+			req:  models.CreateBookingRequest{UserID: userID, RouteID: snap.RouteID, Passengers: 1},
+		},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			body, _ := json.Marshal(tc.req)
+			rr := postCreateBooking(t, mux, body)
+			if rr.Code != http.StatusBadRequest {
+				t.Fatalf("want 400 got %d body=%s", rr.Code, rr.Body.String())
+			}
+		})
+	}
+}
+
+// createBookingForLifecycle posts a booking whose RouteID is never seeded
+// into the routes map. Returns the bookingID. If the lifecycle handlers
+// still consulted Store.GetRoute, they'd 404 (verify) or return zeros (get)
+// for this booking — so any non-zero derived value can only come from the
+// snapshot.
+func createBookingForLifecycle(t *testing.T, app *App, mux http.Handler, userID string, snap models.RouteOption) string {
+	t.Helper()
+	body, _ := json.Marshal(models.CreateBookingRequest{
+		UserID:        userID,
+		RouteID:       snap.RouteID,
+		RouteSnapshot: snap,
+		Passengers:    1,
+	})
+	rr := postCreateBooking(t, mux, body)
+	if rr.Code != http.StatusCreated {
+		t.Fatalf("create booking want 201 got %d body=%s", rr.Code, rr.Body.String())
+	}
+	var env models.APIResponse
+	_ = json.Unmarshal(rr.Body.Bytes(), &env)
+	bookingID, _ := env.Data.(map[string]any)["bookingId"].(string)
+	if bookingID == "" {
+		t.Fatalf("create booking missing bookingId: %s", rr.Body.String())
+	}
+	// Sanity: the route is genuinely absent from the routes map. If this
+	// fails, the test no longer proves what it claims to.
+	if _, ok := app.Store.GetRoute(snap.RouteID); ok {
+		t.Fatalf("precondition failed: route %q already seeded in store", snap.RouteID)
+	}
+	return bookingID
+}
+
+func TestVerifyBookingHandler_ReadsFromSnapshotNotStoreGetRoute(t *testing.T) {
+	app := New(config.Load())
+	mux := app.Routes()
+	userID := registerTestUser(t, mux, "verify-snapshot@verdify.dev")
+
+	snap := sampleRouteSnapshot()
+	snap.RouteID = "route_ephemeral_verify_abc"
+	// TotalDistance=24.7 -> baseline=4940g; CarbonEstimate=820 ->
+	// carbonSaved = 4940 - 820 = 4120g (then Round2).
+	snap.TotalDistance = 24.7
+	snap.CarbonEstimate = 820.0
+	snap.GreenPointsEstimate = 150
+
+	bookingID := createBookingForLifecycle(t, app, mux, userID, snap)
+
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/v1/bookings/"+bookingID+"/verify", nil))
+	if rr.Code != http.StatusOK {
+		t.Fatalf("verify want 200 got %d body=%s", rr.Code, rr.Body.String())
+	}
+
+	var env models.APIResponse
+	_ = json.Unmarshal(rr.Body.Bytes(), &env)
+	data, _ := env.Data.(map[string]any)
+	if data == nil {
+		t.Fatalf("verify response has no data envelope: %s", rr.Body.String())
+	}
+
+	gotPoints, _ := data["actualPoints"].(float64)
+	if int(gotPoints) != snap.GreenPointsEstimate {
+		t.Fatalf("actualPoints = %v want %d (must come from snapshot)", gotPoints, snap.GreenPointsEstimate)
+	}
+
+	wantCarbonSaved := 24.7*200 - 820.0 // baseline - estimate = 4120
+	gotCarbonSaved, _ := data["carbonSaved"].(float64)
+	if gotCarbonSaved != wantCarbonSaved {
+		t.Fatalf("carbonSaved = %v want %v (must derive from snapshot, not zero)", gotCarbonSaved, wantCarbonSaved)
+	}
+}
+
+func TestGetBookingHandler_ReadsFromSnapshotNotStoreGetRoute(t *testing.T) {
+	app := New(config.Load())
+	mux := app.Routes()
+	userID := registerTestUser(t, mux, "get-snapshot@verdify.dev")
+
+	snap := sampleRouteSnapshot()
+	snap.RouteID = "route_ephemeral_get_xyz"
+	snap.TotalDistance = 18.0
+	snap.CarbonEstimate = 600.0
+
+	bookingID := createBookingForLifecycle(t, app, mux, userID, snap)
+
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodGet, "/api/v1/bookings/"+bookingID, nil))
+	if rr.Code != http.StatusOK {
+		t.Fatalf("get want 200 got %d body=%s", rr.Code, rr.Body.String())
+	}
+
+	var env models.APIResponse
+	_ = json.Unmarshal(rr.Body.Bytes(), &env)
+	data, _ := env.Data.(map[string]any)
+	if data == nil {
+		t.Fatalf("get response has no data envelope: %s", rr.Body.String())
+	}
+
+	gotDistance, _ := data["totalDistance"].(float64)
+	if gotDistance != snap.TotalDistance {
+		t.Fatalf("totalDistance = %v want %v (must come from snapshot)", gotDistance, snap.TotalDistance)
+	}
+
+	wantCarbonSaved := 18.0*200 - 600.0 // baseline - estimate = 3000
+	gotCarbonSaved, _ := data["carbonSaved"].(float64)
+	if gotCarbonSaved != wantCarbonSaved {
+		t.Fatalf("carbonSaved = %v want %v (must derive from snapshot, not zero)", gotCarbonSaved, wantCarbonSaved)
 	}
 }
 

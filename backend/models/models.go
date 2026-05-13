@@ -50,17 +50,19 @@ type Route struct {
 }
 
 type Booking struct {
-	ID               string     `json:"bookingId"`
-	UserID           string     `json:"userId"`
-	RouteID          string     `json:"routeId"`
-	Status           string     `json:"status"`
-	QRCode           string     `json:"qrCode"`
-	BookingReference string     `json:"bookingReference"`
-	EstimatedPoints  int        `json:"estimatedPoints"`
-	ActualPoints     int        `json:"actualPoints"`
-	PaymentStatus    string     `json:"paymentStatus"`
-	CreatedAt        time.Time  `json:"createdAt"`
-	CompletedAt      *time.Time `json:"completedAt,omitempty"`
+	ID               string      `json:"bookingId"`
+	UserID           string      `json:"userId"`
+	RouteID          string      `json:"routeId"`
+	RouteSnapshot    RouteOption `json:"routeSnapshot"`
+	Passengers       int         `json:"passengers"`
+	Status           string      `json:"status"`
+	QRCode           string      `json:"qrCode"`
+	BookingReference string      `json:"bookingReference"`
+	EstimatedPoints  int         `json:"estimatedPoints"`
+	ActualPoints     int         `json:"actualPoints"`
+	PaymentStatus    string      `json:"paymentStatus"`
+	CreatedAt        time.Time   `json:"createdAt"`
+	CompletedAt      *time.Time  `json:"completedAt,omitempty"`
 }
 
 type User struct {
@@ -96,8 +98,10 @@ type RouteRequest struct {
 }
 
 type CreateBookingRequest struct {
-	UserID  string `json:"userId"`
-	RouteID string `json:"routeId"`
+	UserID        string      `json:"userId"`
+	RouteID       string      `json:"routeId"`
+	RouteSnapshot RouteOption `json:"routeSnapshot"`
+	Passengers    int         `json:"passengers"`
 }
 
 type AuthRegisterRequest struct {
