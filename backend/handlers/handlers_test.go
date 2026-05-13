@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"reflect"
+	"strings"
 	"testing"
 	"time"
 
@@ -557,5 +558,80 @@ func TestBatchedCalculate_ReturnsThreeOptionsInFixedOrder(t *testing.T) {
 		if o.Mode != want[i] {
 			t.Errorf("position %d mode = %q want %q", i, o.Mode, want[i])
 		}
+	}
+}
+
+func TestPatchUserHandler_ValidPatch_Returns200(t *testing.T) {
+	uid := "uid_patch_happy"
+	app := newAppWithBypassUser(t, uid, "patch@verdify.dev")
+	mux := app.Routes()
+
+	body := `{"displayName":"Patched Name","presetAvatar":"🌿"}`
+	req := httptest.NewRequest(http.MethodPatch, "/api/v1/user/"+uid, bytes.NewBufferString(body))
+	req.Header.Set("Content-Type", "application/json")
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("want 200 got %d body=%s", rr.Code, rr.Body.String())
+	}
+	var env models.APIResponse
+	_ = json.Unmarshal(rr.Body.Bytes(), &env)
+	data, _ := env.Data.(map[string]any)
+	if data == nil {
+		t.Fatalf("no data in response: %s", rr.Body.String())
+	}
+	if gotName, _ := data["displayName"].(string); gotName != "Patched Name" {
+		t.Fatalf("displayName = %q want %q", gotName, "Patched Name")
+	}
+	if gotAvatar, _ := data["presetAvatar"].(string); gotAvatar != "🌿" {
+		t.Fatalf("presetAvatar = %q want 🌿", gotAvatar)
+	}
+}
+
+func TestPatchUserHandler_InvalidPatch_Returns400(t *testing.T) {
+	uid := "uid_patch_bad"
+	app := newAppWithBypassUser(t, uid, "patchbad@verdify.dev")
+	mux := app.Routes()
+
+	body := `{"displayName":"` + strings.Repeat("X", 61) + `","presetAvatar":"🐉"}`
+	req := httptest.NewRequest(http.MethodPatch, "/api/v1/user/"+uid, bytes.NewBufferString(body))
+	req.Header.Set("Content-Type", "application/json")
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusBadRequest {
+		t.Fatalf("want 400 got %d body=%s", rr.Code, rr.Body.String())
+	}
+	// Check that errors array is present.
+	var envelope struct {
+		Success bool `json:"success"`
+		Data    any  `json:"data"`
+		Error   any  `json:"error"`
+	}
+	if err := json.Unmarshal(rr.Body.Bytes(), &envelope); err != nil {
+		t.Fatalf("response not JSON: %s", rr.Body.String())
+	}
+	// The error field should contain validation details.
+	if envelope.Error == nil {
+		t.Fatalf("want non-nil error field in 400 response; got %s", rr.Body.String())
+	}
+}
+
+func TestPatchUserHandler_UidMismatch_Returns403(t *testing.T) {
+	// Token uid is "uid_other"; path uid is "uid_target" — middleware rejects.
+	app := New(config.Load())
+	app.Auth = auth.New(&stubVerifier{id: &auth.Identity{UID: "uid_other"}}, "")
+	mux := app.Routes()
+
+	body := `{"displayName":"Hacked"}`
+	req := httptest.NewRequest(http.MethodPatch, "/api/v1/user/uid_target", bytes.NewBufferString(body))
+	req.Header.Set("Authorization", "Bearer fake_token")
+	req.Header.Set("Content-Type", "application/json")
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusForbidden {
+		t.Fatalf("want 403 got %d body=%s", rr.Code, rr.Body.String())
 	}
 }
