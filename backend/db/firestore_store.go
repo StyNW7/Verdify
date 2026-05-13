@@ -160,11 +160,13 @@ func (s *FirestoreStore) UpdateUser(ctx context.Context, u models.User) error {
 }
 
 // UpdateUserProfile applies only the patched fields to the user doc using a
-// Firestore partial update (MergeAll), so concurrent counter increments from
-// ApplyCompletedTrip are not clobbered. Returns ErrUserNotFound if the doc
+// Firestore transaction that atomically checks existence before writing, so
+// concurrent counter increments from ApplyCompletedTrip are not clobbered and
+// unknown UIDs are never silently upserted. Returns ErrUserNotFound if the doc
 // does not exist.
 func (s *FirestoreStore) UpdateUserProfile(ctx context.Context, uid string, patch validate.ValidatedPatch) (models.User, error) {
 	ref := s.users.Doc(uid)
+
 	// Build the partial update map — only include fields that were patched.
 	updates := map[string]any{}
 	if patch.DisplayName != nil {
@@ -173,15 +175,26 @@ func (s *FirestoreStore) UpdateUserProfile(ctx context.Context, uid string, patc
 	if patch.PresetAvatar != nil {
 		updates["presetAvatar"] = *patch.PresetAvatar
 	}
-	if len(updates) > 0 {
-		if _, err := ref.Set(ctx, updates, firestore.MergeAll); err != nil {
+
+	err := s.client.RunTransaction(ctx, func(ctx context.Context, tx *firestore.Transaction) error {
+		snap, err := tx.Get(ref)
+		if err != nil {
 			if status.Code(err) == codes.NotFound {
-				return models.User{}, ErrUserNotFound
+				return ErrUserNotFound
 			}
-			return models.User{}, fmt.Errorf("update user profile %s: %w", uid, err)
+			return err
 		}
+		_ = snap // existence confirmed; data read-back happens outside the transaction
+		if len(updates) == 0 {
+			return nil
+		}
+		return tx.Set(ref, updates, firestore.MergeAll)
+	})
+	if err != nil {
+		return models.User{}, err
 	}
-	// Read back the updated document.
+
+	// Read back the updated document outside the transaction.
 	u, ok, err := s.GetUser(ctx, uid)
 	if err != nil {
 		return models.User{}, err

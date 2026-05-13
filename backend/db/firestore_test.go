@@ -668,4 +668,10 @@ func TestFirestore_UpdateUserProfile_ReturnsNotFoundForUnknownUID(t *testing.T) 
 	if err != ErrUserNotFound {
 		t.Fatalf("want ErrUserNotFound, got %v", err)
 	}
+
+	// Ghost-doc regression: the failed call must not have created a partial doc.
+	snap, getErr := store.users.Doc(uid).Get(ctx)
+	if getErr == nil && snap.Exists() {
+		t.Fatal("UpdateUserProfile created a ghost doc for unknown uid; want no doc")
+	}
 }
