@@ -15,8 +15,6 @@ import {
   Train,
   type LucideIcon,
 } from 'lucide-react';
-import toast from 'react-hot-toast';
-
 import { useAuth } from '@/lib/auth-provider';
 import { useUserDoc } from '@/lib/user-doc-provider';
 import { pickAvatar } from '@/lib/avatar-source';
