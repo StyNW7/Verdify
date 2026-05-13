@@ -29,23 +29,20 @@ import { pickAvatar } from '@/lib/avatar-source';
 import { patchUser, type UserPatch } from '@/lib/api';
 import { getFirebaseAuth } from '@/lib/firebase';
 import { getSecurityCardState } from './security-card-state';
+import { TRANSPORTS, ROUTE_MODES, LANGUAGES as LANGUAGE_IDS, type Transport, type RouteMode, type Language } from '@/lib/preferences';
 
 // Exported so the backend validator and frontend stay in sync.
 export const PRESET_AVATARS = ['🌿', '🦊', '🌊', '🌙', '🐝', '🪴'] as const;
 export type PresetAvatar = (typeof PRESET_AVATARS)[number];
 
-type Mode = 'Transit' | 'Cycle' | 'Carpool' | 'Walk';
-type Priority = 'Fastest' | 'Greenest' | 'Cheapest' | 'Balanced';
-type Language = 'en' | 'ms' | 'zh' | 'ta';
-
-const MODES: { id: Mode; label: string; hint: string; icon: LucideIcon }[] = [
+const MODES: { id: Transport; label: string; hint: string; icon: LucideIcon }[] = [
   { id: 'Transit', label: 'Transit', hint: 'Bus, MRT, train', icon: Train },
   { id: 'Cycle', label: 'Cycle', hint: 'On two wheels', icon: Bike },
   { id: 'Carpool', label: 'Carpool', hint: 'Share the ride', icon: Car },
   { id: 'Walk', label: 'Walk', hint: 'Short legs only', icon: Footprints },
 ];
 
-const PRIORITIES: { id: Priority; label: string; hint: string; icon: LucideIcon }[] = [
+const PRIORITIES: { id: RouteMode; label: string; hint: string; icon: LucideIcon }[] = [
   { id: 'Fastest', label: 'Fastest', hint: 'Shave the minutes', icon: Gauge },
   { id: 'Greenest', label: 'Greenest', hint: 'Lowest CO₂ first', icon: Leaf },
   { id: 'Cheapest', label: 'Cheapest', hint: 'Spend less, ride smart', icon: Coins },
@@ -58,6 +55,12 @@ const LANGUAGES: { id: Language; label: string; native: string; note: string }[]
   { id: 'zh', label: 'Chinese', native: '简体中文', note: 'Beta' },
   { id: 'ta', label: 'Tamil', native: 'தமிழ்', note: 'Beta' },
 ];
+
+// Validate that local MODES/PRIORITIES arrays stay in sync with preferences.ts
+const _transportCheck: readonly Transport[] = TRANSPORTS;
+const _routeModeCheck: readonly RouteMode[] = ROUTE_MODES;
+const _languageCheck: readonly Language[] = LANGUAGE_IDS;
+void _transportCheck; void _routeModeCheck; void _languageCheck;
 
 export default function ProfilePage() {
   return (
@@ -498,6 +501,46 @@ function SecurityCard() {
 }
 
 function TripDefaultsCard() {
+  const { user } = useAuth();
+  const { doc: userDoc } = useUserDoc();
+
+  const savedTransport = (userDoc?.preferredTransport as Transport | undefined) ?? 'Transit';
+  const savedRouteMode = (userDoc?.preferredRouteMode as RouteMode | undefined) ?? 'Greenest';
+
+  const [transport, setTransport] = useState<Transport>(savedTransport);
+  const [routeMode, setRouteMode] = useState<RouteMode>(savedRouteMode);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Sync initial state when snapshot arrives after first load.
+  useEffect(() => {
+    if (userDoc?.preferredTransport) {
+      setTransport(userDoc.preferredTransport as Transport);
+    }
+  }, [userDoc?.preferredTransport]);
+  useEffect(() => {
+    if (userDoc?.preferredRouteMode) {
+      setRouteMode(userDoc.preferredRouteMode as RouteMode);
+    }
+  }, [userDoc?.preferredRouteMode]);
+
+  const handleApply = async () => {
+    if (!user) return;
+    setIsSaving(true);
+    try {
+      const patch: UserPatch = {};
+      if (transport !== savedTransport) patch.preferredTransport = transport;
+      if (routeMode !== savedRouteMode) patch.preferredRouteMode = routeMode;
+      if (Object.keys(patch).length > 0) {
+        await patchUser(user.uid, patch);
+      }
+      toast.success('Preferences updated.');
+    } catch {
+      toast.error('Could not save preferences. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <motion.section
       initial={{ opacity: 0, y: 12 }}
@@ -537,35 +580,38 @@ function TripDefaultsCard() {
         </p>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {MODES.map(({ id, label, hint, icon: Icon }) => {
+            const active = transport === id;
             return (
-              <div
+              <button
                 key={id}
-                className="group relative flex flex-col items-start gap-2 rounded-[14px] p-3 text-left"
+                type="button"
+                onClick={() => setTransport(id)}
+                className="group relative flex flex-col items-start gap-2 rounded-[14px] p-3 text-left transition-all"
                 style={{
-                  background: 'var(--theme-surface-muted)',
-                  border: '1px solid var(--theme-border)',
-                  opacity: 0.7,
+                  background: active ? 'var(--theme-accent-soft)' : 'var(--theme-surface-muted)',
+                  border: active ? '1px solid var(--theme-accent-muted)' : '1px solid var(--theme-border)',
                 }}
+                aria-pressed={active}
               >
                 <span
                   className="flex h-8 w-8 items-center justify-center rounded-[9px]"
                   style={{
-                    background: 'var(--theme-surface)',
-                    color: 'var(--theme-fg-muted)',
-                    border: '1px solid var(--theme-border)',
+                    background: active ? 'var(--theme-accent)' : 'var(--theme-surface)',
+                    color: active ? 'var(--theme-accent-fg)' : 'var(--theme-fg-muted)',
+                    border: active ? 'none' : '1px solid var(--theme-border)',
                   }}
                 >
                   <Icon className="h-[14px] w-[14px]" strokeWidth={1.8} />
                 </span>
                 <div>
-                  <p className="text-[0.88rem]" style={{ color: 'var(--theme-fg-muted)' }}>
+                  <p className="text-[0.88rem]" style={{ color: active ? 'var(--theme-fg)' : 'var(--theme-fg-muted)' }}>
                     {label}
                   </p>
                   <p className="theme-mono-sm mt-0.5" style={{ color: 'var(--theme-fg-dim)' }}>
                     {hint}
                   </p>
                 </div>
-              </div>
+              </button>
             );
           })}
         </div>
@@ -583,53 +629,53 @@ function TripDefaultsCard() {
         </p>
         <div className="flex flex-col gap-2">
           {PRIORITIES.map(({ id, label, hint, icon: Icon }) => {
+            const active = routeMode === id;
             return (
-              <div
+              <button
                 key={id}
-                className="flex items-center gap-3 rounded-[12px] p-3 text-left"
+                type="button"
+                onClick={() => setRouteMode(id)}
+                className="flex items-center gap-3 rounded-[12px] p-3 text-left transition-all"
                 style={{
-                  background: 'transparent',
-                  border: '1px solid var(--theme-border)',
-                  opacity: 0.7,
+                  background: active ? 'var(--theme-accent-soft)' : 'transparent',
+                  border: active ? '1px solid var(--theme-accent-muted)' : '1px solid var(--theme-border)',
                 }}
+                aria-pressed={active}
               >
                 <span
                   className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px]"
                   style={{
-                    background: 'var(--theme-surface-muted)',
-                    color: 'var(--theme-fg-muted)',
+                    background: active ? 'var(--theme-accent)' : 'var(--theme-surface-muted)',
+                    color: active ? 'var(--theme-accent-fg)' : 'var(--theme-fg-muted)',
                   }}
                 >
                   <Icon className="h-[14px] w-[14px]" strokeWidth={1.8} />
                 </span>
                 <div className="flex-1">
-                  <p className="text-[0.9rem]" style={{ color: 'var(--theme-fg-muted)' }}>
+                  <p className="text-[0.9rem]" style={{ color: active ? 'var(--theme-fg)' : 'var(--theme-fg-muted)' }}>
                     {label}
                   </p>
                   <p className="text-[0.78rem]" style={{ color: 'var(--theme-fg-dim)' }}>
                     {hint}
                   </p>
                 </div>
-              </div>
+                {active && (
+                  <Check className="ml-auto shrink-0 h-4 w-4" style={{ color: 'var(--theme-accent)' }} strokeWidth={2.2} />
+                )}
+              </button>
             );
           })}
         </div>
       </div>
 
-      <div className="mt-6 flex items-center justify-between">
-        <p
-          className="text-[0.78rem]"
-          style={{ color: 'var(--theme-fg-muted)' }}
-        >
-          Preference editing coming next slice.
-        </p>
+      <div className="mt-6 flex items-center justify-end">
         <button
           type="button"
-          disabled
-          title="Editing coming next slice"
+          disabled={isSaving}
+          onClick={handleApply}
           className="theme-btn-ghost disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Apply
+          {isSaving ? 'Saving…' : 'Apply'}
           <ArrowUpRight size={12} strokeWidth={1.8} />
         </button>
       </div>
@@ -638,6 +684,31 @@ function TripDefaultsCard() {
 }
 
 function LanguageCard() {
+  const { user } = useAuth();
+  const { doc: userDoc } = useUserDoc();
+
+  const savedLanguage = (userDoc?.language as Language | undefined) ?? 'en';
+  const [language, setLanguage] = useState<Language>(savedLanguage);
+
+  // Sync initial state when snapshot arrives.
+  useEffect(() => {
+    if (userDoc?.language) {
+      setLanguage(userDoc.language as Language);
+    }
+  }, [userDoc?.language]);
+
+  const handleSelect = async (id: Language) => {
+    if (!user || id === language) return;
+    setLanguage(id);
+    try {
+      await patchUser(user.uid, { language: id });
+      toast.success('Preference saved.');
+    } catch {
+      setLanguage(language);
+      toast.error('Could not save language preference. Please try again.');
+    }
+  };
+
   return (
     <motion.section
       initial={{ opacity: 0, y: 12 }}
@@ -671,20 +742,18 @@ function LanguageCard() {
 
       <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
         {LANGUAGES.map((l) => {
-          const active = l.id === 'en';
+          const active = language === l.id;
           return (
             <button
               key={l.id}
               type="button"
-              disabled
-              title="Language preference editing coming next slice"
-              className="flex items-center justify-between gap-4 rounded-[12px] p-4 text-left"
+              onClick={() => handleSelect(l.id)}
+              className="flex items-center justify-between gap-4 rounded-[12px] p-4 text-left transition-all"
               style={{
                 background: active ? 'var(--theme-accent-soft)' : 'var(--theme-surface-muted)',
                 border: active ? '1px solid var(--theme-accent-muted)' : '1px solid var(--theme-border)',
-                opacity: active ? 1 : 0.7,
-                cursor: 'default',
               }}
+              aria-pressed={active}
             >
               <div>
                 <p
@@ -725,7 +794,7 @@ function LanguageCard() {
         className="mt-5 text-[0.78rem]"
         style={{ color: 'var(--theme-fg-muted)' }}
       >
-        Language preference editing coming next slice.
+        Language changes apply on next session once i18n is enabled.
       </p>
     </motion.section>
   );
