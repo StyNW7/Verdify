@@ -87,6 +87,7 @@ func (app *App) Routes() *http.ServeMux {
 	mux.Handle("POST /api/v1/bookings/{id}/reroute", mw.Wrap(http.HandlerFunc(app.rerouteBookingHandler)))
 	mux.Handle("GET /api/v1/user/{userId}", mw.Wrap(http.HandlerFunc(app.getUserHandler)))
 	mux.Handle("GET /api/v1/user/{userId}/bookings", mw.Wrap(http.HandlerFunc(app.getUserBookingsHandler)))
+	mux.Handle("GET /api/v1/leaderboard", mw.Wrap(http.HandlerFunc(app.getLeaderboardHandler)))
 
 	return mux
 }
