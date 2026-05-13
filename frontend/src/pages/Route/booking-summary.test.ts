@@ -19,9 +19,6 @@ test('booking summary combines selected route and planner options for confirmati
     destination: 'Woodlands North, Singapore',
     passengers: 3,
     preference: 'fast',
-    dateSlot: 'today',
-    pickedDate: '',
-    time: '09:30',
     modes: {
       rts: true,
       lrt: false,
@@ -38,7 +35,6 @@ test('booking summary combines selected route and planner options for confirmati
     corridor: 'Bukit Indah, Johor → Woodlands North, Singapore',
     passengerLabel: '3 passengers',
     preferenceLabel: 'Fastest',
-    departureLabel: 'Today at 09:30',
     allowedModesLabel: 'RTS Link, Bus, EV Taxi',
     routeModesLabel: 'GrabEV + RTS Link',
     perPassengerPrice: 'RM 18.00',
