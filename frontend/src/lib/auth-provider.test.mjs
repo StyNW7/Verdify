@@ -174,3 +174,47 @@ test('dispose() unsubscribes from both auth and id-token streams', () => {
 
   assert.deepEqual(harness.isSubscribed(), { auth: false, id: false });
 });
+
+test('getRedirectResult resolving to a user populates snapshot and token getter', async () => {
+  const harness = makeFakeSeams();
+  const user = fakeUser('uid_google', 'tok_redirect');
+
+  const seamWithRedirect = {
+    ...harness.seams,
+    getRedirectResult: async () => ({ user, idToken: 'tok_redirect' }),
+  };
+
+  const store = createAuthStore(seamWithRedirect);
+
+  // getRedirectResult is async — flush microtasks.
+  await new Promise((r) => setImmediate(r));
+
+  const snap = store.getSnapshot();
+  assert.deepEqual(snap.user, {
+    uid: 'uid_google',
+    email: 'uid_google@example.com',
+    displayName: 'uid_google',
+    photoURL: null,
+  });
+  assert.equal(snap.idToken, 'tok_redirect');
+  assert.equal(snap.loading, false);
+  assert.equal(harness.readToken(), 'tok_redirect', 'api.ts getter must reflect redirect token');
+
+  store.dispose();
+});
+
+test('getRedirectResult resolving to null leaves snapshot unchanged', async () => {
+  const harness = makeFakeSeams();
+
+  const seamWithRedirect = {
+    ...harness.seams,
+    getRedirectResult: async () => null,
+  };
+
+  const store = createAuthStore(seamWithRedirect);
+  await new Promise((r) => setImmediate(r));
+
+  assert.deepEqual(store.getSnapshot(), { user: null, idToken: null, loading: true });
+
+  store.dispose();
+});

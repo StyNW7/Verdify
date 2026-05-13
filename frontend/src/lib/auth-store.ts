@@ -23,10 +23,19 @@ export type AuthSeamUser = {
   getIdToken: () => Promise<string>;
 };
 
+export type RedirectResult = {
+  user: AuthSeamUser;
+  idToken: string;
+};
+
 export type AuthSeams = {
   subscribeAuthState: (cb: (user: AuthSeamUser | null) => void) => () => void;
   subscribeIdToken: (cb: (user: AuthSeamUser | null) => void) => () => void;
   signOut: () => Promise<void>;
+  // Called once on store construction to handle the return leg of
+  // signInWithRedirect. Resolves to { user, idToken } if a redirect just
+  // completed, null otherwise.
+  getRedirectResult?: () => Promise<RedirectResult | null>;
   // Optional override of the api.ts token-getter installer. Tests inject a
   // spy; production leaves this undefined and uses lib/api's module-level
   // setter.
@@ -89,6 +98,24 @@ export function createAuthStore(seams: AuthSeams): AuthStore {
         setSnapshot({ ...snapshot, idToken: null });
       });
   });
+
+  // Handle the return leg of signInWithRedirect. Fires once at construction;
+  // if a redirect just completed, populate user + idToken immediately so the
+  // caller can call syncAuthProfile with the explicit token before
+  // onAuthStateChanged fires.
+  if (seams.getRedirectResult) {
+    void seams.getRedirectResult().then((result) => {
+      if (!result) return;
+      setSnapshot({
+        user: toAuthUser(result.user),
+        idToken: result.idToken,
+        loading: false,
+      });
+    }).catch(() => {
+      // Redirect result errors (e.g. auth/popup-closed) are non-fatal;
+      // onAuthStateChanged will still fire and settle the loading state.
+    });
+  }
 
   return {
     getSnapshot: () => snapshot,
