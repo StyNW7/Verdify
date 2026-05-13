@@ -254,6 +254,113 @@ func (s *FirestoreStore) ListUserBookings(ctx context.Context, userID, queryStat
 	return out, total, nil
 }
 
+// ListLeaderboard returns the top limit users ordered by greenPointsBalance
+// descending, ties broken by createdAt ascending. Uses the composite index
+// declared in firestore.indexes.json. Each entry is assigned a 1-indexed Rank.
+func (s *FirestoreStore) ListLeaderboard(ctx context.Context, limit int) ([]models.LeaderboardEntry, error) {
+	q := s.users.
+		Query.
+		OrderBy("greenPointsBalance", firestore.Desc).
+		OrderBy("createdAt", firestore.Asc).
+		Limit(limit)
+
+	iter := q.Documents(ctx)
+	defer iter.Stop()
+
+	entries := make([]models.LeaderboardEntry, 0, limit)
+	rank := 1
+	for {
+		snap, err := iter.Next()
+		if errors.Is(err, iterator.Done) {
+			break
+		}
+		if err != nil {
+			return nil, fmt.Errorf("list leaderboard: %w", err)
+		}
+		var u models.User
+		if err := snap.DataTo(&u); err != nil {
+			return nil, fmt.Errorf("list leaderboard decode: %w", err)
+		}
+		u.ID = snap.Ref.ID
+		entries = append(entries, models.LeaderboardEntry{
+			Rank:                rank,
+			UserID:              u.ID,
+			DisplayName:         u.DisplayName,
+			PhotoURL:            u.PhotoURL,
+			GreenPointsBalance:  u.GreenPoints,
+			TotalTripsCompleted: u.TotalTrips,
+		})
+		rank++
+	}
+	return entries, nil
+}
+
+// GetUserRank returns the caller's 1-indexed rank and the total user count.
+// Unknown uid → (0, 0, nil).
+//
+// The rank is computed as: (# users with more points) + (# users with same
+// points and earlier createdAt) + 1. This matches the ListLeaderboard ordering.
+func (s *FirestoreStore) GetUserRank(ctx context.Context, uid string) (int, int, error) {
+	snap, err := s.users.Doc(uid).Get(ctx)
+	if err != nil {
+		if status.Code(err) == codes.NotFound {
+			return 0, 0, nil
+		}
+		return 0, 0, fmt.Errorf("get user rank, fetch self %s: %w", uid, err)
+	}
+	var me models.User
+	if err := snap.DataTo(&me); err != nil {
+		return 0, 0, fmt.Errorf("get user rank, decode self %s: %w", uid, err)
+	}
+
+	// Count users with strictly more points.
+	aboveQ := s.users.Where("greenPointsBalance", ">", me.GreenPoints)
+	aboveAgg, err := aboveQ.NewAggregationQuery().WithCount("c").Get(ctx)
+	if err != nil {
+		return 0, 0, fmt.Errorf("get user rank, count above %s: %w", uid, err)
+	}
+	aboveCount := firestoreAggCount(aboveAgg, "c")
+
+	// Count users with same points but earlier createdAt (they rank above us).
+	tiedQ := s.users.
+		Where("greenPointsBalance", "==", me.GreenPoints).
+		Where("createdAt", "<", me.CreatedAt)
+	tiedAgg, err := tiedQ.NewAggregationQuery().WithCount("c").Get(ctx)
+	if err != nil {
+		return 0, 0, fmt.Errorf("get user rank, count tied-above %s: %w", uid, err)
+	}
+	tiedAboveCount := firestoreAggCount(tiedAgg, "c")
+
+	// Count total users.
+	totalAgg, err := s.users.NewAggregationQuery().WithCount("c").Get(ctx)
+	if err != nil {
+		return 0, 0, fmt.Errorf("get user rank, count total: %w", err)
+	}
+	total := int(firestoreAggCount(totalAgg, "c"))
+
+	rank := int(aboveCount+tiedAboveCount) + 1
+	return rank, total, nil
+}
+
+// firestoreAggCount extracts the int64 count from an AggregationResult map.
+// The Firestore SDK returns map[string]interface{} with int64 values.
+func firestoreAggCount(result firestore.AggregationResult, alias string) int64 {
+	v, ok := result[alias]
+	if !ok {
+		return 0
+	}
+	switch t := v.(type) {
+	case int64:
+		return t
+	case *int64:
+		if t == nil {
+			return 0
+		}
+		return *t
+	}
+	return 0
+}
+
 // ApplyCompletedTrip flips the booking to "completed" and increments the
 // user's counters inside a single transaction. The booking's status is the
 // idempotency key — re-running for a booking already marked completed is a

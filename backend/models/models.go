@@ -98,6 +98,17 @@ type User struct {
 	CreatedAt         time.Time `json:"createdAt" firestore:"createdAt"`
 }
 
+// LeaderboardEntry is the public, privacy-safe shape returned by
+// GET /api/v1/leaderboard. Email is deliberately excluded.
+type LeaderboardEntry struct {
+	Rank                int    `json:"rank"`
+	UserID              string `json:"uid"`
+	DisplayName         string `json:"displayName"`
+	PhotoURL            string `json:"photoURL"`
+	GreenPointsBalance  int    `json:"greenPointsBalance"`
+	TotalTripsCompleted int    `json:"totalTripsCompleted"`
+}
+
 // UserProfile is the subset of User-shaped fields supplied by callers of
 // Store.EnsureUser. Counters and CreatedAt are owned by the store.
 type UserProfile struct {

@@ -43,6 +43,15 @@ type Store interface {
 	// same booking yields a single set of increments. Returns the updated
 	// booking and the updated user.
 	ApplyCompletedTrip(ctx context.Context, bookingID string, points int, carbonSaved float64, completedAt time.Time) (models.Booking, models.User, error)
+
+	// ListLeaderboard returns the top limit users ordered by greenPointsBalance
+	// descending, ties broken by createdAt ascending (older account ranks
+	// higher). Each entry is assigned a 1-indexed Rank.
+	ListLeaderboard(ctx context.Context, limit int) ([]models.LeaderboardEntry, error)
+
+	// GetUserRank returns the caller's 1-indexed rank and the total user count.
+	// Unknown uid → (0, 0, nil). The handler treats rank 0 as "no rank yet".
+	GetUserRank(ctx context.Context, uid string) (rank int, totalUsers int, err error)
 }
 
 // MemoryStore is an in-memory implementation of Store. Data resets on restart.
@@ -161,6 +170,60 @@ func (s *MemoryStore) ListUserBookings(_ context.Context, userID, status string,
 		end = total
 	}
 	return all[offset:end], total, nil
+}
+
+// leaderboardSorted returns all users sorted by greenPointsBalance desc,
+// createdAt asc (tie-breaker). Caller must hold at least a read lock.
+func (s *MemoryStore) leaderboardSorted() []models.User {
+	users := make([]models.User, 0, len(s.users))
+	for _, u := range s.users {
+		users = append(users, u)
+	}
+	sort.Slice(users, func(i, j int) bool {
+		if users[i].GreenPoints != users[j].GreenPoints {
+			return users[i].GreenPoints > users[j].GreenPoints
+		}
+		return users[i].CreatedAt.Before(users[j].CreatedAt)
+	})
+	return users
+}
+
+func (s *MemoryStore) ListLeaderboard(_ context.Context, limit int) ([]models.LeaderboardEntry, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	sorted := s.leaderboardSorted()
+	if limit > 0 && len(sorted) > limit {
+		sorted = sorted[:limit]
+	}
+	entries := make([]models.LeaderboardEntry, len(sorted))
+	for i, u := range sorted {
+		entries[i] = models.LeaderboardEntry{
+			Rank:                i + 1,
+			UserID:              u.ID,
+			DisplayName:         u.DisplayName,
+			PhotoURL:            u.PhotoURL,
+			GreenPointsBalance:  u.GreenPoints,
+			TotalTripsCompleted: u.TotalTrips,
+		}
+	}
+	return entries, nil
+}
+
+func (s *MemoryStore) GetUserRank(_ context.Context, uid string) (int, int, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	if _, ok := s.users[uid]; !ok {
+		return 0, 0, nil
+	}
+	sorted := s.leaderboardSorted()
+	total := len(sorted)
+	for i, u := range sorted {
+		if u.ID == uid {
+			return i + 1, total, nil
+		}
+	}
+	// Should be unreachable given the existence check above.
+	return 0, 0, nil
 }
 
 func (s *MemoryStore) ApplyCompletedTrip(_ context.Context, bookingID string, points int, carbonSaved float64, completedAt time.Time) (models.Booking, models.User, error) {
