@@ -8,6 +8,16 @@ go run .        # PORT defaults to 8080
 curl http://localhost:8080/health
 ```
 
+## Firebase console setup (Google sign-in)
+
+These are one-time steps that must be completed in the Firebase console before Google sign-in works in any environment.
+
+1. **Enable the Google provider.** In the Firebase console go to *Authentication → Sign-in method → Google* and toggle it on. Supply a support email and save.
+
+2. **Authorised domains.** Under *Authentication → Settings → Authorised domains* confirm that `localhost` is listed (it is by default). Add the production domain (e.g. `verdify.app`) when deploying to production. Redirect-based sign-in will be blocked by Firebase if the domain is not on this list.
+
+3. **No backend change needed.** The Go auth middleware verifies any Firebase ID token regardless of the provider (email/password or Google). The `/auth/sync` handler maps `email`, `displayName`, and `photoURL` from the token claims; Google-issued tokens carry all three.
+
 ## Auth env vars
 
 - `FIREBASE_CREDENTIALS_JSON` — inline service-account JSON for the Firebase
