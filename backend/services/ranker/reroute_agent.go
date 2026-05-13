@@ -20,8 +20,8 @@ type RouteRecomputer interface {
 
 // BookingReader is the read-only slice of db.Store used by the agent.
 type BookingReader interface {
-	GetBooking(id string) (models.Booking, bool)
-	GetRoute(id string) (models.Route, bool)
+	GetBooking(ctx context.Context, id string) (models.Booking, bool)
+	GetRoute(ctx context.Context, id string) (models.Route, bool)
 }
 
 // RerouteInput carries the per-request trigger data.
@@ -91,7 +91,7 @@ func (a *RerouteAgent) Run(ctx context.Context, in RerouteInput) (*RerouteResult
 // decision, then builds the result.
 func (a *RerouteAgent) runGemini(ctx context.Context, in RerouteInput) (*RerouteResult, error) {
 	// ── 1. Pre-fetch booking context ───────────────────────────────────────
-	b, ok := a.store.GetBooking(in.BookingID)
+	b, ok := a.store.GetBooking(ctx, in.BookingID)
 	if !ok {
 		return nil, fmt.Errorf("booking %s not found", in.BookingID)
 	}
@@ -99,7 +99,7 @@ func (a *RerouteAgent) runGemini(ctx context.Context, in RerouteInput) (*Reroute
 	if activeID == "" {
 		activeID = b.RouteID
 	}
-	rt, _ := a.store.GetRoute(activeID)
+	rt, _ := a.store.GetRoute(ctx, activeID)
 	mode := rt.Mode
 	if mode == "" {
 		mode = "eco"
@@ -211,7 +211,7 @@ func (a *RerouteAgent) buildResult(d *agentDecision, cand *models.RouteCandidate
 
 // fallback is the deterministic path when Vertex is disabled or the agent errors.
 func (a *RerouteAgent) fallback(ctx context.Context, in RerouteInput) (*RerouteResult, error) {
-	b, ok := a.store.GetBooking(in.BookingID)
+	b, ok := a.store.GetBooking(ctx, in.BookingID)
 	if !ok {
 		return &RerouteResult{
 			Action:      "abort",
@@ -223,7 +223,7 @@ func (a *RerouteAgent) fallback(ctx context.Context, in RerouteInput) (*RerouteR
 	if activeID == "" {
 		activeID = b.RouteID
 	}
-	rt, _ := a.store.GetRoute(activeID)
+	rt, _ := a.store.GetRoute(ctx, activeID)
 	mode := rt.Mode
 	if mode == "" {
 		mode = "eco"

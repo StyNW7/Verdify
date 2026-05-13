@@ -71,7 +71,7 @@ func (app *App) calculateRouteHandler(w http.ResponseWriter, r *http.Request) {
 	for i, c := range candidates {
 		opt := buildOption(c, result.Items[i], passengers)
 		rt := optionToRoute(req.Origin, req.Destination, opt, opt.Steps)
-		app.Store.SaveRoute(rt)
+		app.Store.SaveRoute(r.Context(), rt)
 		opt.RouteID = rt.ID
 		opt.CreatedAt = rt.CreatedAt
 		opts = append(opts, opt)

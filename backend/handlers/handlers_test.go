@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -9,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/verdify/backend/auth"
 	"github.com/verdify/backend/config"
 	"github.com/verdify/backend/models"
 )
@@ -28,19 +30,17 @@ type calcEnvelopeForLegacy struct {
 	Data    models.RouteCalculateResponse `json:"data"`
 }
 
-func registerTestUser(t *testing.T, mux http.Handler, email string) string {
+// newAppWithBypassUser builds a fresh App, configures the auth middleware to
+// dev-bypass for the supplied uid, and seeds that uid in the store. Returns
+// the wired App. Use this in tests that need an authenticated session.
+func newAppWithBypassUser(t *testing.T, uid, email string) *App {
 	t.Helper()
-	reg := models.AuthRegisterRequest{Email: email, Password: "pass123", Phone: "+601234"}
-	body, _ := json.Marshal(reg)
-	rr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/register", bytes.NewReader(body))
-	mux.ServeHTTP(rr, req)
-	if rr.Code != http.StatusCreated {
-		t.Fatalf("register want 201 got %d body=%s", rr.Code, rr.Body.String())
+	app := New(config.Load())
+	app.Auth = auth.New(nil, uid)
+	if _, _, err := app.Store.EnsureUser(context.Background(), uid, models.UserProfile{Email: email}); err != nil {
+		t.Fatalf("seed test user: %v", err)
 	}
-	var regResp models.APIResponse
-	_ = json.Unmarshal(rr.Body.Bytes(), &regResp)
-	return regResp.Data.(map[string]any)["userId"].(string)
+	return app
 }
 
 func sampleRouteSnapshot() models.RouteOption {
@@ -104,13 +104,12 @@ func postCreateBooking(t *testing.T, mux http.Handler, body []byte) *httptest.Re
 }
 
 func TestCreateBooking_PersistsSnapshotVerbatim(t *testing.T) {
-	app := New(config.Load())
+	app := newAppWithBypassUser(t, "uid_snapshot", "snapshot@verdify.dev")
 	mux := app.Routes()
-	userID := registerTestUser(t, mux, "snapshot@verdify.dev")
 	snap := sampleRouteSnapshot()
 
 	body, _ := json.Marshal(models.CreateBookingRequest{
-		UserID:        userID,
+		UserID:        "uid_snapshot",
 		RouteID:       snap.RouteID,
 		RouteSnapshot: snap,
 		Passengers:    2,
@@ -132,7 +131,7 @@ func TestCreateBooking_PersistsSnapshotVerbatim(t *testing.T) {
 		t.Fatalf("response missing bookingReference: %s", rr.Body.String())
 	}
 
-	stored, ok := app.Store.GetBooking(bookingID)
+	stored, ok := app.Store.GetBooking(context.Background(), bookingID)
 	if !ok {
 		t.Fatalf("booking not persisted under id %s", bookingID)
 	}
@@ -151,17 +150,14 @@ func TestCreateBooking_PersistsSnapshotVerbatim(t *testing.T) {
 }
 
 func TestCreateBooking_DoesNotCallGetRoute(t *testing.T) {
-	app := New(config.Load())
+	app := newAppWithBypassUser(t, "uid_noroute", "noroute@verdify.dev")
 	mux := app.Routes()
-	userID := registerTestUser(t, mux, "noroute@verdify.dev")
 
-	// Snapshot has a RouteID that the in-memory routes map has never seen.
-	// If the handler still consulted Store.GetRoute, this would 404.
 	snap := sampleRouteSnapshot()
 	snap.RouteID = "route_never_seeded_xyz"
 
 	body, _ := json.Marshal(models.CreateBookingRequest{
-		UserID:        userID,
+		UserID:        "uid_noroute",
 		RouteID:       snap.RouteID,
 		RouteSnapshot: snap,
 		Passengers:    1,
@@ -171,15 +167,14 @@ func TestCreateBooking_DoesNotCallGetRoute(t *testing.T) {
 		t.Fatalf("want 201 got %d body=%s", rr.Code, rr.Body.String())
 	}
 
-	if _, ok := app.Store.GetRoute(snap.RouteID); ok {
+	if _, ok := app.Store.GetRoute(context.Background(), snap.RouteID); ok {
 		t.Fatalf("handler must not write to routes store; GetRoute(%q) found something", snap.RouteID)
 	}
 }
 
 func TestCreateBooking_RejectsMissingFields(t *testing.T) {
-	app := New(config.Load())
+	app := newAppWithBypassUser(t, "uid_reject", "reject@verdify.dev")
 	mux := app.Routes()
-	userID := registerTestUser(t, mux, "reject@verdify.dev")
 	snap := sampleRouteSnapshot()
 
 	cases := []struct {
@@ -193,11 +188,11 @@ func TestCreateBooking_RejectsMissingFields(t *testing.T) {
 		},
 		{
 			name: "missing routeId",
-			req:  models.CreateBookingRequest{UserID: userID, RouteSnapshot: snap, Passengers: 1},
+			req:  models.CreateBookingRequest{UserID: "uid_reject", RouteSnapshot: snap, Passengers: 1},
 		},
 		{
 			name: "empty routeSnapshot",
-			req:  models.CreateBookingRequest{UserID: userID, RouteID: snap.RouteID, Passengers: 1},
+			req:  models.CreateBookingRequest{UserID: "uid_reject", RouteID: snap.RouteID, Passengers: 1},
 		},
 	}
 	for _, tc := range cases {
@@ -212,10 +207,7 @@ func TestCreateBooking_RejectsMissingFields(t *testing.T) {
 }
 
 // createBookingForLifecycle posts a booking whose RouteID is never seeded
-// into the routes map. Returns the bookingID. If the lifecycle handlers
-// still consulted Store.GetRoute, they'd 404 (verify) or return zeros (get)
-// for this booking — so any non-zero derived value can only come from the
-// snapshot.
+// into the routes map. Returns the bookingID.
 func createBookingForLifecycle(t *testing.T, app *App, mux http.Handler, userID string, snap models.RouteOption) string {
 	t.Helper()
 	body, _ := json.Marshal(models.CreateBookingRequest{
@@ -234,28 +226,23 @@ func createBookingForLifecycle(t *testing.T, app *App, mux http.Handler, userID 
 	if bookingID == "" {
 		t.Fatalf("create booking missing bookingId: %s", rr.Body.String())
 	}
-	// Sanity: the route is genuinely absent from the routes map. If this
-	// fails, the test no longer proves what it claims to.
-	if _, ok := app.Store.GetRoute(snap.RouteID); ok {
+	if _, ok := app.Store.GetRoute(context.Background(), snap.RouteID); ok {
 		t.Fatalf("precondition failed: route %q already seeded in store", snap.RouteID)
 	}
 	return bookingID
 }
 
 func TestVerifyBookingHandler_ReadsFromSnapshotNotStoreGetRoute(t *testing.T) {
-	app := New(config.Load())
+	app := newAppWithBypassUser(t, "uid_verify_snap", "verify-snapshot@verdify.dev")
 	mux := app.Routes()
-	userID := registerTestUser(t, mux, "verify-snapshot@verdify.dev")
 
 	snap := sampleRouteSnapshot()
 	snap.RouteID = "route_ephemeral_verify_abc"
-	// TotalDistance=24.7 -> baseline=4940g; CarbonEstimate=820 ->
-	// carbonSaved = 4940 - 820 = 4120g (then Round2).
 	snap.TotalDistance = 24.7
 	snap.CarbonEstimate = 820.0
 	snap.GreenPointsEstimate = 150
 
-	bookingID := createBookingForLifecycle(t, app, mux, userID, snap)
+	bookingID := createBookingForLifecycle(t, app, mux, "uid_verify_snap", snap)
 
 	rr := httptest.NewRecorder()
 	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/v1/bookings/"+bookingID+"/verify", nil))
@@ -283,16 +270,15 @@ func TestVerifyBookingHandler_ReadsFromSnapshotNotStoreGetRoute(t *testing.T) {
 }
 
 func TestGetBookingHandler_ReadsFromSnapshotNotStoreGetRoute(t *testing.T) {
-	app := New(config.Load())
+	app := newAppWithBypassUser(t, "uid_get_snap", "get-snapshot@verdify.dev")
 	mux := app.Routes()
-	userID := registerTestUser(t, mux, "get-snapshot@verdify.dev")
 
 	snap := sampleRouteSnapshot()
 	snap.RouteID = "route_ephemeral_get_xyz"
 	snap.TotalDistance = 18.0
 	snap.CarbonEstimate = 600.0
 
-	bookingID := createBookingForLifecycle(t, app, mux, userID, snap)
+	bookingID := createBookingForLifecycle(t, app, mux, "uid_get_snap", snap)
 
 	rr := httptest.NewRecorder()
 	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodGet, "/api/v1/bookings/"+bookingID, nil))
@@ -312,7 +298,7 @@ func TestGetBookingHandler_ReadsFromSnapshotNotStoreGetRoute(t *testing.T) {
 		t.Fatalf("totalDistance = %v want %v (must come from snapshot)", gotDistance, snap.TotalDistance)
 	}
 
-	wantCarbonSaved := 18.0*200 - 600.0 // baseline - estimate = 3000
+	wantCarbonSaved := 18.0*200 - 600.0
 	gotCarbonSaved, _ := data["carbonSaved"].(float64)
 	if gotCarbonSaved != wantCarbonSaved {
 		t.Fatalf("carbonSaved = %v want %v (must derive from snapshot, not zero)", gotCarbonSaved, wantCarbonSaved)
@@ -320,14 +306,13 @@ func TestGetBookingHandler_ReadsFromSnapshotNotStoreGetRoute(t *testing.T) {
 }
 
 func TestGetBookingHandler_EmbedsRouteSnapshotInResponse(t *testing.T) {
-	app := New(config.Load())
+	app := newAppWithBypassUser(t, "uid_embed_snap", "get-embed-snap@verdify.dev")
 	mux := app.Routes()
-	userID := registerTestUser(t, mux, "get-embed-snap@verdify.dev")
 
 	snap := sampleRouteSnapshot()
 	snap.RouteID = "route_ephemeral_embed_xyz"
 
-	bookingID := createBookingForLifecycle(t, app, mux, userID, snap)
+	bookingID := createBookingForLifecycle(t, app, mux, "uid_embed_snap", snap)
 
 	rr := httptest.NewRecorder()
 	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodGet, "/api/v1/bookings/"+bookingID, nil))
@@ -362,16 +347,15 @@ func TestGetBookingHandler_EmbedsRouteSnapshotInResponse(t *testing.T) {
 }
 
 func TestGetUserBookingsHandler_EmbedsRouteSnapshotPerItem(t *testing.T) {
-	app := New(config.Load())
+	app := newAppWithBypassUser(t, "uid_list_snap", "list-embed-snap@verdify.dev")
 	mux := app.Routes()
-	userID := registerTestUser(t, mux, "list-embed-snap@verdify.dev")
 
 	snap := sampleRouteSnapshot()
 	snap.RouteID = "route_ephemeral_list_xyz"
-	_ = createBookingForLifecycle(t, app, mux, userID, snap)
+	_ = createBookingForLifecycle(t, app, mux, "uid_list_snap", snap)
 
 	rr := httptest.NewRecorder()
-	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodGet, "/api/v1/user/"+userID+"/bookings", nil))
+	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodGet, "/api/v1/user/uid_list_snap/bookings", nil))
 	if rr.Code != http.StatusOK {
 		t.Fatalf("list want 200 got %d body=%s", rr.Code, rr.Body.String())
 	}
@@ -400,15 +384,14 @@ func TestGetUserBookingsHandler_EmbedsRouteSnapshotPerItem(t *testing.T) {
 }
 
 func TestPayBookingHandler_LeavesConfirmedStatusUntouched(t *testing.T) {
-	app := New(config.Load())
+	app := newAppWithBypassUser(t, "uid_pay_conf", "pay-confirmed@verdify.dev")
 	mux := app.Routes()
-	userID := registerTestUser(t, mux, "pay-confirmed@verdify.dev")
 
 	snap := sampleRouteSnapshot()
 	snap.RouteID = "route_pay_confirmed_xyz"
-	bookingID := createBookingForLifecycle(t, app, mux, userID, snap)
+	bookingID := createBookingForLifecycle(t, app, mux, "uid_pay_conf", snap)
 
-	before, _ := app.Store.GetBooking(bookingID)
+	before, _ := app.Store.GetBooking(context.Background(), bookingID)
 	if before.Status != "confirmed" {
 		t.Fatalf("precondition: want status=confirmed got %q", before.Status)
 	}
@@ -419,7 +402,7 @@ func TestPayBookingHandler_LeavesConfirmedStatusUntouched(t *testing.T) {
 		t.Fatalf("pay want 200 got %d body=%s", rr.Code, rr.Body.String())
 	}
 
-	after, _ := app.Store.GetBooking(bookingID)
+	after, _ := app.Store.GetBooking(context.Background(), bookingID)
 	if after.Status != "confirmed" {
 		t.Fatalf("status flipped to %q; pay must leave confirmed untouched", after.Status)
 	}
@@ -429,17 +412,16 @@ func TestPayBookingHandler_LeavesConfirmedStatusUntouched(t *testing.T) {
 }
 
 func TestPayBookingHandler_RejectsCompletedBooking(t *testing.T) {
-	app := New(config.Load())
+	app := newAppWithBypassUser(t, "uid_pay_done", "pay-completed@verdify.dev")
 	mux := app.Routes()
-	userID := registerTestUser(t, mux, "pay-completed@verdify.dev")
 
 	snap := sampleRouteSnapshot()
 	snap.RouteID = "route_pay_completed_abc"
-	bookingID := createBookingForLifecycle(t, app, mux, userID, snap)
+	bookingID := createBookingForLifecycle(t, app, mux, "uid_pay_done", snap)
 
-	b, _ := app.Store.GetBooking(bookingID)
+	b, _ := app.Store.GetBooking(context.Background(), bookingID)
 	b.Status = "completed"
-	app.Store.UpdateBooking(b)
+	app.Store.UpdateBooking(context.Background(), b)
 
 	rr := httptest.NewRecorder()
 	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/v1/bookings/"+bookingID+"/pay", nil))
@@ -449,17 +431,16 @@ func TestPayBookingHandler_RejectsCompletedBooking(t *testing.T) {
 }
 
 func TestPayBookingHandler_RejectsCancelledBooking(t *testing.T) {
-	app := New(config.Load())
+	app := newAppWithBypassUser(t, "uid_pay_canc", "pay-cancelled@verdify.dev")
 	mux := app.Routes()
-	userID := registerTestUser(t, mux, "pay-cancelled@verdify.dev")
 
 	snap := sampleRouteSnapshot()
 	snap.RouteID = "route_pay_cancelled_abc"
-	bookingID := createBookingForLifecycle(t, app, mux, userID, snap)
+	bookingID := createBookingForLifecycle(t, app, mux, "uid_pay_canc", snap)
 
-	b, _ := app.Store.GetBooking(bookingID)
+	b, _ := app.Store.GetBooking(context.Background(), bookingID)
 	b.Status = "cancelled"
-	app.Store.UpdateBooking(b)
+	app.Store.UpdateBooking(context.Background(), b)
 
 	rr := httptest.NewRecorder()
 	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/v1/bookings/"+bookingID+"/pay", nil))
@@ -469,17 +450,16 @@ func TestPayBookingHandler_RejectsCancelledBooking(t *testing.T) {
 }
 
 func TestCancelBookingHandler_RejectsCompletedBooking(t *testing.T) {
-	app := New(config.Load())
+	app := newAppWithBypassUser(t, "uid_cancel_done", "cancel-completed@verdify.dev")
 	mux := app.Routes()
-	userID := registerTestUser(t, mux, "cancel-completed@verdify.dev")
 
 	snap := sampleRouteSnapshot()
 	snap.RouteID = "route_cancel_completed_abc"
-	bookingID := createBookingForLifecycle(t, app, mux, userID, snap)
+	bookingID := createBookingForLifecycle(t, app, mux, "uid_cancel_done", snap)
 
-	b, _ := app.Store.GetBooking(bookingID)
+	b, _ := app.Store.GetBooking(context.Background(), bookingID)
 	b.Status = "completed"
-	app.Store.UpdateBooking(b)
+	app.Store.UpdateBooking(context.Background(), b)
 
 	rr := httptest.NewRecorder()
 	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/v1/bookings/"+bookingID+"/cancel", nil))

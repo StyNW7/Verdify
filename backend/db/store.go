@@ -1,7 +1,7 @@
 package db
 
 import (
-	"errors"
+	"context"
 	"sort"
 	"sync"
 	"time"
@@ -9,27 +9,30 @@ import (
 	"github.com/verdify/backend/models"
 )
 
-// Store is the persistence interface. MemoryStore is the default impl; FirestoreStore is next.
+// Store is the persistence interface. MemoryStore is the default impl;
+// FirestoreStore arrives in slice 02. All methods accept ctx so the Firestore
+// impl can honour cancellation; MemoryStore ignores it.
 type Store interface {
-	CreateUser(u models.User) error
-	FindUserByEmail(email string) (models.User, bool)
-	GetUser(id string) (models.User, bool)
-	UpdateUser(u models.User)
-	SaveRoute(r models.Route)
-	GetRoute(id string) (models.Route, bool)
-	CreateBooking(b models.Booking)
-	GetBooking(id string) (models.Booking, bool)
-	UpdateBooking(b models.Booking)
-	ListUserBookings(userID, status string, limit, offset int) ([]models.Booking, int)
-	ApplyCompletedTrip(userID string, points int, carbonSaved float64)
-	SeedDevUser(id string) error
+	// EnsureUser upserts the profile fields onto /users/{uid} without touching
+	// counters. Returns the resulting user and a "created" bool so callers can
+	// log first-sign-in events. Idempotent.
+	EnsureUser(ctx context.Context, uid string, p models.UserProfile) (models.User, bool, error)
+
+	GetUser(ctx context.Context, id string) (models.User, bool)
+	UpdateUser(ctx context.Context, u models.User)
+	SaveRoute(ctx context.Context, r models.Route)
+	GetRoute(ctx context.Context, id string) (models.Route, bool)
+	CreateBooking(ctx context.Context, b models.Booking)
+	GetBooking(ctx context.Context, id string) (models.Booking, bool)
+	UpdateBooking(ctx context.Context, b models.Booking)
+	ListUserBookings(ctx context.Context, userID, status string, limit, offset int) ([]models.Booking, int)
+	ApplyCompletedTrip(ctx context.Context, userID string, points int, carbonSaved float64)
 }
 
 // MemoryStore is an in-memory implementation of Store. Data resets on restart.
 type MemoryStore struct {
 	mu       sync.RWMutex
 	users    map[string]models.User
-	emails   map[string]string
 	routes   map[string]models.Route
 	bookings map[string]models.Booking
 }
@@ -37,7 +40,6 @@ type MemoryStore struct {
 func NewMemoryStore() *MemoryStore {
 	return &MemoryStore{
 		users:    map[string]models.User{},
-		emails:   map[string]string{},
 		routes:   map[string]models.Route{},
 		bookings: map[string]models.Booking{},
 	}
@@ -46,74 +48,81 @@ func NewMemoryStore() *MemoryStore {
 // NewStore is kept for backward compatibility; use NewMemoryStore going forward.
 func NewStore() *MemoryStore { return NewMemoryStore() }
 
-func (s *MemoryStore) CreateUser(u models.User) error {
+func (s *MemoryStore) EnsureUser(_ context.Context, uid string, p models.UserProfile) (models.User, bool, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	if _, ok := s.emails[u.Email]; ok {
-		return errors.New("email already exists")
+	if existing, ok := s.users[uid]; ok {
+		// Refresh profile fields (display name / photo can change in Firebase),
+		// but never reset counters.
+		if p.Email != "" {
+			existing.Email = p.Email
+		}
+		if p.DisplayName != "" {
+			existing.DisplayName = p.DisplayName
+		}
+		if p.PhotoURL != "" {
+			existing.PhotoURL = p.PhotoURL
+		}
+		s.users[uid] = existing
+		return existing, false, nil
 	}
-	s.users[u.ID] = u
-	s.emails[u.Email] = u.ID
-	return nil
+	u := models.User{
+		ID:          uid,
+		Email:       p.Email,
+		DisplayName: p.DisplayName,
+		PhotoURL:    p.PhotoURL,
+		CreatedAt:   time.Now().UTC(),
+	}
+	s.users[uid] = u
+	return u, true, nil
 }
 
-func (s *MemoryStore) FindUserByEmail(email string) (models.User, bool) {
+func (s *MemoryStore) GetUser(_ context.Context, id string) (models.User, bool) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	id, ok := s.emails[email]
-	if !ok {
-		return models.User{}, false
-	}
 	u, ok := s.users[id]
 	return u, ok
 }
 
-func (s *MemoryStore) GetUser(id string) (models.User, bool) {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-	u, ok := s.users[id]
-	return u, ok
-}
-
-func (s *MemoryStore) UpdateUser(u models.User) {
+func (s *MemoryStore) UpdateUser(_ context.Context, u models.User) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.users[u.ID] = u
 }
 
-func (s *MemoryStore) SaveRoute(r models.Route) {
+func (s *MemoryStore) SaveRoute(_ context.Context, r models.Route) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.routes[r.ID] = r
 }
 
-func (s *MemoryStore) GetRoute(id string) (models.Route, bool) {
+func (s *MemoryStore) GetRoute(_ context.Context, id string) (models.Route, bool) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	r, ok := s.routes[id]
 	return r, ok
 }
 
-func (s *MemoryStore) CreateBooking(b models.Booking) {
+func (s *MemoryStore) CreateBooking(_ context.Context, b models.Booking) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.bookings[b.ID] = b
 }
 
-func (s *MemoryStore) GetBooking(id string) (models.Booking, bool) {
+func (s *MemoryStore) GetBooking(_ context.Context, id string) (models.Booking, bool) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	b, ok := s.bookings[id]
 	return b, ok
 }
 
-func (s *MemoryStore) UpdateBooking(b models.Booking) {
+func (s *MemoryStore) UpdateBooking(_ context.Context, b models.Booking) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.bookings[b.ID] = b
 }
 
-func (s *MemoryStore) ListUserBookings(userID, status string, limit, offset int) ([]models.Booking, int) {
+func (s *MemoryStore) ListUserBookings(_ context.Context, userID, status string, limit, offset int) ([]models.Booking, int) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	all := make([]models.Booking, 0)
@@ -140,30 +149,7 @@ func (s *MemoryStore) ListUserBookings(userID, status string, limit, offset int)
 	return all[offset:end], total
 }
 
-func (s *MemoryStore) SeedDevUser(id string) error {
-	if id == "" {
-		return nil
-	}
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	if _, ok := s.users[id]; ok {
-		return nil
-	}
-	email := "dev@verdify.local"
-	if existing, taken := s.emails[email]; taken && existing != id {
-		email = id + "@verdify.local"
-	}
-	s.users[id] = models.User{
-		ID:        id,
-		Email:     email,
-		Phone:     "+0000000000",
-		CreatedAt: time.Now().UTC(),
-	}
-	s.emails[email] = id
-	return nil
-}
-
-func (s *MemoryStore) ApplyCompletedTrip(userID string, points int, carbonSaved float64) {
+func (s *MemoryStore) ApplyCompletedTrip(_ context.Context, userID string, points int, carbonSaved float64) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	u, ok := s.users[userID]

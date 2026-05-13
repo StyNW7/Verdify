@@ -35,7 +35,7 @@ func (app *App) rerouteBookingHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Load booking.
-	b, ok := app.Store.GetBooking(bookingID)
+	b, ok := app.Store.GetBooking(r.Context(), bookingID)
 	if !ok {
 		writeErr(w, http.StatusNotFound, "booking_not_found")
 		return
@@ -57,7 +57,7 @@ func (app *App) rerouteBookingHandler(w http.ResponseWriter, r *http.Request) {
 			AgentSource:  "cap",
 		}
 		b.RerouteHistory = append(b.RerouteHistory, event)
-		app.Store.UpdateBooking(b)
+		app.Store.UpdateBooking(r.Context(), b)
 		writeOK(w, http.StatusOK, map[string]any{
 			"action":      "abort",
 			"userMessage": "Please contact support.",
@@ -73,7 +73,7 @@ func (app *App) rerouteBookingHandler(w http.ResponseWriter, r *http.Request) {
 	if activeRouteID == "" {
 		activeRouteID = b.RouteID
 	}
-	activeRoute, hasRoute := app.Store.GetRoute(activeRouteID)
+	activeRoute, hasRoute := app.Store.GetRoute(r.Context(), activeRouteID)
 
 	// Run agent with a hard timeout.
 	ctx, cancel := context.WithTimeout(r.Context(), rerouteBudget)
@@ -107,7 +107,7 @@ func (app *App) rerouteBookingHandler(w http.ResponseWriter, r *http.Request) {
 			dest = activeRoute.Destination
 		}
 		rt := optionToRoute(origin, dest, opt, result.NewCandidate.Steps)
-		app.Store.SaveRoute(rt)
+		app.Store.SaveRoute(r.Context(), rt)
 
 		opt.RouteID = rt.ID
 		opt.CreatedAt = rt.CreatedAt
@@ -125,7 +125,7 @@ func (app *App) rerouteBookingHandler(w http.ResponseWriter, r *http.Request) {
 		NewRouteID:   newRouteID,
 		AgentSource:  result.Source,
 	})
-	app.Store.UpdateBooking(b)
+	app.Store.UpdateBooking(r.Context(), b)
 
 	log.Printf("event=reroute booking=%s action=%s source=%s rerouteCount=%d",
 		bookingID, result.Action, result.Source, len(b.RerouteHistory))

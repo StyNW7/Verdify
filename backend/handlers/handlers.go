@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/verdify/backend/auth"
 	"github.com/verdify/backend/models"
 	"github.com/verdify/backend/services"
 	"github.com/verdify/backend/services/pricing"
@@ -18,52 +19,24 @@ func (app *App) healthHandler(w http.ResponseWriter, _ *http.Request) {
 	})
 }
 
-func (app *App) registerHandler(w http.ResponseWriter, r *http.Request) {
-	var req models.AuthRegisterRequest
-	if err := parseJSON(r, &req); err != nil {
-		writeErr(w, http.StatusBadRequest, "invalid json")
+// authSyncHandler upserts the User row from the verified Firebase claims and
+// returns the resulting profile. Idempotent — counters survive subsequent calls.
+func (app *App) authSyncHandler(w http.ResponseWriter, r *http.Request) {
+	id, ok := auth.IdentityFrom(r.Context())
+	if !ok || id == nil || id.UID == "" {
+		writeErr(w, http.StatusUnauthorized, "unauthorized")
 		return
 	}
-	if req.Email == "" || req.Password == "" {
-		writeErr(w, http.StatusBadRequest, "email and password required")
-		return
-	}
-	u := models.User{
-		ID:        newID("user_"),
-		Email:     strings.ToLower(strings.TrimSpace(req.Email)),
-		Phone:     strings.TrimSpace(req.Phone),
-		Password:  req.Password,
-		CreatedAt: services.NowUTC(),
-	}
-	if err := app.Store.CreateUser(u); err != nil {
-		writeErr(w, http.StatusConflict, err.Error())
-		return
-	}
-	writeOK(w, http.StatusCreated, map[string]any{
-		"userId":    u.ID,
-		"email":     u.Email,
-		"phone":     u.Phone,
-		"token":     "mock_" + newID(""),
-		"createdAt": u.CreatedAt,
+	u, _, err := app.Store.EnsureUser(r.Context(), id.UID, models.UserProfile{
+		Email:       id.Email,
+		DisplayName: id.Name,
+		PhotoURL:    id.Picture,
 	})
-}
-
-func (app *App) loginHandler(w http.ResponseWriter, r *http.Request) {
-	var req models.AuthLoginRequest
-	if err := parseJSON(r, &req); err != nil {
-		writeErr(w, http.StatusBadRequest, "invalid json")
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, "user upsert failed")
 		return
 	}
-	u, ok := app.Store.FindUserByEmail(strings.ToLower(strings.TrimSpace(req.Email)))
-	if !ok || u.Password != req.Password {
-		writeErr(w, http.StatusBadRequest, "invalid credentials")
-		return
-	}
-	writeOK(w, http.StatusOK, map[string]any{
-		"userId":    u.ID,
-		"token":     "mock_" + newID(""),
-		"expiresIn": 86400,
-	})
+	writeOK(w, http.StatusOK, u)
 }
 
 func (app *App) createBookingHandler(w http.ResponseWriter, r *http.Request) {
@@ -80,7 +53,11 @@ func (app *App) createBookingHandler(w http.ResponseWriter, r *http.Request) {
 		writeErr(w, http.StatusBadRequest, "routeSnapshot required")
 		return
 	}
-	if _, ok := app.Store.GetUser(req.UserID); !ok {
+	if id, ok := auth.IdentityFrom(r.Context()); ok && id != nil && id.UID != "" && id.UID != req.UserID {
+		writeErr(w, http.StatusForbidden, "userId mismatch")
+		return
+	}
+	if _, ok := app.Store.GetUser(r.Context(), req.UserID); !ok {
 		writeErr(w, http.StatusNotFound, "user not found")
 		return
 	}
@@ -99,7 +76,7 @@ func (app *App) createBookingHandler(w http.ResponseWriter, r *http.Request) {
 		PaymentStatus:    "pending",
 		CreatedAt:        now,
 	}
-	app.Store.CreateBooking(b)
+	app.Store.CreateBooking(r.Context(), b)
 	writeOK(w, http.StatusCreated, map[string]any{
 		"bookingId":        b.ID,
 		"qrCode":           b.QRCode,
@@ -116,7 +93,7 @@ func (app *App) createBookingHandler(w http.ResponseWriter, r *http.Request) {
 
 func (app *App) payBookingHandler(w http.ResponseWriter, r *http.Request) {
 	bookingID := r.PathValue("id")
-	b, ok := app.Store.GetBooking(bookingID)
+	b, ok := app.Store.GetBooking(r.Context(), bookingID)
 	if !ok {
 		writeErr(w, http.StatusNotFound, "booking not found")
 		return
@@ -130,13 +107,13 @@ func (app *App) payBookingHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	b.PaymentStatus = "completed"
-	app.Store.UpdateBooking(b)
+	app.Store.UpdateBooking(r.Context(), b)
 	writeOK(w, http.StatusOK, b)
 }
 
 func (app *App) verifyBookingHandler(w http.ResponseWriter, r *http.Request) {
 	bookingID := r.PathValue("id")
-	b, ok := app.Store.GetBooking(bookingID)
+	b, ok := app.Store.GetBooking(r.Context(), bookingID)
 	if !ok {
 		writeErr(w, http.StatusNotFound, "booking not found")
 		return
@@ -154,19 +131,19 @@ func (app *App) verifyBookingHandler(w http.ResponseWriter, r *http.Request) {
 	b.Status = "completed"
 	b.ActualPoints = b.EstimatedPoints
 	b.CompletedAt = &now
-	app.Store.UpdateBooking(b)
+	app.Store.UpdateBooking(r.Context(), b)
 
 	baseline := pricing.BaselineCarbonGrams(rt.TotalDistance)
 	carbonSaved := baseline - rt.CarbonEstimate
 	if carbonSaved < 0 {
 		carbonSaved = 0
 	}
-	app.Store.ApplyCompletedTrip(b.UserID, b.ActualPoints, carbonSaved)
+	app.Store.ApplyCompletedTrip(r.Context(), b.UserID, b.ActualPoints, carbonSaved)
 	writeOK(w, http.StatusOK, map[string]any{"bookingId": b.ID, "status": b.Status, "paymentStatus": b.PaymentStatus, "actualPoints": b.ActualPoints, "carbonSaved": pricing.Round2(carbonSaved)})
 }
 
 func (app *App) getBookingHandler(w http.ResponseWriter, r *http.Request) {
-	b, ok := app.Store.GetBooking(r.PathValue("id"))
+	b, ok := app.Store.GetBooking(r.Context(), r.PathValue("id"))
 	if !ok {
 		writeErr(w, http.StatusNotFound, "booking not found")
 		return
@@ -197,7 +174,7 @@ func (app *App) getBookingHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) cancelBookingHandler(w http.ResponseWriter, r *http.Request) {
-	b, ok := app.Store.GetBooking(r.PathValue("id"))
+	b, ok := app.Store.GetBooking(r.Context(), r.PathValue("id"))
 	if !ok {
 		writeErr(w, http.StatusNotFound, "booking not found")
 		return
@@ -207,13 +184,13 @@ func (app *App) cancelBookingHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	b.Status = "cancelled"
-	app.Store.UpdateBooking(b)
+	app.Store.UpdateBooking(r.Context(), b)
 	writeOK(w, http.StatusOK, b)
 }
 
 func (app *App) getUserGreenPointsHandler(w http.ResponseWriter, r *http.Request) {
 	userID := r.PathValue("userId")
-	u, ok := app.Store.GetUser(userID)
+	u, ok := app.Store.GetUser(r.Context(), userID)
 	if !ok {
 		writeErr(w, http.StatusNotFound, "user not found")
 		return
@@ -229,7 +206,7 @@ func (app *App) getUserGreenPointsHandler(w http.ResponseWriter, r *http.Request
 
 func (app *App) getUserBookingsHandler(w http.ResponseWriter, r *http.Request) {
 	userID := r.PathValue("userId")
-	if _, ok := app.Store.GetUser(userID); !ok {
+	if _, ok := app.Store.GetUser(r.Context(), userID); !ok {
 		writeErr(w, http.StatusNotFound, "user not found")
 		return
 	}
@@ -237,7 +214,7 @@ func (app *App) getUserBookingsHandler(w http.ResponseWriter, r *http.Request) {
 	limit := parseIntOr(q.Get("limit"), 10)
 	offset := parseIntOr(q.Get("offset"), 0)
 	status := strings.TrimSpace(q.Get("status"))
-	items, total := app.Store.ListUserBookings(userID, status, limit, offset)
+	items, total := app.Store.ListUserBookings(r.Context(), userID, status, limit, offset)
 	writeOK(w, http.StatusOK, map[string]any{"bookings": items, "pagination": map[string]int{"total": total, "limit": limit, "offset": offset}})
 }
 
@@ -258,4 +235,3 @@ func (app *App) geocodeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	writeOK(w, http.StatusOK, suggestions)
 }
-

@@ -10,6 +10,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/verdify/backend/auth"
 	"github.com/verdify/backend/config"
 	"github.com/verdify/backend/db"
 	"github.com/verdify/backend/models"
@@ -73,6 +74,7 @@ func newTestApp(fetcher routes.RouteFetcher, r ranker.Ranker) *App {
 		Ranker:    r,
 		Builder:   routes.NewCandidateBuilder(fetcher),
 		Places:    fakePlaces{},
+		Auth:      auth.New(nil, "uid_test_bypass"),
 		StartTime: services.NowUTC(),
 	}
 	return app

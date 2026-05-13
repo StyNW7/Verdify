@@ -4,10 +4,12 @@ import (
 	"context"
 	"log"
 	"net/http"
-	"os"
 
+	"github.com/verdify/backend/auth"
 	"github.com/verdify/backend/config"
+	fbpkg "github.com/verdify/backend/firebase"
 	"github.com/verdify/backend/handlers"
+	"github.com/verdify/backend/models"
 	"github.com/verdify/backend/services/ranker"
 
 	"github.com/joho/godotenv"
@@ -23,12 +25,27 @@ func main() {
 
 	app := handlers.New(cfg)
 
-	if devUserID := os.Getenv("DEV_USER_ID"); devUserID != "" {
-		if err := app.Store.SeedDevUser(devUserID); err != nil {
-			log.Printf("seed dev user %q failed: %v", devUserID, err)
+	// Wire Firebase Admin SDK -> auth middleware. Dev bypass takes precedence
+	// when DEV_USER_ID is set; in that mode Firebase init is best-effort.
+	if cfg.DevUserID != "" {
+		log.Printf("WARN: dev bypass active, DO NOT USE IN PROD (DEV_USER_ID=%s)", cfg.DevUserID)
+		app.Auth = auth.New(nil, cfg.DevUserID)
+
+		// Seed the dev user so booking/handler code finds it.
+		if _, _, err := app.Store.EnsureUser(context.Background(), cfg.DevUserID, models.UserProfile{
+			Email:       "dev@verdify.local",
+			DisplayName: "Dev User",
+		}); err != nil {
+			log.Printf("seed dev user %q failed: %v", cfg.DevUserID, err)
 		} else {
-			log.Printf("seeded dev user %q", devUserID)
+			log.Printf("seeded dev user %q", cfg.DevUserID)
 		}
+	} else {
+		fb, err := fbpkg.Init(context.Background(), cfg.FirebaseCredentialsJSON)
+		if err != nil {
+			log.Fatalf("firebase init: %v", err)
+		}
+		app.Auth = auth.New(auth.NewFirebaseVerifier(fb.Auth()), "")
 	}
 
 	mux := withCORS(app.Routes())

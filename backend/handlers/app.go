@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/verdify/backend/auth"
 	"github.com/verdify/backend/config"
 	"github.com/verdify/backend/db"
 	"github.com/verdify/backend/models"
@@ -27,6 +28,7 @@ type App struct {
 	RoutesClient *routes.Client
 	Places       places.PlacesAPI
 	Geocoding    *geocoding.Client
+	Auth         *auth.Middleware
 	StartTime    time.Time
 }
 
@@ -43,6 +45,7 @@ func New(cfg config.Config) *App {
 		RoutesClient: routesClient,
 		Places:       places.NewClient(cfg.GoogleMapsAPIKey),
 		Geocoding:    geocoding.NewClient(cfg.GoogleMapsAPIKey),
+		Auth:         auth.New(nil, cfg.DevUserID),
 		StartTime:    services.NowUTC(),
 	}
 	app.RerouteAgent = ranker.NewRerouteAgent(cfg, geminiRanker, store, builder)
@@ -51,21 +54,31 @@ func New(cfg config.Config) *App {
 
 func (app *App) Routes() *http.ServeMux {
 	mux := http.NewServeMux()
+	mw := app.Auth
+	if mw == nil {
+		// Tests that construct App by hand may not wire middleware. Use a
+		// permissive bypass so they keep working without touching every fixture.
+		mw = auth.New(nil, "test_bypass")
+	}
+
+	// Public.
 	mux.HandleFunc("GET /health", app.healthHandler)
-	mux.HandleFunc("POST /api/v1/auth/register", app.registerHandler)
-	mux.HandleFunc("POST /api/v1/auth/login", app.loginHandler)
 	mux.HandleFunc("POST /api/v1/routes/calculate", app.calculateRouteHandler)
-	mux.HandleFunc("POST /api/v1/bookings/create", app.createBookingHandler)
-	mux.HandleFunc("POST /api/v1/bookings/{id}/pay", app.payBookingHandler)
-	mux.HandleFunc("POST /api/v1/bookings/{id}/verify", app.verifyBookingHandler)
-	mux.HandleFunc("GET /api/v1/bookings/{id}", app.getBookingHandler)
-	mux.HandleFunc("POST /api/v1/bookings/{id}/cancel", app.cancelBookingHandler)
-	mux.HandleFunc("GET /api/v1/user/{userId}/green-points", app.getUserGreenPointsHandler)
-	mux.HandleFunc("GET /api/v1/user/{userId}/bookings", app.getUserBookingsHandler)
-	mux.HandleFunc("POST /api/v1/bookings/{id}/reroute", app.rerouteBookingHandler)
 	mux.HandleFunc("GET /api/v1/geocode", app.geocodeHandler)
 	mux.HandleFunc("GET /api/v1/places/autocomplete", app.placesAutocompleteHandler)
 	mux.HandleFunc("GET /api/v1/places/details", app.placeDetailsHandler)
+
+	// Protected — wrapped in auth middleware.
+	mux.Handle("POST /auth/sync", mw.Wrap(http.HandlerFunc(app.authSyncHandler)))
+	mux.Handle("POST /api/v1/bookings/create", mw.Wrap(http.HandlerFunc(app.createBookingHandler)))
+	mux.Handle("POST /api/v1/bookings/{id}/pay", mw.Wrap(http.HandlerFunc(app.payBookingHandler)))
+	mux.Handle("POST /api/v1/bookings/{id}/verify", mw.Wrap(http.HandlerFunc(app.verifyBookingHandler)))
+	mux.Handle("GET /api/v1/bookings/{id}", mw.Wrap(http.HandlerFunc(app.getBookingHandler)))
+	mux.Handle("POST /api/v1/bookings/{id}/cancel", mw.Wrap(http.HandlerFunc(app.cancelBookingHandler)))
+	mux.Handle("POST /api/v1/bookings/{id}/reroute", mw.Wrap(http.HandlerFunc(app.rerouteBookingHandler)))
+	mux.Handle("GET /api/v1/user/{userId}/green-points", mw.Wrap(http.HandlerFunc(app.getUserGreenPointsHandler)))
+	mux.Handle("GET /api/v1/user/{userId}/bookings", mw.Wrap(http.HandlerFunc(app.getUserBookingsHandler)))
+
 	return mux
 }
 
@@ -118,4 +131,3 @@ func bookingExpiresAt(t time.Time) time.Time {
 func newID(prefix string) string {
 	return prefix + uuid.NewString()
 }
-

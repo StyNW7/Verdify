@@ -1,49 +1,72 @@
 package db
 
-import "testing"
+import (
+	"context"
+	"testing"
 
-func TestSeedDevUserCreatesWhenMissing(t *testing.T) {
+	"github.com/verdify/backend/models"
+)
+
+func TestEnsureUser_CreatesWhenMissing(t *testing.T) {
 	s := NewStore()
-	id := "usr_dev_001"
+	uid := "uid_first_signin_001"
 
-	if err := s.SeedDevUser(id); err != nil {
-		t.Fatalf("SeedDevUser returned error: %v", err)
+	u, created, err := s.EnsureUser(context.Background(), uid, models.UserProfile{
+		Email:       "first@example.com",
+		DisplayName: "First Signin",
+		PhotoURL:    "https://example.com/avatar.png",
+	})
+	if err != nil {
+		t.Fatalf("EnsureUser err: %v", err)
+	}
+	if !created {
+		t.Fatalf("created = false; want true on first ensure")
+	}
+	if u.ID != uid {
+		t.Fatalf("uid = %q want %q", u.ID, uid)
+	}
+	if u.Email != "first@example.com" || u.DisplayName != "First Signin" || u.PhotoURL == "" {
+		t.Fatalf("profile fields not persisted: %+v", u)
+	}
+	if u.CreatedAt.IsZero() {
+		t.Fatalf("CreatedAt must be populated")
 	}
 
-	u, ok := s.GetUser(id)
+	got, ok := s.GetUser(context.Background(), uid)
 	if !ok {
-		t.Fatalf("expected GetUser(%q) to return a user after seeding", id)
+		t.Fatalf("GetUser missing after ensure")
 	}
-	if u.ID != id {
-		t.Fatalf("seeded user id = %q, want %q", u.ID, id)
-	}
-	if u.Email == "" {
-		t.Fatalf("seeded user should have a placeholder email, got empty")
+	if got.ID != uid {
+		t.Fatalf("GetUser uid = %q want %q", got.ID, uid)
 	}
 }
 
-func TestSeedDevUserIsIdempotent(t *testing.T) {
+func TestEnsureUser_IsIdempotent_PreservesCounters(t *testing.T) {
 	s := NewStore()
-	id := "usr_dev_001"
+	ctx := context.Background()
+	uid := "uid_repeat_002"
 
-	if err := s.SeedDevUser(id); err != nil {
-		t.Fatalf("first SeedDevUser returned error: %v", err)
-	}
-	if err := s.SeedDevUser(id); err != nil {
-		t.Fatalf("second SeedDevUser returned error: %v", err)
+	if _, created, err := s.EnsureUser(ctx, uid, models.UserProfile{Email: "u@example.com"}); err != nil || !created {
+		t.Fatalf("first ensure: created=%v err=%v", created, err)
 	}
 
-	if _, ok := s.GetUser(id); !ok {
-		t.Fatalf("expected user to still exist after repeat seeding")
-	}
-}
+	// Award points so we can prove EnsureUser doesn't reset them.
+	s.ApplyCompletedTrip(ctx, uid, 50, 1200.0)
 
-func TestSeedDevUserEmptyIDIsNoop(t *testing.T) {
-	s := NewStore()
-	if err := s.SeedDevUser(""); err != nil {
-		t.Fatalf("SeedDevUser(\"\") should be a no-op, got error: %v", err)
+	u2, created, err := s.EnsureUser(ctx, uid, models.UserProfile{
+		Email:       "u-renamed@example.com",
+		DisplayName: "Renamed",
+	})
+	if err != nil {
+		t.Fatalf("second ensure err: %v", err)
 	}
-	if _, ok := s.GetUser(""); ok {
-		t.Fatalf("empty id should not create a user")
+	if created {
+		t.Fatalf("created should be false on repeat ensure")
+	}
+	if u2.GreenPoints != 50 || u2.TotalTrips != 1 {
+		t.Fatalf("counters wiped on repeat ensure: %+v", u2)
+	}
+	if u2.Email != "u-renamed@example.com" || u2.DisplayName != "Renamed" {
+		t.Fatalf("profile not refreshed: %+v", u2)
 	}
 }
