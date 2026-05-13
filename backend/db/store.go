@@ -4,6 +4,7 @@ import (
 	"errors"
 	"sort"
 	"sync"
+	"time"
 
 	"github.com/verdify/backend/models"
 )
@@ -117,6 +118,29 @@ func (s *Store) ListUserBookings(userID, status string, limit, offset int) ([]mo
 		end = total
 	}
 	return all[offset:end], total
+}
+
+func (s *Store) SeedDevUser(id string) error {
+	if id == "" {
+		return nil
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if _, ok := s.users[id]; ok {
+		return nil
+	}
+	email := "dev@verdify.local"
+	if existing, taken := s.emails[email]; taken && existing != id {
+		email = id + "@verdify.local"
+	}
+	s.users[id] = models.User{
+		ID:        id,
+		Email:     email,
+		Phone:     "+0000000000",
+		CreatedAt: time.Now().UTC(),
+	}
+	s.emails[email] = id
+	return nil
 }
 
 func (s *Store) ApplyCompletedTrip(userID string, points int, carbonSaved float64) {

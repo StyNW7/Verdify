@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, NavLink, Outlet, useLocation } from 'react-router';
+import { Link, Navigate, NavLink, Outlet, useLocation } from 'react-router';
 import { LoadingScreen } from '@/components/loading-screen';
 import { getLastPath } from '@/utility/nav-history';
+import { parseAuthRequired, resolveAuthGuard } from '@/lib/auth-guard';
+import { getUserIdFromSession } from '@/lib/session';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ChevronsLeft,
@@ -54,6 +56,20 @@ const isAuthedPath = (p: string) =>
   p.startsWith('/profile');
 
 export default function AuthedLayout() {
+  const { pathname, search } = useLocation();
+  const guard = resolveAuthGuard({
+    authRequired: parseAuthRequired(import.meta.env.VITE_AUTH_REQUIRED),
+    sessionUserId: getUserIdFromSession(),
+    devUserId: import.meta.env.VITE_DEV_USER_ID ?? '',
+    pathname: pathname + search,
+  });
+  if ('redirectTo' in guard) {
+    return <Navigate to={guard.redirectTo} replace />;
+  }
+  return <AuthedShell />;
+}
+
+function AuthedShell() {
   const { pathname } = useLocation();
   const [expanded, setExpanded] = useState<boolean>(() => {
     if (typeof window === 'undefined') return true;
