@@ -50,19 +50,36 @@ type Route struct {
 }
 
 type Booking struct {
-	ID               string      `json:"bookingId"`
-	UserID           string      `json:"userId"`
-	RouteID          string      `json:"routeId"`
-	RouteSnapshot    RouteOption `json:"routeSnapshot"`
-	Passengers       int         `json:"passengers"`
-	Status           string      `json:"status"`
-	QRCode           string      `json:"qrCode"`
-	BookingReference string      `json:"bookingReference"`
-	EstimatedPoints  int         `json:"estimatedPoints"`
-	ActualPoints     int         `json:"actualPoints"`
-	PaymentStatus    string      `json:"paymentStatus"`
-	CreatedAt        time.Time   `json:"createdAt"`
-	CompletedAt      *time.Time  `json:"completedAt,omitempty"`
+	ID               string         `json:"bookingId"`
+	UserID           string         `json:"userId"`
+	RouteID          string         `json:"routeId"`
+	ActiveRouteID    string         `json:"activeRouteId"`
+	RouteSnapshot    RouteOption    `json:"routeSnapshot"`
+	Passengers       int            `json:"passengers"`
+	Status           string         `json:"status"`
+	QRCode           string         `json:"qrCode"`
+	BookingReference string         `json:"bookingReference"`
+	EstimatedPoints  int            `json:"estimatedPoints"`
+	ActualPoints     int            `json:"actualPoints"`
+	PaymentStatus    string         `json:"paymentStatus"`
+	RerouteHistory   []RerouteEvent `json:"rerouteHistory"`
+	CreatedAt        time.Time      `json:"createdAt"`
+	CompletedAt      *time.Time     `json:"completedAt,omitempty"`
+}
+
+// RerouteEvent records one "I missed my stop" trigger on a booking.
+type RerouteEvent struct {
+	Ts           time.Time `json:"ts"`
+	FromLocation Location  `json:"fromLocation"`
+	Reason       string    `json:"reason"`
+	Action       string    `json:"action"` // "reroute" | "wait_and_continue" | "abort"
+	NewRouteID   string    `json:"newRouteId,omitempty"`
+	AgentSource  string    `json:"agentSource"` // "gemini" | "fallback" | "cap"
+}
+
+type RerouteRequest struct {
+	CurrentLocation Location `json:"currentLocation"`
+	Reason          string   `json:"reason,omitempty"` // "missed_stop" | "missed_connection" | "stuck"
 }
 
 type User struct {
@@ -126,14 +143,14 @@ type VerifyRequest struct {
 type RouteCandidate struct {
 	ID            string
 	Label         string
-	Mode          string  // "fast" | "eco" | "cheap"
+	Mode          string // "fast" | "eco" | "cheap"
 	TotalDistance float64
 	TotalDuration int
 	TotalCarbon   float64
 	Congestion    float64
 	Steps         []TransportSegment
-	Polyline      string  // empty when DataSource = fallback_synthetic without override
-	DataSource    string  // "google_routes" | "fallback_synthetic"
+	Polyline      string // empty when DataSource = fallback_synthetic without override
+	DataSource    string // "google_routes" | "fallback_synthetic"
 }
 
 // RouteOption is the public, per-mode response object returned inside

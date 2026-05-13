@@ -144,6 +144,30 @@ export function calculateRoute(payload: CalculateRoutePayload) {
   });
 }
 
+// ── Reroute ───────────────────────────────────────────────────────────────────
+
+export type ReroutePayload = {
+  currentLocation: { latitude: number; longitude: number };
+  reason?: 'missed_stop' | 'missed_connection' | 'stuck';
+};
+
+export type RerouteResult = {
+  action: 'reroute' | 'wait_and_continue' | 'abort';
+  userMessage: string;
+  newRoute: BackendRouteOption | null;
+  reasoning: string;
+  agentSource: 'gemini' | 'fallback' | 'cap';
+};
+
+export function rerouteBooking(bookingId: string, payload: ReroutePayload) {
+  return apiRequest<RerouteResult>(`/api/v1/bookings/${encodeURIComponent(bookingId)}/reroute`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
+// ── Geocode / Places ──────────────────────────────────────────────────────────
+
 // Legacy geocode endpoint — still supported as a fallback for the autocomplete hook.
 export type GeocodeSuggestion = {
   formattedAddress: string;

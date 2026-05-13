@@ -8,6 +8,7 @@ type Config struct {
 	VertexProjectID  string
 	VertexLocation   string
 	GeminiModel      string
+	GeminiAgentModel string // reroute agent model; defaults to gemini-2.5-flash
 	GoogleMapsAPIKey string
 }
 
@@ -16,6 +17,10 @@ func Load() Config {
 	if model != "" && !containsSlash(model) {
 		model = "vertexai/" + model
 	}
+	agentModel := getenv("GEMINI_AGENT_MODEL", "vertexai/gemini-2.5-flash")
+	if agentModel != "" && !containsSlash(agentModel) {
+		agentModel = "vertexai/" + agentModel
+	}
 
 	return Config{
 		Port:             getenv("PORT", "8080"),
@@ -23,6 +28,7 @@ func Load() Config {
 		VertexProjectID:  getenv("VERTEX_PROJECT_ID", ""),
 		VertexLocation:   getenv("VERTEX_LOCATION", "us-central1"),
 		GeminiModel:      model,
+		GeminiAgentModel: agentModel,
 		GoogleMapsAPIKey: getenv("GOOGLE_MAPS_API_KEY", ""),
 	}
 }

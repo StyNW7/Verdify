@@ -20,8 +20,9 @@ import (
 
 type App struct {
 	Cfg          config.Config
-	Store        *db.Store
+	Store        db.Store
 	Ranker       ranker.Ranker
+	RerouteAgent *ranker.RerouteAgent
 	Builder      *routes.CandidateBuilder
 	RoutesClient *routes.Client
 	Places       places.PlacesAPI
@@ -31,16 +32,21 @@ type App struct {
 
 func New(cfg config.Config) *App {
 	routesClient := routes.NewClient(cfg.GoogleMapsAPIKey)
-	return &App{
+	builder := routes.NewCandidateBuilder(routesClient)
+	store := db.NewMemoryStore()
+	geminiRanker := ranker.New(cfg)
+	app := &App{
 		Cfg:          cfg,
-		Store:        db.NewStore(),
-		Ranker:       ranker.New(cfg),
-		Builder:      routes.NewCandidateBuilder(routesClient),
+		Store:        store,
+		Ranker:       geminiRanker,
+		Builder:      builder,
 		RoutesClient: routesClient,
 		Places:       places.NewClient(cfg.GoogleMapsAPIKey),
 		Geocoding:    geocoding.NewClient(cfg.GoogleMapsAPIKey),
 		StartTime:    services.NowUTC(),
 	}
+	app.RerouteAgent = ranker.NewRerouteAgent(cfg, geminiRanker, store, builder)
+	return app
 }
 
 func (app *App) Routes() *http.ServeMux {
@@ -56,6 +62,7 @@ func (app *App) Routes() *http.ServeMux {
 	mux.HandleFunc("POST /api/v1/bookings/{id}/cancel", app.cancelBookingHandler)
 	mux.HandleFunc("GET /api/v1/user/{userId}/green-points", app.getUserGreenPointsHandler)
 	mux.HandleFunc("GET /api/v1/user/{userId}/bookings", app.getUserBookingsHandler)
+	mux.HandleFunc("POST /api/v1/bookings/{id}/reroute", app.rerouteBookingHandler)
 	mux.HandleFunc("GET /api/v1/geocode", app.geocodeHandler)
 	mux.HandleFunc("GET /api/v1/places/autocomplete", app.placesAutocompleteHandler)
 	mux.HandleFunc("GET /api/v1/places/details", app.placeDetailsHandler)
