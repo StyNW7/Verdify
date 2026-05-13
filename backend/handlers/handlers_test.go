@@ -474,6 +474,66 @@ func TestCancelBookingHandler_RejectsCompletedBooking(t *testing.T) {
 	}
 }
 
+func TestGetUserHandler_HappyPath(t *testing.T) {
+	uid := "uid_getuser_happy"
+	app := newAppWithBypassUser(t, uid, "getuser@verdify.dev")
+	mux := app.Routes()
+
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodGet, "/api/v1/user/"+uid, nil))
+	if rr.Code != http.StatusOK {
+		t.Fatalf("want 200 got %d body=%s", rr.Code, rr.Body.String())
+	}
+	var env models.APIResponse
+	_ = json.Unmarshal(rr.Body.Bytes(), &env)
+	data, _ := env.Data.(map[string]any)
+	if data == nil {
+		t.Fatalf("response has no data envelope: %s", rr.Body.String())
+	}
+	if gotUID, _ := data["userId"].(string); gotUID != uid {
+		t.Fatalf("userId = %q want %q", gotUID, uid)
+	}
+	if gotEmail, _ := data["email"].(string); gotEmail != "getuser@verdify.dev" {
+		t.Fatalf("email = %q want %q", gotEmail, "getuser@verdify.dev")
+	}
+}
+
+func TestGetUserHandler_MissingUser_Returns404(t *testing.T) {
+	app := newAppWithBypassUser(t, "uid_requester", "req@verdify.dev")
+	mux := app.Routes()
+
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodGet, "/api/v1/user/uid_requester", nil))
+	// The bypass sets uid_requester but no matching store doc was seeded; however
+	// newAppWithBypassUser seeds the user, so let's test a truly unseeded uid.
+	// We need a fresh app with a bypass uid that's NOT seeded.
+	app2 := New(config.Load())
+	app2.Auth = auth.New(nil, "uid_unseeded")
+	mux2 := app2.Routes()
+
+	rr2 := httptest.NewRecorder()
+	mux2.ServeHTTP(rr2, httptest.NewRequest(http.MethodGet, "/api/v1/user/uid_unseeded", nil))
+	if rr2.Code != http.StatusNotFound {
+		t.Fatalf("want 404 got %d body=%s", rr2.Code, rr2.Body.String())
+	}
+}
+
+func TestGetUserHandler_UidMismatch_Returns403(t *testing.T) {
+	// Real auth: token uid "uid_other" does not match path uid "uid_target".
+	// Use the shared stubVerifier with identity uid_other.
+	app := New(config.Load())
+	app.Auth = auth.New(&stubVerifier{id: &auth.Identity{UID: "uid_other"}}, "")
+	mux := app.Routes()
+
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/user/uid_target", nil)
+	req.Header.Set("Authorization", "Bearer fake_token")
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, req)
+	if rr.Code != http.StatusForbidden {
+		t.Fatalf("want 403 got %d body=%s", rr.Code, rr.Body.String())
+	}
+}
+
 func TestBatchedCalculate_ReturnsThreeOptionsInFixedOrder(t *testing.T) {
 	app := New(config.Load())
 	mux := app.Routes()
