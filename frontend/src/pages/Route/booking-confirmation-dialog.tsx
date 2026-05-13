@@ -15,9 +15,15 @@ import {
 } from 'lucide-react';
 
 import { createBookingSummary } from './booking-summary';
+import { QrCard } from './qr-card';
 import type { PlannerState, RouteOption } from './shared';
 import { createBookingDraft, type ConfirmedBooking } from '@/lib/booking-draft';
-import { createBooking, ApiError, type BackendRouteOption } from '@/lib/api';
+import { createBooking, ApiError, type BackendRouteOption, type BackendTransportSegment } from '@/lib/api';
+import {
+  buildBookingCostBreakdown,
+  isBookableStep,
+  type BookingCostBreakdown,
+} from '@/lib/booking-cost-breakdown';
 import { useBookingUserId } from '@/hooks/useBookingUserId';
 
 const EASE = [0.2, 0.7, 0.2, 1] as const;
@@ -37,6 +43,10 @@ type BookingConfirmationDialogProps = BookingProps & {
 
 export function BookingActionBar({ state, route, onBook }: BookingActionBarProps) {
   const summary = getBookingSummary(state, route);
+  const bookable = countBookableLegs(route.backendOption);
+  const primaryLabel = bookable > 0 ? 'Book route' : 'Save trip';
+  const primaryLabelShort = bookable > 0 ? 'Book' : 'Save';
+  const primaryDisabled = !route.backendOption;
 
   return (
     <motion.div
@@ -86,11 +96,13 @@ export function BookingActionBar({ state, route, onBook }: BookingActionBarProps
         <button
           type="button"
           onClick={onBook}
-          className="theme-btn-primary theme-action-bar-primary sm:w-auto"
+          disabled={primaryDisabled}
+          aria-disabled={primaryDisabled || undefined}
+          className="theme-btn-primary theme-action-bar-primary sm:w-auto disabled:cursor-not-allowed disabled:opacity-50"
         >
           <span className="theme-action-label">
-            <span className="sm:hidden">Book</span>
-            <span className="hidden sm:inline">Book route</span>
+            <span className="sm:hidden">{primaryLabelShort}</span>
+            <span className="hidden sm:inline">{primaryLabel}</span>
           </span>
           <ArrowRight size={14} />
         </button>
@@ -113,6 +125,9 @@ export function BookingConfirmationDialog({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const snapshotSource: BackendRouteOption | undefined = route.backendOption;
+  const bookableLegCount = countBookableLegs(snapshotSource);
+  const confirmLabel = bookableLegCount > 0 ? 'Confirm booking' : 'Save trip';
+  const confirmLabelShort = bookableLegCount > 0 ? 'Confirm' : 'Save';
 
   const handleConfirm = async () => {
     if (!userId) {
@@ -332,11 +347,7 @@ export function BookingConfirmationDialog({
 
             <div className="flex flex-1 flex-col gap-4 px-4 pb-0 pt-4 sm:gap-7 sm:px-7 sm:pb-8 sm:pt-6 md:px-10 md:pb-10 md:pt-8">
               {phase === 'confirmed' && confirmed ? (
-                <ConfirmedPane
-                  booking={confirmed}
-                  totalPrice={summary.totalPrice}
-                  onClose={onCancel}
-                />
+                <ConfirmedPane booking={confirmed} onClose={onCancel} />
               ) : (
                 <>
                   <div>
@@ -460,8 +471,8 @@ export function BookingConfirmationDialog({
                       ) : (
                         <>
                           <span className="theme-action-label">
-                            <span className="sm:hidden">Confirm</span>
-                            <span className="hidden sm:inline">Confirm booking</span>
+                            <span className="sm:hidden">{confirmLabelShort}</span>
+                            <span className="hidden sm:inline">{confirmLabel}</span>
                           </span>
                           <CircleCheck size={14} />
                         </>
@@ -577,13 +588,15 @@ function PlainDetail({ label, value }: { label: string; value: string }) {
 
 function ConfirmedPane({
   booking,
-  totalPrice,
   onClose,
 }: {
   booking: ConfirmedBooking;
-  totalPrice: string;
   onClose: () => void;
 }) {
+  const steps = booking.routeSnapshot.steps;
+  const breakdown = buildBookingCostBreakdown(steps);
+  const hasBookable = breakdown.reserved.length > 0;
+
   return (
     <div className="flex flex-1 flex-col gap-6">
       <div className="flex items-center gap-3">
@@ -610,35 +623,51 @@ function ConfirmedPane({
         </div>
       </div>
 
-      <div
-        className="rounded-[16px] p-4 sm:rounded-[18px] sm:p-5"
-        style={{
-          background: 'var(--theme-surface-muted)',
-          border: '1px solid var(--theme-border)',
-        }}
-      >
-        <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
-          Status
+      {hasBookable && (
+        <div className="flex flex-col gap-3">
+          <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
+            § Bookable legs — show at boarding
+          </div>
+          {breakdown.reserved.map((entry) => (
+            <QrCard
+              key={`qr-${entry.leg}`}
+              legLabel={buildLegLabel(steps[entry.leg], entry.label)}
+              cost={entry.cost}
+              bookingReference={booking.bookingReference}
+            />
+          ))}
         </div>
-        <div className="mt-1 text-[0.95rem]" style={{ color: 'var(--theme-fg)' }}>
-          Confirmed · awaiting payment
-        </div>
-      </div>
+      )}
 
-      <div
-        className="flex flex-col gap-1 border-y py-4 sm:py-5"
-        style={{ borderColor: 'var(--theme-border)' }}
-      >
-        <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
-          Trip total
-        </div>
+      {breakdown.tapIn.length > 0 && (
         <div
-          className="theme-display"
-          style={{ color: 'var(--theme-fg)', fontSize: 'clamp(2rem, 4vw, 3rem)' }}
+          className="rounded-[16px] p-4 sm:rounded-[18px] sm:p-5"
+          style={{
+            background: 'var(--theme-surface-muted)',
+            border: '1px solid var(--theme-border)',
+          }}
         >
-          {totalPrice}
+          <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
+            Tap-in fares · pay on boarding
+          </div>
+          <ul className="mt-3 flex flex-col gap-2">
+            {breakdown.tapIn.map((entry) => (
+              <li
+                key={`tap-${entry.leg}`}
+                className="flex items-center justify-between gap-3 text-[0.95rem]"
+                style={{ color: 'var(--theme-fg)' }}
+              >
+                <span className="truncate">{entry.label}</span>
+                <span className="theme-mono-sm shrink-0" style={{ color: 'var(--theme-fg-muted)' }}>
+                  RM {entry.cost.toFixed(2)}
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
-      </div>
+      )}
+
+      <CostSummary breakdown={breakdown} grandTotal={booking.routeSnapshot.estimatedCost} />
 
       <div
         className="theme-action-bar sticky bottom-0 -mx-4 mt-auto px-4 py-4 sm:static sm:mx-0 sm:p-0"
@@ -659,4 +688,57 @@ function ConfirmedPane({
       </div>
     </div>
   );
+}
+
+function CostSummary({
+  breakdown,
+  grandTotal,
+}: {
+  breakdown: BookingCostBreakdown;
+  grandTotal: number;
+}) {
+  return (
+    <div
+      className="flex flex-col gap-2 border-y py-4 sm:py-5"
+      style={{ borderColor: 'var(--theme-border)' }}
+    >
+      <div className="flex items-center justify-between text-[0.95rem]" style={{ color: 'var(--theme-fg)' }}>
+        <span style={{ color: 'var(--theme-fg-muted)' }}>Reserved fares</span>
+        <span className="theme-mono-sm">RM {breakdown.reservedTotal.toFixed(2)}</span>
+      </div>
+      <div className="flex items-center justify-between text-[0.95rem]" style={{ color: 'var(--theme-fg)' }}>
+        <span style={{ color: 'var(--theme-fg-muted)' }}>Tap-in fares</span>
+        <span className="theme-mono-sm">RM {breakdown.tapInTotal.toFixed(2)}</span>
+      </div>
+      <div className="mt-1 flex items-baseline justify-between">
+        <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
+          Total
+        </span>
+        <span
+          className="theme-display"
+          style={{ color: 'var(--theme-fg)', fontSize: 'clamp(1.6rem, 3.5vw, 2.4rem)' }}
+        >
+          RM {grandTotal.toFixed(2)}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function buildLegLabel(step: BackendTransportSegment | undefined, fallback: string): string {
+  if (!step) return fallback;
+  const prefix =
+    step.type === 'ev_taxi' || step.type === 'evTaxi'
+      ? 'EV Taxi'
+      : step.transitLine?.trim() || fallback;
+  const from = step.departureStop?.trim();
+  const to = step.arrivalStop?.trim() || step.headsign?.trim();
+  if (from && to) return `${prefix} · ${from} → ${to}`;
+  if (to) return `${prefix} → ${to}`;
+  return prefix;
+}
+
+function countBookableLegs(option: BackendRouteOption | undefined): number {
+  if (!option) return 0;
+  return option.steps.reduce((acc, step) => (isBookableStep(step.type) ? acc + 1 : acc), 0);
 }

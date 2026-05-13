@@ -27,3 +27,21 @@ test('booking confirmation dialog uses a compact mobile layout', () => {
   assert.match(dialogSource, /sticky bottom-0/);
   assert.match(dialogSource, /sm:hidden/);
 });
+
+test('action bar primary button is disabled when route has no backendOption', () => {
+  // The primary "Book" button must be disabled when route.backendOption is
+  // undefined, otherwise the click handler errors with "not produced by the
+  // planner".
+  assert.match(dialogSource, /primaryDisabled = !route\.backendOption/);
+  assert.match(dialogSource, /disabled=\{primaryDisabled\}/);
+});
+
+test('confirmed pane headline total uses route.estimatedCost, not the breakdown sum', () => {
+  // The review pane shows route.estimatedCost via summary.totalPrice; the
+  // confirmed pane must use the same authoritative number so the user does not
+  // see a different total after confirming.
+  assert.match(
+    dialogSource,
+    /routeSnapshot\.estimatedCost/,
+  );
+});
