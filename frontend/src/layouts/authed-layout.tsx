@@ -75,6 +75,7 @@ export default function AuthedLayout() {
 
 function AuthedShell() {
   const { pathname } = useLocation();
+  const { user, signOut } = useAuth();
   const [expanded, setExpanded] = useState<boolean>(() => {
     if (typeof window === 'undefined') return true;
     const v = window.localStorage.getItem('verdify:sidebar');
@@ -82,6 +83,16 @@ function AuthedShell() {
   });
 
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+  const profileName = user?.displayName?.trim() || user?.email || 'Verdify member';
+  const profileInitials = profileName
+    .split(/\s+/)
+    .map((part) => part[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join('')
+    .toUpperCase() || 'V';
+  const profileSubtitle = user?.email && user.email !== profileName ? user.email : 'Verdify member';
 
   useEffect(() => {
     setMobileNavOpen(false);
@@ -243,17 +254,26 @@ function AuthedShell() {
               <div
                 className={`flex items-center ${expanded ? 'gap-3 px-2' : 'justify-center'}`}
               >
-                <div
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[0.72rem] font-medium"
-                  style={{
-                    background: 'var(--theme-accent-soft)',
-                    color: 'var(--theme-accent)',
-                    border: '1px solid var(--theme-accent-muted)',
-                    letterSpacing: '0.04em',
-                  }}
-                >
-                  SR
-                </div>
+                {user?.photoURL ? (
+                  <img
+                    src={user.photoURL}
+                    alt=""
+                    className="h-9 w-9 shrink-0 rounded-full object-cover"
+                    style={{ border: '1px solid var(--theme-accent-muted)' }}
+                  />
+                ) : (
+                  <div
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[0.72rem] font-medium"
+                    style={{
+                      background: 'var(--theme-accent-soft)',
+                      color: 'var(--theme-accent)',
+                      border: '1px solid var(--theme-accent-muted)',
+                      letterSpacing: '0.04em',
+                    }}
+                  >
+                    {profileInitials}
+                  </div>
+                )}
                 <AnimatePresence initial={false}>
                   {expanded && (
                     <motion.div
@@ -268,13 +288,13 @@ function AuthedShell() {
                         className="truncate text-[0.82rem]"
                         style={{ color: 'var(--theme-fg)' }}
                       >
-                        Stanley Wijaya
+                        {profileName}
                       </p>
                       <p
                         className="theme-mono-sm truncate"
                         style={{ color: 'var(--theme-fg-dim)' }}
                       >
-                        Commuter · JB
+                        {profileSubtitle}
                       </p>
                     </motion.div>
                   )}
@@ -284,6 +304,7 @@ function AuthedShell() {
                     <motion.button
                       key="signout"
                       type="button"
+                      onClick={() => { void signOut(); }}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
@@ -468,33 +489,43 @@ function AuthedShell() {
                       style={{ borderColor: 'var(--theme-border)' }}
                     >
                       <div className="flex items-center gap-3">
-                        <div
-                          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[0.72rem] font-medium"
-                          style={{
-                            background: 'var(--theme-accent-soft)',
-                            color: 'var(--theme-accent)',
-                            border: '1px solid var(--theme-accent-muted)',
-                            letterSpacing: '0.04em',
-                          }}
-                        >
-                          SR
-                        </div>
+                        {user?.photoURL ? (
+                          <img
+                            src={user.photoURL}
+                            alt=""
+                            className="h-9 w-9 shrink-0 rounded-full object-cover"
+                            style={{ border: '1px solid var(--theme-accent-muted)' }}
+                          />
+                        ) : (
+                          <div
+                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[0.72rem] font-medium"
+                            style={{
+                              background: 'var(--theme-accent-soft)',
+                              color: 'var(--theme-accent)',
+                              border: '1px solid var(--theme-accent-muted)',
+                              letterSpacing: '0.04em',
+                            }}
+                          >
+                            {profileInitials}
+                          </div>
+                        )}
                         <div className="min-w-0 flex-1">
                           <p
                             className="truncate text-[0.82rem]"
                             style={{ color: 'var(--theme-fg)' }}
                           >
-                            Stanley Wijaya
+                            {profileName}
                           </p>
                           <p
                             className="theme-mono-sm truncate"
                             style={{ color: 'var(--theme-fg-dim)' }}
                           >
-                            Commuter · JB
+                            {profileSubtitle}
                           </p>
                         </div>
                         <button
                           type="button"
+                          onClick={() => { void signOut(); }}
                           className="inline-flex h-9 w-9 items-center justify-center rounded-full"
                           style={{
                             border: '1px solid var(--theme-border)',
