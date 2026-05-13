@@ -1,14 +1,17 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/verdify/backend/auth"
+	"github.com/verdify/backend/db"
 	"github.com/verdify/backend/models"
 	"github.com/verdify/backend/services"
 	"github.com/verdify/backend/services/pricing"
+	"github.com/verdify/backend/validate"
 )
 
 func (app *App) healthHandler(w http.ResponseWriter, _ *http.Request) {
@@ -232,6 +235,68 @@ func (app *App) getUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeOK(w, http.StatusOK, u)
+}
+
+func (app *App) patchUserHandler(w http.ResponseWriter, r *http.Request) {
+	userID := r.PathValue("userId")
+
+	// Read body — allow empty body (PATCH no-op semantics).
+	var rawBody []byte
+	if r.Body != nil {
+		var err error
+		rawBody, err = readBody(r)
+		if err != nil {
+			writeErr(w, http.StatusBadRequest, "failed to read request body")
+			return
+		}
+	}
+
+	patch, err := validate.ValidateUserPatch(rawBody)
+	if err != nil {
+		ve, ok := err.(*validate.ValidationError)
+		if !ok {
+			writeErr(w, http.StatusBadRequest, err.Error())
+			return
+		}
+		// Return structured validation errors.
+		writeJSON(w, http.StatusBadRequest, models.APIResponse{
+			Success: false,
+			Data:    nil,
+			Error:   map[string]any{"errors": ve.Errors},
+			Metadata: models.APIMeta{
+				Timestamp: services.NowUTC().Format("2006-01-02T15:04:05Z07:00"),
+				Version:   "v1",
+			},
+		})
+		return
+	}
+
+	u, err := app.Store.UpdateUserProfile(r.Context(), userID, patch)
+	if err != nil {
+		if err == db.ErrUserNotFound {
+			writeErr(w, http.StatusNotFound, "user not found")
+			return
+		}
+		writeErr(w, http.StatusInternalServerError, "user update failed")
+		return
+	}
+	writeOK(w, http.StatusOK, u)
+}
+
+func readBody(r *http.Request) ([]byte, error) {
+	if r.Body == nil {
+		return nil, nil
+	}
+	var raw json.RawMessage
+	if err := json.NewDecoder(r.Body).Decode(&raw); err != nil {
+		// json.Decoder treats EOF on an empty stream as io.EOF which is not a
+		// JSON syntax error. We surface actual decode errors; empty body is fine.
+		if err.Error() == "EOF" {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return raw, nil
 }
 
 func (app *App) getUserBookingsHandler(w http.ResponseWriter, r *http.Request) {
