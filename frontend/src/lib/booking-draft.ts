@@ -21,6 +21,7 @@ export type ConfirmedBooking = {
   routeSnapshot: BackendRouteOption;
   passengers: number;
   estimatedPoints: number;
+  actualPoints?: number;
   paymentStatus: string;
   createdAt?: string;
 };
