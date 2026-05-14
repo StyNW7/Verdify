@@ -1126,8 +1126,14 @@ function JourneyPane({
   // coordinate by default ("I missed this stop") — but the user can flip to
   // device GPS ("I'm somewhere else"). Step coords are exposed on
   // routeSnapshot.steps[i].startLocation.
+  // Reroute agent must receive the last server-confirmed step, not the
+  // optimistic mirror that may have advanced before the debounced PATCH lands.
+  const persistedStepIndex = total === 0 ? 0 : Math.min(
+    booking.journeyProgress?.currentStepIndex ?? 0,
+    total - 1,
+  );
   const currentStepLocation: BackendLocation | null =
-    booking.routeSnapshot.steps[safeIndex]?.startLocation ?? null;
+    booking.routeSnapshot.steps[persistedStepIndex]?.startLocation ?? null;
   const [locationSource, setLocationSource] = useState<'stop' | 'gps'>('stop');
   const [gpsFetching, setGpsFetching] = useState(false);
   const canMissStop =
