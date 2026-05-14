@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"strings"
-	"time"
 
 	"cloud.google.com/go/firestore"
 	"firebase.google.com/go/v4/auth"
@@ -35,12 +34,12 @@ type WipeResult struct {
 // Two-phase intent: callers typically run Wipe and then Run, so the
 // IsEmailAlreadyExists short-circuit in Run no longer triggers and every
 // persona is re-created with fresh data.
-func Wipe(ctx context.Context, authClient *auth.Client, fs *firestore.Client, personas []Persona, _ time.Time) []WipeResult {
+func Wipe(ctx context.Context, authClient *auth.Client, fs *firestore.Client) []WipeResult {
 	users := fs.Collection("users")
 	bookings := fs.Collection("bookings")
 
-	results := make([]WipeResult, 0, len(personas))
-	for _, p := range personas {
+	results := make([]WipeResult, 0, len(Personas))
+	for _, p := range Personas {
 		results = append(results, wipePersona(ctx, authClient, fs, users, bookings, p))
 	}
 	return results
