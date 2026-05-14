@@ -9,7 +9,19 @@ import (
 	"github.com/verdify/backend/models"
 )
 
-const bookingsPerPersona = 12
+const (
+	minBookingsPerPersona = 3
+	maxBookingsPerPersona = 7
+)
+
+// bookingCountForPersona derives a deterministic booking count in the
+// inclusive range [minBookingsPerPersona, maxBookingsPerPersona] from the
+// persona's email, so each persona has a varied-but-stable history size.
+func bookingCountForPersona(email string) int {
+	h := hashSeed(email, -1)
+	span := maxBookingsPerPersona - minBookingsPerPersona + 1
+	return minBookingsPerPersona + int(h[0])%span
+}
 
 // GenerateBookingsForPersona returns a deterministic slice of bookings for
 // persona, distributed across the trailing ~30 days from now. Each booking's
@@ -30,14 +42,15 @@ func GenerateBookingsForPersona(p Persona, now time.Time) []models.Booking {
 	}
 
 	now = now.UTC()
-	bookings := make([]models.Booking, 0, bookingsPerPersona)
+	count := bookingCountForPersona(p.Email)
+	bookings := make([]models.Booking, 0, count)
 
 	pool := PoolByCity[p.BaseCity]
 	if len(pool) == 0 {
 		panic(fmt.Sprintf("seed: no fixture pool for base city %q (persona %s)", p.BaseCity, p.Email))
 	}
 
-	for i := 0; i < bookingsPerPersona; i++ {
+	for i := 0; i < count; i++ {
 		h := hashSeed(p.Email, i)
 
 		key := pool[int(h[0])%len(pool)]
@@ -91,10 +104,15 @@ func GenerateBookingsForPersona(p Persona, now time.Time) []models.Booking {
 
 // pickStatus distributes statuses so each persona has at least one completed,
 // up to two confirmed (the upcoming-trip slot), and an occasional cancelled.
-// Index-driven, so deterministic.
+// Index-driven, so deterministic. The i==2 slot is reserved as completed so
+// the at-least-one-completed invariant holds even at the minimum persona
+// booking count.
 func pickStatus(i int, h [32]byte) string {
 	if i == 0 || i == 1 {
 		return "confirmed"
+	}
+	if i == 2 {
+		return "completed"
 	}
 	if int(h[7])%9 == 0 {
 		return "cancelled"
