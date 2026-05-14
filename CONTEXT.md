@@ -22,6 +22,33 @@ See [ADR-0002](docs/adr/0002-carbon-trend-window.md) for the
 window-semantics decision (rolling-7 / Asia/Kuala_Lumpur / completed-only)
 and the rejected alternatives.
 
+## Journey Progress
+
+How far the rider has progressed through a confirmed-paid `Booking`'s
+`RouteSnapshot.Steps`. Modelled as `Booking.JourneyProgress` with two
+fields: `CurrentStepIndex` (0-indexed) and `UpdatedAt`. The lifecycle
+transition `confirmed+paid → completed` is gated on
+`CurrentStepIndex == len(steps) - 1`.
+
+A reroute resets `CurrentStepIndex` to 0 atomically with the snapshot
+swap in `backend/handlers/reroute_handler.go`. Clients write through
+`PATCH /bookings/{id}/progress`, debounced ~500ms client-side with a
+flush on dialog close / page unload. The server clamps to
+`[0, len(steps)-1]` and rejects decreasing values outside the reroute
+path.
+
+- Endpoint: `PATCH /api/v1/bookings/{bookingId}/progress`
+- Field: `models.Booking.JourneyProgress` (Firestore-persisted)
+- UI: `JourneyPane` in `frontend/src/pages/Route/booking-dialog.tsx`,
+  rendered from both `/route` and `/history`
+
+See [ADR-0008](docs/adr/0008-journey-progress-on-booking.md). Note that
+[ADR-0001](docs/adr/0001-bookings-snapshot-route.md) describes
+`RouteSnapshot` as "frozen at confirmation," but in practice the
+reroute handler overwrites it (per [ADR-0004](docs/adr/0004-routes-ephemeral-reroute-reads-snapshot.md)).
+That discrepancy is acknowledged but not resolved by ADR-0008 — flagged
+for a separate cleanup pass.
+
 ## Persona
 
 A seeded Verdify account created by `cmd/seed` (see ADR-0001). A persona is
