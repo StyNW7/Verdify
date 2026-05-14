@@ -198,6 +198,7 @@ func (app *App) getBookingHandler(w http.ResponseWriter, r *http.Request) {
 		"passengers":       b.Passengers,
 		"estimatedPoints":  b.EstimatedPoints,
 		"actualPoints":     b.ActualPoints,
+		"journeyProgress":  b.JourneyProgress,
 		"createdAt":        b.CreatedAt,
 		"completedAt":      b.CompletedAt,
 		"routeSnapshot":    b.RouteSnapshot,
