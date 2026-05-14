@@ -147,6 +147,53 @@ test('bookingMapEndpoints walks backward to find last valid endLocation', () => 
   assert.deepEqual(end, { latitude: 1.5, longitude: 103.7 });
 });
 
+test('walking step borrows next departureStop when own address is missing', () => {
+  // Real Routes API responses (and the seeded fixtures) often omit `address`
+  // on the inner endpoint of a walk-to-transfer step. The walk's "to" should
+  // resolve from the next leg's `departureStop`.
+  const rows = buildItineraryRows([
+    seg({
+      type: 'walking',
+      distance: 0.13,
+      duration: 2,
+      startLocation: { latitude: 5.98, longitude: 116.07, address: 'Filipino Market, Kota Kinabalu' },
+      endLocation: { latitude: 5.984, longitude: 116.0745 },
+    }),
+    seg({
+      type: 'bus',
+      transitLine: 'Sabah State Bus 5A',
+      headsign: 'Towards Sembulan',
+      departureStop: 'Wawasan Plaza Bus Stop',
+      arrivalStop: 'Sabah State Mosque',
+      startLocation: { latitude: 5.984, longitude: 116.0745 },
+      endLocation: { latitude: 5.962, longitude: 116.078 },
+    }),
+    seg({
+      type: 'walking',
+      distance: 0.04,
+      duration: 3,
+      startLocation: { latitude: 5.962, longitude: 116.078 },
+      endLocation: { latitude: 5.9621, longitude: 116.079, address: 'Masjid Negeri Sabah, Kota Kinabalu' },
+    }),
+  ]);
+  assert.equal(rows[0].secondary, 'Filipino Market, Kota Kinabalu → Wawasan Plaza Bus Stop');
+  assert.equal(rows[1].secondary, 'Wawasan Plaza Bus Stop → Sabah State Mosque');
+  assert.equal(rows[2].secondary, 'Sabah State Mosque → Masjid Negeri Sabah, Kota Kinabalu');
+});
+
+test('walking step borrows previous arrivalStop for its "from"', () => {
+  const rows = buildItineraryRows([
+    seg({
+      type: 'lrt',
+      transitLine: 'MRT Kajang',
+      departureStop: 'KL Sentral',
+      arrivalStop: 'Bukit Bintang',
+    }),
+    seg({ type: 'walking', distance: 0.1, duration: 2 }),
+  ]);
+  assert.equal(rows[1].secondary.startsWith('Bukit Bintang → '), true);
+});
+
 test('bookingFallbackPath stitches per-step coords and dedupes adjacent duplicates', () => {
   const path = bookingFallbackPath([
     seg({

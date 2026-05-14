@@ -39,17 +39,28 @@ function trim(value: string | undefined | null): string {
   return (value ?? '').trim();
 }
 
-function stepEndpoints(step: BackendTransportSegment): { from: string; to: string } {
+function stepEndpoints(
+  steps: BackendTransportSegment[],
+  index: number,
+): { from: string; to: string } {
+  const step = steps[index];
   const t = normalizeType(step.type);
   if (WALK_TYPES.has(t)) {
+    // A walk's inner endpoint is anchored by the neighbouring transit leg
+    // (e.g. "Walk to Wawasan Plaza Bus Stop"). The walk itself rarely
+    // carries a stop name or a `departureStop`/`arrivalStop`, so when the
+    // address is missing we borrow the adjacent step's stop label.
+    const prev = steps[index - 1];
+    const next = steps[index + 1];
     const from =
       trim(step.startLocation?.address) ||
-      trim(step.departureStop) ||
+      trim(prev?.arrivalStop) ||
+      trim(prev?.endLocation?.address) ||
       '—';
     const to =
       trim(step.endLocation?.address) ||
-      trim(step.arrivalStop) ||
-      trim(step.headsign) ||
+      trim(next?.departureStop) ||
+      trim(next?.startLocation?.address) ||
       '—';
     return { from, to };
   }
@@ -150,7 +161,7 @@ export function buildItineraryRows(
 ): ItineraryRow[] {
   return steps.map((step, index) => {
     const iconKey = iconKeyForStep(step.type);
-    const { from, to } = stepEndpoints(step);
+    const { from, to } = stepEndpoints(steps, index);
     return {
       index,
       iconKey,
