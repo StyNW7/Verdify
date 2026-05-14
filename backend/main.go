@@ -121,7 +121,7 @@ func withCORS(next http.Handler) http.Handler {
 
 			w.Header().Set(
 				"Access-Control-Allow-Methods",
-				"GET, POST, PUT, DELETE, OPTIONS",
+				"GET, POST, PUT, PATCH, DELETE, OPTIONS",
 			)
 
 			w.Header().Set(
