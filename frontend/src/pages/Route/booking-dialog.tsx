@@ -36,11 +36,13 @@ import {
   markBookingPaid,
   markBookingCompleted,
   cancelBooking,
+  updateBookingProgress,
   type BackendLocation,
   type BackendRouteOption,
   type BackendTransportSegment,
   type RerouteResult,
 } from '@/lib/api';
+import { nextStep, isFinalStep, createProgressFlusher } from '@/lib/journey-progress';
 import {
   buildBookingCostBreakdown,
   isBookableStep,
@@ -355,6 +357,7 @@ export function BookingDialog({
                         estimatedPoints: result.estimatedPoints,
                         paymentStatus: result.paymentStatus ?? 'pending',
                         createdAt: result.createdAt,
+                        journeyProgress: result.journeyProgress,
                       };
                       applyUpdate(confirmed);
                       setPhase('idle');
@@ -1083,15 +1086,43 @@ function JourneyPane({
     return booking.routeSnapshot.steps.map(describeSnapshotStep);
   }, [liveRoute, booking.routeSnapshot.steps]);
 
-  // Use the first step text as a stable identity for the current route.
-  // When a reroute swaps the route, this key changes and we restart at 0.
-  const routeKey = stepLines[0] ?? '';
-  const [currentStep, setCurrentStep] = useState(0);
-  useEffect(() => {
-    setCurrentStep(0);
-  }, [routeKey]);
-
   const total = stepLines.length;
+
+  // Seed from the persisted field; fall back to 0 for bookings that
+  // pre-date the migration or are mid-PATCH when the dialog opens.
+  const persistedStep = booking.journeyProgress?.currentStepIndex ?? 0;
+  const [currentStep, setCurrentStep] = useState(() =>
+    total === 0 ? 0 : Math.min(persistedStep, total - 1),
+  );
+
+  // Re-sync the optimistic mirror whenever the server-persisted value changes
+  // (e.g. after a reroute resets the booking prop with a new routeSnapshot and
+  // journeyProgress.currentStepIndex = 0). JourneyPane does not unmount on
+  // reroute, so the useState initialiser is not re-run.
+  const serverStep = booking.journeyProgress?.currentStepIndex ?? 0;
+  useEffect(() => {
+    flusher.cancel();
+    setCurrentStep(total === 0 ? 0 : Math.min(serverStep, total - 1));
+  }, [serverStep, total, flusher]);
+
+  const [flusher] = useState(() =>
+    createProgressFlusher({
+      patch: (idx, keepalive) => { updateBookingProgress(booking.bookingId, idx, { keepalive }).catch(() => {}); },
+    }),
+  );
+
+  useEffect(() => {
+    const beforeUnload = () => flusher.flush(true);
+    window.addEventListener('beforeunload', beforeUnload);
+    return () => {
+      flusher.flush();
+      window.removeEventListener('beforeunload', beforeUnload);
+    };
+  // flusher is stable (useState initialiser); booking.bookingId does not
+  // change within a single JourneyPane mount.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const safeIndex = total === 0 ? 0 : Math.min(currentStep, total - 1);
   const atFinalStep = total > 0 && safeIndex === total - 1;
   const remainingReroutes = Math.max(0, 3 - rerouteCount);
@@ -1099,8 +1130,14 @@ function JourneyPane({
   // coordinate by default ("I missed this stop") — but the user can flip to
   // device GPS ("I'm somewhere else"). Step coords are exposed on
   // routeSnapshot.steps[i].startLocation.
+  // Reroute agent must receive the last server-confirmed step, not the
+  // optimistic mirror that may have advanced before the debounced PATCH lands.
+  const persistedStepIndex = total === 0 ? 0 : Math.min(
+    booking.journeyProgress?.currentStepIndex ?? 0,
+    total - 1,
+  );
   const currentStepLocation: BackendLocation | null =
-    booking.routeSnapshot.steps[safeIndex]?.startLocation ?? null;
+    booking.routeSnapshot.steps[persistedStepIndex]?.startLocation ?? null;
   const [locationSource, setLocationSource] = useState<'stop' | 'gps'>('stop');
   const [gpsFetching, setGpsFetching] = useState(false);
   const canMissStop =
@@ -1288,8 +1325,12 @@ function JourneyPane({
           <>
             <button
               type="button"
-              onClick={() => setCurrentStep((idx) => Math.min(total - 1, idx + 1))}
-              disabled={actionsDisabled}
+              onClick={() => {
+                const next = nextStep(safeIndex, total);
+                setCurrentStep(next);
+                flusher.schedule(next);
+              }}
+              disabled={actionsDisabled || isFinalStep(safeIndex, total)}
               className="theme-btn-primary h-12 flex-1 justify-center disabled:opacity-70"
             >
               <Navigation size={14} />
@@ -1336,13 +1377,11 @@ function JourneyPane({
         )}
       </div>
 
-      {!atFinalStep && (
+      {!atFinalStep && onMissedStop && (
         <p className="text-[0.75rem]" style={{ color: 'var(--theme-fg-dim)' }}>
-          {!onMissedStop
-            ? 'Reroute is only available from the planner page.'
-            : remainingReroutes > 0
-              ? `${remainingReroutes} reroute${remainingReroutes !== 1 ? 's' : ''} remaining`
-              : 'Reroute limit reached — contact support if needed.'}
+          {remainingReroutes > 0
+            ? `${remainingReroutes} reroute${remainingReroutes !== 1 ? 's' : ''} remaining`
+            : 'Reroute limit reached — contact support if needed.'}
         </p>
       )}
     </div>

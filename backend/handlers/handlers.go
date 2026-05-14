@@ -14,6 +14,7 @@ import (
 	"github.com/verdify/backend/models"
 	"github.com/verdify/backend/services"
 	"github.com/verdify/backend/services/carbontrend"
+	"github.com/verdify/backend/services/journeyprogress"
 	"github.com/verdify/backend/services/pricing"
 	"github.com/verdify/backend/validate"
 )
@@ -84,6 +85,7 @@ func (app *App) createBookingHandler(w http.ResponseWriter, r *http.Request) {
 		BookingReference: fmt.Sprintf("VERD-%d", now.Unix()),
 		EstimatedPoints:  req.RouteSnapshot.GreenPointsEstimate,
 		PaymentStatus:    "pending",
+		JourneyProgress:  models.JourneyProgress{CurrentStepIndex: 0, UpdatedAt: now},
 		CreatedAt:        now,
 	}
 	if err := app.Store.CreateBooking(r.Context(), b); err != nil {
@@ -101,6 +103,7 @@ func (app *App) createBookingHandler(w http.ResponseWriter, r *http.Request) {
 		"passengers":       b.Passengers,
 		"createdAt":        b.CreatedAt,
 		"expiresAt":        bookingExpiresAt(now),
+		"journeyProgress":  b.JourneyProgress,
 	})
 }
 
@@ -150,6 +153,10 @@ func (app *App) verifyBookingHandler(w http.ResponseWriter, r *http.Request) {
 		writeErr(w, http.StatusConflict, "booking cancelled")
 		return
 	}
+	if !journeyprogress.CanMarkCompleted(b.JourneyProgress, len(b.RouteSnapshot.Steps)) {
+		writeErr(w, http.StatusConflict, "trip still in progress")
+		return
+	}
 	rt := b.RouteSnapshot
 	baseline := pricing.BaselineCarbonGrams(rt.TotalDistance)
 	carbonSaved := baseline - rt.CarbonEstimate
@@ -197,6 +204,7 @@ func (app *App) getBookingHandler(w http.ResponseWriter, r *http.Request) {
 		"passengers":       b.Passengers,
 		"estimatedPoints":  b.EstimatedPoints,
 		"actualPoints":     b.ActualPoints,
+		"journeyProgress":  b.JourneyProgress,
 		"createdAt":        b.CreatedAt,
 		"completedAt":      b.CompletedAt,
 		"routeSnapshot":    b.RouteSnapshot,

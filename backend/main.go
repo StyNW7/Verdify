@@ -57,6 +57,9 @@ func main() {
 		}
 		log.Printf("event=store_init driver=firestore")
 		store = db.NewFirestoreStore(fs)
+		if err := db.BackfillJourneyProgress(ctx, fs); err != nil {
+			log.Printf("WARN: backfill_journey_progress failed: %v", err)
+		}
 	default:
 		log.Fatalf("unknown DB_DRIVER=%q (expected firestore or memory)", driver)
 	}
@@ -118,7 +121,7 @@ func withCORS(next http.Handler) http.Handler {
 
 			w.Header().Set(
 				"Access-Control-Allow-Methods",
-				"GET, POST, PUT, DELETE, OPTIONS",
+				"GET, POST, PUT, PATCH, DELETE, OPTIONS",
 			)
 
 			w.Header().Set(
