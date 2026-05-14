@@ -23,12 +23,11 @@ func (f *fakeRecomputer) Recompute(_ context.Context, _, _ models.Location, _ st
 type fakeBookingStore struct {
 	booking models.Booking
 	ok      bool
-	route   models.Route
-	routeOK bool
 }
 
-func (f *fakeBookingStore) GetBooking(_ string) (models.Booking, bool) { return f.booking, f.ok }
-func (f *fakeBookingStore) GetRoute(_ string) (models.Route, bool)     { return f.route, f.routeOK }
+func (f *fakeBookingStore) GetBooking(_ context.Context, _ string) (models.Booking, bool, error) {
+	return f.booking, f.ok, nil
+}
 
 func disabledAgent(store BookingReader, rc RouteRecomputer) *RerouteAgent {
 	return &RerouteAgent{Enabled: false, store: store, routes: rc}
