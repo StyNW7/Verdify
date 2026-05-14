@@ -357,6 +357,7 @@ export function BookingDialog({
                         estimatedPoints: result.estimatedPoints,
                         paymentStatus: result.paymentStatus ?? 'pending',
                         createdAt: result.createdAt,
+                        journeyProgress: result.journeyProgress,
                       };
                       applyUpdate(confirmed);
                       setPhase('idle');
