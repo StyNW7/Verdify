@@ -54,11 +54,66 @@ test('walking step uses startLocation/endLocation address chain', () => {
   assert.equal(rows[0].detail, '0.3 km · 4 min');
 });
 
-test('walking step falls back to em-dash when addresses are missing', () => {
+test('walking step hides secondary line when addresses and instruction are missing', () => {
   const rows = buildItineraryRows([
     seg({ type: 'walk', distance: 0, duration: 0 }),
   ]);
-  assert.equal(rows[0].secondary, '— → —');
+  assert.equal(rows[0].secondary, '');
+});
+
+test('walking step hides secondary line when only "from" resolves and no instruction', () => {
+  // Mirrors a real "walk to nowhere named" tail step — borrowing produces a
+  // half-known `from` but the `to` is unrecoverable.
+  const rows = buildItineraryRows([
+    seg({
+      type: 'lrt',
+      transitLine: 'Kelana Jaya',
+      arrivalStop: 'Kuala Lumpur Sentral (KJ15/KA01)',
+    }),
+    seg({ type: 'walk', distance: 0.0, duration: 1 }),
+  ]);
+  assert.equal(rows[1].secondary, '');
+});
+
+test('walking step hides secondary line when only "to" resolves and no instruction', () => {
+  const rows = buildItineraryRows([
+    seg({ type: 'walk', distance: 0.0, duration: 1 }),
+    seg({
+      type: 'lrt',
+      transitLine: 'Kelana Jaya',
+      departureStop: 'KLCC (KJ10)',
+    }),
+  ]);
+  assert.equal(rows[0].secondary, '');
+});
+
+test('walking step promotes instruction to secondary when endpoints are missing', () => {
+  const rows = buildItineraryRows([
+    seg({
+      type: 'walk',
+      distance: 0.1,
+      duration: 2,
+      instruction: 'Head <b>northeast</b>',
+    }),
+  ]);
+  assert.equal(rows[0].secondary, 'Head northeast');
+  assert.equal(rows[0].detail, '0.1 km · 2 min');
+  assert.equal(rows[0].instruction, null);
+});
+
+test('walking step keeps endpoints as secondary when addresses are present', () => {
+  const rows = buildItineraryRows([
+    seg({
+      type: 'walk',
+      distance: 0.3,
+      duration: 4,
+      instruction: 'Head northeast',
+      startLocation: { latitude: 0, longitude: 0, address: '12 Jalan Indah' },
+      endLocation: { latitude: 0, longitude: 0, address: 'Bukit Indah RTS' },
+    }),
+  ]);
+  assert.equal(rows[0].secondary, '12 Jalan Indah → Bukit Indah RTS');
+  assert.equal(rows[0].instruction, 'Head northeast');
 });
 
 test('transit step formats line · headsign and from → to from stops', () => {
@@ -98,7 +153,10 @@ test('ev_taxi prefixes the line label', () => {
 test('instruction is HTML-stripped and trimmed', () => {
   const rows = buildItineraryRows([
     seg({
-      type: 'walking',
+      type: 'lrt',
+      transitLine: 'KJ',
+      departureStop: 'A',
+      arrivalStop: 'B',
       instruction: 'Head <b>north</b> on  <span>Jalan A</span>',
     }),
   ]);
@@ -190,8 +248,13 @@ test('walking step borrows previous arrivalStop for its "from"', () => {
       arrivalStop: 'Bukit Bintang',
     }),
     seg({ type: 'walking', distance: 0.1, duration: 2 }),
+    seg({
+      type: 'bus',
+      transitLine: '300',
+      departureStop: 'Pavilion KL',
+    }),
   ]);
-  assert.equal(rows[1].secondary.startsWith('Bukit Bintang → '), true);
+  assert.equal(rows[1].secondary, 'Bukit Bintang → Pavilion KL');
 });
 
 test('bookingFallbackPath stitches per-step coords and dedupes adjacent duplicates', () => {

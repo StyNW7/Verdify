@@ -1717,12 +1717,14 @@ function ItineraryPanel({ rows }: { rows: ItineraryRow[] }) {
                   {row.primary}
                 </span>
               </div>
-              <div
-                className="mt-1 truncate text-[0.88rem] leading-snug"
-                style={{ color: 'var(--theme-fg-muted)' }}
-              >
-                {row.secondary}
-              </div>
+              {row.secondary && (
+                <div
+                  className="mt-1 truncate text-[0.88rem] leading-snug"
+                  style={{ color: 'var(--theme-fg-muted)' }}
+                >
+                  {row.secondary}
+                </div>
+              )}
               {(row.detail || row.instruction) && (
                 <div
                   className="theme-mono-sm mt-1 line-clamp-2"

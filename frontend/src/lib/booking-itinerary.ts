@@ -162,13 +162,27 @@ export function buildItineraryRows(
   return steps.map((step, index) => {
     const iconKey = iconKeyForStep(step.type);
     const { from, to } = stepEndpoints(steps, index);
+    const instruction = cleanInstruction(step.instruction);
+    let secondary = `${from} → ${to}`;
+    let rowInstruction: string | null = instruction;
+    if (iconKey === 'walk' && (from === '—' || to === '—')) {
+      // Walk legs frequently lack stop names on one or both sides. Rather
+      // than render an "— → X" placeholder, promote the turn instruction
+      // into the secondary slot; if there isn't one, hide the line.
+      if (instruction !== null) {
+        secondary = instruction;
+        rowInstruction = null;
+      } else {
+        secondary = '';
+      }
+    }
     return {
       index,
       iconKey,
       primary: primaryLabel(step, iconKey),
-      secondary: `${from} → ${to}`,
+      secondary,
       detail: detailLabel(step),
-      instruction: cleanInstruction(step.instruction),
+      instruction: rowInstruction,
     };
   });
 }
