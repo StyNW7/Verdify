@@ -273,7 +273,7 @@ export default function DashboardPage() {
           <RecentTripsCard trips={trips} loading={tripsLoading} error={tripsError} />
         </div>
         <div className={`${tab === 'impact' ? '' : 'hidden'} lg:!block`}>
-          <ImpactLedgerCard totalCarbonSaved={totalCarbonSaved} />
+          <ImpactLedgerCard totalCarbonKg={totalCarbonSaved / 1000} />
         </div>
       </section>
     </div>
@@ -755,8 +755,8 @@ function currentMonthYearKL(): string {
   }).format(new Date());
 }
 
-function ImpactLedgerCard({ totalCarbonSaved }: { totalCarbonSaved: number }) {
-  const { treesEquivalent, fuelAvoidedLitres, costSavedRM } = computeImpactLedger(totalCarbonSaved);
+function ImpactLedgerCard({ totalCarbonKg }: { totalCarbonKg: number }) {
+  const { treesEquivalent, fuelAvoidedLitres, costSavedRM } = computeImpactLedger(totalCarbonKg);
 
   const rows = [
     { label: 'Trees equivalent', value: treesEquivalent.toFixed(1), unit: 'saplings / year' },
