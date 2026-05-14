@@ -749,6 +749,9 @@ func TestVerifyBookingHandler_RejectsNonFinalStep(t *testing.T) {
 	if env.Success {
 		t.Fatalf("expected success=false on rejection")
 	}
+	if env.Error != "trip still in progress" {
+		t.Fatalf("error = %q want %q", env.Error, "trip still in progress")
+	}
 }
 
 func TestVerifyBookingHandler_AcceptsAtFinalStep(t *testing.T) {
@@ -829,5 +832,8 @@ func TestVerifyBookingHandler_RejectionDoesNotMutateBooking(t *testing.T) {
 	}
 	if after.PaymentStatus != before.PaymentStatus {
 		t.Fatalf("PaymentStatus mutated: %q → %q", before.PaymentStatus, after.PaymentStatus)
+	}
+	if after.ActualPoints != before.ActualPoints {
+		t.Fatalf("ActualPoints = %d, want unchanged %d", after.ActualPoints, before.ActualPoints)
 	}
 }
