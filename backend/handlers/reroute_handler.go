@@ -118,6 +118,9 @@ func (app *App) rerouteBookingHandler(w http.ResponseWriter, r *http.Request) {
 		// Refresh the snapshot so subsequent reroutes/handlers see the latest
 		// remaining trip.
 		b.RouteSnapshot = opt
+		// Reset journey progress atomically with the snapshot swap so the
+		// server is authoritative: the client never needs to own this reset.
+		b.JourneyProgress = models.JourneyProgress{CurrentStepIndex: 0, UpdatedAt: services.NowUTC()}
 	}
 
 	// Append history entry.
@@ -143,10 +146,11 @@ func (app *App) rerouteBookingHandler(w http.ResponseWriter, r *http.Request) {
 		bookingID, result.Action, result.Source, len(b.RerouteHistory))
 
 	writeOK(w, http.StatusOK, map[string]any{
-		"action":      result.Action,
-		"userMessage": result.UserMessage,
-		"newRoute":    newRouteOpt,
-		"reasoning":   result.Reasoning,
-		"agentSource": result.Source,
+		"action":          result.Action,
+		"userMessage":     result.UserMessage,
+		"newRoute":        newRouteOpt,
+		"reasoning":       result.Reasoning,
+		"agentSource":     result.Source,
+		"journeyProgress": b.JourneyProgress,
 	})
 }

@@ -298,6 +298,72 @@ func TestRerouteHandler_HappyPath_Reroute(t *testing.T) {
 	if b.RerouteHistory[0].NewRouteID != b.ActiveRouteID {
 		t.Errorf("history[0].newRouteId %q != activeRouteId %q", b.RerouteHistory[0].NewRouteID, b.ActiveRouteID)
 	}
+	// JourneyProgress must be reset to step 0 with a fresh timestamp.
+	if b.JourneyProgress.CurrentStepIndex != 0 {
+		t.Errorf("JourneyProgress.CurrentStepIndex = %d want 0", b.JourneyProgress.CurrentStepIndex)
+	}
+	if b.JourneyProgress.UpdatedAt.IsZero() {
+		t.Error("JourneyProgress.UpdatedAt must not be zero after a reroute")
+	}
+	// Response must carry journeyProgress so the client sees the reset.
+	if jp, _ := data["journeyProgress"].(map[string]any); jp == nil {
+		t.Error("response must include journeyProgress field")
+	}
+}
+
+// ── no-op paths must not reset journey progress ───────────────────────────────
+
+func TestRerouteHandler_NoProgress_WaitAndContinue(t *testing.T) {
+	agent := &stubRerouteAgent{result: &ranker.RerouteResult{
+		Action:      "wait_and_continue",
+		UserMessage: "Stay at the stop.",
+		Source:      "gemini",
+	}}
+	app := newRerouteApp(agent)
+	// Seed a booking with an existing non-zero progress step.
+	_ = app.Store.CreateBooking(context.Background(), models.Booking{
+		ID:     "bk_wait_prog",
+		UserID: "u_test",
+		Status: "confirmed",
+		JourneyProgress: models.JourneyProgress{
+			CurrentStepIndex: 3,
+		},
+	})
+
+	rr := doReroute(t, app.Routes(), "bk_wait_prog", 1.48, 103.76)
+	if rr.Code != http.StatusOK {
+		t.Fatalf("want 200 got %d body=%s", rr.Code, rr.Body.String())
+	}
+	after, _, _ := app.Store.GetBooking(context.Background(), "bk_wait_prog")
+	if after.JourneyProgress.CurrentStepIndex != 3 {
+		t.Errorf("wait_and_continue must not reset progress: got %d want 3", after.JourneyProgress.CurrentStepIndex)
+	}
+}
+
+func TestRerouteHandler_NoProgress_Abort(t *testing.T) {
+	agent := &stubRerouteAgent{result: &ranker.RerouteResult{
+		Action:      "abort",
+		UserMessage: "No route available.",
+		Source:      "fallback",
+	}}
+	app := newRerouteApp(agent)
+	_ = app.Store.CreateBooking(context.Background(), models.Booking{
+		ID:     "bk_abort_prog",
+		UserID: "u_test",
+		Status: "confirmed",
+		JourneyProgress: models.JourneyProgress{
+			CurrentStepIndex: 2,
+		},
+	})
+
+	rr := doReroute(t, app.Routes(), "bk_abort_prog", 1.48, 103.76)
+	if rr.Code != http.StatusOK {
+		t.Fatalf("want 200 got %d body=%s", rr.Code, rr.Body.String())
+	}
+	after, _, _ := app.Store.GetBooking(context.Background(), "bk_abort_prog")
+	if after.JourneyProgress.CurrentStepIndex != 2 {
+		t.Errorf("abort must not reset progress: got %d want 2", after.JourneyProgress.CurrentStepIndex)
+	}
 }
 
 // ── reasoning must not surface in response as a user-visible primary field ────
