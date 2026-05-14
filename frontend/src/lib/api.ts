@@ -27,9 +27,13 @@ export class ApiError extends Error {
 // AuthProvider plugs a getter in via setAuthTokenGetter. We hold a function,
 // not a value, so token rotations land on the next request without any
 // re-wiring.
-let tokenGetter: () => string | null = () => null;
+//
+// The getter is async: it resolves immediately when a token is already in
+// hand, or waits briefly for the auth-store to deliver one (bridging the
+// race between subscribeAuthState and subscribeIdToken). See auth-store.ts.
+let tokenGetter: () => Promise<string | null> = () => Promise.resolve(null);
 
-export function setAuthTokenGetter(getter: () => string | null) {
+export function setAuthTokenGetter(getter: () => Promise<string | null>) {
   tokenGetter = getter;
 }
 
@@ -45,7 +49,7 @@ async function apiRequest<T>(
   init: RequestInit,
   opts: ApiRequestOptions = {},
 ): Promise<T> {
-  const token = opts.bearerToken ?? tokenGetter();
+  const token = opts.bearerToken !== undefined ? opts.bearerToken : await tokenGetter();
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(init.headers as Record<string, string> | undefined ?? {}),
