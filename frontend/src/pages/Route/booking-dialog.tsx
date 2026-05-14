@@ -1103,12 +1103,12 @@ function JourneyPane({
 
   const [flusher] = useState(() =>
     createProgressFlusher({
-      patch: (idx) => { updateBookingProgress(booking.bookingId, idx).catch(() => {}); },
+      patch: (idx, keepalive) => { updateBookingProgress(booking.bookingId, idx, { keepalive }).catch(() => {}); },
     }),
   );
 
   useEffect(() => {
-    const beforeUnload = () => flusher.flush();
+    const beforeUnload = () => flusher.flush(true);
     window.addEventListener('beforeunload', beforeUnload);
     return () => {
       flusher.flush();
