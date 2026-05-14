@@ -4,11 +4,16 @@ import { motion } from 'framer-motion';
 import {
   AlertCircle,
   ArrowRight,
+  Bus,
+  Car,
   CircleCheck,
+  Footprints,
   Leaf,
   Loader2,
+  Navigation,
   RefreshCw,
   TicketCheck,
+  TrainFront,
   Trophy,
   Users,
   Wallet,
@@ -43,7 +48,15 @@ import {
   type BookingLifecyclePaymentStatus,
   type BookingLifecycleStatus,
 } from '@/lib/booking-lifecycle';
+import {
+  bookingMapEndpoints,
+  buildItineraryRows,
+  type ItineraryIconKey,
+  type ItineraryRow,
+  type MapPoint,
+} from '@/lib/booking-itinerary';
 import { useBookingUserId } from '@/hooks/useBookingUserId';
+import BookingRouteMap from '@/components/BookingRouteMap';
 
 const EASE = [0.2, 0.7, 0.2, 1] as const;
 
@@ -662,6 +675,9 @@ function PersistedBookingPane({
   ) as BookingLifecyclePaymentStatus;
   const lifecycle = bookingLifecycle({ status, paymentStatus });
 
+  const itinerary = buildItineraryRows(steps);
+  const mapEndpoints = bookingMapEndpoints(steps);
+
   const [busy, setBusy] = useState<LifecycleAction | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [confirmingCancel, setConfirmingCancel] = useState(false);
@@ -760,6 +776,17 @@ function PersistedBookingPane({
           </div>
         </div>
       </div>
+
+      {(booking.routeSnapshot.polyline || mapEndpoints.start || mapEndpoints.end) && (
+        <BookingRouteMapPanel
+          polyline={booking.routeSnapshot.polyline}
+          start={mapEndpoints.start}
+          end={mapEndpoints.end}
+          mode={booking.routeSnapshot.mode}
+        />
+      )}
+
+      {itinerary.length > 0 && <ItineraryPanel rows={itinerary} />}
 
       {lifecycle.content === 'qr' && hasBookable && (
         <div className="flex flex-col gap-3">
@@ -1099,6 +1126,111 @@ function PlainDetail({ label, value }: { label: string; value: string }) {
       <div className="mt-1 text-[0.94rem] leading-snug" style={{ color: 'var(--theme-fg)' }}>
         {value}
       </div>
+    </div>
+  );
+}
+
+function BookingRouteMapPanel({
+  polyline,
+  start,
+  end,
+  mode,
+}: {
+  polyline?: string;
+  start: MapPoint | null;
+  end: MapPoint | null;
+  mode?: string;
+}) {
+  return (
+    <div
+      className="relative h-[200px] overflow-hidden rounded-[16px] sm:h-[260px] sm:rounded-[18px]"
+      style={{
+        background: 'var(--theme-map-surface, var(--theme-surface-muted))',
+        border: '1px solid var(--theme-border)',
+      }}
+    >
+      <BookingRouteMap polyline={polyline} start={start} end={end} mode={mode} />
+    </div>
+  );
+}
+
+function ItineraryStepIcon({ iconKey }: { iconKey: ItineraryIconKey }) {
+  const Icon =
+    iconKey === 'walk'
+      ? Footprints
+      : iconKey === 'train'
+        ? TrainFront
+        : iconKey === 'bus'
+          ? Bus
+          : iconKey === 'evTaxi'
+            ? Car
+            : Navigation;
+  return <Icon size={14} style={{ color: 'var(--theme-accent)' }} />;
+}
+
+function ItineraryPanel({ rows }: { rows: ItineraryRow[] }) {
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
+        § Itinerary
+      </div>
+      <ol
+        className="flex flex-col overflow-hidden rounded-[16px] sm:rounded-[18px]"
+        style={{
+          background: 'var(--theme-surface)',
+          border: '1px solid var(--theme-border)',
+        }}
+      >
+        {rows.map((row, idx) => (
+          <li
+            key={`itin-${row.index}`}
+            className={`flex items-start gap-3 p-3 sm:gap-4 sm:p-4 ${idx > 0 ? 'border-t' : ''}`}
+            style={{ borderColor: 'var(--theme-border)' }}
+          >
+            <span
+              className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+              style={{
+                background: 'var(--theme-accent-soft)',
+                border: '1px solid var(--theme-accent-muted)',
+              }}
+            >
+              <ItineraryStepIcon iconKey={row.iconKey} />
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-baseline gap-2">
+                <span
+                  className="theme-mono-sm shrink-0"
+                  style={{ color: 'var(--theme-fg-dim)' }}
+                >
+                  {String(row.index + 1).padStart(2, '0')}
+                </span>
+                <span
+                  className="truncate text-[0.95rem] leading-snug"
+                  style={{ color: 'var(--theme-fg)' }}
+                >
+                  {row.primary}
+                </span>
+              </div>
+              <div
+                className="mt-1 truncate text-[0.88rem] leading-snug"
+                style={{ color: 'var(--theme-fg-muted)' }}
+              >
+                {row.secondary}
+              </div>
+              {(row.detail || row.instruction) && (
+                <div
+                  className="theme-mono-sm mt-1 line-clamp-2"
+                  style={{ color: 'var(--theme-fg-dim)' }}
+                >
+                  {row.detail}
+                  {row.detail && row.instruction ? ' · ' : ''}
+                  {row.instruction}
+                </div>
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }
