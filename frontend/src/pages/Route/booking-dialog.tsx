@@ -1375,13 +1375,11 @@ function JourneyPane({
         )}
       </div>
 
-      {!atFinalStep && (
+      {!atFinalStep && onMissedStop && (
         <p className="text-[0.75rem]" style={{ color: 'var(--theme-fg-dim)' }}>
-          {!onMissedStop
-            ? 'Reroute is only available from the planner page.'
-            : remainingReroutes > 0
-              ? `${remainingReroutes} reroute${remainingReroutes !== 1 ? 's' : ''} remaining`
-              : 'Reroute limit reached — contact support if needed.'}
+          {remainingReroutes > 0
+            ? `${remainingReroutes} reroute${remainingReroutes !== 1 ? 's' : ''} remaining`
+            : 'Reroute limit reached — contact support if needed.'}
         </p>
       )}
     </div>
