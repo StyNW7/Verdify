@@ -119,3 +119,73 @@ Skip-if-exists, additive-only:
   `buildStats` divides by 1000 to display kg. The field name is unsuffixed, but
   the sibling `RouteSnapshot.CarbonSavedGrams` IS suffixed — this asymmetry is
   documented inline on the model field (`// grams`) to prevent future misreads.
+
+## Fixture-replay route snapshots
+
+The original seed slice fabricated each booking's `RouteSnapshot` from a
+haversine + linear-formula synthesis (`dataSource: "fallback_synthetic"`,
+no polyline, placeholder transit-line strings). The booking-detail page
+renders maps and step-by-step transit instructions from this snapshot —
+synthetic data falls down there: maps render empty, transit lines read as
+"Kelana Jaya Line" regardless of where the trip actually is.
+
+### Decision
+
+The seed reads route snapshots from a set of **recorded Google Routes API
+fixtures** committed to the repo at `backend/seed/fixtures/*.json`. The
+generator picks one fixture per booking deterministically from the
+persona's home-city pool (`seed.PoolByCity`). Snapshots inherit
+`dataSource: "google_routes"` from the fixture.
+
+### Recording
+
+The recorder is a separate one-shot program at
+`backend/cmd/seed-fixtures/main.go`. From `backend/`:
+
+```sh
+GOOGLE_MAPS_API_KEY=... go run ./cmd/seed-fixtures
+```
+
+It iterates the unique fixture keys in `seed.PoolByCity`, calls
+`routes.CandidateBuilder.Build` for each origin/destination, picks the
+candidate matching the requested mode, runs it through the same
+carbon/cost math as the live `/routes/calculate` handler, and writes the
+result as pretty-printed JSON. Existing real recordings are skipped;
+files marked with a top-level `"_stub": true` field are overwritten.
+
+The recorder is **not** wired into `cmd/seed`, package init, or CI — it
+runs only when an operator explicitly refreshes fixtures (quarterly, or
+when transit infrastructure shifts). This keeps the seed itself
+network-free and key-free.
+
+### Embedding
+
+Fixtures are loaded via `embed.FS` in `backend/seed/fixtures.go` rather
+than `os.ReadFile`. This makes the seed binary fully self-contained —
+the working directory at runtime does not matter, and tests do not have
+to chase a relative path. The trade-off is that adding a fixture
+requires a recompile, which is fine because new fixtures are
+infrastructure, not data.
+
+### Fail-fast coverage
+
+`seed.AssertFixtureCoverage()` runs at the top of every
+`GenerateBookingsForPersona` call (and is exercised explicitly by
+`TestFixtureCoverageIsComplete`). If any key referenced in
+`PoolByCity` lacks a matching fixture file, the generator panics with
+the missing keys listed. This catches the realistic mistake of "I
+added an origin to a persona's pool but forgot to record the
+fixture" — silently falling back to synthetic data here would
+re-introduce the data-quality problem this slice is trying to fix.
+
+### Stub fixtures
+
+The initial fixture set was committed as **stubs** (hand-crafted
+JSON marked with `"_stub": true`) rather than real recordings,
+because the development environment that produced this slice has no
+Routes API key. Stubs are realistic enough that the booking-detail
+page renders coherent transit lines and step text, and the recorder
+recognises the `_stub` marker so a later refresh overwrites them
+without operator intervention. ADR consequence: until an operator
+runs the recorder against a real key, the dataset is plausible-
+looking but not authoritative.
