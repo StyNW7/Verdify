@@ -1094,13 +1094,6 @@ function JourneyPane({
     total === 0 ? 0 : Math.min(persistedStep, total - 1),
   );
 
-  // When a reroute swaps the route snapshot the step pointer must reset to 0.
-  // Track the first step text as a stable route identity for that purpose.
-  const routeKey = stepLines[0] ?? '';
-  useEffect(() => {
-    setCurrentStep(0);
-  }, [routeKey]);
-
   const [flusher] = useState(() =>
     createProgressFlusher({
       patch: (idx, keepalive) => { updateBookingProgress(booking.bookingId, idx, { keepalive }).catch(() => {}); },
