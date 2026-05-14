@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_mount_austin__jb_city_square__eco",
+  "mode": "eco",
+  "totalDistance": 9.84,
+  "totalDuration": 32,
+  "carbonEstimate": 787.2,
+  "carbonBaseline": 1968,
+  "carbonSavedGrams": 1180.8,
+  "carbonSavingsPercent": 60,
+  "carbonEstimateKg": 0.79,
+  "estimatedCost": 2.8,
+  "greenPointsEstimate": 118,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.5404,
+        "longitude": 103.7902,
+        "address": "Mount Austin, Johor Bahru"
+      },
+      "endLocation": {
+        "latitude": 1.540624,
+        "longitude": 103.789672
+      },
+      "distance": 0.18,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Mount Austin Bus Stop"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 1.540624,
+        "longitude": 103.789672
+      },
+      "endLocation": {
+        "latitude": 1.46298,
+        "longitude": 103.764132
+      },
+      "distance": 9.48,
+      "duration": 26,
+      "carbonPerKm": 80,
+      "totalCarbon": 758.4,
+      "estimatedCost": 2.8,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "myBAS T44",
+      "departureStop": "Mount Austin Bus Stop",
+      "arrivalStop": "JB Sentral Bus Hub",
+      "headsign": "Towards JB Sentral",
+      "stopCount": 18,
+      "instruction": "Board myBAS T44 Towards JB Sentral"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.46298,
+        "longitude": 103.764132
+      },
+      "endLocation": {
+        "latitude": 1.4628,
+        "longitude": 103.7639,
+        "address": "Johor Bahru City Square"
+      },
+      "distance": 0.18,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to JB City Square"
+    }
+  ],
+  "polyline": "amgGgqsxR~hHriD",
+  "reasoning": "Lowest-carbon option from Mount Austin to JB City Square on myBAS T44 bus.",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

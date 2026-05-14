@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_melaka_sentral__stadhuys__eco",
+  "mode": "eco",
+  "totalDistance": 2.21,
+  "totalDuration": 14,
+  "carbonEstimate": 120,
+  "carbonBaseline": 442,
+  "carbonSavedGrams": 322,
+  "carbonSavingsPercent": 73,
+  "carbonEstimateKg": 0.12,
+  "estimatedCost": 2.0,
+  "greenPointsEstimate": 32,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.2114,
+        "longitude": 102.253,
+        "address": "Melaka Sentral"
+      },
+      "endLocation": {
+        "latitude": 2.211192,
+        "longitude": 102.252876
+      },
+      "distance": 0.06,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Melaka Sentral Bus Hub"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 2.211192,
+        "longitude": 102.252876
+      },
+      "endLocation": {
+        "latitude": 2.194432,
+        "longitude": 102.249156
+      },
+      "distance": 2.0,
+      "duration": 9,
+      "carbonPerKm": 60,
+      "totalCarbon": 120,
+      "estimatedCost": 2.0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "Panorama Melaka 17",
+      "departureStop": "Melaka Sentral Bus Hub",
+      "arrivalStop": "Dutch Square Stop",
+      "headsign": "Towards Bandar Hilir",
+      "stopCount": 5,
+      "instruction": "Board Panorama Melaka 17 Towards Bandar Hilir"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.194432,
+        "longitude": 102.249156
+      },
+      "endLocation": {
+        "latitude": 2.1942,
+        "longitude": 102.2491,
+        "address": "Stadthuys, Dutch Square, Melaka"
+      },
+      "distance": 0.15,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Stadthuys"
+    }
+  ],
+  "polyline": "k`oLghboRrnBfQ",
+  "reasoning": "Lowest-carbon option from Melaka Sentral to Dutch Square (Stadthuys) on Panorama Melaka 17 bus.",
+  "recommendedFor": [
+    "low-carbon",
+    "tourist"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

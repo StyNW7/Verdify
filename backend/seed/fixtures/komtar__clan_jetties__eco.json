@@ -1,0 +1,46 @@
+{
+  "routeId": "fixture_komtar__clan_jetties__eco",
+  "mode": "eco",
+  "totalDistance": 1.41,
+  "totalDuration": 18,
+  "carbonEstimate": 0,
+  "carbonBaseline": 282,
+  "carbonSavedGrams": 282,
+  "carbonSavingsPercent": 100,
+  "carbonEstimateKg": 0,
+  "estimatedCost": 0,
+  "greenPointsEstimate": 28,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4143,
+        "longitude": 100.3296,
+        "address": "KOMTAR, Georgetown"
+      },
+      "endLocation": {
+        "latitude": 5.4147,
+        "longitude": 100.3413,
+        "address": "Clan Jetties of Penang, Georgetown"
+      },
+      "distance": 1.41,
+      "duration": 18,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk through Georgetown heritage zone to Clan Jetties"
+    }
+  ],
+  "polyline": "kn``@isjcR??_pA",
+  "reasoning": "Walking-only heritage route from KOMTAR to Clan Jetties through Georgetown's UNESCO core.",
+  "recommendedFor": [
+    "low-carbon",
+    "tourist"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

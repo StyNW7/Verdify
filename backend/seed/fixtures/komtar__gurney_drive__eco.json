@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_komtar__gurney_drive__eco",
+  "mode": "eco",
+  "totalDistance": 3.34,
+  "totalDuration": 17,
+  "carbonEstimate": 180,
+  "carbonBaseline": 668,
+  "carbonSavedGrams": 488,
+  "carbonSavingsPercent": 73,
+  "carbonEstimateKg": 0.18,
+  "estimatedCost": 1.4,
+  "greenPointsEstimate": 49,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4143,
+        "longitude": 100.3296,
+        "address": "KOMTAR, Georgetown"
+      },
+      "endLocation": {
+        "latitude": 5.415068,
+        "longitude": 100.329104
+      },
+      "distance": 0.13,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to KOMTAR Bus Hub"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 5.415068,
+        "longitude": 100.329104
+      },
+      "endLocation": {
+        "latitude": 5.437272,
+        "longitude": 100.30948
+      },
+      "distance": 3.0,
+      "duration": 11,
+      "carbonPerKm": 60,
+      "totalCarbon": 180,
+      "estimatedCost": 1.4,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "Rapid Penang 103",
+      "departureStop": "KOMTAR Bus Hub",
+      "arrivalStop": "Gurney Plaza",
+      "headsign": "Towards Tanjung Tokong",
+      "stopCount": 7,
+      "instruction": "Board Rapid Penang 103 Towards Tanjung Tokong"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.437272,
+        "longitude": 100.30948
+      },
+      "endLocation": {
+        "latitude": 5.4374,
+        "longitude": 100.3094,
+        "address": "Gurney Drive, Georgetown"
+      },
+      "distance": 0.21,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Gurney Drive"
+    }
+  ],
+  "polyline": "kn``@isjcRgxBnxA",
+  "reasoning": "Lowest-carbon option from KOMTAR to Gurney Drive on Rapid Penang 103 bus.",
+  "recommendedFor": [
+    "low-carbon",
+    "tourist"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}
