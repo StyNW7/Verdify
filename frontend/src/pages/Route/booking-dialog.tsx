@@ -36,11 +36,13 @@ import {
   markBookingPaid,
   markBookingCompleted,
   cancelBooking,
+  updateBookingProgress,
   type BackendLocation,
   type BackendRouteOption,
   type BackendTransportSegment,
   type RerouteResult,
 } from '@/lib/api';
+import { nextStep, isFinalStep, createProgressFlusher } from '@/lib/journey-progress';
 import {
   buildBookingCostBreakdown,
   isBookableStep,
@@ -1083,15 +1085,40 @@ function JourneyPane({
     return booking.routeSnapshot.steps.map(describeSnapshotStep);
   }, [liveRoute, booking.routeSnapshot.steps]);
 
-  // Use the first step text as a stable identity for the current route.
-  // When a reroute swaps the route, this key changes and we restart at 0.
+  const total = stepLines.length;
+
+  // Seed from the persisted field; fall back to 0 for bookings that
+  // pre-date the migration or are mid-PATCH when the dialog opens.
+  const persistedStep = booking.journeyProgress?.currentStepIndex ?? 0;
+  const [currentStep, setCurrentStep] = useState(() =>
+    total === 0 ? 0 : Math.min(persistedStep, total - 1),
+  );
+
+  // When a reroute swaps the route snapshot the step pointer must reset to 0.
+  // Track the first step text as a stable route identity for that purpose.
   const routeKey = stepLines[0] ?? '';
-  const [currentStep, setCurrentStep] = useState(0);
   useEffect(() => {
     setCurrentStep(0);
   }, [routeKey]);
 
-  const total = stepLines.length;
+  const [flusher] = useState(() =>
+    createProgressFlusher({
+      patch: (idx) => { updateBookingProgress(booking.bookingId, idx).catch(() => {}); },
+    }),
+  );
+
+  useEffect(() => {
+    const beforeUnload = () => flusher.flush();
+    window.addEventListener('beforeunload', beforeUnload);
+    return () => {
+      flusher.flush();
+      window.removeEventListener('beforeunload', beforeUnload);
+    };
+  // flusher is stable (useState initialiser); booking.bookingId does not
+  // change within a single JourneyPane mount.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const safeIndex = total === 0 ? 0 : Math.min(currentStep, total - 1);
   const atFinalStep = total > 0 && safeIndex === total - 1;
   const remainingReroutes = Math.max(0, 3 - rerouteCount);
@@ -1288,8 +1315,12 @@ function JourneyPane({
           <>
             <button
               type="button"
-              onClick={() => setCurrentStep((idx) => Math.min(total - 1, idx + 1))}
-              disabled={actionsDisabled}
+              onClick={() => {
+                const next = nextStep(safeIndex, total);
+                setCurrentStep(next);
+                flusher.schedule(next);
+              }}
+              disabled={actionsDisabled || isFinalStep(safeIndex, total)}
               className="theme-btn-primary h-12 flex-1 justify-center disabled:opacity-70"
             >
               <Navigation size={14} />
