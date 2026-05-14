@@ -5,7 +5,6 @@ import {
   Flame,
   Leaf,
   MapPin,
-  Sparkles,
   Star,
   TrendingUp,
   Trophy,
@@ -298,10 +297,9 @@ export default function DashboardPage() {
       </section>
 
       <section
-        className={`${tab === 'trends' ? '' : 'hidden'} mt-0 grid grid-cols-1 gap-5 lg:!grid lg:mt-8 lg:grid-cols-[1.35fr_1fr]`}
+        className={`${tab === 'trends' ? '' : 'hidden'} mt-0 grid grid-cols-1 gap-5 lg:!grid lg:mt-8`}
       >
         <WeeklyTrendCard days={trendDays} loading={trendLoading} error={trendError} />
-        <AIRecommendationCard />
       </section>
 
       <section className="mt-0 grid grid-cols-1 gap-5 lg:mt-8 lg:grid-cols-[1.1fr_0.9fr]">
@@ -589,99 +587,6 @@ function WeeklyTrendCard({
         <span className="ml-auto theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
           {weekLabel}
         </span>
-      </div>
-    </motion.div>
-  );
-}
-
-function AIRecommendationCard() {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.55, delay: 0.36, ease: [0.2, 0.7, 0.2, 1] }}
-      className="theme-card relative overflow-hidden p-6 md:p-7"
-    >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full"
-        style={{
-          background:
-            'radial-gradient(circle at 30% 30%, var(--theme-accent-soft), transparent 70%)',
-        }}
-      />
-
-      <div className="relative flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span
-            className="flex h-6 w-6 items-center justify-center rounded-[7px]"
-            style={{
-              background: 'var(--theme-accent)',
-              color: 'var(--theme-accent-fg)',
-            }}
-          >
-            <Sparkles className="h-[12px] w-[12px]" strokeWidth={2} />
-          </span>
-          <span
-            className="theme-mono-sm"
-            style={{ color: 'var(--theme-fg-dim)' }}
-          >
-            AI recommendation
-          </span>
-        </div>
-        <span
-          className="theme-mono-sm rounded-full border px-2 py-1"
-          style={{
-            borderColor: 'var(--theme-border)',
-            color: 'var(--theme-fg-dim)',
-            fontSize: '0.56rem',
-          }}
-        >
-          Preview
-        </span>
-      </div>
-
-      <blockquote
-        className="theme-display relative mt-5 text-[1.35rem] leading-[1.25]"
-        style={{ color: 'var(--theme-fg)' }}
-      >
-        <span
-          className="theme-italic absolute -left-3 -top-2 text-[2.5rem]"
-          style={{ color: 'var(--theme-accent-muted)' }}
-          aria-hidden
-        >
-          "
-        </span>
-        Leave at{' '}
-        <span
-          className="theme-italic"
-          style={{ color: 'var(--theme-accent)' }}
-        >
-          08:32
-        </span>{' '}
-        tomorrow to slip past the causeway crush — save{' '}
-        <span style={{ color: 'var(--theme-accent)' }}>18 min</span> and earn{' '}
-        <span style={{ color: 'var(--theme-accent)' }}>2× points</span>.
-      </blockquote>
-
-      <div
-        className="mt-6 flex items-center justify-between border-t pt-4 text-[0.78rem]"
-        style={{
-          borderColor: 'var(--theme-border)',
-          color: 'var(--theme-fg-muted)',
-        }}
-      >
-        <span>Based on your last 14 days of patterns</span>
-        <button
-          type="button"
-          disabled
-          className="theme-link-underline opacity-60"
-          title="LLM integration coming soon"
-          style={{ color: 'var(--theme-fg-muted)' }}
-        >
-          Ask Verdify AI
-          <ArrowUpRight size={12} strokeWidth={1.8} />
-        </button>
       </div>
     </motion.div>
   );
