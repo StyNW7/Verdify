@@ -42,6 +42,9 @@ type ApiRequestOptions = {
   // login/register where the new credential is in hand before onIdTokenChanged
   // has plumbed it into the store.
   bearerToken?: string;
+  // Extra fetch init fields merged last (e.g. { keepalive: true } for
+  // beforeunload-triggered calls).
+  fetchInit?: Pick<RequestInit, 'keepalive'>;
 };
 
 async function apiRequest<T>(
@@ -57,7 +60,7 @@ async function apiRequest<T>(
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
-  const response = await fetch(`${API_BASE_URL}${path}`, { ...init, headers });
+  const response = await fetch(`${API_BASE_URL}${path}`, { ...init, ...opts.fetchInit, headers });
 
   const body = (await response.json().catch(() => null)) as ApiEnvelope<T> | null;
   const errorMessage =
@@ -174,6 +177,7 @@ export type RerouteResult = {
   newRoute: BackendRouteOption | null;
   reasoning: string;
   agentSource: 'gemini' | 'fallback' | 'cap';
+  journeyProgress?: JourneyProgressRecord;
 };
 
 export function rerouteBooking(bookingId: string, payload: ReroutePayload) {
@@ -248,6 +252,7 @@ export type CreateBookingResponse = {
   qrCode?: string;
   createdAt?: string;
   expiresAt?: string;
+  journeyProgress?: JourneyProgressRecord;
 };
 
 export function createBooking(payload: CreateBookingPayload) {
@@ -256,6 +261,11 @@ export function createBooking(payload: CreateBookingPayload) {
     body: JSON.stringify(payload),
   });
 }
+
+export type JourneyProgressRecord = {
+  currentStepIndex: number;
+  updatedAt: string;
+};
 
 export type BookingRecord = {
   bookingId: string;
@@ -269,6 +279,7 @@ export type BookingRecord = {
   estimatedPoints: number;
   actualPoints: number;
   paymentStatus: string;
+  journeyProgress?: JourneyProgressRecord;
   createdAt: string;
   completedAt?: string;
 };
@@ -298,6 +309,18 @@ export function cancelBooking(bookingId: string) {
   return apiRequest<BookingRecord>(`/api/v1/bookings/${encodeURIComponent(bookingId)}/cancel`, {
     method: 'POST',
   });
+}
+
+export function updateBookingProgress(
+  bookingId: string,
+  currentStepIndex: number,
+  opts?: { keepalive?: boolean },
+) {
+  return apiRequest<BookingRecord>(
+    `/api/v1/bookings/${encodeURIComponent(bookingId)}/progress`,
+    { method: 'PATCH', body: JSON.stringify({ currentStepIndex }) },
+    opts?.keepalive ? { fetchInit: { keepalive: true } } : undefined,
+  );
 }
 
 export type UserBookingsResponse = {

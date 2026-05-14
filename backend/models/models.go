@@ -2,6 +2,11 @@ package models
 
 import "time"
 
+type JourneyProgress struct {
+	CurrentStepIndex int       `json:"currentStepIndex" firestore:"currentStepIndex"`
+	UpdatedAt        time.Time `json:"updatedAt"        firestore:"updatedAt"`
+}
+
 type Location struct {
 	Latitude  float64 `json:"latitude" firestore:"latitude"`
 	Longitude float64 `json:"longitude" firestore:"longitude"`
@@ -62,9 +67,10 @@ type Booking struct {
 	EstimatedPoints  int            `json:"estimatedPoints" firestore:"estimatedPoints"`
 	ActualPoints     int            `json:"actualPoints" firestore:"actualPoints"`
 	PaymentStatus    string         `json:"paymentStatus" firestore:"paymentStatus"`
-	RerouteHistory   []RerouteEvent `json:"rerouteHistory" firestore:"rerouteHistory"`
-	CreatedAt        time.Time      `json:"createdAt" firestore:"createdAt"`
-	CompletedAt      *time.Time     `json:"completedAt,omitempty" firestore:"completedAt,omitempty"`
+	RerouteHistory  []RerouteEvent  `json:"rerouteHistory"  firestore:"rerouteHistory"`
+	JourneyProgress JourneyProgress `json:"journeyProgress" firestore:"journeyProgress"`
+	CreatedAt       time.Time       `json:"createdAt"       firestore:"createdAt"`
+	CompletedAt     *time.Time      `json:"completedAt,omitempty" firestore:"completedAt,omitempty"`
 }
 
 // RerouteEvent records one "I missed my stop" trigger on a booking.

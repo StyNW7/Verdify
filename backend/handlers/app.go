@@ -85,6 +85,7 @@ func (app *App) Routes() *http.ServeMux {
 	mux.Handle("GET /api/v1/bookings/{id}", mw.Wrap(http.HandlerFunc(app.getBookingHandler)))
 	mux.Handle("POST /api/v1/bookings/{id}/cancel", mw.Wrap(http.HandlerFunc(app.cancelBookingHandler)))
 	mux.Handle("POST /api/v1/bookings/{id}/reroute", mw.Wrap(http.HandlerFunc(app.rerouteBookingHandler)))
+	mux.Handle("PATCH /api/v1/bookings/{bookingId}/progress", mw.Wrap(http.HandlerFunc(app.updateBookingProgressHandler)))
 	mux.Handle("GET /api/v1/user/{userId}", mw.Wrap(http.HandlerFunc(app.getUserHandler)))
 	mux.Handle("PATCH /api/v1/user/{userId}", mw.Wrap(http.HandlerFunc(app.patchUserHandler)))
 	mux.Handle("GET /api/v1/user/{userId}/bookings", mw.Wrap(http.HandlerFunc(app.getUserBookingsHandler)))

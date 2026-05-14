@@ -246,6 +246,13 @@ func TestVerifyBookingHandler_ReadsFromSnapshotNotStoreGetRoute(t *testing.T) {
 
 	bookingID := createBookingForLifecycle(t, app, mux, "uid_verify_snap", snap)
 
+	// Advance to the final step so CanMarkCompleted passes.
+	b, _, _ := app.Store.GetBooking(context.Background(), bookingID)
+	b.JourneyProgress.CurrentStepIndex = len(snap.Steps) - 1
+	if err := app.Store.UpdateBooking(context.Background(), b); err != nil {
+		t.Fatalf("advance step: %v", err)
+	}
+
 	rr := httptest.NewRecorder()
 	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/v1/bookings/"+bookingID+"/verify", nil))
 	if rr.Code != http.StatusOK {
@@ -719,5 +726,114 @@ func TestPatchUserHandler_OversizedBody_Returns400Or413(t *testing.T) {
 
 	if rr.Code != http.StatusBadRequest && rr.Code != http.StatusRequestEntityTooLarge {
 		t.Fatalf("want 400 or 413 for oversized body, got %d body=%s", rr.Code, rr.Body.String())
+	}
+}
+
+func TestVerifyBookingHandler_RejectsNonFinalStep(t *testing.T) {
+	app := newAppWithBypassUser(t, "uid_verify_nonfinal", "verify-nonfinal@verdify.dev")
+	mux := app.Routes()
+
+	snap := sampleRouteSnapshot()
+	snap.RouteID = "route_verify_nonfinal_xyz"
+	bookingID := createBookingForLifecycle(t, app, mux, "uid_verify_nonfinal", snap)
+
+	// Booking has UpdatedAt non-zero (set by createBookingHandler) and
+	// CurrentStepIndex = 0, which is not the final step (1). Expect 409.
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/v1/bookings/"+bookingID+"/verify", nil))
+	if rr.Code != http.StatusConflict {
+		t.Fatalf("verify non-final want 409 got %d body=%s", rr.Code, rr.Body.String())
+	}
+	var env models.APIResponse
+	_ = json.Unmarshal(rr.Body.Bytes(), &env)
+	if env.Success {
+		t.Fatalf("expected success=false on rejection")
+	}
+	if env.Error != "trip still in progress" {
+		t.Fatalf("error = %q want %q", env.Error, "trip still in progress")
+	}
+}
+
+func TestVerifyBookingHandler_AcceptsAtFinalStep(t *testing.T) {
+	app := newAppWithBypassUser(t, "uid_verify_final", "verify-final@verdify.dev")
+	mux := app.Routes()
+
+	snap := sampleRouteSnapshot()
+	snap.RouteID = "route_verify_final_xyz"
+	bookingID := createBookingForLifecycle(t, app, mux, "uid_verify_final", snap)
+
+	b, _, _ := app.Store.GetBooking(context.Background(), bookingID)
+	b.JourneyProgress.CurrentStepIndex = len(snap.Steps) - 1
+	if err := app.Store.UpdateBooking(context.Background(), b); err != nil {
+		t.Fatalf("advance step: %v", err)
+	}
+
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/v1/bookings/"+bookingID+"/verify", nil))
+	if rr.Code != http.StatusOK {
+		t.Fatalf("verify final step want 200 got %d body=%s", rr.Code, rr.Body.String())
+	}
+	var env models.APIResponse
+	_ = json.Unmarshal(rr.Body.Bytes(), &env)
+	data, _ := env.Data.(map[string]any)
+	if status, _ := data["status"].(string); status != "completed" {
+		t.Fatalf("status = %q want completed", status)
+	}
+}
+
+func TestVerifyBookingHandler_AcceptsZeroUpdatedAt(t *testing.T) {
+	app := newAppWithBypassUser(t, "uid_verify_zero", "verify-zero@verdify.dev")
+	mux := app.Routes()
+
+	snap := sampleRouteSnapshot()
+	snap.RouteID = "route_verify_zero_xyz"
+	bookingID := createBookingForLifecycle(t, app, mux, "uid_verify_zero", snap)
+
+	// Clear UpdatedAt to zero — simulates a backfill booking. CurrentStepIndex
+	// stays at 0 (non-final) but the carve-out must let it through.
+	b, _, _ := app.Store.GetBooking(context.Background(), bookingID)
+	b.JourneyProgress = models.JourneyProgress{CurrentStepIndex: 0}
+	if err := app.Store.UpdateBooking(context.Background(), b); err != nil {
+		t.Fatalf("zero UpdatedAt: %v", err)
+	}
+
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/v1/bookings/"+bookingID+"/verify", nil))
+	if rr.Code != http.StatusOK {
+		t.Fatalf("verify zero-UpdatedAt want 200 got %d body=%s", rr.Code, rr.Body.String())
+	}
+	var env models.APIResponse
+	_ = json.Unmarshal(rr.Body.Bytes(), &env)
+	data, _ := env.Data.(map[string]any)
+	if status, _ := data["status"].(string); status != "completed" {
+		t.Fatalf("status = %q want completed", status)
+	}
+}
+
+func TestVerifyBookingHandler_RejectionDoesNotMutateBooking(t *testing.T) {
+	app := newAppWithBypassUser(t, "uid_verify_nomut", "verify-nomut@verdify.dev")
+	mux := app.Routes()
+
+	snap := sampleRouteSnapshot()
+	snap.RouteID = "route_verify_nomut_xyz"
+	bookingID := createBookingForLifecycle(t, app, mux, "uid_verify_nomut", snap)
+
+	before, _, _ := app.Store.GetBooking(context.Background(), bookingID)
+
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/v1/bookings/"+bookingID+"/verify", nil))
+	if rr.Code != http.StatusConflict {
+		t.Fatalf("precondition: want 409 got %d body=%s", rr.Code, rr.Body.String())
+	}
+
+	after, _, _ := app.Store.GetBooking(context.Background(), bookingID)
+	if after.Status != before.Status {
+		t.Fatalf("Status mutated: %q → %q", before.Status, after.Status)
+	}
+	if after.PaymentStatus != before.PaymentStatus {
+		t.Fatalf("PaymentStatus mutated: %q → %q", before.PaymentStatus, after.PaymentStatus)
+	}
+	if after.ActualPoints != before.ActualPoints {
+		t.Fatalf("ActualPoints = %d, want unchanged %d", after.ActualPoints, before.ActualPoints)
 	}
 }
