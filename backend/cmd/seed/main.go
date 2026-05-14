@@ -39,7 +39,7 @@ func main() {
 
 	if *wipe {
 		log.Printf("wipe mode: deleting %d personas + their docs before recreate...", len(seed.Personas))
-		wipeResults := seed.Wipe(ctx, fb.Auth(), fs, seed.Personas, now)
+		wipeResults := seed.Wipe(ctx, fb.Auth(), fs)
 		seed.LogWipeResults(wipeResults)
 	}
 
