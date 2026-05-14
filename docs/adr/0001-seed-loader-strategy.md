@@ -113,3 +113,9 @@ Skip-if-exists, additive-only:
 - The orchestrator is not unit-tested in this slice (skip-if-exists logic is
   exercised against a real Firestore + Auth project rather than mocks).
   Adding emulator-backed integration tests is left as follow-up.
+- `models.User.TotalCarbonSaved` is stored in **grams**, matching the
+  production write path (`pricing.BaselineCarbonGrams` → `u.TotalCarbonSaved`).
+  The seed accumulates grams directly without conversion. The frontend's
+  `buildStats` divides by 1000 to display kg. The field name is unsuffixed, but
+  the sibling `RouteSnapshot.CarbonSavedGrams` IS suffixed — this asymmetry is
+  documented inline on the model field (`// grams`) to prevent future misreads.

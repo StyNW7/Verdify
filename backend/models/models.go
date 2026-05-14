@@ -96,7 +96,7 @@ type User struct {
 	Language           string    `json:"language,omitempty" firestore:"language,omitempty"`
 	GreenPoints       int       `json:"greenPointsBalance" firestore:"greenPointsBalance"`
 	TotalTrips        int       `json:"totalTripsCompleted" firestore:"totalTripsCompleted"`
-	TotalCarbonSaved  float64   `json:"totalCarbonSaved" firestore:"totalCarbonSaved"`
+	TotalCarbonSaved  float64   `json:"totalCarbonSaved" firestore:"totalCarbonSaved"` // grams
 	TotalPointsEarned int       `json:"totalEarned" firestore:"totalEarned"`
 	TotalRedeemed     int       `json:"totalRedeemed" firestore:"totalRedeemed"`
 	CreatedAt         time.Time `json:"createdAt" firestore:"createdAt"`
