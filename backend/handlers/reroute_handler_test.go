@@ -306,8 +306,15 @@ func TestRerouteHandler_HappyPath_Reroute(t *testing.T) {
 		t.Error("JourneyProgress.UpdatedAt must not be zero after a reroute")
 	}
 	// Response must carry journeyProgress so the client sees the reset.
-	if jp, _ := data["journeyProgress"].(map[string]any); jp == nil {
-		t.Error("response must include journeyProgress field")
+	jp, ok := data["journeyProgress"].(map[string]any)
+	if !ok || jp == nil {
+		t.Fatal("response must include journeyProgress field")
+	}
+	if jp["currentStepIndex"].(float64) != 0 {
+		t.Fatalf("response journeyProgress.currentStepIndex = %v, want 0", jp["currentStepIndex"])
+	}
+	if jp["updatedAt"] == "" || jp["updatedAt"] == nil {
+		t.Fatalf("response journeyProgress.updatedAt is empty")
 	}
 }
 
@@ -320,13 +327,15 @@ func TestRerouteHandler_NoProgress_WaitAndContinue(t *testing.T) {
 		Source:      "gemini",
 	}}
 	app := newRerouteApp(agent)
-	// Seed a booking with an existing non-zero progress step.
+	// Seed a booking with an existing non-zero progress step and a known timestamp.
+	seededAt := services.NowUTC()
 	_ = app.Store.CreateBooking(context.Background(), models.Booking{
 		ID:     "bk_wait_prog",
 		UserID: "u_test",
 		Status: "confirmed",
 		JourneyProgress: models.JourneyProgress{
 			CurrentStepIndex: 3,
+			UpdatedAt:        seededAt,
 		},
 	})
 
@@ -338,6 +347,9 @@ func TestRerouteHandler_NoProgress_WaitAndContinue(t *testing.T) {
 	if after.JourneyProgress.CurrentStepIndex != 3 {
 		t.Errorf("wait_and_continue must not reset progress: got %d want 3", after.JourneyProgress.CurrentStepIndex)
 	}
+	if !after.JourneyProgress.UpdatedAt.Equal(seededAt) {
+		t.Errorf("wait_and_continue must not touch UpdatedAt: got %v want %v", after.JourneyProgress.UpdatedAt, seededAt)
+	}
 }
 
 func TestRerouteHandler_NoProgress_Abort(t *testing.T) {
@@ -347,12 +359,14 @@ func TestRerouteHandler_NoProgress_Abort(t *testing.T) {
 		Source:      "fallback",
 	}}
 	app := newRerouteApp(agent)
+	seededAt := services.NowUTC()
 	_ = app.Store.CreateBooking(context.Background(), models.Booking{
 		ID:     "bk_abort_prog",
 		UserID: "u_test",
 		Status: "confirmed",
 		JourneyProgress: models.JourneyProgress{
 			CurrentStepIndex: 2,
+			UpdatedAt:        seededAt,
 		},
 	})
 
@@ -363,6 +377,9 @@ func TestRerouteHandler_NoProgress_Abort(t *testing.T) {
 	after, _, _ := app.Store.GetBooking(context.Background(), "bk_abort_prog")
 	if after.JourneyProgress.CurrentStepIndex != 2 {
 		t.Errorf("abort must not reset progress: got %d want 2", after.JourneyProgress.CurrentStepIndex)
+	}
+	if !after.JourneyProgress.UpdatedAt.Equal(seededAt) {
+		t.Errorf("abort must not touch UpdatedAt: got %v want %v", after.JourneyProgress.UpdatedAt, seededAt)
 	}
 }
 

@@ -36,6 +36,7 @@ import {
   rerouteBooking,
   type BackendLocation,
   type BackendRouteOption,
+  type JourneyProgressRecord,
   type RerouteResult,
   type RouteMode,
 } from '@/lib/api';
@@ -552,7 +553,7 @@ export function usePlannerState(initialPreference: Preference = 'eco') {
   const triggerMissedStop = async (
     route: RouteOption,
     currentLocation: BackendLocation,
-    onBookingUpdate?: (patch: Partial<ConfirmedBooking>) => void,
+    onBookingUpdate?: (patch: { routeSnapshot: BackendRouteOption; journeyProgress: JourneyProgressRecord }) => void,
   ) => {
     if (!bookingId || rerouteInFlight) return;
     setRerouteInFlight(true);

@@ -72,11 +72,12 @@ func (app *App) rerouteBookingHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		writeOK(w, http.StatusOK, map[string]any{
-			"action":      "abort",
-			"userMessage": "Please contact support.",
-			"newRoute":    nil,
-			"reasoning":   "Reroute limit reached.",
-			"agentSource": "cap",
+			"action":          "abort",
+			"userMessage":     "Please contact support.",
+			"newRoute":        nil,
+			"reasoning":       "Reroute limit reached.",
+			"agentSource":     "cap",
+			"journeyProgress": b.JourneyProgress,
 		})
 		return
 	}
