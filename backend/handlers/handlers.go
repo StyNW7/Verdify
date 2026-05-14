@@ -332,6 +332,10 @@ func (app *App) getUserCarbonTrendHandler(w http.ResponseWriter, r *http.Request
 	now := services.NowUTC()
 	localNow := now.In(carbonTrendKL)
 	startOfToday := time.Date(localNow.Year(), localNow.Month(), localNow.Day(), 0, 0, 0, 0, carbonTrendKL)
+	// Window is keyed on createdAt, not completedAt: bookings created before
+	// the 7-day window but completed inside it are excluded. Acceptable because
+	// completion typically follows creation by minutes-to-hours, not days. Revisit
+	// if booking-to-completion lag grows.
 	since := startOfToday.AddDate(0, 0, -6)
 
 	bookings, err := app.Store.ListCompletedBookingsSince(r.Context(), userID, since)
