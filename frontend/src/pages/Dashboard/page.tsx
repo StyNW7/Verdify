@@ -23,6 +23,7 @@ import {
 } from '@/lib/api';
 import { formatTodayInKL } from '@/lib/format-today-kl';
 import { computeImpactLedger } from '@/lib/impact-ledger';
+import { originFromSnapshot, destinationFromSnapshot } from '@/lib/booking-corridor';
 
 type Stat = {
   label: string;
@@ -110,11 +111,8 @@ function bookingToTrip(b: BookingRecord): Trip {
   const timeStr = createdAt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
   const when = `${whenPrefix} · ${timeStr}`;
 
-  const steps = snap.steps ?? [];
-  const firstStep = steps[0];
-  const lastStep = steps[steps.length - 1];
-  const from = firstStep?.departureStop || firstStep?.startLocation?.address || 'Origin';
-  const to = lastStep?.arrivalStop || lastStep?.endLocation?.address || 'Destination';
+  const from = originFromSnapshot(snap);
+  const to = destinationFromSnapshot(snap);
 
   const modeMap: Record<string, Trip['mode']> = {
     fast: 'Transit',
