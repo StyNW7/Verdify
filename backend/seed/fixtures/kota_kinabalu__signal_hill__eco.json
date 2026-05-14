@@ -1,0 +1,46 @@
+{
+  "routeId": "fixture_kota_kinabalu__signal_hill__eco",
+  "mode": "eco",
+  "totalDistance": 1.21,
+  "totalDuration": 18,
+  "carbonEstimate": 0,
+  "carbonBaseline": 242,
+  "carbonSavedGrams": 242,
+  "carbonSavingsPercent": 100,
+  "carbonEstimateKg": 0,
+  "estimatedCost": 0,
+  "greenPointsEstimate": 24,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.9804,
+        "longitude": 116.0735,
+        "address": "Kota Kinabalu City Centre"
+      },
+      "endLocation": {
+        "latitude": 5.9839,
+        "longitude": 116.081,
+        "address": "Signal Hill Observatory, Kota Kinabalu"
+      },
+      "distance": 1.21,
+      "duration": 18,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk uphill from KK City Centre to Signal Hill Observatory"
+    }
+  ],
+  "polyline": "qjfd@en|tAcQwh@",
+  "reasoning": "Walking-only climb from KK City Centre to Signal Hill Observatory deck.",
+  "recommendedFor": [
+    "low-carbon",
+    "tourist"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

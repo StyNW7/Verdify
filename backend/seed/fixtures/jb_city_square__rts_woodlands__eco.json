@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_jb_city_square__rts_woodlands__eco",
+  "mode": "eco",
+  "totalDistance": 1.83,
+  "totalDuration": 9,
+  "carbonEstimate": 70.4,
+  "carbonBaseline": 366,
+  "carbonSavedGrams": 295.6,
+  "carbonSavingsPercent": 81,
+  "carbonEstimateKg": 0.07,
+  "estimatedCost": 2.69,
+  "greenPointsEstimate": 30,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4628,
+        "longitude": 103.7639,
+        "address": "Johor Bahru City Square"
+      },
+      "endLocation": {
+        "latitude": 1.461696,
+        "longitude": 103.768768
+      },
+      "distance": 0.37,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Bukit Chagar RTS Station"
+    },
+    {
+      "type": "rts",
+      "startLocation": {
+        "latitude": 1.461696,
+        "longitude": 103.768768
+      },
+      "endLocation": {
+        "latitude": 1.450104,
+        "longitude": 103.770532
+      },
+      "distance": 1.33,
+      "duration": 5,
+      "carbonPerKm": 40,
+      "totalCarbon": 53.2,
+      "estimatedCost": 2.69,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "RTS Link",
+      "departureStop": "Bukit Chagar RTS Station",
+      "arrivalStop": "RTS Woodlands RTS Station",
+      "headsign": "Towards RTS Woodlands",
+      "stopCount": 1,
+      "instruction": "Board RTS Link Towards RTS Woodlands"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.450104,
+        "longitude": 103.770532
+      },
+      "endLocation": {
+        "latitude": 1.449,
+        "longitude": 103.7707,
+        "address": "RTS Woodlands North"
+      },
+      "distance": 0.13,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to RTS Woodlands"
+    }
+  ],
+  "polyline": "wt`Gks{xRfuAcL",
+  "reasoning": "Lowest-carbon option from JB City Square to RTS Woodlands via RTS Link.",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

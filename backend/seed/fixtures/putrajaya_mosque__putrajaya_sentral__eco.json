@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_putrajaya_mosque__putrajaya_sentral__eco",
+  "mode": "eco",
+  "totalDistance": 3.21,
+  "totalDuration": 14,
+  "carbonEstimate": 192.6,
+  "carbonBaseline": 642,
+  "carbonSavedGrams": 449.4,
+  "carbonSavingsPercent": 70,
+  "carbonEstimateKg": 0.19,
+  "estimatedCost": 1.5,
+  "greenPointsEstimate": 45,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.9355,
+        "longitude": 101.6918,
+        "address": "Masjid Putra, Putrajaya"
+      },
+      "endLocation": {
+        "latitude": 2.935328,
+        "longitude": 101.691552
+      },
+      "distance": 0.16,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Masjid Putra Bus Stop"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 2.935328,
+        "longitude": 101.691552
+      },
+      "endLocation": {
+        "latitude": 2.945272,
+        "longitude": 101.671868
+      },
+      "distance": 2.89,
+      "duration": 9,
+      "carbonPerKm": 80,
+      "totalCarbon": 231.2,
+      "estimatedCost": 1.5,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "Nadi Putra L11",
+      "departureStop": "Masjid Putra Bus Stop",
+      "arrivalStop": "Putrajaya Sentral Bus Hub",
+      "headsign": "Towards Putrajaya Sentral",
+      "stopCount": 4,
+      "instruction": "Board Nadi Putra L11 Towards Putrajaya Sentral"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.945272,
+        "longitude": 101.671868
+      },
+      "endLocation": {
+        "latitude": 2.945,
+        "longitude": 101.6712,
+        "address": "Putrajaya Sentral"
+      },
+      "distance": 0.16,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Putrajaya Sentral"
+    }
+  ],
+  "polyline": "wmoPgrxkRkr@vjB",
+  "reasoning": "Lowest-carbon option from Masjid Putra to Putrajaya Sentral via Nadi Putra L11 bus.",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

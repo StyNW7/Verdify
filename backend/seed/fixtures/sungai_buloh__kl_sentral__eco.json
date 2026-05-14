@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_sungai_buloh__kl_sentral__eco",
+  "mode": "eco",
+  "totalDistance": 18.42,
+  "totalDuration": 41,
+  "carbonEstimate": 720.8,
+  "carbonBaseline": 3684,
+  "carbonSavedGrams": 2963.2,
+  "carbonSavingsPercent": 80,
+  "carbonEstimateKg": 0.72,
+  "estimatedCost": 5.6,
+  "greenPointsEstimate": 296,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.2071,
+        "longitude": 101.5808,
+        "address": "Sungai Buloh MRT, Selangor"
+      },
+      "endLocation": {
+        "latitude": 3.207316,
+        "longitude": 101.581256
+      },
+      "distance": 0.21,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Sungai Buloh MRT Station"
+    },
+    {
+      "type": "mrt",
+      "startLocation": {
+        "latitude": 3.207316,
+        "longitude": 101.581256
+      },
+      "endLocation": {
+        "latitude": 3.134232,
+        "longitude": 101.687508
+      },
+      "distance": 18,
+      "duration": 35,
+      "carbonPerKm": 40,
+      "totalCarbon": 720,
+      "estimatedCost": 5.6,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "MRT Kajang Line",
+      "departureStop": "Sungai Buloh MRT",
+      "arrivalStop": "Muzium Negara MRT",
+      "headsign": "Towards Kajang",
+      "stopCount": 11,
+      "instruction": "Board MRT Kajang Line Towards Kajang"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.134232,
+        "longitude": 101.687508
+      },
+      "endLocation": {
+        "latitude": 3.1338,
+        "longitude": 101.6869,
+        "address": "KL Sentral, Kuala Lumpur"
+      },
+      "distance": 0.21,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to KL Sentral"
+    }
+  ],
+  "polyline": "_v_S_qbjRzaIy_b@",
+  "reasoning": "Lowest-carbon option from Sungai Buloh to KL Sentral on the MRT Kajang Line.",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

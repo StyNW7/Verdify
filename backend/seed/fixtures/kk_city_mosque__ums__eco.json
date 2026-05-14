@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_kk_city_mosque__ums__eco",
+  "mode": "eco",
+  "totalDistance": 4.21,
+  "totalDuration": 19,
+  "carbonEstimate": 240,
+  "carbonBaseline": 842,
+  "carbonSavedGrams": 602,
+  "carbonSavingsPercent": 71,
+  "carbonEstimateKg": 0.24,
+  "estimatedCost": 1.5,
+  "greenPointsEstimate": 60,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 6.0045,
+        "longitude": 116.1073,
+        "address": "Kota Kinabalu City Mosque, Likas"
+      },
+      "endLocation": {
+        "latitude": 6.004732,
+        "longitude": 116.106892
+      },
+      "distance": 0.16,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Likas Bus Stop"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 6.004732,
+        "longitude": 116.106892
+      },
+      "endLocation": {
+        "latitude": 6.035268,
+        "longitude": 116.119956
+      },
+      "distance": 4.0,
+      "duration": 13,
+      "carbonPerKm": 60,
+      "totalCarbon": 240,
+      "estimatedCost": 1.5,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "Sabah State Bus 12",
+      "departureStop": "Likas Bus Stop",
+      "arrivalStop": "UMS Main Gate",
+      "headsign": "Towards Sepanggar",
+      "stopCount": 6,
+      "instruction": "Board Sabah State Bus 12 Towards Sepanggar"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 6.035268,
+        "longitude": 116.119956
+      },
+      "endLocation": {
+        "latitude": 6.0353,
+        "longitude": 116.1198,
+        "address": "Universiti Malaysia Sabah, Kota Kinabalu"
+      },
+      "distance": 0.05,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to UMS Campus"
+    }
+  ],
+  "polyline": "iohd@kt~tAyaCi`A",
+  "reasoning": "Lowest-carbon option from KK City Mosque (Likas) to UMS on Sabah State Bus 12.",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

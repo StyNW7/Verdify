@@ -1,0 +1,46 @@
+{
+  "routeId": "fixture_batu_ferringhi__penang_national_park__fast",
+  "mode": "fast",
+  "totalDistance": 5.84,
+  "totalDuration": 12,
+  "carbonEstimate": 467.2,
+  "carbonBaseline": 1168,
+  "carbonSavedGrams": 700.8,
+  "carbonSavingsPercent": 60,
+  "carbonEstimateKg": 0.47,
+  "estimatedCost": 9.2,
+  "greenPointsEstimate": 35,
+  "steps": [
+    {
+      "type": "ev_taxi",
+      "startLocation": {
+        "latitude": 5.4754,
+        "longitude": 100.2503,
+        "address": "Batu Ferringhi, Penang"
+      },
+      "endLocation": {
+        "latitude": 5.463,
+        "longitude": 100.2003,
+        "address": "Penang National Park, Teluk Bahang"
+      },
+      "distance": 5.84,
+      "duration": 12,
+      "carbonPerKm": 80,
+      "totalCarbon": 467.2,
+      "estimatedCost": 9.2,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Drive from Batu Ferringhi to Penang National Park"
+    }
+  ],
+  "polyline": "atb``@_~`cR~`@nrG",
+  "reasoning": "Fastest direct ride from Batu Ferringhi to Penang National Park along the coastal road.",
+  "recommendedFor": [
+    "speed",
+    "tourist"
+  ],
+  "recommended": false,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}
