@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_bukit_bintang__klcc__eco",
+  "mode": "eco",
+  "totalDistance": 1.51,
+  "totalDuration": 7,
+  "carbonEstimate": 51.6,
+  "carbonBaseline": 302,
+  "carbonSavedGrams": 250.4,
+  "carbonSavingsPercent": 83,
+  "carbonEstimateKg": 0.05,
+  "estimatedCost": 2.68,
+  "greenPointsEstimate": 13,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1466,
+        "longitude": 101.7104,
+        "address": "Bukit Bintang, Kuala Lumpur"
+      },
+      "endLocation": {
+        "latitude": 3.147504,
+        "longitude": 101.710496
+      },
+      "distance": 0.11,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Bukit Bintang Station"
+    },
+    {
+      "type": "lrt",
+      "startLocation": {
+        "latitude": 3.147504,
+        "longitude": 101.710496
+      },
+      "endLocation": {
+        "latitude": 3.156996,
+        "longitude": 101.711504
+      },
+      "distance": 1.29,
+      "duration": 5,
+      "carbonPerKm": 40,
+      "totalCarbon": 51.6,
+      "estimatedCost": 2.68,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "Kelana Jaya LRT",
+      "departureStop": "Bukit Bintang Station",
+      "arrivalStop": "KLCC Station",
+      "headsign": "Towards Putra Heights",
+      "stopCount": 6,
+      "instruction": "Board Kelana Jaya LRT Towards Putra Heights"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.156996,
+        "longitude": 101.711504
+      },
+      "endLocation": {
+        "latitude": 3.1579,
+        "longitude": 101.7116,
+        "address": "KLCC, Kuala Lumpur"
+      },
+      "distance": 0.11,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to KLCC"
+    }
+  ],
+  "polyline": "gqeR_ixkRseAoF",
+  "reasoning": "Lowest-carbon option from Bukit Bintang to KLCC using Kelana Jaya LRT.",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

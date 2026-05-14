@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_subang__klcc__eco",
+  "mode": "eco",
+  "totalDistance": 23.41,
+  "totalDuration": 65,
+  "carbonEstimate": 805.2,
+  "carbonBaseline": 4682,
+  "carbonSavedGrams": 3876.8,
+  "carbonSavingsPercent": 83,
+  "carbonEstimateKg": 0.81,
+  "estimatedCost": 6.83,
+  "greenPointsEstimate": 204,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.0738,
+        "longitude": 101.5183,
+        "address": "Subang Jaya"
+      },
+      "endLocation": {
+        "latitude": 3.0805279999999997,
+        "longitude": 101.53376399999999
+      },
+      "distance": 1.64,
+      "duration": 12,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Subang Station"
+    },
+    {
+      "type": "lrt",
+      "startLocation": {
+        "latitude": 3.0805279999999997,
+        "longitude": 101.53376399999999
+      },
+      "endLocation": {
+        "latitude": 3.1511720000000003,
+        "longitude": 101.69613600000001
+      },
+      "distance": 20.13,
+      "duration": 41,
+      "carbonPerKm": 40,
+      "totalCarbon": 805.2,
+      "estimatedCost": 6.83,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "Kelana Jaya LRT",
+      "departureStop": "Subang Station",
+      "arrivalStop": "KLCC Station",
+      "headsign": "Towards Putra Heights",
+      "stopCount": 6,
+      "instruction": "Board Kelana Jaya LRT Towards Putra Heights"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1511720000000003,
+        "longitude": 101.69613600000001
+      },
+      "endLocation": {
+        "latitude": 3.1579,
+        "longitude": 101.7116,
+        "address": "KLCC, Kuala Lumpur"
+      },
+      "distance": 1.64,
+      "duration": 12,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to KLCC"
+    }
+  ],
+  "polyline": "gjwQkxrjRslOcwd@",
+  "reasoning": "Lowest-carbon option from Subang to KLCC using Kelana Jaya LRT.",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

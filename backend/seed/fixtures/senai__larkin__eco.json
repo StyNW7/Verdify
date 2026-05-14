@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_senai__larkin__eco",
+  "mode": "eco",
+  "totalDistance": 18.42,
+  "totalDuration": 57,
+  "carbonEstimate": 950.4,
+  "carbonBaseline": 3684,
+  "carbonSavedGrams": 2733.6,
+  "carbonSavingsPercent": 74,
+  "carbonEstimateKg": 0.95,
+  "estimatedCost": 4.45,
+  "greenPointsEstimate": 107,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.6406,
+        "longitude": 103.67,
+        "address": "Senai International Airport"
+      },
+      "endLocation": {
+        "latitude": 1.628632,
+        "longitude": 103.67568800000001
+      },
+      "distance": 1.29,
+      "duration": 12,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Senai Bus Terminal"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 1.628632,
+        "longitude": 103.67568800000001
+      },
+      "endLocation": {
+        "latitude": 1.502968,
+        "longitude": 103.735412
+      },
+      "distance": 15.84,
+      "duration": 33,
+      "carbonPerKm": 60,
+      "totalCarbon": 950.4,
+      "estimatedCost": 4.45,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "Causeway Link CW2",
+      "departureStop": "Senai Bus Terminal",
+      "arrivalStop": "Larkin Bus Terminal",
+      "headsign": "Towards Larkin",
+      "stopCount": 7,
+      "instruction": "Board Causeway Link CW2 Towards Larkin"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.502968,
+        "longitude": 103.735412
+      },
+      "endLocation": {
+        "latitude": 1.491,
+        "longitude": 103.7411,
+        "address": "Larkin Sentral, Johor Bahru"
+      },
+      "distance": 1.29,
+      "duration": 12,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Larkin"
+    }
+  ],
+  "polyline": "wl_Io`wwR~e\\k{L",
+  "reasoning": "Lowest-carbon option from Senai to Larkin using Causeway Link CW2.",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

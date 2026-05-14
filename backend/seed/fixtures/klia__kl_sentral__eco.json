@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_klia__kl_sentral__eco",
+  "mode": "eco",
+  "totalDistance": 43.25,
+  "totalDuration": 64,
+  "carbonEstimate": 1487.6,
+  "carbonBaseline": 8650,
+  "carbonSavedGrams": 7162.4,
+  "carbonSavingsPercent": 83,
+  "carbonEstimateKg": 1.49,
+  "estimatedCost": 10.58,
+  "greenPointsEstimate": 377,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.7456,
+        "longitude": 101.7099,
+        "address": "KLIA, Sepang"
+      },
+      "endLocation": {
+        "latitude": 2.776656,
+        "longitude": 101.70806
+      },
+      "distance": 3.03,
+      "duration": 12,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to KLIA ERL Station"
+    },
+    {
+      "type": "mrt",
+      "startLocation": {
+        "latitude": 2.776656,
+        "longitude": 101.70806
+      },
+      "endLocation": {
+        "latitude": 3.102744,
+        "longitude": 101.68874
+      },
+      "distance": 37.19,
+      "duration": 40,
+      "carbonPerKm": 40,
+      "totalCarbon": 1487.6,
+      "estimatedCost": 10.58,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "KLIA Ekspres",
+      "departureStop": "KLIA ERL Station",
+      "arrivalStop": "KL Sentral ERL Station",
+      "headsign": "Towards KL Sentral",
+      "stopCount": 1,
+      "instruction": "Board KLIA Ekspres Towards KL Sentral"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.102744,
+        "longitude": 101.68874
+      },
+      "endLocation": {
+        "latitude": 3.1338,
+        "longitude": 101.6869,
+        "address": "KL Sentral, Kuala Lumpur"
+      },
+      "distance": 3.03,
+      "duration": 12,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to KL Sentral"
+    }
+  ],
+  "polyline": "_gwO{exkRgyjAvnC",
+  "reasoning": "Lowest-carbon option from KLIA to KL Sentral using KLIA Ekspres.",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}
