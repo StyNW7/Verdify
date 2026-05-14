@@ -16,7 +16,12 @@ import { Link } from 'react-router';
 import { useAuth } from '@/lib/auth-provider';
 import { useUserDoc } from '@/lib/user-doc-provider';
 import { useBookingUserId } from '@/hooks/useBookingUserId';
-import { listUserBookings, type BookingRecord } from '@/lib/api';
+import {
+  getUserCarbonTrend,
+  listUserBookings,
+  type BookingRecord,
+  type CarbonTrendDay,
+} from '@/lib/api';
 
 type Stat = {
   label: string;
@@ -71,16 +76,23 @@ function buildStats(
   ];
 }
 
-// TODO: weekly carbon aggregation endpoint
-const weeklyTrend: { day: string; kg: number }[] = [
-  { day: 'Mon', kg: 3.2 },
-  { day: 'Tue', kg: 5.8 },
-  { day: 'Wed', kg: 4.1 },
-  { day: 'Thu', kg: 6.9 },
-  { day: 'Fri', kg: 8.4 },
-  { day: 'Sat', kg: 2.1 },
-  { day: 'Sun', kg: 3.7 },
-];
+// placeholderTrendDays returns 7 zero-filled buckets ending today, in the
+// browser's local timezone. Used as the loading/error fallback so the SVG
+// path math has a stable, non-empty input even before the real data lands.
+function placeholderTrendDays(): CarbonTrendDay[] {
+  const out: CarbonTrendDay[] = [];
+  const today = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    out.push({
+      date: d.toISOString().slice(0, 10),
+      dayLabel: d.toLocaleDateString('en-US', { weekday: 'short' }),
+      kg: 0,
+    });
+  }
+  return out;
+}
 
 function bookingToTrip(b: BookingRecord): Trip {
   const snap = b.routeSnapshot;
@@ -149,6 +161,10 @@ export default function DashboardPage() {
   const [tripsLoading, setTripsLoading] = useState(true);
   const [tripsError, setTripsError] = useState(false);
 
+  const [trendDays, setTrendDays] = useState<CarbonTrendDay[]>(() => placeholderTrendDays());
+  const [trendLoading, setTrendLoading] = useState(true);
+  const [trendError, setTrendError] = useState(false);
+
   useEffect(() => {
     if (!userId) {
       setTrips([]);
@@ -167,6 +183,27 @@ export default function DashboardPage() {
         setTrips([]);
         setTripsLoading(false);
         setTripsError(true);
+      });
+  }, [userId]);
+
+  useEffect(() => {
+    if (!userId) {
+      setTrendDays(placeholderTrendDays());
+      setTrendLoading(false);
+      setTrendError(false);
+      return;
+    }
+    setTrendLoading(true);
+    setTrendError(false);
+    getUserCarbonTrend(userId)
+      .then(({ days }) => {
+        setTrendDays(days);
+        setTrendLoading(false);
+      })
+      .catch(() => {
+        setTrendDays(placeholderTrendDays());
+        setTrendLoading(false);
+        setTrendError(true);
       });
   }, [userId]);
 
@@ -263,7 +300,7 @@ export default function DashboardPage() {
       <section
         className={`${tab === 'trends' ? '' : 'hidden'} mt-0 grid grid-cols-1 gap-5 lg:!grid lg:mt-8 lg:grid-cols-[1.35fr_1fr]`}
       >
-        <WeeklyTrendCard />
+        <WeeklyTrendCard days={trendDays} loading={trendLoading} error={trendError} />
         <AIRecommendationCard />
       </section>
 
@@ -335,24 +372,37 @@ function StatCard({ stat, index }: { stat: Stat; index: number }) {
   );
 }
 
-function WeeklyTrendCard() {
+function WeeklyTrendCard({
+  days,
+  loading,
+  error,
+}: {
+  days: CarbonTrendDay[];
+  loading: boolean;
+  error: boolean;
+}) {
   const W = 640;
   const H = 240;
   const padX = 28;
   const padTop = 24;
   const padBottom = 36;
 
-  const max = Math.max(...weeklyTrend.map((d) => d.kg));
+  // Defensive: if a caller ever hands us an empty array, fall back to a
+  // zero-filled placeholder so the SVG math (which divides by length-1)
+  // does not produce NaN.
+  const safeDays = days.length === 7 ? days : placeholderTrendDays();
+
+  const max = Math.max(...safeDays.map((d) => d.kg));
   const min = 0;
 
   const points = useMemo(() => {
-    return weeklyTrend.map((d, i) => {
-      const x = padX + (i / (weeklyTrend.length - 1)) * (W - padX * 2);
+    return safeDays.map((d, i) => {
+      const x = padX + (i / (safeDays.length - 1)) * (W - padX * 2);
       const y =
         padTop + (1 - (d.kg - min) / (max - min || 1)) * (H - padTop - padBottom);
-      return { x, y, kg: d.kg, day: d.day };
+      return { x, y, kg: d.kg, day: d.dayLabel };
     });
-  }, [max]);
+  }, [safeDays, max]);
 
   const linePath = points
     .map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`)
@@ -361,7 +411,22 @@ function WeeklyTrendCard() {
   const areaPath = `${linePath} L ${points[points.length - 1].x} ${H - padBottom} L ${points[0].x
     } ${H - padBottom} Z`;
 
-  const totalKg = weeklyTrend.reduce((acc, d) => acc + d.kg, 0);
+  const totalKg = safeDays.reduce((acc, d) => acc + d.kg, 0);
+  const peak = safeDays.reduce(
+    (best, d) => (d.kg > best.kg ? d : best),
+    safeDays[0],
+  );
+  const avgKg = totalKg / safeDays.length;
+  const weekLabel = (() => {
+    const last = safeDays[safeDays.length - 1];
+    if (!last) return '';
+    const d = new Date(`${last.date}T00:00:00`);
+    if (Number.isNaN(d.getTime())) return '';
+    const yearStart = new Date(d.getFullYear(), 0, 1);
+    const diffDays = Math.floor((d.getTime() - yearStart.getTime()) / 86_400_000);
+    const weekNum = Math.ceil((diffDays + yearStart.getDay() + 1) / 7);
+    return `Week ${weekNum} · ${d.getFullYear()}`;
+  })();
 
   return (
     <motion.div
@@ -503,17 +568,26 @@ function WeeklyTrendCard() {
           color: 'var(--theme-fg-muted)',
         }}
       >
-        <span>
-          Peak · <span style={{ color: 'var(--theme-fg)' }}>Fri 8.4 kg</span>
-        </span>
-        <span>
-          Avg ·{' '}
-          <span style={{ color: 'var(--theme-fg)' }}>
-            {(totalKg / weeklyTrend.length).toFixed(1)} kg/day
-          </span>
-        </span>
+        {error ? (
+          <span style={{ color: 'var(--theme-fg-muted)' }}>Trend unavailable</span>
+        ) : (
+          <>
+            <span>
+              Peak ·{' '}
+              <span style={{ color: 'var(--theme-fg)' }}>
+                {loading ? '—' : `${peak.dayLabel} ${peak.kg.toFixed(1)} kg`}
+              </span>
+            </span>
+            <span>
+              Avg ·{' '}
+              <span style={{ color: 'var(--theme-fg)' }}>
+                {loading ? '—' : `${avgKg.toFixed(1)} kg/day`}
+              </span>
+            </span>
+          </>
+        )}
         <span className="ml-auto theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
-          Week 16 · 2026
+          {weekLabel}
         </span>
       </div>
     </motion.div>

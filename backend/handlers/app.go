@@ -88,6 +88,7 @@ func (app *App) Routes() *http.ServeMux {
 	mux.Handle("GET /api/v1/user/{userId}", mw.Wrap(http.HandlerFunc(app.getUserHandler)))
 	mux.Handle("PATCH /api/v1/user/{userId}", mw.Wrap(http.HandlerFunc(app.patchUserHandler)))
 	mux.Handle("GET /api/v1/user/{userId}/bookings", mw.Wrap(http.HandlerFunc(app.getUserBookingsHandler)))
+	mux.Handle("GET /api/v1/user/{userId}/carbon-trend", mw.Wrap(http.HandlerFunc(app.getUserCarbonTrendHandler)))
 	mux.Handle("GET /api/v1/leaderboard", mw.Wrap(http.HandlerFunc(app.getLeaderboardHandler)))
 
 	return mux

@@ -311,6 +311,41 @@ func (s *FirestoreStore) ListUserBookings(ctx context.Context, userID, queryStat
 	return out, total, nil
 }
 
+// ListCompletedBookingsSince returns the user's "completed" bookings with
+// createdAt >= since. Backed by the (userId ASC, status ASC, createdAt ASC)
+// composite index declared in firestore.indexes.json.
+func (s *FirestoreStore) ListCompletedBookingsSince(ctx context.Context, userID string, since time.Time) ([]models.Booking, error) {
+	if userID == "" {
+		return []models.Booking{}, nil
+	}
+	q := s.books.Query.
+		Where("userId", "==", userID).
+		Where("status", "==", "completed").
+		Where("createdAt", ">=", since).
+		OrderBy("createdAt", firestore.Asc)
+
+	iter := q.Documents(ctx)
+	defer iter.Stop()
+
+	out := make([]models.Booking, 0)
+	for {
+		snap, err := iter.Next()
+		if errors.Is(err, iterator.Done) {
+			break
+		}
+		if err != nil {
+			return out, fmt.Errorf("list completed bookings %s: %w", userID, err)
+		}
+		var b models.Booking
+		if err := snap.DataTo(&b); err != nil {
+			return out, fmt.Errorf("list completed bookings decode %s/%s: %w", userID, snap.Ref.ID, err)
+		}
+		b.ID = snap.Ref.ID
+		out = append(out, b)
+	}
+	return out, nil
+}
+
 // ListLeaderboard returns the top limit users ordered by greenPointsBalance
 // descending, ties broken by createdAt ascending. Uses the composite index
 // declared in firestore.indexes.json. Each entry is assigned a 1-indexed Rank.
