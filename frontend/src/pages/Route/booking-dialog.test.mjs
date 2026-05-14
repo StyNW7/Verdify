@@ -57,3 +57,11 @@ test('booking dialog branches on bookingLifecycle.content', () => {
 test('confirmed pane total uses routeSnapshot.estimatedCost', () => {
   assert.match(dialogSource, /routeSnapshot\.estimatedCost/);
 });
+
+test('JourneyPane seeds currentStep from booking.journeyProgress.currentStepIndex', () => {
+  assert.match(dialogSource, /booking\.journeyProgress\?\.currentStepIndex/);
+});
+
+test('JourneyPane flushes pending progress write on unmount', () => {
+  assert.match(dialogSource, /flusher\.flush\(\)/);
+});
