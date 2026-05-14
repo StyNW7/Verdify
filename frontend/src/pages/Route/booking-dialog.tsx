@@ -1101,8 +1101,9 @@ function JourneyPane({
   // reroute, so the useState initialiser is not re-run.
   const serverStep = booking.journeyProgress?.currentStepIndex ?? 0;
   useEffect(() => {
+    flusher.cancel();
     setCurrentStep(total === 0 ? 0 : Math.min(serverStep, total - 1));
-  }, [serverStep, total]);
+  }, [serverStep, total, flusher]);
 
   const [flusher] = useState(() =>
     createProgressFlusher({
