@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_ciq_johor__larkin__eco",
+  "mode": "eco",
+  "totalDistance": 4.39,
+  "totalDuration": 18,
+  "carbonEstimate": 226.2,
+  "carbonBaseline": 878,
+  "carbonSavedGrams": 651.8,
+  "carbonSavingsPercent": 74,
+  "carbonEstimateKg": 0.23,
+  "estimatedCost": 2.28,
+  "greenPointsEstimate": 26,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4628,
+        "longitude": 103.7686,
+        "address": "Sultan Iskandar CIQ, Johor Bahru"
+      },
+      "endLocation": {
+        "latitude": 1.4650560000000001,
+        "longitude": 103.7664
+      },
+      "distance": 0.31,
+      "duration": 4,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to CIQ Johor Bus Terminal"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 1.4650560000000001,
+        "longitude": 103.7664
+      },
+      "endLocation": {
+        "latitude": 1.488744,
+        "longitude": 103.7433
+      },
+      "distance": 3.77,
+      "duration": 10,
+      "carbonPerKm": 60,
+      "totalCarbon": 226.2,
+      "estimatedCost": 2.28,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "Causeway Link CW2",
+      "departureStop": "CIQ Johor Bus Terminal",
+      "arrivalStop": "Larkin Bus Terminal",
+      "headsign": "Towards Larkin",
+      "stopCount": 7,
+      "instruction": "Board Causeway Link CW2 Towards Larkin"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.488744,
+        "longitude": 103.7433
+      },
+      "endLocation": {
+        "latitude": 1.491,
+        "longitude": 103.7411,
+        "address": "Larkin Sentral, Johor Bahru"
+      },
+      "distance": 0.31,
+      "duration": 4,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Larkin"
+    }
+  ],
+  "polyline": "ou|GwhjxRgoDzjD",
+  "reasoning": "Lowest-carbon option from CIQ Johor to Larkin using Causeway Link CW2.",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

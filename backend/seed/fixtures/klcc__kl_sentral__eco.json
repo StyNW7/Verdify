@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_klcc__kl_sentral__eco",
+  "mode": "eco",
+  "totalDistance": 3.84,
+  "totalDuration": 15,
+  "carbonEstimate": 132,
+  "carbonBaseline": 768,
+  "carbonSavedGrams": 636,
+  "carbonSavingsPercent": 83,
+  "carbonEstimateKg": 0.13,
+  "estimatedCost": 3.13,
+  "greenPointsEstimate": 34,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1579,
+        "longitude": 101.7116,
+        "address": "KLCC, Kuala Lumpur"
+      },
+      "endLocation": {
+        "latitude": 3.155972,
+        "longitude": 101.709624
+      },
+      "distance": 0.27,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to KLCC Station"
+    },
+    {
+      "type": "lrt",
+      "startLocation": {
+        "latitude": 3.155972,
+        "longitude": 101.709624
+      },
+      "endLocation": {
+        "latitude": 3.135728,
+        "longitude": 101.688876
+      },
+      "distance": 3.3,
+      "duration": 9,
+      "carbonPerKm": 40,
+      "totalCarbon": 132,
+      "estimatedCost": 3.13,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "Kelana Jaya LRT",
+      "departureStop": "KLCC Station",
+      "arrivalStop": "KL Sentral Station",
+      "headsign": "Towards Putra Heights",
+      "stopCount": 6,
+      "instruction": "Board Kelana Jaya LRT Towards Putra Heights"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.135728,
+        "longitude": 101.688876
+      },
+      "endLocation": {
+        "latitude": 3.1338,
+        "longitude": 101.6869,
+        "address": "KL Sentral, Kuala Lumpur"
+      },
+      "distance": 0.27,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to KL Sentral"
+    }
+  ],
+  "polyline": "{wgRopxkRruCjyC",
+  "reasoning": "Lowest-carbon option from KLCC to KL Sentral using Kelana Jaya LRT.",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

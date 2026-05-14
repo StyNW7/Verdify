@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_putrajaya_sentral__klcc__eco",
+  "mode": "eco",
+  "totalDistance": 24.1,
+  "totalDuration": 66,
+  "carbonEstimate": 828.8,
+  "carbonBaseline": 4820,
+  "carbonSavedGrams": 3991.2,
+  "carbonSavingsPercent": 83,
+  "carbonEstimateKg": 0.83,
+  "estimatedCost": 6.96,
+  "greenPointsEstimate": 210,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.945,
+        "longitude": 101.6712,
+        "address": "Putrajaya Sentral"
+      },
+      "endLocation": {
+        "latitude": 2.9620319999999998,
+        "longitude": 101.674432
+      },
+      "distance": 1.69,
+      "duration": 12,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Putrajaya Sentral MRT Station"
+    },
+    {
+      "type": "mrt",
+      "startLocation": {
+        "latitude": 2.9620319999999998,
+        "longitude": 101.674432
+      },
+      "endLocation": {
+        "latitude": 3.140868,
+        "longitude": 101.70836800000001
+      },
+      "distance": 20.72,
+      "duration": 42,
+      "carbonPerKm": 40,
+      "totalCarbon": 828.8,
+      "estimatedCost": 6.96,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "Putrajaya Line (MRT)",
+      "departureStop": "Putrajaya Sentral MRT Station",
+      "arrivalStop": "KLCC MRT Station",
+      "headsign": "Towards KLCC",
+      "stopCount": 12,
+      "instruction": "Board Putrajaya Line (MRT) Towards KLCC"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.140868,
+        "longitude": 101.70836800000001
+      },
+      "endLocation": {
+        "latitude": 3.1579,
+        "longitude": 101.7116,
+        "address": "KLCC, Kuala Lumpur"
+      },
+      "distance": 1.69,
+      "duration": 12,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to KLCC"
+    }
+  ],
+  "polyline": "ge~P_tpkRsqh@o{F",
+  "reasoning": "Lowest-carbon option from Putrajaya Sentral to KLCC using Putrajaya Line (MRT).",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

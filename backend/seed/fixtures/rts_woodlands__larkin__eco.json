@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_rts_woodlands__larkin__eco",
+  "mode": "eco",
+  "totalDistance": 5.71,
+  "totalDuration": 22,
+  "carbonEstimate": 196.4,
+  "carbonBaseline": 1142,
+  "carbonSavedGrams": 945.6,
+  "carbonSavingsPercent": 83,
+  "carbonEstimateKg": 0.2,
+  "estimatedCost": 3.48,
+  "greenPointsEstimate": 50,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.449,
+        "longitude": 103.7707,
+        "address": "RTS Woodlands North"
+      },
+      "endLocation": {
+        "latitude": 1.45236,
+        "longitude": 103.768332
+      },
+      "distance": 0.4,
+      "duration": 5,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to RTS Woodlands RTS Station"
+    },
+    {
+      "type": "rts",
+      "startLocation": {
+        "latitude": 1.45236,
+        "longitude": 103.768332
+      },
+      "endLocation": {
+        "latitude": 1.48764,
+        "longitude": 103.74346800000001
+      },
+      "distance": 4.91,
+      "duration": 12,
+      "carbonPerKm": 40,
+      "totalCarbon": 196.4,
+      "estimatedCost": 3.48,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "RTS Link",
+      "departureStop": "RTS Woodlands RTS Station",
+      "arrivalStop": "Larkin RTS Station",
+      "headsign": "Towards Larkin",
+      "stopCount": 1,
+      "instruction": "Board RTS Link Towards Larkin"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.48764,
+        "longitude": 103.74346800000001
+      },
+      "endLocation": {
+        "latitude": 1.491,
+        "longitude": 103.7411,
+        "address": "Larkin Sentral, Johor Bahru"
+      },
+      "distance": 0.4,
+      "duration": 5,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Larkin"
+    }
+  ],
+  "polyline": "g_zG{ujxRoeG~wD",
+  "reasoning": "Lowest-carbon option from RTS Woodlands to Larkin using RTS Link.",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

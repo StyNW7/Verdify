@@ -1,0 +1,46 @@
+{
+  "routeId": "fixture_kl_sentral__klia__fast",
+  "mode": "fast",
+  "totalDistance": 43.24,
+  "totalDuration": 53,
+  "carbonEstimate": 3459.31,
+  "carbonBaseline": 8648.27,
+  "carbonSavedGrams": 5188.96,
+  "carbonSavingsPercent": 60,
+  "carbonEstimateKg": 3.46,
+  "estimatedCost": 42.55,
+  "greenPointsEstimate": 162,
+  "steps": [
+    {
+      "type": "ev_taxi",
+      "startLocation": {
+        "latitude": 3.1338,
+        "longitude": 101.6869,
+        "address": "KL Sentral, Kuala Lumpur"
+      },
+      "endLocation": {
+        "latitude": 2.7456,
+        "longitude": 101.7099,
+        "address": "KLIA, Sepang"
+      },
+      "distance": 43.24,
+      "duration": 53,
+      "carbonPerKm": 80,
+      "totalCarbon": 3459.31,
+      "estimatedCost": 42.55,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Drive from KL Sentral to KLIA"
+    }
+  ],
+  "polyline": "gacRcvskRfyjAwnC",
+  "reasoning": "Fastest direct ride from KL Sentral to KLIA, traffic-aware ETA.",
+  "recommendedFor": [
+    "speed",
+    "luggage"
+  ],
+  "recommended": false,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}
