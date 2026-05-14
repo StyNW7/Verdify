@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 import {
   Leaf,
   Navigation,
@@ -180,7 +181,7 @@ export default function HistoryPage() {
         );
       }
     } catch {
-      // leave last result unchanged; the button re-enables for a retry
+      toast.error('Could not reach the server. Please try again.');
     } finally {
       setRerouteInFlight(false);
     }
