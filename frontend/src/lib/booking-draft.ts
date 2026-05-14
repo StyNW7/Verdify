@@ -1,4 +1,4 @@
-import type { BackendRouteOption } from './api';
+import type { BackendRouteOption, JourneyProgressRecord } from './api';
 
 export type BookingStatus =
   | 'draft'
@@ -35,6 +35,7 @@ export type ConfirmedBooking = {
   estimatedPoints: number;
   actualPoints?: number;
   paymentStatus: string;
+  journeyProgress?: JourneyProgressRecord;
   createdAt?: string;
 };
 

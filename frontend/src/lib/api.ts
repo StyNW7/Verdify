@@ -257,6 +257,11 @@ export function createBooking(payload: CreateBookingPayload) {
   });
 }
 
+export type JourneyProgressRecord = {
+  currentStepIndex: number;
+  updatedAt: string;
+};
+
 export type BookingRecord = {
   bookingId: string;
   userId: string;
@@ -269,6 +274,7 @@ export type BookingRecord = {
   estimatedPoints: number;
   actualPoints: number;
   paymentStatus: string;
+  journeyProgress?: JourneyProgressRecord;
   createdAt: string;
   completedAt?: string;
 };
@@ -298,6 +304,13 @@ export function cancelBooking(bookingId: string) {
   return apiRequest<BookingRecord>(`/api/v1/bookings/${encodeURIComponent(bookingId)}/cancel`, {
     method: 'POST',
   });
+}
+
+export function updateBookingProgress(bookingId: string, currentStepIndex: number) {
+  return apiRequest<BookingRecord>(
+    `/api/v1/bookings/${encodeURIComponent(bookingId)}/progress`,
+    { method: 'PATCH', body: JSON.stringify({ currentStepIndex }) },
+  );
 }
 
 export type UserBookingsResponse = {
