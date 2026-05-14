@@ -1,0 +1,46 @@
+{
+  "routeId": "fixture_kota_kinabalu__klia__fast",
+  "mode": "fast",
+  "totalDistance": 1632.41,
+  "totalDuration": 1787,
+  "carbonEstimate": 130593.01,
+  "carbonBaseline": 326482.51,
+  "carbonSavedGrams": 195889.5,
+  "carbonSavingsPercent": 60,
+  "carbonEstimateKg": 130.59,
+  "estimatedCost": 1441.02,
+  "greenPointsEstimate": 6122,
+  "steps": [
+    {
+      "type": "ev_taxi",
+      "startLocation": {
+        "latitude": 5.9804,
+        "longitude": 116.0735,
+        "address": "Kota Kinabalu City Centre"
+      },
+      "endLocation": {
+        "latitude": 2.7456,
+        "longitude": 101.7099,
+        "address": "KLIA, Sepang"
+      },
+      "distance": 1632.41,
+      "duration": 1787,
+      "carbonPerKm": 80,
+      "totalCarbon": 130593.01,
+      "estimatedCost": 1441.02,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Drive from Kota Kinabalu to KLIA"
+    }
+  ],
+  "polyline": "o`oc@krmcUnxvRnktvA",
+  "reasoning": "Fastest direct ride from Kota Kinabalu to KLIA, traffic-aware ETA.",
+  "recommendedFor": [
+    "speed",
+    "luggage"
+  ],
+  "recommended": false,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

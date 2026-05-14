@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_kl_sentral__melaka_sentral__eco",
+  "mode": "eco",
+  "totalDistance": 120.3,
+  "totalDuration": 92,
+  "carbonEstimate": 4138.4,
+  "carbonBaseline": 24060,
+  "carbonSavedGrams": 19921.6,
+  "carbonSavingsPercent": 83,
+  "carbonEstimateKg": 4.14,
+  "estimatedCost": 25.16,
+  "greenPointsEstimate": 1049,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1338,
+        "longitude": 101.6869,
+        "address": "KL Sentral, Kuala Lumpur"
+      },
+      "endLocation": {
+        "latitude": 3.060008,
+        "longitude": 101.732188
+      },
+      "distance": 8.42,
+      "duration": 12,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to KL Sentral Intercity Platform"
+    },
+    {
+      "type": "mrt",
+      "startLocation": {
+        "latitude": 3.060008,
+        "longitude": 101.732188
+      },
+      "endLocation": {
+        "latitude": 2.285192,
+        "longitude": 102.207712
+      },
+      "distance": 103.46,
+      "duration": 68,
+      "carbonPerKm": 40,
+      "totalCarbon": 4138.4,
+      "estimatedCost": 25.16,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "ETS Gold",
+      "departureStop": "KL Sentral Intercity Platform",
+      "arrivalStop": "Melaka Sentral Intercity Platform",
+      "headsign": "Towards Melaka Sentral",
+      "stopCount": 5,
+      "instruction": "Board ETS Gold Towards Melaka Sentral"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.285192,
+        "longitude": 102.207712
+      },
+      "endLocation": {
+        "latitude": 2.2114,
+        "longitude": 102.253,
+        "address": "Melaka Sentral"
+      },
+      "distance": 8.42,
+      "duration": 12,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Melaka Sentral"
+    }
+  ],
+  "polyline": "gacRcvskR~csDcqmB",
+  "reasoning": "Lowest-carbon option from KL Sentral to Melaka Sentral using ETS Gold.",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

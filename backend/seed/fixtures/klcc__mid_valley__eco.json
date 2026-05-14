@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_klcc__mid_valley__eco",
+  "mode": "eco",
+  "totalDistance": 5.87,
+  "totalDuration": 22,
+  "carbonEstimate": 202,
+  "carbonBaseline": 1174,
+  "carbonSavedGrams": 972,
+  "carbonSavingsPercent": 83,
+  "carbonEstimateKg": 0.2,
+  "estimatedCost": 3.51,
+  "greenPointsEstimate": 51,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1579,
+        "longitude": 101.7116,
+        "address": "KLCC, Kuala Lumpur"
+      },
+      "endLocation": {
+        "latitude": 3.1547080000000003,
+        "longitude": 101.708832
+      },
+      "distance": 0.41,
+      "duration": 5,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to KLCC Station"
+    },
+    {
+      "type": "lrt",
+      "startLocation": {
+        "latitude": 3.1547080000000003,
+        "longitude": 101.708832
+      },
+      "endLocation": {
+        "latitude": 3.1211919999999997,
+        "longitude": 101.67976800000001
+      },
+      "distance": 5.05,
+      "duration": 12,
+      "carbonPerKm": 40,
+      "totalCarbon": 202,
+      "estimatedCost": 3.51,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "Kelana Jaya LRT",
+      "departureStop": "KLCC Station",
+      "arrivalStop": "Mid Valley Station",
+      "headsign": "Towards Putra Heights",
+      "stopCount": 6,
+      "instruction": "Board Kelana Jaya LRT Towards Putra Heights"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1211919999999997,
+        "longitude": 101.67976800000001
+      },
+      "endLocation": {
+        "latitude": 3.118,
+        "longitude": 101.677,
+        "address": "Mid Valley Megamall, Kuala Lumpur"
+      },
+      "distance": 0.41,
+      "duration": 5,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Mid Valley"
+    }
+  ],
+  "polyline": "{wgRopxkRjxFfwE",
+  "reasoning": "Lowest-carbon option from KLCC to Mid Valley using Kelana Jaya LRT.",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

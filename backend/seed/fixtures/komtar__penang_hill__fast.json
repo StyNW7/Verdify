@@ -1,0 +1,46 @@
+{
+  "routeId": "fixture_komtar__penang_hill__fast",
+  "mode": "fast",
+  "totalDistance": 6.31,
+  "totalDuration": 13,
+  "carbonEstimate": 504.97,
+  "carbonBaseline": 1262.43,
+  "carbonSavedGrams": 757.46,
+  "carbonSavingsPercent": 60,
+  "carbonEstimateKg": 0.5,
+  "estimatedCost": 10.05,
+  "greenPointsEstimate": 24,
+  "steps": [
+    {
+      "type": "ev_taxi",
+      "startLocation": {
+        "latitude": 5.4143,
+        "longitude": 100.3296,
+        "address": "KOMTAR, Georgetown"
+      },
+      "endLocation": {
+        "latitude": 5.4239,
+        "longitude": 100.2734,
+        "address": "Penang Hill"
+      },
+      "distance": 6.31,
+      "duration": 13,
+      "carbonPerKm": 80,
+      "totalCarbon": 504.97,
+      "estimatedCost": 10.05,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Drive from KOMTAR to Penang Hill"
+    }
+  ],
+  "polyline": "kn``@_sjcR_{@f~I",
+  "reasoning": "Fastest direct ride from KOMTAR to Penang Hill, traffic-aware ETA.",
+  "recommendedFor": [
+    "speed",
+    "luggage"
+  ],
+  "recommended": false,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

@@ -1,0 +1,46 @@
+{
+  "routeId": "fixture_bukit_indah__senai__fast",
+  "mode": "fast",
+  "totalDistance": 17,
+  "totalDuration": 25,
+  "carbonEstimate": 1360.16,
+  "carbonBaseline": 3400.4,
+  "carbonSavedGrams": 2040.24,
+  "carbonSavingsPercent": 60,
+  "carbonEstimateKg": 1.36,
+  "estimatedCost": 19.46,
+  "greenPointsEstimate": 64,
+  "steps": [
+    {
+      "type": "ev_taxi",
+      "startLocation": {
+        "latitude": 1.4877,
+        "longitude": 103.6691,
+        "address": "Bukit Indah, Johor Bahru"
+      },
+      "endLocation": {
+        "latitude": 1.6406,
+        "longitude": 103.67,
+        "address": "Senai International Airport"
+      },
+      "distance": 17,
+      "duration": 25,
+      "carbonPerKm": 80,
+      "totalCarbon": 1360.16,
+      "estimatedCost": 19.46,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Drive from Bukit Indah to Senai"
+    }
+  ],
+  "polyline": "cqaH{zvwRsz\\sD",
+  "reasoning": "Fastest direct ride from Bukit Indah to Senai, traffic-aware ETA.",
+  "recommendedFor": [
+    "speed",
+    "luggage"
+  ],
+  "recommended": false,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}
