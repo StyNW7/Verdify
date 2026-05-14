@@ -116,7 +116,7 @@ func summarise(bs []models.Booking) personaTotals {
 		}
 		t.completed++
 		t.points += b.ActualPoints
-		t.carbonSaved += b.RouteSnapshot.CarbonSavedGrams / 1000.0
+		t.carbonSaved += b.RouteSnapshot.CarbonSavedGrams
 	}
 	return t
 }
