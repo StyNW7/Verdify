@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"cloud.google.com/go/firestore"
+	firestorepb "cloud.google.com/go/firestore/apiv1/firestorepb"
 	"github.com/verdify/backend/models"
 	"github.com/verdify/backend/validate"
 	"google.golang.org/api/iterator"
@@ -399,13 +400,22 @@ func (s *FirestoreStore) GetUserRank(ctx context.Context, uid string) (int, int,
 }
 
 // firestoreAggCount extracts the int64 count from an AggregationResult map.
-// The Firestore SDK returns map[string]interface{} with int64 values.
+// The Firestore Go SDK (v1.18) populates entries with *firestorepb.Value
+// taken straight off the wire — see query.go's stream handler copying
+// res.Result.AggregateFields directly into the result map. The int64 /
+// *int64 cases are kept for forward-compat with any future SDK that
+// pre-unwraps the proto.
 func firestoreAggCount(result firestore.AggregationResult, alias string) int64 {
 	v, ok := result[alias]
 	if !ok {
 		return 0
 	}
 	switch t := v.(type) {
+	case *firestorepb.Value:
+		if t == nil {
+			return 0
+		}
+		return t.GetIntegerValue()
 	case int64:
 		return t
 	case *int64:
