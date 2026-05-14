@@ -1,6 +1,7 @@
 package seed
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 	"time"
@@ -87,6 +88,30 @@ func TestGenerateBookingsForPersona_CoordsInBoundingBox(t *testing.T) {
 				if loc.lng < minLng || loc.lng > maxLng {
 					t.Errorf("persona %s booking %s: %s lng %f outside [%f,%f]", p.Email, b.ID, loc.name, loc.lng, minLng, maxLng)
 				}
+			}
+		}
+	}
+}
+
+func TestGenerateBookingsForPersona_BookingsAreUnique(t *testing.T) {
+	for _, p := range Personas {
+		bookings := GenerateBookingsForPersona(p, fixedNow)
+		seen := make(map[string]int, len(bookings))
+		for _, b := range bookings {
+			steps := b.RouteSnapshot.Steps
+			if len(steps) == 0 {
+				continue
+			}
+			start := steps[0].StartLocation
+			end := steps[len(steps)-1].EndLocation
+			key := fmt.Sprintf("%.5f,%.5f->%.5f,%.5f",
+				start.Latitude, start.Longitude, end.Latitude, end.Longitude)
+			seen[key]++
+		}
+		for route, count := range seen {
+			if count > 1 {
+				t.Errorf("persona %s: route %q appears %d times, want unique fixtures per persona",
+					p.Email, route, count)
 			}
 		}
 	}

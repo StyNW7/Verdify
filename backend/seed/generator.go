@@ -23,6 +23,21 @@ func bookingCountForPersona(email string) int {
 	return minBookingsPerPersona + int(h[0])%span
 }
 
+// shuffledPool returns a deterministic Fisher-Yates permutation of pool
+// seeded from the persona's email. Callers take the first N entries to draw
+// N booking fixtures without replacement, guaranteeing every booking in a
+// persona's history references a distinct fixture.
+func shuffledPool(email string, pool []FixtureKey) []FixtureKey {
+	out := make([]FixtureKey, len(pool))
+	copy(out, pool)
+	h := hashSeed(email, -2)
+	for i := len(out) - 1; i > 0; i-- {
+		j := int(h[i%len(h)]) % (i + 1)
+		out[i], out[j] = out[j], out[i]
+	}
+	return out
+}
+
 // GenerateBookingsForPersona returns a deterministic slice of bookings for
 // persona, distributed across the trailing ~30 days from now. Each booking's
 // RouteSnapshot is sourced from a recorded Routes-API fixture (see
@@ -42,18 +57,22 @@ func GenerateBookingsForPersona(p Persona, now time.Time) []models.Booking {
 	}
 
 	now = now.UTC()
-	count := bookingCountForPersona(p.Email)
-	bookings := make([]models.Booking, 0, count)
-
 	pool := PoolByCity[p.BaseCity]
 	if len(pool) == 0 {
 		panic(fmt.Sprintf("seed: no fixture pool for base city %q (persona %s)", p.BaseCity, p.Email))
 	}
 
+	count := bookingCountForPersona(p.Email)
+	if count > len(pool) {
+		count = len(pool)
+	}
+	shuffled := shuffledPool(p.Email, pool)
+	bookings := make([]models.Booking, 0, count)
+
 	for i := 0; i < count; i++ {
 		h := hashSeed(p.Email, i)
 
-		key := pool[int(h[0])%len(pool)]
+		key := shuffled[i]
 		fixture, ok := fixtureFor(key)
 		if !ok {
 			panic(fmt.Sprintf("seed: fixture %s missing despite coverage check", key))
