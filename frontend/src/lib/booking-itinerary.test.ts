@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import {
+  bookingMapEndpoints,
   buildItineraryRows,
   iconKeyForStep,
 } from './booking-itinerary.ts';
@@ -110,4 +111,52 @@ test('rows are indexed in order', () => {
     seg({ type: 'bus' }),
   ]);
   assert.deepEqual(rows.map((r) => r.index), [0, 1, 2]);
+});
+
+test('bookingMapEndpoints returns null for empty steps', () => {
+  const result = bookingMapEndpoints([]);
+  assert.deepEqual(result, { start: null, end: null });
+});
+
+test('bookingMapEndpoints walks forward to find first valid startLocation', () => {
+  const steps = [
+    seg({ type: 'walking' }),
+    seg({
+      type: 'lrt',
+      startLocation: { latitude: 1.23, longitude: 103.8, address: 'Stop A' },
+    }),
+    seg({
+      type: 'bus',
+      startLocation: { latitude: 1.3, longitude: 103.9, address: 'Stop B' },
+    }),
+  ];
+  const { start } = bookingMapEndpoints(steps);
+  assert.deepEqual(start, { latitude: 1.23, longitude: 103.8 });
+});
+
+test('bookingMapEndpoints walks backward to find last valid endLocation', () => {
+  const steps = [
+    seg({
+      type: 'lrt',
+      endLocation: { latitude: 1.5, longitude: 103.7, address: 'End A' },
+    }),
+    seg({ type: 'walking' }),
+  ];
+  const { end } = bookingMapEndpoints(steps);
+  assert.deepEqual(end, { latitude: 1.5, longitude: 103.7 });
+});
+
+test('bookingMapEndpoints returns both endpoints from a single step', () => {
+  const steps = [
+    seg({
+      type: 'lrt',
+      startLocation: { latitude: 1.1, longitude: 103.1, address: 'From' },
+      endLocation: { latitude: 1.9, longitude: 103.9, address: 'To' },
+    }),
+  ];
+  const result = bookingMapEndpoints(steps);
+  assert.deepEqual(result, {
+    start: { latitude: 1.1, longitude: 103.1 },
+    end: { latitude: 1.9, longitude: 103.9 },
+  });
 });

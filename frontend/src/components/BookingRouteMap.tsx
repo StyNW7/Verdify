@@ -76,6 +76,16 @@ export default function BookingRouteMap({
     return (
       <div className={`relative h-full w-full ${className}`}>
         <RouteMap variant={isDark ? 'dark' : 'warm'} showChips={false} />
+        <div
+          className="theme-mono-sm absolute right-2 top-2 rounded-md px-2 py-0.5"
+          style={{
+            color: 'var(--theme-fg-dim)',
+            background: 'var(--theme-accent-soft)',
+            border: '1px solid var(--theme-border)',
+          }}
+        >
+          Map preview unavailable
+        </div>
       </div>
     );
   }
