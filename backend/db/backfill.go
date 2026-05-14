@@ -16,6 +16,12 @@ import (
 // call multiple times — bookings with an existing non-zero UpdatedAt are
 // skipped. Uses batched writes (≤500 per batch) to stay within Firestore limits.
 //
+// Operational note: records written by this function keep UpdatedAt as
+// time.Time{} (zero). Because the skip check tests !IsZero(), they are
+// re-queried and re-written on every boot. The final state is unchanged
+// (still {0, zero}), so the operation is idempotent per spec, but not free.
+// Acceptable for TB1; revisit if Firestore write costs become a concern.
+//
 // For MemoryStore and test environments this is a no-op because all in-memory
 // bookings are constructed with a sensible default in the handlers and seed
 // generator.
