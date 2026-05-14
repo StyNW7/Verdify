@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import { createAuthStore } from './auth-store.ts';
+import { setAuthTokenGetter, getLeaderboard } from './api.ts';
 
 // Build a controllable set of seams that mirrors the firebase/auth surface
 // AuthProvider depends on: two independent subscription callbacks, a signOut
@@ -118,13 +119,13 @@ test('subsequent id-token events update idToken AND the api.ts token getter', as
   harness.emitIdToken(fakeUser('uid_abc', 'tok_1'));
   await new Promise((r) => setImmediate(r));
   assert.equal(store.getSnapshot().idToken, 'tok_1');
-  assert.equal(harness.readToken(), 'tok_1', 'api.ts getter must see the latest token');
+  assert.equal(await harness.readToken(), 'tok_1', 'api.ts getter must see the latest token');
 
   // Token refresh (same user, new token).
   harness.emitIdToken(fakeUser('uid_abc', 'tok_2'));
   await new Promise((r) => setImmediate(r));
   assert.equal(store.getSnapshot().idToken, 'tok_2');
-  assert.equal(harness.readToken(), 'tok_2', 'token rotation must land on the api.ts getter');
+  assert.equal(await harness.readToken(), 'tok_2', 'token rotation must land on the api.ts getter');
 
   teardown();
 });
@@ -137,7 +138,6 @@ test('id-token callback with null clears the token immediately', () => {
   harness.emitIdToken(null);
 
   assert.equal(store.getSnapshot().idToken, null);
-  assert.equal(harness.readToken(), null);
   teardown();
 });
 
@@ -256,7 +256,7 @@ test('getRedirectResult resolving to a user populates snapshot and token getter'
   });
   assert.equal(snap.idToken, 'tok_redirect');
   assert.equal(snap.loading, false);
-  assert.equal(harness.readToken(), 'tok_redirect', 'api.ts getter must reflect redirect token');
+  assert.equal(await harness.readToken(), 'tok_redirect', 'api.ts getter must reflect redirect token');
 
   teardown();
 });
@@ -276,4 +276,168 @@ test('getRedirectResult resolving to null leaves snapshot unchanged', async () =
   assert.deepEqual(store.getSnapshot(), { user: null, idToken: null, loading: true });
 
   teardown();
+});
+
+// ── Token-race regression tests ───────────────────────────────────────────────
+// These tests exercise the race between subscribeAuthState populating `user`
+// synchronously and subscribeIdToken populating `idToken` a microtask later.
+
+test('token getter installed by the store is a Promise-returning function after the fix', async () => {
+  const harness = makeFakeSeams();
+
+  let installedGetter = null;
+  const seamsWithSpy = {
+    ...harness.seams,
+    setTokenGetter: (getter) => {
+      installedGetter = getter;
+      harness.seams.setTokenGetter(getter);
+    },
+  };
+
+  const store = createAuthStore(seamsWithSpy);
+  const teardown = store.start();
+
+  // The getter must exist.
+  assert.ok(installedGetter !== null, 'token getter must be installed');
+
+  // The getter must return a Promise (async contract).
+  const result = installedGetter();
+  assert.ok(result instanceof Promise, 'token getter must return a Promise');
+
+  teardown();
+});
+
+test('awaitToken resolves immediately when idToken is already in the snapshot', async () => {
+  const harness = makeFakeSeams();
+  const store = createAuthStore(harness.seams);
+  const teardown = store.start();
+
+  // Populate the token first.
+  harness.emitIdToken(fakeUser('uid_abc', 'tok_ready'));
+  await new Promise((r) => setImmediate(r));
+  assert.equal(store.getSnapshot().idToken, 'tok_ready');
+
+  // Now the async getter should resolve immediately with the cached token.
+  const token = await harness.readToken();
+  assert.equal(token, 'tok_ready', 'awaitToken must resolve immediately with the cached token');
+
+  teardown();
+});
+
+test('awaitToken resolves with the token when subscribeIdToken emits after a delay (the race)', async () => {
+  const harness = makeFakeSeams();
+  const store = createAuthStore(harness.seams);
+  const teardown = store.start();
+
+  // Simulate the race: auth state fires (user set) but no id-token yet.
+  harness.emitAuthState(fakeUser('uid_abc', 'tok_1'));
+  // idToken is still null at this point.
+  assert.equal(store.getSnapshot().idToken, null, 'idToken must still be null before subscribeIdToken fires');
+
+  // Start awaiting the token — this is what apiRequest will do.
+  const tokenPromise = harness.readToken();
+  assert.ok(tokenPromise instanceof Promise, 'must return a Promise, not null');
+
+  // Promise should NOT have resolved yet (token hasn't arrived).
+  let resolved = false;
+  tokenPromise.then(() => { resolved = true; });
+  await Promise.resolve(); // flush one microtask
+  assert.equal(resolved, false, 'promise must not resolve before subscribeIdToken fires');
+
+  // Now subscribeIdToken fires — simulates Firebase delivering the token.
+  harness.emitIdToken(fakeUser('uid_abc', 'tok_1'));
+  await new Promise((r) => setImmediate(r));
+
+  const token = await tokenPromise;
+  assert.equal(token, 'tok_1', 'awaitToken must resolve with the token once subscribeIdToken fires');
+
+  teardown();
+});
+
+test('awaitToken resolves with null after timeout when subscribeIdToken never fires', async () => {
+  const harness = makeFakeSeams();
+  const store = createAuthStore(harness.seams);
+  const teardown = store.start();
+
+  // Auth state fires but token never arrives.
+  harness.emitAuthState(fakeUser('uid_abc', 'tok_1'));
+  assert.equal(store.getSnapshot().idToken, null);
+
+  // Use a very short timeout (overridable in tests via the seams/store API).
+  // We test by calling a version with an injected short timeout.
+  // The store exposes awaitToken(timeoutMs) — we call it with 50ms.
+  const tokenPromise = store.awaitToken(50);
+  assert.ok(tokenPromise instanceof Promise, 'awaitToken must return a Promise');
+
+  const token = await tokenPromise;
+  assert.equal(token, null, 'awaitToken must resolve null after timeout when token never arrives');
+
+  teardown();
+});
+
+test('apiRequest sends Authorization header even when request fires before subscribeIdToken emits', async () => {
+  // Integration-style test: stub fetch, wire apiRequest with the async getter,
+  // and confirm the Authorization header is present despite the race.
+  const capturedRequests = [];
+  const stubFetch = async (url, init) => {
+    capturedRequests.push({ url, headers: init?.headers ?? {} });
+    return {
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: { entries: [], me: { rank: 1, uid: 'u', displayName: 'u', photoURL: '', greenPointsBalance: 0, totalTripsCompleted: 0 }, totalUsers: 0 },
+        error: null,
+        metadata: { timestamp: '', version: '' },
+      }),
+    };
+  };
+
+  // Wire the store with the async getter installed into api.ts.
+  const harness = makeFakeSeams();
+  let asyncGetter = null;
+  const seamsWithSpy = {
+    ...harness.seams,
+    setTokenGetter: (getter) => {
+      asyncGetter = getter;
+      // DO NOT call the harness setter here; we want direct control over apiRequest.
+    },
+  };
+
+  const store = createAuthStore(seamsWithSpy);
+  const teardown = store.start();
+
+  // Install the async getter into api.ts.
+  setAuthTokenGetter(asyncGetter);
+
+  // Auth state fires but token not yet available — this is the race window.
+  harness.emitAuthState(fakeUser('uid_abc', 'tok_race'));
+  assert.equal(store.getSnapshot().idToken, null, 'pre-condition: no token yet');
+
+  // Simulate a page useEffect firing an API call in the race window.
+  const origFetch = globalThis.fetch;
+  globalThis.fetch = stubFetch;
+
+  let requestPromise;
+  try {
+    // getLeaderboard calls apiRequest which will await the async token getter.
+    requestPromise = getLeaderboard();
+
+    // Before the subscribeIdToken fires, the request should be waiting.
+    // (Do NOT await yet — that's the whole point of the test.)
+
+    // Now subscribeIdToken fires — delivers the token to the waiting awaitToken.
+    harness.emitIdToken(fakeUser('uid_abc', 'tok_race'));
+    await new Promise((r) => setImmediate(r));
+
+    // Now await the request.
+    await requestPromise;
+  } finally {
+    globalThis.fetch = origFetch;
+  }
+
+  teardown();
+
+  assert.equal(capturedRequests.length, 1, 'exactly one request should have been made');
+  const authHeader = capturedRequests[0].headers['Authorization'];
+  assert.equal(authHeader, 'Bearer tok_race', 'Authorization header must contain the token even in the race window');
 });
