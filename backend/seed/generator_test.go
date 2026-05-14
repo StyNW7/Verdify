@@ -100,18 +100,18 @@ func TestGenerateBookingsForPersona_Deterministic(t *testing.T) {
 	}
 }
 
-func TestGenerateBookingsForPersona_SnapshotIsSynthetic(t *testing.T) {
+func TestGenerateBookingsForPersona_SnapshotIsFromFixture(t *testing.T) {
 	p := Personas[0]
 	bookings := GenerateBookingsForPersona(p, fixedNow)
 	for _, b := range bookings {
-		if b.RouteSnapshot.DataSource != "fallback_synthetic" {
-			t.Errorf("booking %s: DataSource = %q, want fallback_synthetic", b.ID, b.RouteSnapshot.DataSource)
+		if b.RouteSnapshot.DataSource != "google_routes" {
+			t.Errorf("booking %s: DataSource = %q, want google_routes", b.ID, b.RouteSnapshot.DataSource)
 		}
-		if b.RouteSnapshot.Polyline != "" {
-			t.Errorf("booking %s: synthetic snapshot should have empty Polyline, got %q", b.ID, b.RouteSnapshot.Polyline)
+		if b.RouteSnapshot.Polyline == "" {
+			t.Errorf("booking %s: fixture snapshot should have a polyline, got empty", b.ID)
 		}
-		if len(b.RouteSnapshot.Steps) != 3 {
-			t.Errorf("booking %s: want exactly 3 steps (walk/transit/walk), got %d", b.ID, len(b.RouteSnapshot.Steps))
+		if len(b.RouteSnapshot.Steps) < 1 {
+			t.Errorf("booking %s: want >=1 steps, got %d", b.ID, len(b.RouteSnapshot.Steps))
 		}
 		if b.RouteSnapshot.TotalDistance <= 0 {
 			t.Errorf("booking %s: TotalDistance must be > 0, got %f", b.ID, b.RouteSnapshot.TotalDistance)
@@ -119,6 +119,12 @@ func TestGenerateBookingsForPersona_SnapshotIsSynthetic(t *testing.T) {
 		if b.RouteSnapshot.CarbonSavedGrams <= 0 {
 			t.Errorf("booking %s: CarbonSavedGrams must be > 0, got %f", b.ID, b.RouteSnapshot.CarbonSavedGrams)
 		}
+	}
+}
+
+func TestFixtureCoverageIsComplete(t *testing.T) {
+	if err := AssertFixtureCoverage(); err != nil {
+		t.Fatalf("fixture coverage check failed: %v", err)
 	}
 }
 
