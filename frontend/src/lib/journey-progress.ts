@@ -16,12 +16,12 @@ export function isFinalStep(step: number, total: number): boolean {
 
 export type ProgressFlusher = {
   schedule: (stepIndex: number) => void;
-  flush: () => void;
+  flush: (keepalive?: boolean) => void;
   cancel: () => void;
 };
 
 type FlusherOptions = {
-  patch: (stepIndex: number) => void;
+  patch: (stepIndex: number, keepalive?: boolean) => void;
   debounceMs?: number;
 };
 
@@ -43,13 +43,13 @@ export function createProgressFlusher({ patch, debounceMs = 500 }: FlusherOption
     }, debounceMs);
   }
 
-  function flush(): void {
+  function flush(keepalive?: boolean): void {
     if (timer !== null) {
       clearTimeout(timer);
       timer = null;
     }
     if (pending !== null) {
-      patch(pending);
+      patch(pending, keepalive);
       pending = null;
     }
   }

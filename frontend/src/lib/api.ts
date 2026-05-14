@@ -42,6 +42,9 @@ type ApiRequestOptions = {
   // login/register where the new credential is in hand before onIdTokenChanged
   // has plumbed it into the store.
   bearerToken?: string;
+  // Extra fetch init fields merged last (e.g. { keepalive: true } for
+  // beforeunload-triggered calls).
+  fetchInit?: Pick<RequestInit, 'keepalive'>;
 };
 
 async function apiRequest<T>(
@@ -57,7 +60,7 @@ async function apiRequest<T>(
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
-  const response = await fetch(`${API_BASE_URL}${path}`, { ...init, headers });
+  const response = await fetch(`${API_BASE_URL}${path}`, { ...init, ...opts.fetchInit, headers });
 
   const body = (await response.json().catch(() => null)) as ApiEnvelope<T> | null;
   const errorMessage =
@@ -306,10 +309,15 @@ export function cancelBooking(bookingId: string) {
   });
 }
 
-export function updateBookingProgress(bookingId: string, currentStepIndex: number) {
+export function updateBookingProgress(
+  bookingId: string,
+  currentStepIndex: number,
+  opts?: { keepalive?: boolean },
+) {
   return apiRequest<BookingRecord>(
     `/api/v1/bookings/${encodeURIComponent(bookingId)}/progress`,
     { method: 'PATCH', body: JSON.stringify({ currentStepIndex }) },
+    opts?.keepalive ? { fetchInit: { keepalive: true } } : undefined,
   );
 }
 
