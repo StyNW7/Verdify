@@ -132,10 +132,10 @@ func existsAndNotStub(path string) bool {
 }
 
 // record fetches all three candidates for the (origin, dest) pair and picks
-// the one matching k.Mode. Falling back to the synthetic candidate (which
-// CandidateBuilder does internally on per-mode failures) is intentional: the
-// recorder is only meant to be run with a working API key, but a partial
-// outage shouldn't crash the whole run.
+// the one matching k.Mode. If CandidateBuilder returns no real Routes API
+// result (network error, no transit available, etc.), the synthetic fallback
+// is refused: the fixture is left as-is and the tuple is counted as a failure
+// for the operator to investigate.
 func record(ctx context.Context, builder *routes.CandidateBuilder, k seed.FixtureKey, origin, dest seed.Place) (models.RouteOption, error) {
 	candidates, err := builder.Build(ctx, origin.Loc, dest.Loc)
 	if err != nil {
@@ -212,5 +212,15 @@ func writeFixture(path string, opt models.RouteOption) error {
 		return fmt.Errorf("marshal: %w", err)
 	}
 	raw = append(raw, '\n')
-	return os.WriteFile(path, raw, 0o644)
+	// Write to a temp file then rename so an interrupted write never leaves
+	// a half-written (malformed) JSON on disk.
+	tmp := path + ".tmp"
+	if err := os.WriteFile(tmp, raw, 0o644); err != nil {
+		return err
+	}
+	if err := os.Rename(tmp, path); err != nil {
+		_ = os.Remove(tmp)
+		return err
+	}
+	return nil
 }

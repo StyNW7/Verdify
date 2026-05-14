@@ -32,7 +32,7 @@
       "instruction": "Walk to KLIA ERL Station"
     },
     {
-      "type": "mrt",
+      "type": "train",
       "startLocation": {
         "latitude": 2.776656,
         "longitude": 101.70806
