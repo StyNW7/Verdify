@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_puteri_harbour__legoland__eco",
+  "mode": "eco",
+  "totalDistance": 1.71,
+  "totalDuration": 12,
+  "carbonEstimate": 116.8,
+  "carbonBaseline": 342,
+  "carbonSavedGrams": 225.2,
+  "carbonSavingsPercent": 66,
+  "carbonEstimateKg": 0.12,
+  "estimatedCost": 1.5,
+  "greenPointsEstimate": 23,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4148,
+        "longitude": 103.63,
+        "address": "Puteri Harbour, Iskandar Puteri"
+      },
+      "endLocation": {
+        "latitude": 1.415044,
+        "longitude": 103.629748
+      },
+      "distance": 0.25,
+      "duration": 4,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Puteri Harbour Bus Stop"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 1.415044,
+        "longitude": 103.629748
+      },
+      "endLocation": {
+        "latitude": 1.426824,
+        "longitude": 103.631316
+      },
+      "distance": 1.31,
+      "duration": 5,
+      "carbonPerKm": 80,
+      "totalCarbon": 104.8,
+      "estimatedCost": 1.5,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "Iskandar Puteri Shuttle IPS1",
+      "departureStop": "Puteri Harbour Bus Stop",
+      "arrivalStop": "Legoland Terminal",
+      "headsign": "Towards Legoland",
+      "stopCount": 2,
+      "instruction": "Board Iskandar Puteri Shuttle IPS1 Towards Legoland"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.426824,
+        "longitude": 103.631316
+      },
+      "endLocation": {
+        "latitude": 1.4271,
+        "longitude": 103.631,
+        "address": "Legoland Malaysia, Iskandar Puteri"
+      },
+      "distance": 0.15,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Legoland Malaysia"
+    }
+  ],
+  "polyline": "kwbGiljxRas@Ea@",
+  "reasoning": "Lowest-carbon option from Puteri Harbour to Legoland on the Iskandar Puteri shuttle.",
+  "recommendedFor": [
+    "low-carbon",
+    "tourist"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

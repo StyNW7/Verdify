@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_danga_bay__ciq_johor__eco",
+  "mode": "eco",
+  "totalDistance": 4.81,
+  "totalDuration": 22,
+  "carbonEstimate": 384,
+  "carbonBaseline": 962,
+  "carbonSavedGrams": 578,
+  "carbonSavingsPercent": 60,
+  "carbonEstimateKg": 0.38,
+  "estimatedCost": 2.1,
+  "greenPointsEstimate": 58,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4753,
+        "longitude": 103.7236,
+        "address": "Danga Bay, Johor Bahru"
+      },
+      "endLocation": {
+        "latitude": 1.475068,
+        "longitude": 103.724108
+      },
+      "distance": 0.16,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Danga Bay Bus Stop"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 1.475068,
+        "longitude": 103.724108
+      },
+      "endLocation": {
+        "latitude": 1.462968,
+        "longitude": 103.768348
+      },
+      "distance": 4.49,
+      "duration": 16,
+      "carbonPerKm": 80,
+      "totalCarbon": 359.2,
+      "estimatedCost": 2.1,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "Causeway Link CW2",
+      "departureStop": "Danga Bay Bus Stop",
+      "arrivalStop": "CIQ Johor Bus Bay",
+      "headsign": "Towards CIQ Johor",
+      "stopCount": 6,
+      "instruction": "Board Causeway Link CW2 Towards CIQ Johor"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.462968,
+        "longitude": 103.768348
+      },
+      "endLocation": {
+        "latitude": 1.4628,
+        "longitude": 103.7686,
+        "address": "Sultan Iskandar CIQ, Johor Bahru"
+      },
+      "distance": 0.16,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Sultan Iskandar CIQ"
+    }
+  ],
+  "polyline": "ougGcyixRf{Cae[",
+  "reasoning": "Lowest-carbon option from Danga Bay to CIQ Johor on Causeway Link CW2 bus.",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

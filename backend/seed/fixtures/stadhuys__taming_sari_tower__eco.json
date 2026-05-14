@@ -1,0 +1,46 @@
+{
+  "routeId": "fixture_stadhuys__taming_sari_tower__eco",
+  "mode": "eco",
+  "totalDistance": 0.42,
+  "totalDuration": 6,
+  "carbonEstimate": 0,
+  "carbonBaseline": 84,
+  "carbonSavedGrams": 84,
+  "carbonSavingsPercent": 100,
+  "carbonEstimateKg": 0,
+  "estimatedCost": 0,
+  "greenPointsEstimate": 8,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.1942,
+        "longitude": 102.2491,
+        "address": "Stadthuys, Dutch Square, Melaka"
+      },
+      "endLocation": {
+        "latitude": 2.1908,
+        "longitude": 102.2516,
+        "address": "Menara Taming Sari, Melaka"
+      },
+      "distance": 0.42,
+      "duration": 6,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk along Sungai Melaka boardwalk to Taming Sari Tower"
+    }
+  ],
+  "polyline": "ohnLkjboRzPmO",
+  "reasoning": "Short heritage walk between Stadthuys and Taming Sari Tower along the riverfront.",
+  "recommendedFor": [
+    "low-carbon",
+    "tourist"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

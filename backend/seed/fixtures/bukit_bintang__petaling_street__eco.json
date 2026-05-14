@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_bukit_bintang__petaling_street__eco",
+  "mode": "eco",
+  "totalDistance": 1.62,
+  "totalDuration": 11,
+  "carbonEstimate": 53.2,
+  "carbonBaseline": 324,
+  "carbonSavedGrams": 270.8,
+  "carbonSavingsPercent": 84,
+  "carbonEstimateKg": 0.05,
+  "estimatedCost": 1.4,
+  "greenPointsEstimate": 27,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1466,
+        "longitude": 101.7104,
+        "address": "Bukit Bintang, Kuala Lumpur"
+      },
+      "endLocation": {
+        "latitude": 3.146912,
+        "longitude": 101.710564
+      },
+      "distance": 0.13,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Bukit Bintang MRT Station"
+    },
+    {
+      "type": "mrt",
+      "startLocation": {
+        "latitude": 3.146912,
+        "longitude": 101.710564
+      },
+      "endLocation": {
+        "latitude": 3.143544,
+        "longitude": 101.698712
+      },
+      "distance": 1.33,
+      "duration": 6,
+      "carbonPerKm": 40,
+      "totalCarbon": 53.2,
+      "estimatedCost": 1.4,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "MRT Kajang Line",
+      "departureStop": "Bukit Bintang MRT",
+      "arrivalStop": "Pasar Seni MRT",
+      "headsign": "Towards Sungai Buloh",
+      "stopCount": 2,
+      "instruction": "Board MRT Kajang Line Towards Sungai Buloh"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.143544,
+        "longitude": 101.698712
+      },
+      "endLocation": {
+        "latitude": 3.1438,
+        "longitude": 101.6986,
+        "address": "Petaling Street, Kuala Lumpur"
+      },
+      "distance": 0.16,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Petaling Street"
+    }
+  ],
+  "polyline": "ymeR_kxkR~e@vsB",
+  "reasoning": "Lowest-carbon option from Bukit Bintang to Petaling Street using MRT Kajang Line.",
+  "recommendedFor": [
+    "low-carbon",
+    "tourist"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

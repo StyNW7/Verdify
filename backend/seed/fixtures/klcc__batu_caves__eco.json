@@ -1,0 +1,113 @@
+{
+  "routeId": "fixture_klcc__batu_caves__eco",
+  "mode": "eco",
+  "totalDistance": 13.42,
+  "totalDuration": 38,
+  "carbonEstimate": 525.6,
+  "carbonBaseline": 2684,
+  "carbonSavedGrams": 2158.4,
+  "carbonSavingsPercent": 80,
+  "carbonEstimateKg": 0.53,
+  "estimatedCost": 4.1,
+  "greenPointsEstimate": 216,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1579,
+        "longitude": 101.7116,
+        "address": "KLCC, Kuala Lumpur"
+      },
+      "endLocation": {
+        "latitude": 3.155972,
+        "longitude": 101.709624
+      },
+      "distance": 0.27,
+      "duration": 4,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to KLCC LRT Station"
+    },
+    {
+      "type": "lrt",
+      "startLocation": {
+        "latitude": 3.155972,
+        "longitude": 101.709624
+      },
+      "endLocation": {
+        "latitude": 3.135728,
+        "longitude": 101.688876
+      },
+      "distance": 3.3,
+      "duration": 9,
+      "carbonPerKm": 40,
+      "totalCarbon": 132,
+      "estimatedCost": 1.7,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "Kelana Jaya LRT",
+      "departureStop": "KLCC Station",
+      "arrivalStop": "KL Sentral Station",
+      "headsign": "Towards Gombak",
+      "stopCount": 6,
+      "instruction": "Board Kelana Jaya LRT Towards Gombak"
+    },
+    {
+      "type": "train",
+      "startLocation": {
+        "latitude": 3.135728,
+        "longitude": 101.688876
+      },
+      "endLocation": {
+        "latitude": 3.237112,
+        "longitude": 101.683988
+      },
+      "distance": 9.84,
+      "duration": 22,
+      "carbonPerKm": 40,
+      "totalCarbon": 393.6,
+      "estimatedCost": 2.4,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "KTM Komuter Batu Caves Line",
+      "departureStop": "KL Sentral KTM",
+      "arrivalStop": "Batu Caves Komuter",
+      "headsign": "Towards Batu Caves",
+      "stopCount": 7,
+      "instruction": "Board KTM Komuter Batu Caves Line Towards Batu Caves"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.237112,
+        "longitude": 101.683988
+      },
+      "endLocation": {
+        "latitude": 3.2379,
+        "longitude": 101.684,
+        "address": "Batu Caves, Selangor"
+      },
+      "distance": 0.11,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Batu Caves"
+    }
+  ],
+  "polyline": "{wgRopxkRruCjyC_dFhg@",
+  "reasoning": "Lowest-carbon option from KLCC to Batu Caves combining LRT and KTM Komuter.",
+  "recommendedFor": [
+    "low-carbon",
+    "tourist"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}
