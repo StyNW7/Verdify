@@ -1,46 +1,119 @@
 {
   "routeId": "fixture_stadhuys__taming_sari_tower__eco",
   "mode": "eco",
-  "totalDistance": 0.42,
-  "totalDuration": 6,
+  "totalDistance": 0.719,
+  "totalDuration": 9,
   "carbonEstimate": 0,
-  "carbonBaseline": 84,
-  "carbonSavedGrams": 84,
-  "carbonSavingsPercent": 100,
+  "carbonBaseline": 143.8,
+  "carbonSavedGrams": 143.8,
+  "carbonSavingsPercent": 99,
   "carbonEstimateKg": 0,
   "estimatedCost": 0,
-  "greenPointsEstimate": 8,
+  "greenPointsEstimate": 0,
   "steps": [
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 2.1942,
-        "longitude": 102.2491,
-        "address": "Stadthuys, Dutch Square, Melaka"
+        "latitude": 2.1942109999999997,
+        "longitude": 102.24909889999999
       },
       "endLocation": {
-        "latitude": 2.1908,
-        "longitude": 102.2516,
-        "address": "Menara Taming Sari, Melaka"
+        "latitude": 2.1942049,
+        "longitude": 102.2487755
       },
-      "distance": 0.42,
-      "duration": 6,
+      "distance": 0.04,
+      "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk along Sungai Melaka boardwalk to Taming Sari Tower"
+      "departure": "2026-05-14T09:11:41.550379Z",
+      "arrival": "2026-05-14T09:12:41.550379Z",
+      "instruction": "Tuju barat di Jalan Gereja"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.1942049,
+        "longitude": 102.2487755
+      },
+      "endLocation": {
+        "latitude": 2.193948,
+        "longitude": 102.24837199999999
+      },
+      "distance": 0.06,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:12:41.550379Z",
+      "arrival": "2026-05-14T09:13:41.550379Z",
+      "instruction": "Di bulatan, ambil susur keluar Pertama ke Jln Merdeka/Jln Tun Khalil Yaakob/Laluan 5"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.193948,
+        "longitude": 102.24837199999999
+      },
+      "endLocation": {
+        "latitude": 2.1915405000000003,
+        "longitude": 102.2509807
+      },
+      "distance": 0.52,
+      "duration": 7,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:13:41.550379Z",
+      "arrival": "2026-05-14T09:20:41.550379Z",
+      "instruction": "Belok kiri ke Jln Kota"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.1915405000000003,
+        "longitude": 102.2509807
+      },
+      "endLocation": {
+        "latitude": 2.1913088,
+        "longitude": 102.25160040000002
+      },
+      "distance": 0.07,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:20:41.550379Z",
+      "arrival": "2026-05-14T09:21:41.550379Z",
+      "instruction": "Teruskan perjalanan ke Jln Parameswara"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.1913088,
+        "longitude": 102.25160040000002
+      },
+      "endLocation": {
+        "latitude": 2.1910906,
+        "longitude": 102.2517754
+      },
+      "distance": 0.04,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:21:41.550379Z",
+      "arrival": "2026-05-14T09:22:41.550379Z",
+      "instruction": "Belok kanan\nDestinasi berada di sebelah kanan"
     }
   ],
-  "polyline": "ohnLkjboRzPmO",
-  "reasoning": "Short heritage walk between Stadthuys and Taming Sari Tower along the riverfront.",
+  "polyline": "ypkL{oaoR@l@?PFNAP`@\\HPxGMlASPG^Ut@u@T[Pe@Bs@Ek@CQ]o@K]?m@Ju@Lm@l@{BT?Tc@",
+  "reasoning": "Recorded Google Routes response for Stadhuys -\u003e Taming Sari Tower (eco).",
   "recommendedFor": [
     "low-carbon",
-    "tourist"
+    "commute"
   ],
   "recommended": true,
   "dataSource": "google_routes",
-  "createdAt": "0001-01-01T00:00:00Z",
-  "_stub": true
+  "createdAt": "0001-01-01T00:00:00Z"
 }

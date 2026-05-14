@@ -1,89 +1,333 @@
 {
   "routeId": "fixture_ciq_johor__bukit_indah__eco",
   "mode": "eco",
-  "totalDistance": 11.41,
-  "totalDuration": 41,
-  "carbonEstimate": 588.6,
-  "carbonBaseline": 2282,
-  "carbonSavedGrams": 1693.4,
-  "carbonSavingsPercent": 74,
-  "carbonEstimateKg": 0.59,
-  "estimatedCost": 3.37,
-  "greenPointsEstimate": 66,
+  "totalDistance": 28.919,
+  "totalDuration": 111,
+  "carbonEstimate": 1576.8,
+  "carbonBaseline": 5783.8,
+  "carbonSavedGrams": 4207,
+  "carbonSavingsPercent": 73,
+  "carbonEstimateKg": 1.58,
+  "estimatedCost": 6.33,
+  "greenPointsEstimate": 159,
   "steps": [
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 1.4628,
-        "longitude": 103.7686,
-        "address": "Sultan Iskandar CIQ, Johor Bahru"
+        "latitude": 1.4625645999999999,
+        "longitude": 103.7684589
       },
       "endLocation": {
-        "latitude": 1.464792,
-        "longitude": 103.76064000000001
+        "latitude": 1.4633922,
+        "longitude": 103.7685527
       },
-      "distance": 0.8,
-      "duration": 10,
+      "distance": 0.19,
+      "duration": 2,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to CIQ Johor Bus Terminal"
-    },
-    {
-      "type": "bus",
-      "startLocation": {
-        "latitude": 1.464792,
-        "longitude": 103.76064000000001
-      },
-      "endLocation": {
-        "latitude": 1.485708,
-        "longitude": 103.67706
-      },
-      "distance": 9.81,
-      "duration": 21,
-      "carbonPerKm": 60,
-      "totalCarbon": 588.6,
-      "estimatedCost": 3.37,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "transitLine": "Causeway Link CW2",
-      "departureStop": "CIQ Johor Bus Terminal",
-      "arrivalStop": "Bukit Indah Bus Terminal",
-      "headsign": "Towards Bukit Indah",
-      "stopCount": 7,
-      "instruction": "Board Causeway Link CW2 Towards Bukit Indah"
+      "departure": "2026-05-14T09:11:28.973701Z",
+      "arrival": "2026-05-14T09:13:28.973701Z",
+      "instruction": "Tuju tenggara ke arah Jalan Lumba Kuda"
     },
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 1.485708,
-        "longitude": 103.67706
+        "latitude": 1.4633922,
+        "longitude": 103.7685527
       },
       "endLocation": {
-        "latitude": 1.4877,
-        "longitude": 103.6691,
-        "address": "Bukit Indah, Johor Bahru"
+        "latitude": 1.4621822999999998,
+        "longitude": 103.76792510000001
       },
-      "distance": 0.8,
-      "duration": 10,
+      "distance": 0.15,
+      "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to Bukit Indah"
+      "departure": "2026-05-14T09:13:28.973701Z",
+      "arrival": "2026-05-14T09:14:28.973701Z",
+      "instruction": "Belok kiri ke Jalan Lumba Kuda"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4621822999999998,
+        "longitude": 103.76792510000001
+      },
+      "endLocation": {
+        "latitude": 1.4602887,
+        "longitude": 103.76690789999999
+      },
+      "distance": 0.25,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:14:28.973701Z",
+      "arrival": "2026-05-14T09:17:28.973701Z",
+      "instruction": "Belok sedikit ke kanan untuk kekal di Jalan Lumba Kuda"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4602887,
+        "longitude": 103.76690789999999
+      },
+      "endLocation": {
+        "latitude": 1.4629398,
+        "longitude": 103.7654711
+      },
+      "distance": 0.34,
+      "duration": 4,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:17:28.973701Z",
+      "arrival": "2026-05-14T09:21:28.973701Z",
+      "instruction": "Belok kanan ke Jalan Jim Quee"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4629398,
+        "longitude": 103.7654711
+      },
+      "endLocation": {
+        "latitude": 1.4628545,
+        "longitude": 103.76535589999999
+      },
+      "distance": 0.02,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:21:28.973701Z",
+      "arrival": "2026-05-14T09:22:28.973701Z",
+      "instruction": "Belok kiri ke arah Jalan Jim Quee\nJalan penggunaan terhad"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4628545,
+        "longitude": 103.76535589999999
+      },
+      "endLocation": {
+        "latitude": 1.463531,
+        "longitude": 103.76498070000001
+      },
+      "distance": 0.09,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:22:28.973701Z",
+      "arrival": "2026-05-14T09:23:28.973701Z",
+      "instruction": "Belok kanan ke Jalan Jim Quee\nDestinasi berada di sebelah kiri"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 1.46352,
+        "longitude": 103.76496
+      },
+      "endLocation": {
+        "latitude": 1.4931699999999999,
+        "longitude": 103.65742
+      },
+      "distance": 26.28,
+      "duration": 76,
+      "carbonPerKm": 60,
+      "totalCarbon": 1576.8,
+      "estimatedCost": 6.33,
+      "departure": "2026-05-14T09:23:28.973701Z",
+      "arrival": "2026-05-14T10:39:28.973701Z",
+      "transitLine": "JB Sentral - Taman Tan Sri Yaacob",
+      "departureStop": "JB Sentral",
+      "arrivalStop": "Taman Nusa Bestari 3",
+      "headsign": "JB Sentral - Hab Taman Tan Sri Yaacob",
+      "stopCount": 48,
+      "instruction": "Bas menuju JB Sentral - Hab Taman Tan Sri Yaacob"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4932082999999998,
+        "longitude": 103.65744769999999
+      },
+      "endLocation": {
+        "latitude": 1.4932573,
+        "longitude": 103.6575648
+      },
+      "distance": 0.08,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:39:28.973701Z",
+      "arrival": "2026-05-14T10:40:28.973701Z",
+      "instruction": "Tuju barat ke arah Jalan Sutera Danga\nGunakan tangga"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4932573,
+        "longitude": 103.6575648
+      },
+      "endLocation": {
+        "latitude": 1.4918346,
+        "longitude": 103.6595253
+      },
+      "distance": 0.27,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:40:28.973701Z",
+      "arrival": "2026-05-14T10:43:28.973701Z",
+      "instruction": "Teruskan perjalanan ke Jalan Sutera Danga"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4918346,
+        "longitude": 103.6595253
+      },
+      "endLocation": {
+        "latitude": 1.4919482,
+        "longitude": 103.6596005
+      },
+      "distance": 0.02,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:43:28.973701Z",
+      "arrival": "2026-05-14T10:44:28.973701Z",
+      "instruction": "Belok kiri ke Jalan Bestari 3/5"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4919482,
+        "longitude": 103.6596005
+      },
+      "endLocation": {
+        "latitude": 1.4895421,
+        "longitude": 103.66436829999999
+      },
+      "distance": 0.61,
+      "duration": 8,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:44:28.973701Z",
+      "arrival": "2026-05-14T10:52:28.973701Z",
+      "instruction": "Belok kanan ke Jalan Bestari 1/4"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4895421,
+        "longitude": 103.66436829999999
+      },
+      "endLocation": {
+        "latitude": 1.4883868999999998,
+        "longitude": 103.66665560000001
+      },
+      "distance": 0.38,
+      "duration": 5,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:52:28.973701Z",
+      "arrival": "2026-05-14T10:57:28.973701Z",
+      "instruction": "Teruskan perjalanan ke Jalan Bestari 23/4"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4883868999999998,
+        "longitude": 103.66665560000001
+      },
+      "endLocation": {
+        "latitude": 1.4882408,
+        "longitude": 103.6666961
+      },
+      "distance": 0.02,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:57:28.973701Z",
+      "arrival": "2026-05-14T10:58:28.973701Z",
+      "instruction": "Belok kanan ke arah Jln Bestari 19/4"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4882408,
+        "longitude": 103.6666961
+      },
+      "endLocation": {
+        "latitude": 1.4885541,
+        "longitude": 103.66748229999999
+      },
+      "distance": 0.09,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:58:28.973701Z",
+      "arrival": "2026-05-14T10:59:28.973701Z",
+      "instruction": "Belok kiri ke Jln Bestari 19/4"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4885541,
+        "longitude": 103.66748229999999
+      },
+      "endLocation": {
+        "latitude": 1.4880546,
+        "longitude": 103.6683355
+      },
+      "distance": 0.12,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:59:28.973701Z",
+      "arrival": "2026-05-14T11:00:28.973701Z",
+      "instruction": "Jln Bestari 19/4 belok sedikit ke kanan dan menjadi Jalan Bestari 22/4"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4880546,
+        "longitude": 103.6683355
+      },
+      "endLocation": {
+        "latitude": 1.4878388,
+        "longitude": 103.66840479999999
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T11:00:28.973701Z",
+      "arrival": "2026-05-14T11:01:28.973701Z",
+      "instruction": "Teruskan perjalanan ke Jln Bestari 21/4\nDestinasi berada di sebelah kiri"
     }
   ],
-  "polyline": "ou|GwhjxRszCzlR",
-  "reasoning": "Lowest-carbon option from CIQ Johor to Bukit Indah using Causeway Link CW2.",
+  "polyline": "_t|G{gjxRZq@@QkAq@Q?MBeAn@ING^rDrA|@f@FPpEvCZDdBDTJFHiCpAcBb@yE`CiAf@PTgCjA@BACyAn@sAr@uChBEDSDMAEMBMpBgAlAs@lDcB~DeBxEaC`Bc@jCqAbB}@A[j@[RSLN\\j@r@d@RJzAVfAJf@Nl@^`@\\j@\\xBx@l@b@NJn@t@Vl@dCtMfBxKrBzRHhABjAAxBKlASbAGr@k@lEiBjKgBtH}A~E[x@gCfIWt@_@xB_CvOq@tFg@jDq@pDmBrJIn@_@hBa@bDeBlJw@`Do@vB_BxCkChEyAhB_Av@sDlD?\\cC`C{DnDqB`BQDIAwGlGSN{@x@{CzBcF|@wAZWTgDbA}EdAaIpAqC^oF~@gJnA]IiDh@yBXkAHoATk@NoBn@{@ZoAj@aAr@cBzAcAlAsGhKU`AiEbHu@r@{@j@q@^SXIp@FVZf@@@xDdCbDlBXZ~AtCZXf@r@dBdDz@rBVv@\\|AD\\ERe@DKCKKEMa@gBa@}AoBsECU?E_@}@uAkCe@o@[Ye@[s@]kFcDq@GUBGDQ^c@j@aHfLg@j@yFtImClEs@rAeEzGcJlOcBhDyAdC}C~E[h@aFbHWT[NMBeHfLeBfCs@lAoCdEqDzFiF~HE\\ENc@`AU`@uBlC{@bAiAnAa@t@Ol@Ch@?TJ`AHPHb@?LzAzDxBlFPx@HzAG`Bu@rGCbAFdANt@^dAd@x@~@dAlQ`Q\\^n@P\\@XETKx@w@~DcElMkM`Aq@vDuArDk@tPeBvIy@lIy@xABh@D`AVl@NzEhB`@PXRjHfGfClBhHjGfBtAjFzEtGtGXPxBlAbJnEdA`@xEl@g@hBUrAIhBKtJELEHQnOEjHJR@fBEjAItIFlAN~@~@zBJRkV~BqMhAqJlAwBZgBNSNMRCTxCrMsA^w@`@y@j@y@x@MPo@nAg@bBM|@CdAHxAZjBPn@r@tAfAnA|@l@x@`@XLx@Rr@Lf@Dr@@bA?p@EpAUnDfOv@rCN~@x@bDd@jArAfCd@rAkFlBoBj@{E`BgM|DmF|AiCn@MFo@aAqAqAgM_LaD{Cq@u@_AuAOc@[}ASsBCuALgCdA{KDgAZyVH}EMeBUiBg@g@q@PaAb@o@`@a@Za@`@sA~AuGdKoBnCaHnKFDGEBTKTa@YRa@JE|GiKWMjC_EpFuIHWDoGFWHQ`AqAH[FSHKnC{@vC}@HKAKeB{F\\G}@{Cz@yCFE^Kh@K",
+  "reasoning": "Recorded Google Routes response for CIQ Johor -\u003e Bukit Indah (eco).",
   "recommendedFor": [
     "low-carbon",
     "commute"
   ],
   "recommended": true,
   "dataSource": "google_routes",
-  "createdAt": "0001-01-01T00:00:00Z",
-  "_stub": true
+  "createdAt": "0001-01-01T00:00:00Z"
 }

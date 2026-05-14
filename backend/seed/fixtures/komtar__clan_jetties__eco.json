@@ -1,46 +1,161 @@
 {
   "routeId": "fixture_komtar__clan_jetties__eco",
   "mode": "eco",
-  "totalDistance": 1.41,
-  "totalDuration": 18,
-  "carbonEstimate": 0,
-  "carbonBaseline": 282,
-  "carbonSavedGrams": 282,
-  "carbonSavingsPercent": 100,
-  "carbonEstimateKg": 0,
-  "estimatedCost": 0,
-  "greenPointsEstimate": 28,
+  "totalDistance": 2.03,
+  "totalDuration": 12,
+  "carbonEstimate": 100.2,
+  "carbonBaseline": 406,
+  "carbonSavedGrams": 305.8,
+  "carbonSavingsPercent": 75,
+  "carbonEstimateKg": 0.1,
+  "estimatedCost": 1.9,
+  "greenPointsEstimate": 12,
   "steps": [
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 5.4143,
-        "longitude": 100.3296,
-        "address": "KOMTAR, Georgetown"
+        "latitude": 5.4139352,
+        "longitude": 100.329679
       },
       "endLocation": {
-        "latitude": 5.4147,
-        "longitude": 100.3413,
-        "address": "Clan Jetties of Penang, Georgetown"
+        "latitude": 5.4137172,
+        "longitude": 100.3294469
       },
-      "distance": 1.41,
-      "duration": 18,
+      "distance": 0.04,
+      "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk through Georgetown heritage zone to Clan Jetties"
+      "departure": "2026-05-14T09:11:35.731767Z",
+      "arrival": "2026-05-14T09:12:35.731767Z",
+      "instruction": "Tuju barat daya di Jalan Ria ke arah Jalan Magazine"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4137172,
+        "longitude": 100.3294469
+      },
+      "endLocation": {
+        "latitude": 5.4131202,
+        "longitude": 100.3306161
+      },
+      "distance": 0.15,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:12:35.731767Z",
+      "arrival": "2026-05-14T09:14:35.731767Z",
+      "instruction": "Belok kiri ke Jalan Magazine"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4131202,
+        "longitude": 100.3306161
+      },
+      "endLocation": {
+        "latitude": 5.4137663,
+        "longitude": 100.3309517
+      },
+      "distance": 0.08,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:14:35.731767Z",
+      "arrival": "2026-05-14T09:15:35.731767Z",
+      "instruction": "Belok kiri ke Lebuh Lintang"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 5.41378,
+        "longitude": 100.33094
+      },
+      "endLocation": {
+        "latitude": 5.414516,
+        "longitude": 100.341866
+      },
+      "distance": 1.67,
+      "duration": 5,
+      "carbonPerKm": 60,
+      "totalCarbon": 100.2,
+      "estimatedCost": 1.9,
+      "departure": "2026-05-14T09:15:35.731767Z",
+      "arrival": "2026-05-14T09:20:35.731767Z",
+      "transitLine": "303",
+      "departureStop": "Komtar",
+      "arrivalStop": "Jejantas Terminal Feri",
+      "headsign": "bkt.Gedung - Jeti",
+      "stopCount": 7,
+      "instruction": "Bas menuju bkt.Gedung - Jeti"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4145188,
+        "longitude": 100.3418694
+      },
+      "endLocation": {
+        "latitude": 5.414462599999999,
+        "longitude": 100.34191580000001
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:20:35.731767Z",
+      "arrival": "2026-05-14T09:21:35.731767Z",
+      "instruction": "Tuju tenggara di Gat Lebuh Pasar ke arah Pengkalan Weld"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.414462599999999,
+        "longitude": 100.34191580000001
+      },
+      "endLocation": {
+        "latitude": 5.4147241,
+        "longitude": 100.3413549
+      },
+      "distance": 0.09,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:21:35.731767Z",
+      "arrival": "2026-05-14T09:22:35.731767Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4147241,
+        "longitude": 100.3413549
+      },
+      "endLocation": {
+        "latitude": 5.4146896,
+        "longitude": 100.3413076
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:22:35.731767Z",
+      "arrival": "2026-05-14T09:23:35.731767Z",
+      "instruction": "Belok kiri"
     }
   ],
-  "polyline": "kn``@isjcR??_pA",
-  "reasoning": "Walking-only heritage route from KOMTAR to Clan Jetties through Georgetown's UNESCO core.",
+  "polyline": "cl``@osjcRj@l@Vs@JQrAcD}@a@cA_@A@@ASUKQcCwCAa@HSpAeA\\UN]AGi@gAq@mAqAuBcCmDc@i@g@UmBo@b@wAJa@XuDKg@SS_Ai@EGaB{@h@s@jAiA`@_@vAyA`CwBxA_A`@UZGlBqAXc@_@{@mA_Be@u@KHJI\\j@[Xu@j@DF",
+  "reasoning": "Recorded Google Routes response for KOMTAR -\u003e Clan Jetties (eco).",
   "recommendedFor": [
     "low-carbon",
-    "tourist"
+    "commute"
   ],
   "recommended": true,
   "dataSource": "google_routes",
-  "createdAt": "0001-01-01T00:00:00Z",
-  "_stub": true
+  "createdAt": "0001-01-01T00:00:00Z"
 }

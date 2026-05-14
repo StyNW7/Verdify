@@ -1,89 +1,324 @@
 {
   "routeId": "fixture_senai__larkin__eco",
   "mode": "eco",
-  "totalDistance": 18.42,
-  "totalDuration": 57,
-  "carbonEstimate": 950.4,
-  "carbonBaseline": 3684,
-  "carbonSavedGrams": 2733.6,
-  "carbonSavingsPercent": 74,
-  "carbonEstimateKg": 0.95,
-  "estimatedCost": 4.45,
-  "greenPointsEstimate": 107,
+  "totalDistance": 32.515,
+  "totalDuration": 120,
+  "carbonEstimate": 1795.2,
+  "carbonBaseline": 6503,
+  "carbonSavedGrams": 4707.8,
+  "carbonSavingsPercent": 72,
+  "carbonEstimateKg": 1.8,
+  "estimatedCost": 10.18,
+  "greenPointsEstimate": 177,
   "steps": [
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 1.6406,
-        "longitude": 103.67,
-        "address": "Senai International Airport"
+        "latitude": 1.6402295999999998,
+        "longitude": 103.6728905
       },
       "endLocation": {
-        "latitude": 1.628632,
-        "longitude": 103.67568800000001
+        "latitude": 1.6373828,
+        "longitude": 103.6744885
       },
-      "distance": 1.29,
-      "duration": 12,
+      "distance": 0.38,
+      "duration": 5,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to Senai Bus Terminal"
-    },
-    {
-      "type": "bus",
-      "startLocation": {
-        "latitude": 1.628632,
-        "longitude": 103.67568800000001
-      },
-      "endLocation": {
-        "latitude": 1.502968,
-        "longitude": 103.735412
-      },
-      "distance": 15.84,
-      "duration": 33,
-      "carbonPerKm": 60,
-      "totalCarbon": 950.4,
-      "estimatedCost": 4.45,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "transitLine": "Causeway Link CW2",
-      "departureStop": "Senai Bus Terminal",
-      "arrivalStop": "Larkin Bus Terminal",
-      "headsign": "Towards Larkin",
-      "stopCount": 7,
-      "instruction": "Board Causeway Link CW2 Towards Larkin"
+      "departure": "2026-05-14T09:11:41.4467Z",
+      "arrival": "2026-05-14T09:16:41.4467Z",
+      "instruction": "Tuju selatan"
     },
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 1.502968,
-        "longitude": 103.735412
+        "latitude": 1.6373828,
+        "longitude": 103.6744885
       },
       "endLocation": {
-        "latitude": 1.491,
-        "longitude": 103.7411,
-        "address": "Larkin Sentral, Johor Bahru"
+        "latitude": 1.6362889999999999,
+        "longitude": 103.67445749999999
       },
-      "distance": 1.29,
-      "duration": 12,
+      "distance": 0.15,
+      "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to Larkin"
+      "departure": "2026-05-14T09:16:41.4467Z",
+      "arrival": "2026-05-14T09:17:41.4467Z",
+      "instruction": "Belok kanan ke arah Jalan Idaman 3/9"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.6362889999999999,
+        "longitude": 103.67445749999999
+      },
+      "endLocation": {
+        "latitude": 1.640594,
+        "longitude": 103.68026859999999
+      },
+      "distance": 0.8,
+      "duration": 11,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:17:41.4467Z",
+      "arrival": "2026-05-14T09:28:41.4467Z",
+      "instruction": "Belok kiri ke Jalan Idaman 3/9"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.640594,
+        "longitude": 103.68026859999999
+      },
+      "endLocation": {
+        "latitude": 1.6386844999999999,
+        "longitude": 103.68162749999999
+      },
+      "distance": 0.26,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:28:41.4467Z",
+      "arrival": "2026-05-14T09:31:41.4467Z",
+      "instruction": "Belok kanan ke Jalan Idaman 3/1"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.6386844999999999,
+        "longitude": 103.68162749999999
+      },
+      "endLocation": {
+        "latitude": 1.6351327999999998,
+        "longitude": 103.6842777
+      },
+      "distance": 0.52,
+      "duration": 7,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:31:41.4467Z",
+      "arrival": "2026-05-14T09:38:41.4467Z",
+      "instruction": "Di bulatan, ambil susur keluar Ke-3 ke Jalan Idaman 2/9"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.6351327999999998,
+        "longitude": 103.6842777
+      },
+      "endLocation": {
+        "latitude": 1.6339568999999998,
+        "longitude": 103.6826967
+      },
+      "distance": 0.22,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:38:41.4467Z",
+      "arrival": "2026-05-14T09:40:41.4467Z",
+      "instruction": "Belok kanan ke Jalan Idaman 2/1\nDestinasi berada di sebelah kanan"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 1.63398,
+        "longitude": 103.68267999999999
+      },
+      "endLocation": {
+        "latitude": 1.59748,
+        "longitude": 103.64559
+      },
+      "distance": 8.11,
+      "duration": 13,
+      "carbonPerKm": 60,
+      "totalCarbon": 486.6,
+      "estimatedCost": 3.06,
+      "departure": "2026-05-14T09:40:41.4467Z",
+      "arrival": "2026-05-14T09:53:41.4467Z",
+      "transitLine": "P402 : Econsave Senai - Taman Aman",
+      "departureStop": "Taman Perindustrian Senai",
+      "arrivalStop": "Balai Polis Senai",
+      "headsign": "Econsave Senai",
+      "stopCount": 4,
+      "instruction": "Bas menuju Econsave Senai"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.5974865,
+        "longitude": 103.6455392
+      },
+      "endLocation": {
+        "latitude": 1.5969057999999998,
+        "longitude": 103.645465
+      },
+      "distance": 0.07,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:53:41.4467Z",
+      "arrival": "2026-05-14T09:54:41.4467Z",
+      "instruction": "Tuju selatan di Lebuhraya Senai/Laluan 1 ke arah Jalan Ria"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.5969057999999998,
+        "longitude": 103.645465
+      },
+      "endLocation": {
+        "latitude": 1.5969086,
+        "longitude": 103.64561719999999
+      },
+      "distance": 0.02,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:54:41.4467Z",
+      "arrival": "2026-05-14T09:55:41.4467Z",
+      "instruction": "Belok ke kiri sebelum Sin Yong Tat Trading 新永大贸易"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.5969086,
+        "longitude": 103.64561719999999
+      },
+      "endLocation": {
+        "latitude": 1.5965783,
+        "longitude": 103.64562629999999
+      },
+      "distance": 0.04,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:55:41.4467Z",
+      "arrival": "2026-05-14T09:56:41.4467Z",
+      "instruction": "Belok kanan ke 5,Jalan Impian Senai Utama\nDestinasi berada di sebelah kanan"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 1.5965829999999999,
+        "longitude": 103.64557599999999
+      },
+      "endLocation": {
+        "latitude": 1.4950872,
+        "longitude": 103.74264840000001
+      },
+      "distance": 21.19,
+      "duration": 37,
+      "carbonPerKm": 60,
+      "totalCarbon": 1271.4,
+      "estimatedCost": 5.41,
+      "departure": "2026-05-14T09:56:41.4467Z",
+      "arrival": "2026-05-14T10:33:41.4467Z",
+      "transitLine": "2 : Larkin - Air Hitam",
+      "departureStop": "Sekolah Kebangsaan Senai",
+      "arrivalStop": "Larkin Sentral",
+      "headsign": "Larkin Sentral",
+      "stopCount": 18,
+      "instruction": "Bas menuju Larkin Sentral"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 1.4950872,
+        "longitude": 103.74264840000001
+      },
+      "endLocation": {
+        "latitude": 1.4916699999999998,
+        "longitude": 103.740917
+      },
+      "distance": 0.62,
+      "duration": 3,
+      "carbonPerKm": 60,
+      "totalCarbon": 37.2,
+      "estimatedCost": 1.71,
+      "departure": "2026-05-14T10:33:41.4467Z",
+      "arrival": "2026-05-14T10:36:41.4467Z",
+      "transitLine": "CWL : Larkin Sentral - CIQ",
+      "departureStop": "Larkin Sentral",
+      "arrivalStop": "Dewan JKR Johor Bharu",
+      "headsign": "JB Custom",
+      "stopCount": 2,
+      "instruction": "Bas menuju JB Custom"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4916379,
+        "longitude": 103.74083809999999
+      },
+      "endLocation": {
+        "latitude": 1.4914163999999999,
+        "longitude": 103.7409086
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:36:41.4467Z",
+      "arrival": "2026-05-14T10:37:41.4467Z",
+      "instruction": "Tuju selatan di Jln Datin Halimah/J3 ke arah Jalan Tun Abdul Razak (Susur 5)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4914163999999999,
+        "longitude": 103.7409086
+      },
+      "endLocation": {
+        "latitude": 1.49081,
+        "longitude": 103.7413502
+      },
+      "distance": 0.08,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:37:41.4467Z",
+      "arrival": "2026-05-14T10:38:41.4467Z",
+      "instruction": "Belok sedikit ke kiri ke Jalan Tun Abdul Razak (Susur 5)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.49081,
+        "longitude": 103.7413502
+      },
+      "endLocation": {
+        "latitude": 1.4909451999999999,
+        "longitude": 103.74108249999999
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:38:41.4467Z",
+      "arrival": "2026-05-14T10:39:41.4467Z",
+      "instruction": "Belok tajam ke kanan\nDestinasi berada di sebelah kanan"
     }
   ],
-  "polyline": "wl_Io`wwR~e\\k{L",
-  "reasoning": "Lowest-carbon option from Senai to Larkin using Causeway Link CW2.",
+  "polyline": "mj_IqrwwRtCSd@?PInEaDJU~AcAn@e@RHpAfAJAHM^Ub@OXUmDcF_Tm[MW|ImGPCL@VJX@VGPMLSD]CUDQBEjCaBvCqBjDsB~BaBxArBnCfECBBC~CfFzBdDdRaMBOLEF?|HaFfH{E~D}CnNsJbB_ArCyAfAc@jACAt@BdANr@Rf@`AhBFRbLlPdAxAh@t@jC|DrGnJfE~Fv@jAz@hAhBxBdKnOnAvBR`@T`AR`DDfL_@vIDP@r@CvCTnBVn@CLfAlCt@zBp@|BJJXr@ZpAb@nCLtAAXLfBH`D?hCA^DVq@dLEx@ERQVQd@uAnB_AfA@r@F^fDlBr@b@p@h@t@p@jE`Fh@~@jA`Cp@hBfAbEh@lCXlBPvCF`FVtFNf@XZTLn@B`@BvAd@r@ZfAl@rAtAbDtCjBxBf@\\tAj@|Ab@dB\\x@F|@AbAQ|@]lBkAv@Wx@KpAAnAF@IAHrBN?_@`AA?HAZp@?hAMbAWx@Y|DeBbCkAjAe@tAm@fEyA~Bk@jB]t@MnBS|Jw@~@MnCk@pDeAd@SpAm@dC}Av@k@vAwAnAeBp@iAn@aAp@oAzBkFhAaC`@s@hEeG~CoChA}@zDuBlJgExEgB`EeBlGeCjFgBv@]`Bc@bB]b@Gz@IrCGvCErBBlUr@zF\\`KhAfG~@|FpAbCFzDd@`F`@dDLvCH`C@bCZd@N`BPzCd@xGnB`Cl@`Dl@|@JnBL`CFxB?tAEzAKjAMjB[xA_@vAc@`D{@`AYpBs@hBy@lBgArByAtBcB~DuD|@u@nFkF@OfAsArEqEfCwBnEyC~Ay@~A{@nEuCrEiCx@g@|CcCtBaBnAiAnBwB~A{Bd@q@`@]Vm@p@qBfHiWdAeCnAaCr@kApAaBxBiCzAmAdBmAt@e@jCwAnOcK~CmBzBgA`GkDrBuABKPQ\\g@|CwBrCcB`@Sd@]ZQXINJjG}D|O}JfBcAlQ{IvBkAlAu@|AkAhEkD~@q@bFyElDgEbDyEpBwChIaN`H_LrDyF`GuJxJ{OhDyFdMcSCKBMrA{BRQJEnB_DzEiHb@iAJ]Bu@GcAg@aCMaAKmI?y@@[FWJW`@g@l@]fAa@h@]Xg@Rq@BQk@oOEgAOqAOaAc@qAc@gAaDkFa@}@y@kC_HqXa@_CO_Di@{MCyABcBLsBHu@f@wCj@mB`CeHN}@`@iCNeBY}@a@m@OOSGY?_@Fc@PQRKXA\\Bb@JTNN`Ab@vAVvCv@j@EXGROPSLWBi@AUEWKYOWUQUIYEY@UFUL[`@WdAe@`FNjAN\\^\\^N`@B`@GVONSJa@Bc@Ac@Ug@OQg@[mGwAuA_@k@MaAMsBAg@@g@FoFbAMAoANICm@_DQk@Yq@m@cBQg@kAy@q@sCiCZIJ?PRbBZnBlAQUuBc@Dq@H\\vBJ|@vFu@TEv@dCtAbB`@XVHz@JfDs@EODNj@MxBwAQd@IN",
+  "reasoning": "Recorded Google Routes response for Senai -\u003e Larkin (eco).",
   "recommendedFor": [
     "low-carbon",
     "commute"
   ],
   "recommended": true,
   "dataSource": "google_routes",
-  "createdAt": "0001-01-01T00:00:00Z",
-  "_stub": true
+  "createdAt": "0001-01-01T00:00:00Z"
 }

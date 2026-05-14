@@ -1,89 +1,257 @@
 {
   "routeId": "fixture_danga_bay__ciq_johor__eco",
   "mode": "eco",
-  "totalDistance": 4.81,
-  "totalDuration": 22,
-  "carbonEstimate": 384,
-  "carbonBaseline": 962,
-  "carbonSavedGrams": 578,
-  "carbonSavingsPercent": 60,
-  "carbonEstimateKg": 0.38,
-  "estimatedCost": 2.1,
-  "greenPointsEstimate": 58,
+  "totalDistance": 8.133,
+  "totalDuration": 32,
+  "carbonEstimate": 390,
+  "carbonBaseline": 1626.6,
+  "carbonSavedGrams": 1236.6,
+  "carbonSavingsPercent": 76,
+  "carbonEstimateKg": 0.39,
+  "estimatedCost": 2.77,
+  "greenPointsEstimate": 51,
   "steps": [
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 1.4753,
-        "longitude": 103.7236,
-        "address": "Danga Bay, Johor Bahru"
+        "latitude": 1.4752946,
+        "longitude": 103.7235776
       },
       "endLocation": {
-        "latitude": 1.475068,
-        "longitude": 103.724108
+        "latitude": 1.475913,
+        "longitude": 103.7236307
       },
-      "distance": 0.16,
-      "duration": 3,
+      "distance": 0.08,
+      "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to Danga Bay Bus Stop"
-    },
-    {
-      "type": "bus",
-      "startLocation": {
-        "latitude": 1.475068,
-        "longitude": 103.724108
-      },
-      "endLocation": {
-        "latitude": 1.462968,
-        "longitude": 103.768348
-      },
-      "distance": 4.49,
-      "duration": 16,
-      "carbonPerKm": 80,
-      "totalCarbon": 359.2,
-      "estimatedCost": 2.1,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "transitLine": "Causeway Link CW2",
-      "departureStop": "Danga Bay Bus Stop",
-      "arrivalStop": "CIQ Johor Bus Bay",
-      "headsign": "Towards CIQ Johor",
-      "stopCount": 6,
-      "instruction": "Board Causeway Link CW2 Towards CIQ Johor"
+      "departure": "2026-05-14T09:11:29.49008Z",
+      "arrival": "2026-05-14T09:12:29.49008Z",
+      "instruction": "Head northwest"
     },
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 1.462968,
-        "longitude": 103.768348
+        "latitude": 1.475913,
+        "longitude": 103.7236307
       },
       "endLocation": {
-        "latitude": 1.4628,
-        "longitude": 103.7686,
-        "address": "Sultan Iskandar CIQ, Johor Bahru"
+        "latitude": 1.4758251999999998,
+        "longitude": 103.7238054
       },
-      "distance": 0.16,
-      "duration": 3,
+      "distance": 0.02,
+      "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to Sultan Iskandar CIQ"
+      "departure": "2026-05-14T09:12:29.49008Z",
+      "arrival": "2026-05-14T09:13:29.49008Z",
+      "instruction": "Turn right toward Danga Bay"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4758251999999998,
+        "longitude": 103.7238054
+      },
+      "endLocation": {
+        "latitude": 1.4754216,
+        "longitude": 103.7243968
+      },
+      "distance": 0.09,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:13:29.49008Z",
+      "arrival": "2026-05-14T09:14:29.49008Z",
+      "instruction": "Turn right toward Danga Bay"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4754216,
+        "longitude": 103.7243968
+      },
+      "endLocation": {
+        "latitude": 1.4738137999999998,
+        "longitude": 103.7248097
+      },
+      "distance": 0.19,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:14:29.49008Z",
+      "arrival": "2026-05-14T09:16:29.49008Z",
+      "instruction": "Turn right onto Danga Bay"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4738137999999998,
+        "longitude": 103.7248097
+      },
+      "endLocation": {
+        "latitude": 1.4738647000000002,
+        "longitude": 103.7250334
+      },
+      "distance": 0.09,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:16:29.49008Z",
+      "arrival": "2026-05-14T09:17:29.49008Z",
+      "instruction": "Turn right toward Jln Ismail Sultan/Lbh Skudai/Persiaran Abu Bakar Sultan/Route 52\nTake the stairs"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4738647000000002,
+        "longitude": 103.7250334
+      },
+      "endLocation": {
+        "latitude": 1.4751570999999999,
+        "longitude": 103.72472789999999
+      },
+      "distance": 0.15,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:17:29.49008Z",
+      "arrival": "2026-05-14T09:18:29.49008Z",
+      "instruction": "Turn right onto Jln Ismail Sultan/Lbh Skudai/Persiaran Abu Bakar Sultan/Route 52"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 1.47516,
+        "longitude": 103.72474
+      },
+      "endLocation": {
+        "latitude": 1.46352,
+        "longitude": 103.76496
+      },
+      "distance": 6.5,
+      "duration": 17,
+      "carbonPerKm": 60,
+      "totalCarbon": 390,
+      "estimatedCost": 2.77,
+      "departure": "2026-05-14T09:18:29.49008Z",
+      "arrival": "2026-05-14T09:35:29.49008Z",
+      "transitLine": "JB Sentral - Terminal Kulai",
+      "departureStop": "OPP Danga Bay",
+      "arrivalStop": "JB Sentral",
+      "headsign": "Terminal Kulai - JB Sentral 3.0",
+      "stopCount": 9,
+      "instruction": "Bus towards Terminal Kulai - JB Sentral 3.0"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.463531,
+        "longitude": 103.76498070000001
+      },
+      "endLocation": {
+        "latitude": 1.4628545,
+        "longitude": 103.76535589999999
+      },
+      "distance": 0.09,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:35:29.49008Z",
+      "arrival": "2026-05-14T09:36:29.49008Z",
+      "instruction": "Head southeast on Jalan Jim Quee"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4628545,
+        "longitude": 103.76535589999999
+      },
+      "endLocation": {
+        "latitude": 1.4629398,
+        "longitude": 103.7654711
+      },
+      "distance": 0.02,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:36:29.49008Z",
+      "arrival": "2026-05-14T09:37:29.49008Z",
+      "instruction": "Turn left toward Jalan Jim Quee\nRestricted usage road"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4629398,
+        "longitude": 103.7654711
+      },
+      "endLocation": {
+        "latitude": 1.4602887,
+        "longitude": 103.76690789999999
+      },
+      "distance": 0.34,
+      "duration": 4,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:37:29.49008Z",
+      "arrival": "2026-05-14T09:41:29.49008Z",
+      "instruction": "Turn right onto Jalan Jim Quee"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4602887,
+        "longitude": 103.76690789999999
+      },
+      "endLocation": {
+        "latitude": 1.4633922,
+        "longitude": 103.7685527
+      },
+      "distance": 0.4,
+      "duration": 5,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:41:29.49008Z",
+      "arrival": "2026-05-14T09:46:29.49008Z",
+      "instruction": "Turn left onto Jalan Lumba Kuda"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4633922,
+        "longitude": 103.7685527
+      },
+      "endLocation": {
+        "latitude": 1.4625645999999999,
+        "longitude": 103.7684589
+      },
+      "distance": 0.19,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:46:29.49008Z",
+      "arrival": "2026-05-14T09:48:29.49008Z",
+      "instruction": "Turn right\nDestination will be on the right"
     }
   ],
-  "polyline": "ougGcyixRf{Cae[",
-  "reasoning": "Lowest-carbon option from Danga Bay to CIQ Johor on Causeway Link CW2 bus.",
+  "polyline": "qc_HkoaxR}@^WIe@_@LK@WTCNKRYVkAnF_ApAQ?JUFEIOu@DGPGDBBJcGz@?A?@nLcBzHwApJ}BvFqA^Qb@[hC}BhDsC~CoCbH{GvKeKdAiA~A{Bn@iAx@gBdAcC\\gAj@gClC_QJmAFi@jBeK|AyHVeBAIbDmTZwBz@mEd@mBp@iBTg@|CoI^cBPeA\\aBPm@`@sBj@wDLiA`@mFBoBKuCSwBmBaOMqAi@cDMs@i@qBc@oBi@gBgCeHm@s@aAmBc@g@c@a@o@[g@Ow@I}@Gy@OUIs@m@[KMCYAITiE`Cg@TcCt@YL]RgIxD@BACfCkAQUfDaBzBgAbBc@hCqAUSSCyAC[EqEwCGQ}@g@sDsAJe@DIdAo@XEHBhAp@GVWh@",
+  "reasoning": "Recorded Google Routes response for Danga Bay -\u003e CIQ Johor (eco).",
   "recommendedFor": [
     "low-carbon",
     "commute"
   ],
   "recommended": true,
   "dataSource": "google_routes",
-  "createdAt": "0001-01-01T00:00:00Z",
-  "_stub": true
+  "createdAt": "0001-01-01T00:00:00Z"
 }

@@ -1,89 +1,449 @@
 {
   "routeId": "fixture_bukit_bintang__klcc__eco",
   "mode": "eco",
-  "totalDistance": 1.51,
-  "totalDuration": 7,
-  "carbonEstimate": 51.6,
-  "carbonBaseline": 302,
-  "carbonSavedGrams": 250.4,
-  "carbonSavingsPercent": 83,
-  "carbonEstimateKg": 0.05,
-  "estimatedCost": 2.68,
-  "greenPointsEstimate": 13,
+  "totalDistance": 3.218,
+  "totalDuration": 28,
+  "carbonEstimate": 116.8,
+  "carbonBaseline": 643.6,
+  "carbonSavedGrams": 526.8,
+  "carbonSavingsPercent": 82,
+  "carbonEstimateKg": 0.12,
+  "estimatedCost": 4.5,
+  "greenPointsEstimate": 27,
   "steps": [
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 3.1466,
-        "longitude": 101.7104,
-        "address": "Bukit Bintang, Kuala Lumpur"
+        "latitude": 3.1465821,
+        "longitude": 101.7104143
       },
       "endLocation": {
-        "latitude": 3.147504,
-        "longitude": 101.710496
+        "latitude": 3.1467131,
+        "longitude": 101.71059269999999
       },
-      "distance": 0.11,
+      "distance": 0.03,
       "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to Bukit Bintang Station"
-    },
-    {
-      "type": "lrt",
-      "startLocation": {
-        "latitude": 3.147504,
-        "longitude": 101.710496
-      },
-      "endLocation": {
-        "latitude": 3.156996,
-        "longitude": 101.711504
-      },
-      "distance": 1.29,
-      "duration": 5,
-      "carbonPerKm": 40,
-      "totalCarbon": 51.6,
-      "estimatedCost": 2.68,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "transitLine": "Kelana Jaya LRT",
-      "departureStop": "Bukit Bintang Station",
-      "arrivalStop": "KLCC Station",
-      "headsign": "Towards Putra Heights",
-      "stopCount": 6,
-      "instruction": "Board Kelana Jaya LRT Towards Putra Heights"
+      "departure": "2026-05-14T09:11:28.522164Z",
+      "arrival": "2026-05-14T09:12:28.522164Z",
+      "instruction": "Tuju timur laut"
     },
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 3.156996,
-        "longitude": 101.711504
+        "latitude": 3.1467131,
+        "longitude": 101.71059269999999
       },
       "endLocation": {
-        "latitude": 3.1579,
-        "longitude": 101.7116,
-        "address": "KLCC, Kuala Lumpur"
+        "latitude": 3.1463699,
+        "longitude": 101.7107703
+      },
+      "distance": 0.04,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:12:28.522164Z",
+      "arrival": "2026-05-14T09:13:28.522164Z",
+      "instruction": "Belok kanan ke arah Jln Bukit Bintang"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1463699,
+        "longitude": 101.7107703
+      },
+      "endLocation": {
+        "latitude": 3.1464790999999996,
+        "longitude": 101.7112935
+      },
+      "distance": 0.06,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:13:28.522164Z",
+      "arrival": "2026-05-14T09:14:28.522164Z",
+      "instruction": "Belok kiri ke Jln Bukit Bintang"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1464790999999996,
+        "longitude": 101.7112935
+      },
+      "endLocation": {
+        "latitude": 3.146391,
+        "longitude": 101.7113225
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:14:28.522164Z",
+      "arrival": "2026-05-14T09:15:28.522164Z",
+      "instruction": "Belok kanan ke Jln Sultan Ismail"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.146391,
+        "longitude": 101.7113225
+      },
+      "endLocation": {
+        "latitude": 3.1460429,
+        "longitude": 101.7113162
+      },
+      "distance": 0.05,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:15:28.522164Z",
+      "arrival": "2026-05-14T09:16:28.522164Z",
+      "instruction": "Belok kanan\nGunakan tangga\nDestinasi berada di sebelah kiri"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.14605,
+        "longitude": 101.71133999999999
+      },
+      "endLocation": {
+        "latitude": 3.14605,
+        "longitude": 101.71133999999999
+      },
+      "distance": 0,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:16:28.522164Z",
+      "arrival": "2026-05-14T09:17:28.522164Z",
+      "instruction": "Ambil laluan masuk AirAsia-Bukit Bintang - Station Foyer"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.14605,
+        "longitude": 101.71133999999999
+      },
+      "endLocation": {
+        "latitude": 3.14612,
+        "longitude": 101.71148
+      },
+      "distance": 0.02,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:17:28.522164Z",
+      "arrival": "2026-05-14T09:18:28.522164Z"
+    },
+    {
+      "type": "lrt",
+      "startLocation": {
+        "latitude": 3.14612,
+        "longitude": 101.71148
+      },
+      "endLocation": {
+        "latitude": 3.15617,
+        "longitude": 101.70483999999999
+      },
+      "distance": 1.45,
+      "duration": 4,
+      "carbonPerKm": 40,
+      "totalCarbon": 58,
+      "estimatedCost": 2.72,
+      "departure": "2026-05-14T09:18:28.522164Z",
+      "arrival": "2026-05-14T09:22:28.522164Z",
+      "transitLine": "KL Monorail Line",
+      "departureStop": "Bukit Bintang",
+      "arrivalStop": "Bukit Nanas",
+      "headsign": "KL Sentral to Titiwangsa",
+      "stopCount": 3,
+      "instruction": "Monorel menuju KL Sentral to Titiwangsa"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.15617,
+        "longitude": 101.70483999999999
+      },
+      "endLocation": {
+        "latitude": 3.15617,
+        "longitude": 101.70483999999999
+      },
+      "distance": 0,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:22:28.522164Z",
+      "arrival": "2026-05-14T09:23:28.522164Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.15617,
+        "longitude": 101.70483999999999
+      },
+      "endLocation": {
+        "latitude": 3.15617,
+        "longitude": 101.70483999999999
+      },
+      "distance": 0,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:23:28.522164Z",
+      "arrival": "2026-05-14T09:24:28.522164Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.15617,
+        "longitude": 101.70483999999999
+      },
+      "endLocation": {
+        "latitude": 3.15609,
+        "longitude": 101.70472
+      },
+      "distance": 0.02,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:24:28.522164Z",
+      "arrival": "2026-05-14T09:25:28.522164Z",
+      "instruction": "Ambil susur keluar Bukit Nanas - Entrance/Exit (Lift)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1561220999999997,
+        "longitude": 101.7047815
+      },
+      "endLocation": {
+        "latitude": 3.1564600000000005,
+        "longitude": 101.70461759999999
+      },
+      "distance": 0.04,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:25:28.522164Z",
+      "arrival": "2026-05-14T09:26:28.522164Z",
+      "instruction": "Tuju barat laut di Jln Sultan Ismail ke arah Jln Ampang"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1564600000000005,
+        "longitude": 101.70461759999999
+      },
+      "endLocation": {
+        "latitude": 3.1568008,
+        "longitude": 101.7055601
       },
       "distance": 0.11,
       "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to KLCC"
+      "departure": "2026-05-14T09:26:28.522164Z",
+      "arrival": "2026-05-14T09:27:28.522164Z",
+      "instruction": "Belok kanan ke Jln Ampang\nDestinasi berada di sebelah kanan"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 3.1566888,
+        "longitude": 101.70552099999999
+      },
+      "endLocation": {
+        "latitude": 3.1592981,
+        "longitude": 101.7124091
+      },
+      "distance": 0.98,
+      "duration": 3,
+      "carbonPerKm": 60,
+      "totalCarbon": 58.8,
+      "estimatedCost": 1.78,
+      "departure": "2026-05-14T09:27:28.522164Z",
+      "arrival": "2026-05-14T09:30:28.522164Z",
+      "transitLine": "Terminal Maluri ~ Lebuh Ampang",
+      "departureStop": "Renaissance Hotel",
+      "arrivalStop": "KL2301 KLCC (Opp)",
+      "headsign": "Hab Pandan Indah",
+      "stopCount": 3,
+      "instruction": "Bas menuju Hab Pandan Indah"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1591888999999997,
+        "longitude": 101.7123795
+      },
+      "endLocation": {
+        "latitude": 3.1590048,
+        "longitude": 101.7129392
+      },
+      "distance": 0.07,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:30:28.522164Z",
+      "arrival": "2026-05-14T09:31:28.522164Z",
+      "instruction": "Tuju timur di Jln Ampang"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1590048,
+        "longitude": 101.7129392
+      },
+      "endLocation": {
+        "latitude": 3.158848,
+        "longitude": 101.7129047
+      },
+      "distance": 0.02,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:31:28.522164Z",
+      "arrival": "2026-05-14T09:32:28.522164Z",
+      "instruction": "Belok kanan ke arah Jln Ampang"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.158848,
+        "longitude": 101.7129047
+      },
+      "endLocation": {
+        "latitude": 3.1588068999999996,
+        "longitude": 101.7132803
+      },
+      "distance": 0.04,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:32:28.522164Z",
+      "arrival": "2026-05-14T09:33:28.522164Z",
+      "instruction": "Belok kiri ke Jln Ampang"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1588068999999996,
+        "longitude": 101.7132803
+      },
+      "endLocation": {
+        "latitude": 3.1586958999999997,
+        "longitude": 101.713302
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:33:28.522164Z",
+      "arrival": "2026-05-14T09:34:28.522164Z",
+      "instruction": "Belok kanan"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1586958999999997,
+        "longitude": 101.713302
+      },
+      "endLocation": {
+        "latitude": 3.1587049000000005,
+        "longitude": 101.7131655
+      },
+      "distance": 0.02,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:34:28.522164Z",
+      "arrival": "2026-05-14T09:35:28.522164Z",
+      "instruction": "Belok kanan"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1587049000000005,
+        "longitude": 101.7131655
+      },
+      "endLocation": {
+        "latitude": 3.1584794,
+        "longitude": 101.7132187
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:35:28.522164Z",
+      "arrival": "2026-05-14T09:36:28.522164Z",
+      "instruction": "Belok kiri"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1584794,
+        "longitude": 101.7132187
+      },
+      "endLocation": {
+        "latitude": 3.158487,
+        "longitude": 101.7114508
+      },
+      "distance": 0.2,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:36:28.522164Z",
+      "arrival": "2026-05-14T09:38:28.522164Z",
+      "instruction": "Belok kanan"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.158487,
+        "longitude": 101.7114508
+      },
+      "endLocation": {
+        "latitude": 3.1582898,
+        "longitude": 101.7116662
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:38:28.522164Z",
+      "arrival": "2026-05-14T09:39:28.522164Z",
+      "instruction": "Belok kiri"
     }
   ],
-  "polyline": "gqeR_ixkRseAoF",
-  "reasoning": "Lowest-carbon option from Bukit Bintang to KLCC using Kelana Jaya LRT.",
+  "polyline": "cqeRaixkRYc@n@c@R?Y_@?a@D_@AEPEDJDBx@OACM[@FeE|@iC`@YB}A?aCOeABc@HeAb@mAr@yAh@y@VqB^}@VoAp@eA~@k@v@a@hA]bAc@|@_BnBkB|Bq@bAa@dAc@xAMXSZy@|@u@^oA`@CINVEKcA^CWw@uCGMTFHC_@mA[N`@bAUD}AwD_FsKiC}FWu@W[MqA?mAZcDZcCUETDd@oB\\FFy@?QTC?Xj@IIpDYrB@N^j@f@k@",
+  "reasoning": "Recorded Google Routes response for Bukit Bintang -\u003e KLCC (eco).",
   "recommendedFor": [
     "low-carbon",
     "commute"
   ],
   "recommended": true,
   "dataSource": "google_routes",
-  "createdAt": "0001-01-01T00:00:00Z",
-  "_stub": true
+  "createdAt": "0001-01-01T00:00:00Z"
 }

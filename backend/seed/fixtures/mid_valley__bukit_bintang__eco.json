@@ -1,89 +1,373 @@
 {
   "routeId": "fixture_mid_valley__bukit_bintang__eco",
   "mode": "eco",
-  "totalDistance": 4.88,
-  "totalDuration": 19,
-  "carbonEstimate": 168,
-  "carbonBaseline": 976,
-  "carbonSavedGrams": 808,
-  "carbonSavingsPercent": 83,
-  "carbonEstimateKg": 0.17,
-  "estimatedCost": 3.32,
-  "greenPointsEstimate": 43,
+  "totalDistance": 6.068,
+  "totalDuration": 45,
+  "carbonEstimate": 273.4,
+  "carbonBaseline": 1213.6,
+  "carbonSavedGrams": 940.2,
+  "carbonSavingsPercent": 77,
+  "carbonEstimateKg": 0.27,
+  "estimatedCost": 5.01,
+  "greenPointsEstimate": 40,
   "steps": [
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 3.118,
-        "longitude": 101.677,
-        "address": "Mid Valley Megamall, Kuala Lumpur"
+        "latitude": 3.1181552,
+        "longitude": 101.67667499999999
       },
       "endLocation": {
-        "latitude": 3.120288,
-        "longitude": 101.67967200000001
+        "latitude": 3.1187891,
+        "longitude": 101.67697869999999
       },
-      "distance": 0.34,
-      "duration": 4,
+      "distance": 0.08,
+      "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to Mid Valley MRT Station"
-    },
-    {
-      "type": "mrt",
-      "startLocation": {
-        "latitude": 3.120288,
-        "longitude": 101.67967200000001
-      },
-      "endLocation": {
-        "latitude": 3.1443119999999998,
-        "longitude": 101.707728
-      },
-      "distance": 4.2,
-      "duration": 11,
-      "carbonPerKm": 40,
-      "totalCarbon": 168,
-      "estimatedCost": 3.32,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "transitLine": "Kajang Line (MRT)",
-      "departureStop": "Mid Valley MRT Station",
-      "arrivalStop": "Bukit Bintang MRT Station",
-      "headsign": "Towards Kajang",
-      "stopCount": 4,
-      "instruction": "Board Kajang Line (MRT) Towards Kajang"
+      "departure": "2026-05-14T09:11:39.792536Z",
+      "arrival": "2026-05-14T09:12:39.792536Z",
+      "instruction": "Tuju timur laut ke arah to Gardens / Petaling Jaya / Pusat Bandaraya"
     },
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 3.1443119999999998,
-        "longitude": 101.707728
+        "latitude": 3.1187891,
+        "longitude": 101.67697869999999
       },
       "endLocation": {
-        "latitude": 3.1466,
-        "longitude": 101.7104,
-        "address": "Bukit Bintang, Kuala Lumpur"
+        "latitude": 3.1195073000000004,
+        "longitude": 101.67730209999999
       },
-      "distance": 0.34,
-      "duration": 4,
+      "distance": 0.09,
+      "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to Bukit Bintang"
+      "departure": "2026-05-14T09:12:39.792536Z",
+      "arrival": "2026-05-14T09:13:39.792536Z",
+      "instruction": "Teruskan perjalanan ke Boulevard Offices Block D"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1195073000000004,
+        "longitude": 101.67730209999999
+      },
+      "endLocation": {
+        "latitude": 3.1195649999999997,
+        "longitude": 101.6778585
+      },
+      "distance": 0.08,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:13:39.792536Z",
+      "arrival": "2026-05-14T09:14:39.792536Z",
+      "instruction": "Belok kanan ke arah Lingkaran Syed Putra"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1195649999999997,
+        "longitude": 101.6778585
+      },
+      "endLocation": {
+        "latitude": 3.1194968999999997,
+        "longitude": 101.6780361
+      },
+      "distance": 0.02,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:14:39.792536Z",
+      "arrival": "2026-05-14T09:15:39.792536Z",
+      "instruction": "Belok kanan ke Lingkaran Syed Putra"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1194968999999997,
+        "longitude": 101.6780361
+      },
+      "endLocation": {
+        "latitude": 3.1193689,
+        "longitude": 101.6786779
+      },
+      "distance": 0.07,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:15:39.792536Z",
+      "arrival": "2026-05-14T09:16:39.792536Z",
+      "instruction": "Teruskan perjalanan untuk kekal di Lingkaran Syed Putra"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1193689,
+        "longitude": 101.6786779
+      },
+      "endLocation": {
+        "latitude": 3.1194672,
+        "longitude": 101.67998800000001
+      },
+      "distance": 0.15,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:16:39.792536Z",
+      "arrival": "2026-05-14T09:18:39.792536Z",
+      "instruction": "Teruskan perjalanan ke Jalan 1/86"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1194672,
+        "longitude": 101.67998800000001
+      },
+      "endLocation": {
+        "latitude": 3.1195578999999998,
+        "longitude": 101.67998469999999
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:18:39.792536Z",
+      "arrival": "2026-05-14T09:19:39.792536Z",
+      "instruction": "Belok kiri ke arah Jalan 1/86"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1195578999999998,
+        "longitude": 101.67998469999999
+      },
+      "endLocation": {
+        "latitude": 3.1195405999999997,
+        "longitude": 101.6790437
+      },
+      "distance": 0.11,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:19:39.792536Z",
+      "arrival": "2026-05-14T09:20:39.792536Z",
+      "instruction": "Belok kiri ke Jalan 1/86"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1195405999999997,
+        "longitude": 101.6790437
+      },
+      "endLocation": {
+        "latitude": 3.119783,
+        "longitude": 101.67918519999999
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:20:39.792536Z",
+      "arrival": "2026-05-14T09:21:39.792536Z",
+      "instruction": "Belok tajam ke kanan\nDestinasi berada di sebelah kanan"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 3.1197700000000004,
+        "longitude": 101.67926
+      },
+      "endLocation": {
+        "latitude": 3.1414033999999997,
+        "longitude": 101.69540119999999
+      },
+      "distance": 3.27,
+      "duration": 14,
+      "carbonPerKm": 60,
+      "totalCarbon": 196.2,
+      "estimatedCost": 2.19,
+      "departure": "2026-05-14T09:21:39.792536Z",
+      "arrival": "2026-05-14T09:35:39.792536Z",
+      "transitLine": "Puchong Utama ~ Hab Pasar Seni",
+      "departureStop": "KL1535 Midvalley",
+      "arrivalStop": "KL1933 Pasar Seni (Platform E1 - E3)",
+      "headsign": "Hab Pasar Seni",
+      "stopCount": 7,
+      "instruction": "Bas menuju Hab Pasar Seni"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1413989,
+        "longitude": 101.6954582
+      },
+      "endLocation": {
+        "latitude": 3.1421699999999997,
+        "longitude": 101.69556999999999
+      },
+      "distance": 0.09,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:35:39.792536Z",
+      "arrival": "2026-05-14T09:36:39.792536Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1421699999999997,
+        "longitude": 101.69556999999999
+      },
+      "endLocation": {
+        "latitude": 3.1421699999999997,
+        "longitude": 101.69556999999999
+      },
+      "distance": 0,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:36:39.792536Z",
+      "arrival": "2026-05-14T09:38:39.792536Z",
+      "instruction": "Ambil laluan masuk Pasar Seni - MRT Entrance/Exit (Pintu B - Jln Sultan Mohamed)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1421699999999997,
+        "longitude": 101.69556999999999
+      },
+      "endLocation": {
+        "latitude": 3.1421699999999997,
+        "longitude": 101.69556999999999
+      },
+      "distance": 0,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:38:39.792536Z",
+      "arrival": "2026-05-14T09:39:39.792536Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1421699999999997,
+        "longitude": 101.69556999999999
+      },
+      "endLocation": {
+        "latitude": 3.14246,
+        "longitude": 101.69606999999999
+      },
+      "distance": 0.06,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:39:39.792536Z",
+      "arrival": "2026-05-14T09:40:39.792536Z"
+    },
+    {
+      "type": "lrt",
+      "startLocation": {
+        "latitude": 3.14246,
+        "longitude": 101.69606999999999
+      },
+      "endLocation": {
+        "latitude": 3.1462999999999997,
+        "longitude": 101.7106
+      },
+      "distance": 1.93,
+      "duration": 5,
+      "carbonPerKm": 40,
+      "totalCarbon": 77.2,
+      "estimatedCost": 2.82,
+      "departure": "2026-05-14T09:40:39.792536Z",
+      "arrival": "2026-05-14T09:45:39.792536Z",
+      "transitLine": "MRT Kajang Line",
+      "departureStop": "LRT Pasar Seni",
+      "arrivalStop": "Bukit Bintang (Interchange outside to Monorail)",
+      "headsign": "From Kwasa Damansara to Kajang",
+      "stopCount": 3,
+      "instruction": "Kereta api bawah tanah menuju From Kwasa Damansara to Kajang"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1462594,
+        "longitude": 101.7106328
+      },
+      "endLocation": {
+        "latitude": 3.1463699,
+        "longitude": 101.7107703
+      },
+      "distance": 0.02,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:45:39.792536Z",
+      "arrival": "2026-05-14T09:46:39.792536Z",
+      "instruction": "Tuju timur laut di Jln Bukit Bintang"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1463699,
+        "longitude": 101.7107703
+      },
+      "endLocation": {
+        "latitude": 3.1467131,
+        "longitude": 101.71059269999999
+      },
+      "distance": 0.04,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:46:39.792536Z",
+      "arrival": "2026-05-14T09:47:39.792536Z",
+      "instruction": "Belok kiri"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1467131,
+        "longitude": 101.71059269999999
+      },
+      "endLocation": {
+        "latitude": 3.1465821,
+        "longitude": 101.7104143
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:47:39.792536Z",
+      "arrival": "2026-05-14T09:48:39.792536Z",
+      "instruction": "Belok kiri\nDestinasi berada di sebelah kanan"
     }
   ],
-  "polyline": "o~_RgxqkRwqDwoE",
-  "reasoning": "Lowest-carbon option from Mid Valley to Bukit Bintang using Kajang Line (MRT).",
+  "polyline": "o_`RevqkR}B}@uBu@YIZw@C]GQGCQCJc@FSRmAA]Ee@Mg@CcB?e@Bm@Q@ClA@pADZQQ]K@M?Wu@BmAEyAOuAa@{Aq@aAs@kBeCWCm@_Ac@c@UMa@KkBGq@KsAu@c@KqAWEIqFsBoCqAgCaAkB{@CKeBu@sBc@s@[w@q@aIeJ}DkEw@w@}AqBq@m@QIy@k@sLmHOU}@_Dg@kBcAsB{EyFFY@oCI]@gBISKE]?aBTeARa@Be@CYKEEi@AWDWFYAUGMSo@Q[AuA?@[?KyCUy@cBVAUyEMkB]oDGiD?{BTkCj@iBlDeIb@w@^oAP}AAkAU{@c@}@k@{@eAcAmAk@{B_@u@Ws@e@e@e@[q@c@oBe@cBq@oAyDwFkAaByAaCSLFEU[W@k@`@Xb@",
+  "reasoning": "Recorded Google Routes response for Mid Valley -\u003e Bukit Bintang (eco).",
   "recommendedFor": [
     "low-carbon",
     "commute"
   ],
   "recommended": true,
   "dataSource": "google_routes",
-  "createdAt": "0001-01-01T00:00:00Z",
-  "_stub": true
+  "createdAt": "0001-01-01T00:00:00Z"
 }

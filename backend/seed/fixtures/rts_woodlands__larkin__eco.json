@@ -1,89 +1,200 @@
 {
   "routeId": "fixture_rts_woodlands__larkin__eco",
   "mode": "eco",
-  "totalDistance": 5.71,
-  "totalDuration": 22,
-  "carbonEstimate": 196.4,
-  "carbonBaseline": 1142,
-  "carbonSavedGrams": 945.6,
-  "carbonSavingsPercent": 83,
-  "carbonEstimateKg": 0.2,
-  "estimatedCost": 3.48,
-  "greenPointsEstimate": 50,
+  "totalDistance": 10.169,
+  "totalDuration": 37,
+  "carbonEstimate": 546,
+  "carbonBaseline": 2033.8,
+  "carbonSavedGrams": 1487.8,
+  "carbonSavingsPercent": 73,
+  "carbonEstimateKg": 0.55,
+  "estimatedCost": 3.24,
+  "greenPointsEstimate": 57,
   "steps": [
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 1.449,
-        "longitude": 103.7707,
-        "address": "RTS Woodlands North"
+        "latitude": 1.4488013,
+        "longitude": 103.7703095
       },
       "endLocation": {
-        "latitude": 1.45236,
-        "longitude": 103.768332
+        "latitude": 1.4443264,
+        "longitude": 103.768445
       },
-      "distance": 0.4,
-      "duration": 5,
+      "distance": 0.54,
+      "duration": 8,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to RTS Woodlands RTS Station"
+      "departure": "2026-05-14T09:11:41.377835Z",
+      "arrival": "2026-05-14T09:19:41.377835Z",
+      "instruction": "Head south\nDestination will be on the right"
     },
     {
-      "type": "rts",
+      "type": "bus",
       "startLocation": {
-        "latitude": 1.45236,
-        "longitude": 103.768332
+        "latitude": 1.444608,
+        "longitude": 103.76774599999999
       },
       "endLocation": {
-        "latitude": 1.48764,
-        "longitude": 103.74346800000001
+        "latitude": 1.493904,
+        "longitude": 103.74403400000001
       },
-      "distance": 4.91,
-      "duration": 12,
-      "carbonPerKm": 40,
-      "totalCarbon": 196.4,
-      "estimatedCost": 3.48,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "transitLine": "RTS Link",
-      "departureStop": "RTS Woodlands RTS Station",
-      "arrivalStop": "Larkin RTS Station",
-      "headsign": "Towards Larkin",
-      "stopCount": 1,
-      "instruction": "Board RTS Link Towards Larkin"
+      "distance": 9.1,
+      "duration": 21,
+      "carbonPerKm": 60,
+      "totalCarbon": 546,
+      "estimatedCost": 3.24,
+      "departure": "2026-05-14T09:19:41.377835Z",
+      "arrival": "2026-05-14T09:40:41.377835Z",
+      "transitLine": "170",
+      "departureStop": "W'lands Checkpt",
+      "arrivalStop": "Larkin Ter",
+      "headsign": "Jln Datin Halimah",
+      "stopCount": 3,
+      "instruction": "Bus towards Jln Datin Halimah"
     },
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 1.48764,
-        "longitude": 103.74346800000001
+        "latitude": 1.4935566,
+        "longitude": 103.7433796
       },
       "endLocation": {
-        "latitude": 1.491,
-        "longitude": 103.7411,
-        "address": "Larkin Sentral, Johor Bahru"
+        "latitude": 1.4929253,
+        "longitude": 103.74317099999999
       },
-      "distance": 0.4,
-      "duration": 5,
+      "distance": 0.09,
+      "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to Larkin"
+      "departure": "2026-05-14T09:40:41.377835Z",
+      "arrival": "2026-05-14T09:41:41.377835Z",
+      "instruction": "Head southeast"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4929253,
+        "longitude": 103.74317099999999
+      },
+      "endLocation": {
+        "latitude": 1.4910651,
+        "longitude": 103.7419594
+      },
+      "distance": 0.27,
+      "duration": 4,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:41:41.377835Z",
+      "arrival": "2026-05-14T09:45:41.377835Z",
+      "instruction": "Turn left"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4910651,
+        "longitude": 103.7419594
+      },
+      "endLocation": {
+        "latitude": 1.4911052999999999,
+        "longitude": 103.7419449
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:45:41.377835Z",
+      "arrival": "2026-05-14T09:46:41.377835Z",
+      "instruction": "Turn right toward Jalan Tun Abdul Razak (Susur 5)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4911052999999999,
+        "longitude": 103.7419449
+      },
+      "endLocation": {
+        "latitude": 1.4905761,
+        "longitude": 103.74164739999999
+      },
+      "distance": 0.08,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:46:41.377835Z",
+      "arrival": "2026-05-14T09:47:41.377835Z",
+      "instruction": "Turn left toward Jalan Tun Abdul Razak (Susur 5)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4905761,
+        "longitude": 103.74164739999999
+      },
+      "endLocation": {
+        "latitude": 1.490507,
+        "longitude": 103.7415644
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:47:41.377835Z",
+      "arrival": "2026-05-14T09:48:41.377835Z",
+      "instruction": "Turn right toward Jalan Tun Abdul Razak (Susur 5)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.490507,
+        "longitude": 103.7415644
+      },
+      "endLocation": {
+        "latitude": 1.49081,
+        "longitude": 103.7413502
+      },
+      "distance": 0.04,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:48:41.377835Z",
+      "arrival": "2026-05-14T09:49:41.377835Z",
+      "instruction": "Turn right onto Jalan Tun Abdul Razak (Susur 5)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.49081,
+        "longitude": 103.7413502
+      },
+      "endLocation": {
+        "latitude": 1.4909451999999999,
+        "longitude": 103.74108249999999
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:49:41.377835Z",
+      "arrival": "2026-05-14T09:50:41.377835Z",
+      "instruction": "Slight left\nDestination will be on the right"
     }
   ],
-  "polyline": "g_zG{ujxRoeG~wD",
-  "reasoning": "Lowest-carbon option from RTS Woodlands to Larkin using RTS Link.",
+  "polyline": "_~yGmsjxR~@Jx@NrC|@bA\\NBvH~BNJLRVPlDfAw@hCHUkGyBcCg@_Cm@c@YKUe@c@eAs@wAo@oAc@}@K}@E_@BwTxEmN|CqAb@qAf@eAZkAN_ADsD@gAFmAV_AZoGjDsKdFs@Rw@Je@EaA]]A]Fu@V[BQCWc@Sk@^QyGuOSQSImBYwD[mACKBiAh@iFzCwA`A}CtCgCjEmAjCyCdJcAfEeAdHGl@m@~DMhB?p@FvAn@dBjDzHHVBXEf@I`@MPMJeHbDiABoMxEaFvBkCp@m@B}@EgBUmDm@kDq@kAIqB@i@@eATs@Vu@h@CEYN{@r@{@dA[h@Wl@Ql@Mr@QlCe@jIUnA[dAc@bAuBxD}HxMaArB}@hDc@~CuAdN@`AFf@Zh@`@Zp@Jj@Kb@e@Ls@Cs@Wg@s@m@mA]oD{@wDs@oCWc@B_ANcAToFbAQ}Ao@_Ck@eBqCwG`CmCbA`Cf@SJ?HB~@x@b@EXMPC^JPJpFpFGBp@fAN@f@OLPi@XQNQd@IN",
+  "reasoning": "Recorded Google Routes response for RTS Woodlands -\u003e Larkin (eco).",
   "recommendedFor": [
     "low-carbon",
     "commute"
   ],
   "recommended": true,
   "dataSource": "google_routes",
-  "createdAt": "0001-01-01T00:00:00Z",
-  "_stub": true
+  "createdAt": "0001-01-01T00:00:00Z"
 }

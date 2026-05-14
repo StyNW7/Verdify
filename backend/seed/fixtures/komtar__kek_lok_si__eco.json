@@ -1,89 +1,200 @@
 {
   "routeId": "fixture_komtar__kek_lok_si__eco",
   "mode": "eco",
-  "totalDistance": 6.21,
-  "totalDuration": 26,
-  "carbonEstimate": 360,
-  "carbonBaseline": 1242,
-  "carbonSavedGrams": 882,
-  "carbonSavingsPercent": 71,
-  "carbonEstimateKg": 0.36,
-  "estimatedCost": 1.7,
-  "greenPointsEstimate": 88,
+  "totalDistance": 6.991,
+  "totalDuration": 34,
+  "carbonEstimate": 371.4,
+  "carbonBaseline": 1398.2,
+  "carbonSavedGrams": 1026.8,
+  "carbonSavingsPercent": 73,
+  "carbonEstimateKg": 0.37,
+  "estimatedCost": 2.71,
+  "greenPointsEstimate": 39,
   "steps": [
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 5.4143,
-        "longitude": 100.3296,
-        "address": "KOMTAR, Georgetown"
+        "latitude": 5.4139352,
+        "longitude": 100.329679
       },
       "endLocation": {
-        "latitude": 5.415068,
-        "longitude": 100.329104
+        "latitude": 5.4137172,
+        "longitude": 100.3294469
       },
-      "distance": 0.13,
-      "duration": 3,
+      "distance": 0.04,
+      "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to KOMTAR Bus Hub"
-    },
-    {
-      "type": "bus",
-      "startLocation": {
-        "latitude": 5.415068,
-        "longitude": 100.329104
-      },
-      "endLocation": {
-        "latitude": 5.39922,
-        "longitude": 100.275168
-      },
-      "distance": 6.0,
-      "duration": 20,
-      "carbonPerKm": 60,
-      "totalCarbon": 360,
-      "estimatedCost": 1.7,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "transitLine": "Rapid Penang 201",
-      "departureStop": "KOMTAR Bus Hub",
-      "arrivalStop": "Air Itam Market",
-      "headsign": "Towards Air Itam",
-      "stopCount": 11,
-      "instruction": "Board Rapid Penang 201 Towards Air Itam"
+      "departure": "2026-05-14T09:11:35.981194Z",
+      "arrival": "2026-05-14T09:12:35.981194Z",
+      "instruction": "Tuju barat daya di Jalan Ria ke arah Jalan Magazine"
     },
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 5.39922,
-        "longitude": 100.275168
+        "latitude": 5.4137172,
+        "longitude": 100.3294469
       },
       "endLocation": {
-        "latitude": 5.3992,
-        "longitude": 100.275,
-        "address": "Kek Lok Si Temple, Air Itam"
+        "latitude": 5.4139295999999995,
+        "longitude": 100.32898469999999
+      },
+      "distance": 0.06,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:12:35.981194Z",
+      "arrival": "2026-05-14T09:13:35.981194Z",
+      "instruction": "Belok kanan ke Jalan Magazine"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4139295999999995,
+        "longitude": 100.32898469999999
+      },
+      "endLocation": {
+        "latitude": 5.4140093,
+        "longitude": 100.3287713
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:13:35.981194Z",
+      "arrival": "2026-05-14T09:14:35.981194Z",
+      "instruction": "Teruskan perjalanan ke Jln Macalister"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4140093,
+        "longitude": 100.3287713
+      },
+      "endLocation": {
+        "latitude": 5.4138158,
+        "longitude": 100.3281012
       },
       "distance": 0.08,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:14:35.981194Z",
+      "arrival": "2026-05-14T09:15:35.981194Z",
+      "instruction": "Belok sedikit ke kiri ke Jalan Dato Keramat"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 5.413819,
+        "longitude": 100.3281
+      },
+      "endLocation": {
+        "latitude": 5.40182,
+        "longitude": 100.27837
+      },
+      "distance": 6.19,
+      "duration": 15,
+      "carbonPerKm": 60,
+      "totalCarbon": 371.4,
+      "estimatedCost": 2.71,
+      "departure": "2026-05-14T09:15:35.981194Z",
+      "arrival": "2026-05-14T09:30:35.981194Z",
+      "transitLine": "502.",
+      "departureStop": "Pasaraya Gama",
+      "arrivalStop": "Pekan Air Itam",
+      "headsign": "Jeti - Balik Pulau",
+      "stopCount": 18,
+      "instruction": "Bas menuju Jeti - Balik Pulau"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4018174,
+        "longitude": 100.2783891
+      },
+      "endLocation": {
+        "latitude": 5.3999082,
+        "longitude": 100.27798539999999
+      },
+      "distance": 0.22,
       "duration": 3,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to Kek Lok Si Temple"
+      "departure": "2026-05-14T09:30:35.981194Z",
+      "arrival": "2026-05-14T09:33:35.981194Z",
+      "instruction": "Tuju selatan di Jln Paya Terubung/Laluan 220 ke arah Jalan Pasar"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.3999082,
+        "longitude": 100.27798539999999
+      },
+      "endLocation": {
+        "latitude": 5.4001436,
+        "longitude": 100.2762645
+      },
+      "distance": 0.2,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:33:35.981194Z",
+      "arrival": "2026-05-14T09:36:35.981194Z",
+      "instruction": "Belok kanan ke Jalan Rambutan"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4001436,
+        "longitude": 100.2762645
+      },
+      "endLocation": {
+        "latitude": 5.4000278999999995,
+        "longitude": 100.2757444
+      },
+      "distance": 0.06,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:36:35.981194Z",
+      "arrival": "2026-05-14T09:37:35.981194Z",
+      "instruction": "Belok sedikit ke kanan untuk kekal di Jalan Rambutan"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4000278999999995,
+        "longitude": 100.2757444
+      },
+      "endLocation": {
+        "latitude": 5.3993782,
+        "longitude": 100.27508139999999
+      },
+      "distance": 0.13,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:37:35.981194Z",
+      "arrival": "2026-05-14T09:38:35.981194Z",
+      "instruction": "Belok kiri\nJalan penggunaan terhad\nDestinasi berada di sebelah kiri"
     }
   ],
-  "polyline": "kn``@isjcRzg@toJ",
-  "reasoning": "Lowest-carbon option from KOMTAR to Kek Lok Si Temple on Rapid Penang 201 bus.",
+  "polyline": "cl``@osjcRj@l@i@|AOh@Jx@XjAhAbEr@vDZ|BdApEDJNj@zAnBTh@Ft@ExA[rDMjBeBpLG`A?vBBnCMrGMx@EJEB}AhGIj@El@DPGvBGRGv@@dEFLDdBL`AP|@?FZf@d@n@nB|BbDnDJBzE`F`CnBlBtAb@d@NXRl@Pz@B\\bBdHbAlDb@nBTr@~@xDC~A[dDg@~BKfA?|ABb@Hf@N^RXfApAfAbAd@ZhAf@jA\\ZLf@ZRZDLP~BR~Gh@xIbArHANHzABxDXpHPlBHdCCbDInBUpA]`AaCxDo@rA?HE^?HNn@?L`E|IrCdG`BbEVTf@Jt@L\\BtA?|@H?B?CpGf@R@r@\\b@FWnASnAYfCCRFNRLTfB~Bj@DR@t@EL",
+  "reasoning": "Recorded Google Routes response for KOMTAR -\u003e Kek Lok Si (eco).",
   "recommendedFor": [
     "low-carbon",
-    "tourist"
+    "commute"
   ],
   "recommended": true,
   "dataSource": "google_routes",
-  "createdAt": "0001-01-01T00:00:00Z",
-  "_stub": true
+  "createdAt": "0001-01-01T00:00:00Z"
 }

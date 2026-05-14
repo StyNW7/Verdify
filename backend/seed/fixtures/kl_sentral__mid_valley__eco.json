@@ -1,89 +1,142 @@
 {
   "routeId": "fixture_kl_sentral__mid_valley__eco",
   "mode": "eco",
-  "totalDistance": 2.08,
-  "totalDuration": 10,
-  "carbonEstimate": 71.2,
-  "carbonBaseline": 416,
-  "carbonSavedGrams": 344.8,
+  "totalDistance": 2.42,
+  "totalDuration": 12,
+  "carbonEstimate": 82,
+  "carbonBaseline": 484,
+  "carbonSavedGrams": 402,
   "carbonSavingsPercent": 83,
-  "carbonEstimateKg": 0.07,
-  "estimatedCost": 2.79,
-  "greenPointsEstimate": 18,
+  "carbonEstimateKg": 0.08,
+  "estimatedCost": 2.85,
+  "greenPointsEstimate": 21,
   "steps": [
     {
       "type": "walking",
       "startLocation": {
         "latitude": 3.1338,
-        "longitude": 101.6869,
-        "address": "KL Sentral, Kuala Lumpur"
+        "longitude": 101.6869
       },
       "endLocation": {
-        "latitude": 3.132536,
-        "longitude": 101.68610799999999
+        "latitude": 3.1336955,
+        "longitude": 101.68672169999999
       },
-      "distance": 0.15,
-      "duration": 2,
+      "distance": 0.02,
+      "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to KL Sentral MRT Station"
+      "departure": "2026-05-14T09:11:33.081915Z",
+      "arrival": "2026-05-14T09:12:33.081915Z"
     },
     {
       "type": "mrt",
       "startLocation": {
-        "latitude": 3.132536,
-        "longitude": 101.68610799999999
+        "latitude": 3.13417,
+        "longitude": 101.68611
       },
       "endLocation": {
-        "latitude": 3.119264,
-        "longitude": 101.67779200000001
+        "latitude": 3.11921,
+        "longitude": 101.67886999999999
       },
-      "distance": 1.78,
-      "duration": 6,
+      "distance": 2.05,
+      "duration": 7,
       "carbonPerKm": 40,
-      "totalCarbon": 71.2,
-      "estimatedCost": 2.79,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "transitLine": "Kajang Line (MRT)",
-      "departureStop": "KL Sentral MRT Station",
-      "arrivalStop": "Mid Valley MRT Station",
-      "headsign": "Towards Kajang",
-      "stopCount": 4,
-      "instruction": "Board Kajang Line (MRT) Towards Kajang"
+      "totalCarbon": 82,
+      "estimatedCost": 2.85,
+      "departure": "2026-05-14T09:12:33.081915Z",
+      "arrival": "2026-05-14T09:19:33.081915Z",
+      "transitLine": "KTM Batu Caves - Pulau Sebang/Tampin",
+      "departureStop": "Kuala Lumpur Sentral (KJ15/KA01)",
+      "arrivalStop": "Mid Valley",
+      "headsign": "Pulau Sebang (Tampin)",
+      "stopCount": 2,
+      "instruction": "Kereta api menuju Pulau Sebang (Tampin)"
     },
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 3.119264,
-        "longitude": 101.67779200000001
+        "latitude": 3.1193798999999998,
+        "longitude": 101.678741
       },
       "endLocation": {
-        "latitude": 3.118,
-        "longitude": 101.677,
-        "address": "Mid Valley Megamall, Kuala Lumpur"
+        "latitude": 3.1193689,
+        "longitude": 101.6786779
       },
-      "distance": 0.15,
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:19:33.081915Z",
+      "arrival": "2026-05-14T09:20:33.081915Z",
+      "instruction": "Tuju barat di Jalan 1/86"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1193689,
+        "longitude": 101.6786779
+      },
+      "endLocation": {
+        "latitude": 3.1195649999999997,
+        "longitude": 101.6778585
+      },
+      "distance": 0.1,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:20:33.081915Z",
+      "arrival": "2026-05-14T09:21:33.081915Z",
+      "instruction": "Teruskan perjalanan ke Lingkaran Syed Putra"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1195649999999997,
+        "longitude": 101.6778585
+      },
+      "endLocation": {
+        "latitude": 3.1195073000000004,
+        "longitude": 101.67730209999999
+      },
+      "distance": 0.08,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:21:33.081915Z",
+      "arrival": "2026-05-14T09:22:33.081915Z",
+      "instruction": "Belok kiri ke arah Boulevard Offices Block D"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1195073000000004,
+        "longitude": 101.67730209999999
+      },
+      "endLocation": {
+        "latitude": 3.1181552,
+        "longitude": 101.67667499999999
+      },
+      "distance": 0.17,
       "duration": 2,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to Mid Valley"
+      "departure": "2026-05-14T09:22:33.081915Z",
+      "arrival": "2026-05-14T09:24:33.081915Z",
+      "instruction": "Belok kiri ke Boulevard Offices Block D\nDestinasi berada di sebelah kiri"
     }
   ],
-  "polyline": "gacRcvskRvaBz|@",
-  "reasoning": "Lowest-carbon option from KL Sentral to Mid Valley using Kajang Line (MRT).",
+  "polyline": "gacRcvskRRb@}AxBYLtBpEfAjB~AtBPR~FxE|OvLlHdFn@b@HHvBbAhBn@`Bb@pB\\xBRvADhBAbCOnFs@xCYtGw@AKa@X@J@\\SpASr@VDHNBXALYp@v@TtEfB",
+  "reasoning": "Recorded Google Routes response for KL Sentral -\u003e Mid Valley (eco).",
   "recommendedFor": [
     "low-carbon",
     "commute"
   ],
   "recommended": true,
   "dataSource": "google_routes",
-  "createdAt": "0001-01-01T00:00:00Z",
-  "_stub": true
+  "createdAt": "0001-01-01T00:00:00Z"
 }

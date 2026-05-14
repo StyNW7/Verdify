@@ -1,89 +1,143 @@
 {
   "routeId": "fixture_melaka_sentral__stadhuys__eco",
   "mode": "eco",
-  "totalDistance": 2.21,
-  "totalDuration": 14,
-  "carbonEstimate": 120,
-  "carbonBaseline": 442,
-  "carbonSavedGrams": 322,
-  "carbonSavingsPercent": 73,
-  "carbonEstimateKg": 0.12,
-  "estimatedCost": 2.0,
-  "greenPointsEstimate": 32,
+  "totalDistance": 2.78,
+  "totalDuration": 11,
+  "carbonEstimate": 135,
+  "carbonBaseline": 556,
+  "carbonSavedGrams": 421,
+  "carbonSavingsPercent": 76,
+  "carbonEstimateKg": 0.14,
+  "estimatedCost": 2.01,
+  "greenPointsEstimate": 17,
   "steps": [
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 2.2114,
-        "longitude": 102.253,
-        "address": "Melaka Sentral"
+        "latitude": 2.2113609,
+        "longitude": 102.25306139999999
       },
       "endLocation": {
-        "latitude": 2.211192,
-        "longitude": 102.252876
+        "latitude": 2.2126106,
+        "longitude": 102.2539652
       },
-      "distance": 0.06,
+      "distance": 0.18,
       "duration": 2,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to Melaka Sentral Bus Hub"
-    },
-    {
-      "type": "bus",
-      "startLocation": {
-        "latitude": 2.211192,
-        "longitude": 102.252876
-      },
-      "endLocation": {
-        "latitude": 2.194432,
-        "longitude": 102.249156
-      },
-      "distance": 2.0,
-      "duration": 9,
-      "carbonPerKm": 60,
-      "totalCarbon": 120,
-      "estimatedCost": 2.0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "transitLine": "Panorama Melaka 17",
-      "departureStop": "Melaka Sentral Bus Hub",
-      "arrivalStop": "Dutch Square Stop",
-      "headsign": "Towards Bandar Hilir",
-      "stopCount": 5,
-      "instruction": "Board Panorama Melaka 17 Towards Bandar Hilir"
+      "departure": "2026-05-14T09:11:39.538207Z",
+      "arrival": "2026-05-14T09:13:39.538207Z",
+      "instruction": "Tuju timur laut ke arah Lorong Mata Kucing 4"
     },
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 2.194432,
-        "longitude": 102.249156
+        "latitude": 2.2126106,
+        "longitude": 102.2539652
       },
       "endLocation": {
-        "latitude": 2.1942,
-        "longitude": 102.2491,
-        "address": "Stadthuys, Dutch Square, Melaka"
+        "latitude": 2.211786,
+        "longitude": 102.255428
       },
-      "distance": 0.15,
-      "duration": 3,
+      "distance": 0.19,
+      "duration": 2,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to Stadthuys"
+      "departure": "2026-05-14T09:13:39.538207Z",
+      "arrival": "2026-05-14T09:15:39.538207Z",
+      "instruction": "Belok kanan ke Jalan Mawar"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.211786,
+        "longitude": 102.255428
+      },
+      "endLocation": {
+        "latitude": 2.2123279000000005,
+        "longitude": 102.2558303
+      },
+      "distance": 0.08,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:15:39.538207Z",
+      "arrival": "2026-05-14T09:16:39.538207Z",
+      "instruction": "Belok kiri ke Jalan Taming Sari"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 2.21232,
+        "longitude": 102.25583999999999
+      },
+      "endLocation": {
+        "latitude": 2.19448,
+        "longitude": 102.24902999999999
+      },
+      "distance": 2.25,
+      "duration": 4,
+      "carbonPerKm": 60,
+      "totalCarbon": 135,
+      "estimatedCost": 2.01,
+      "departure": "2026-05-14T09:16:39.538207Z",
+      "arrival": "2026-05-14T09:20:39.538207Z",
+      "transitLine": "Bandaraya Melaka Feeder",
+      "departureStop": "RTM Melaka",
+      "arrivalStop": "Jongker Walk/Stadhuys",
+      "headsign": "Melaka Sentral 2",
+      "stopCount": 5,
+      "instruction": "Bas menuju Melaka Sentral 2"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.1945036,
+        "longitude": 102.24901469999999
+      },
+      "endLocation": {
+        "latitude": 2.1943430000000004,
+        "longitude": 102.2487747
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:20:39.538207Z",
+      "arrival": "2026-05-14T09:21:39.538207Z",
+      "instruction": "Tuju barat daya di Jalan Laksamana/Laluan 5\nMungkin ditutup pada masa atau hari tertentu"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.1943430000000004,
+        "longitude": 102.2487747
+      },
+      "endLocation": {
+        "latitude": 2.1942109999999997,
+        "longitude": 102.24909889999999
+      },
+      "distance": 0.05,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:21:39.538207Z",
+      "arrival": "2026-05-14T09:22:39.538207Z",
+      "instruction": "Di bulatan, ambil susur keluar Pertama ke Jalan Gereja"
     }
   ],
-  "polyline": "k`oLghboRrnBfQ",
-  "reasoning": "Lowest-carbon option from Melaka Sentral to Dutch Square (Stadthuys) on Panorama Melaka 17 bus.",
+  "polyline": "_|nLshboROMAYAWKOo@W_Cy@i@Sr@eB`BgDLUOG{AgA@AA@zAfAhAf@lA`@pBf@rA`@xAl@fB|@lC~BXZz@j@t@\\l@PfALp@@`IGlDClCAzAJh@HVH|@Hn@@lEOfBH~Er@pB\\~GnA`C^~C|@l@`@`ArAVd@ZhA\\d@l@rA\\f@n@v@\\j@BCCB^n@PCH@?_@A_@",
+  "reasoning": "Recorded Google Routes response for Melaka Sentral -\u003e Stadhuys (eco).",
   "recommendedFor": [
     "low-carbon",
-    "tourist"
+    "commute"
   ],
   "recommended": true,
   "dataSource": "google_routes",
-  "createdAt": "0001-01-01T00:00:00Z",
-  "_stub": true
+  "createdAt": "0001-01-01T00:00:00Z"
 }
