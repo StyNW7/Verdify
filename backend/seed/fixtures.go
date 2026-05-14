@@ -41,6 +41,11 @@ func (k FixtureKey) String() string {
 // Curation goal: each pool covers the persona's local commute patterns plus
 // at least one intercity link, and biases toward eco-mode (transit) so the
 // dashboard stats are dominated by real transit data.
+//
+// Curation rule: pairs must be land-routable by the Google Routes API. No
+// flight legs across the South China Sea (Peninsular Malaysia ↔ Sabah) — the
+// recorder has no road answer for them and they don't fit the low-carbon
+// ground-travel narrative the demo is selling.
 var PoolByCity = map[string][]FixtureKey{
 	"Kuala Lumpur": {
 		{"KLCC", "KL Sentral", "eco"},
@@ -107,8 +112,6 @@ var PoolByCity = map[string][]FixtureKey{
 		{"Melaka Sentral", "Stadhuys", "eco"},
 	},
 	"Kota Kinabalu": {
-		{"Kota Kinabalu", "KLIA", "fast"},
-		{"KLIA", "Kota Kinabalu", "fast"},
 		{"KK Waterfront", "Manukan Jetty", "eco"},
 		{"Filipino Market", "Sabah State Mosque", "eco"},
 		{"Kota Kinabalu", "Signal Hill", "eco"},
