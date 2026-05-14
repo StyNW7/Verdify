@@ -43,6 +43,7 @@ export type BookingRouteMapProps = {
   polyline?: string;
   start?: { latitude: number; longitude: number } | null;
   end?: { latitude: number; longitude: number } | null;
+  fallbackPath?: { latitude: number; longitude: number }[];
   mode?: string;
   className?: string;
 };
@@ -67,6 +68,7 @@ export default function BookingRouteMap({
   polyline,
   start,
   end,
+  fallbackPath,
   mode,
   className = '',
 }: BookingRouteMapProps) {
@@ -96,6 +98,7 @@ export default function BookingRouteMap({
       polyline={polyline}
       start={start}
       end={end}
+      fallbackPath={fallbackPath}
       mode={mode}
       isDark={isDark}
       className={className}
@@ -107,6 +110,7 @@ function GoogleBookingMap({
   polyline,
   start,
   end,
+  fallbackPath,
   mode,
   isDark,
   className,
@@ -138,11 +142,32 @@ function GoogleBookingMap({
     return [];
   }, [rawDecoded, start, end]);
 
-  const path: LatLng[] = useMemo(() => {
-    if (decoded.length > 0) return decoded;
-    if (startCoord && endCoord) return [startCoord, endCoord];
-    return [];
-  }, [decoded, startCoord, endCoord]);
+  const fallbackLatLng = useMemo<LatLng[]>(() => {
+    if (!fallbackPath || fallbackPath.length < 2) return [];
+    return fallbackPath.map((p) => ({ lat: p.latitude, lng: p.longitude }));
+  }, [fallbackPath]);
+
+  // `path` is the geometry; `pathIsApproximate` decides the visual treatment.
+  // A real (sane) decoded polyline renders solid with a glow; a stitched
+  // per-step path or a bare start→end pair renders dashed at lower opacity
+  // so it reads as "approximate, not a routed line."
+  //
+  // Polylines with fewer than 3 points are treated as approximate: a real
+  // Google Routes polyline traces roads with many vertices, so a 2-point
+  // line is by definition a stub. If the per-step fallback has more shape
+  // than that, prefer it.
+  const { path, pathIsApproximate } = useMemo<{
+    path: LatLng[];
+    pathIsApproximate: boolean;
+  }>(() => {
+    if (decoded.length >= 3) return { path: decoded, pathIsApproximate: false };
+    if (fallbackLatLng.length > decoded.length && fallbackLatLng.length >= 2) {
+      return { path: fallbackLatLng, pathIsApproximate: true };
+    }
+    if (decoded.length >= 2) return { path: decoded, pathIsApproximate: true };
+    if (startCoord && endCoord) return { path: [startCoord, endCoord], pathIsApproximate: true };
+    return { path: [], pathIsApproximate: false };
+  }, [decoded, fallbackLatLng, startCoord, endCoord]);
 
   const center = useMemo<LatLng>(() => {
     if (startCoord && endCoord) {
@@ -171,7 +196,7 @@ function GoogleBookingMap({
       >
         <FitBoundsHelper path={path} startCoord={startCoord} endCoord={endCoord} />
 
-        {path.length > 1 && (
+        {path.length > 1 && !pathIsApproximate && (
           <>
             <Polyline
               path={path}
@@ -184,9 +209,29 @@ function GoogleBookingMap({
               strokeColor={accent}
               strokeOpacity={1}
               strokeWeight={4}
-              geodesic={decoded.length === 0}
             />
           </>
+        )}
+        {path.length > 1 && pathIsApproximate && (
+          <Polyline
+            path={path}
+            strokeColor={accent}
+            strokeOpacity={0}
+            strokeWeight={4}
+            icons={[
+              {
+                icon: {
+                  path: 'M 0,-1 0,1',
+                  strokeColor: accent,
+                  strokeOpacity: 0.55,
+                  strokeWeight: 3,
+                  scale: 3,
+                },
+                offset: '0',
+                repeat: '12px',
+              },
+            ]}
+          />
         )}
 
         {startCoord && (

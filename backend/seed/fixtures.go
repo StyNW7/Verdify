@@ -49,7 +49,10 @@ func (k FixtureKey) String() string {
 // unreliable from `cmd/seed-fixtures`) are kept here only when the fixture's
 // polyline has been hand-encoded to a correct 2-point line — those fixtures
 // retain `_stub: true` so the recorder will overwrite them if Google ever
-// adds coverage.
+// adds coverage. The frontend's BookingRouteMap detects sub-3-point
+// polylines and renders them as a dashed piecewise approximation stitched
+// from each step's coordinates, so stubs no longer look like a misleading
+// straight-line route on the booking detail map.
 //
 // Uniqueness rule: GenerateBookingsForPersona samples without replacement
 // from a persona's pool, so the pool must be at least as large as the

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import {
+  bookingFallbackPath,
   bookingMapEndpoints,
   buildItineraryRows,
   iconKeyForStep,
@@ -144,6 +145,56 @@ test('bookingMapEndpoints walks backward to find last valid endLocation', () => 
   ];
   const { end } = bookingMapEndpoints(steps);
   assert.deepEqual(end, { latitude: 1.5, longitude: 103.7 });
+});
+
+test('bookingFallbackPath stitches per-step coords and dedupes adjacent duplicates', () => {
+  const path = bookingFallbackPath([
+    seg({
+      type: 'walking',
+      startLocation: { latitude: 5.98, longitude: 116.07 },
+      endLocation: { latitude: 5.984, longitude: 116.0745 },
+    }),
+    seg({
+      type: 'bus',
+      startLocation: { latitude: 5.984, longitude: 116.0745 },
+      endLocation: { latitude: 5.962, longitude: 116.078 },
+    }),
+    seg({
+      type: 'walking',
+      startLocation: { latitude: 5.962, longitude: 116.078 },
+      endLocation: { latitude: 5.9621, longitude: 116.079 },
+    }),
+  ]);
+  assert.deepEqual(path, [
+    { latitude: 5.98, longitude: 116.07 },
+    { latitude: 5.984, longitude: 116.0745 },
+    { latitude: 5.962, longitude: 116.078 },
+    { latitude: 5.9621, longitude: 116.079 },
+  ]);
+});
+
+test('bookingFallbackPath skips steps with non-finite coords', () => {
+  const path = bookingFallbackPath([
+    seg({
+      type: 'walking',
+      startLocation: { latitude: 1, longitude: 2 },
+      endLocation: { latitude: Number.NaN, longitude: 3 },
+    }),
+    seg({
+      type: 'bus',
+      startLocation: { latitude: 4, longitude: 5 },
+      endLocation: { latitude: 6, longitude: 7 },
+    }),
+  ]);
+  assert.deepEqual(path, [
+    { latitude: 1, longitude: 2 },
+    { latitude: 4, longitude: 5 },
+    { latitude: 6, longitude: 7 },
+  ]);
+});
+
+test('bookingFallbackPath returns [] for empty steps', () => {
+  assert.deepEqual(bookingFallbackPath([]), []);
 });
 
 test('bookingMapEndpoints returns both endpoints from a single step', () => {
