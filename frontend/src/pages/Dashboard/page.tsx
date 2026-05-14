@@ -17,6 +17,7 @@ import { useAuth } from '@/lib/auth-provider';
 import { useUserDoc } from '@/lib/user-doc-provider';
 import { useBookingUserId } from '@/hooks/useBookingUserId';
 import { listUserBookings, type BookingRecord } from '@/lib/api';
+import { computeImpactLedger } from '@/lib/impact-ledger';
 
 type Stat = {
   label: string;
@@ -272,7 +273,7 @@ export default function DashboardPage() {
           <RecentTripsCard trips={trips} loading={tripsLoading} error={tripsError} />
         </div>
         <div className={`${tab === 'impact' ? '' : 'hidden'} lg:!block`}>
-          <ImpactLedgerCard />
+          <ImpactLedgerCard totalCarbonSaved={totalCarbonSaved} />
         </div>
       </section>
     </div>
@@ -746,12 +747,21 @@ function RecentTripsCard({ trips, loading, error }: { trips: Trip[]; loading: bo
   );
 }
 
-function ImpactLedgerCard() {
+function currentMonthYearKL(): string {
+  return new Intl.DateTimeFormat('en-MY', {
+    timeZone: 'Asia/Kuala_Lumpur',
+    month: 'short',
+    year: 'numeric',
+  }).format(new Date());
+}
+
+function ImpactLedgerCard({ totalCarbonSaved }: { totalCarbonSaved: number }) {
+  const { treesEquivalent, fuelAvoidedLitres, costSavedRM } = computeImpactLedger(totalCarbonSaved);
+
   const rows = [
-    { label: 'Trees equivalent', value: '6.2', unit: 'saplings / year' },
-    { label: 'Fuel avoided', value: '54', unit: 'litres' },
-    { label: 'Cost saved', value: 'RM 312', unit: 'est.' },
-    { label: 'Next tier', value: '550', unit: 'pts to Forest' },
+    { label: 'Trees equivalent', value: treesEquivalent.toFixed(1), unit: 'saplings / year' },
+    { label: 'Fuel avoided', value: fuelAvoidedLitres.toFixed(0), unit: 'litres' },
+    { label: 'Cost saved', value: `RM ${costSavedRM.toFixed(0)}`, unit: 'est.' },
   ];
 
   return (
@@ -772,7 +782,7 @@ function ImpactLedgerCard() {
           className="theme-mono-sm"
           style={{ color: 'var(--theme-fg-dim)' }}
         >
-          Apr 2026
+          {currentMonthYearKL()}
         </span>
       </div>
 
@@ -821,13 +831,7 @@ function ImpactLedgerCard() {
         ))}
       </ul>
 
-      <div className="mt-5 flex items-center justify-between">
-        <span
-          className="text-[0.78rem]"
-          style={{ color: 'var(--theme-fg-muted)' }}
-        >
-          Next badge · Forest Guardian
-        </span>
+      <div className="mt-5 flex items-center justify-end">
         <Link to="/route" className="theme-link-underline text-[0.82rem]">
           Earn points
           <ArrowUpRight size={12} strokeWidth={1.8} />
