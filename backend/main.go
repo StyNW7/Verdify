@@ -57,6 +57,9 @@ func main() {
 		}
 		log.Printf("event=store_init driver=firestore")
 		store = db.NewFirestoreStore(fs)
+		if err := db.BackfillJourneyProgress(ctx, fs); err != nil {
+			log.Printf("WARN: backfill_journey_progress failed: %v", err)
+		}
 	default:
 		log.Fatalf("unknown DB_DRIVER=%q (expected firestore or memory)", driver)
 	}
