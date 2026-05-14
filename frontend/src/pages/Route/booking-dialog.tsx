@@ -1094,6 +1094,15 @@ function JourneyPane({
     total === 0 ? 0 : Math.min(persistedStep, total - 1),
   );
 
+  // Re-sync the optimistic mirror whenever the server-persisted value changes
+  // (e.g. after a reroute resets the booking prop with a new routeSnapshot and
+  // journeyProgress.currentStepIndex = 0). JourneyPane does not unmount on
+  // reroute, so the useState initialiser is not re-run.
+  const serverStep = booking.journeyProgress?.currentStepIndex ?? 0;
+  useEffect(() => {
+    setCurrentStep(total === 0 ? 0 : Math.min(serverStep, total - 1));
+  }, [serverStep, total]);
+
   const [flusher] = useState(() =>
     createProgressFlusher({
       patch: (idx, keepalive) => { updateBookingProgress(booking.bookingId, idx, { keepalive }).catch(() => {}); },
