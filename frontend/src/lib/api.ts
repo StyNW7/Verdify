@@ -349,6 +349,23 @@ export function listUserBookings(userId: string, opts: { limit?: number; offset?
   );
 }
 
+export type CarbonTrendDay = {
+  date: string;
+  dayLabel: string;
+  kg: number;
+};
+
+export type CarbonTrendResponse = {
+  days: CarbonTrendDay[];
+};
+
+export function getUserCarbonTrend(userId: string) {
+  return apiRequest<CarbonTrendResponse>(
+    `/api/v1/user/${encodeURIComponent(userId)}/carbon-trend`,
+    { method: 'GET' },
+  );
+}
+
 // ── Leaderboard ───────────────────────────────────────────────────────────────
 
 export type LeaderboardEntry = {
