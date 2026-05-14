@@ -31,6 +31,7 @@ function bookingToConfirmed(record: BookingRecord): ConfirmedBooking {
     estimatedPoints: record.estimatedPoints,
     actualPoints: record.actualPoints,
     paymentStatus: record.paymentStatus,
+    journeyProgress: record.journeyProgress,
     createdAt: record.createdAt,
   };
 }
