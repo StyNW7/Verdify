@@ -2,13 +2,17 @@ package handlers
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
+	"strings"
 	"testing"
 	"time"
 
+	"github.com/verdify/backend/auth"
 	"github.com/verdify/backend/config"
 	"github.com/verdify/backend/models"
 )
@@ -28,19 +32,17 @@ type calcEnvelopeForLegacy struct {
 	Data    models.RouteCalculateResponse `json:"data"`
 }
 
-func registerTestUser(t *testing.T, mux http.Handler, email string) string {
+// newAppWithBypassUser builds a fresh App, configures the auth middleware to
+// dev-bypass for the supplied uid, and seeds that uid in the store. Returns
+// the wired App. Use this in tests that need an authenticated session.
+func newAppWithBypassUser(t *testing.T, uid, email string) *App {
 	t.Helper()
-	reg := models.AuthRegisterRequest{Email: email, Password: "pass123", Phone: "+601234"}
-	body, _ := json.Marshal(reg)
-	rr := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/register", bytes.NewReader(body))
-	mux.ServeHTTP(rr, req)
-	if rr.Code != http.StatusCreated {
-		t.Fatalf("register want 201 got %d body=%s", rr.Code, rr.Body.String())
+	app := New(config.Load())
+	app.Auth = auth.New(nil, uid)
+	if _, _, err := app.Store.EnsureUser(context.Background(), uid, models.UserProfile{Email: email}); err != nil {
+		t.Fatalf("seed test user: %v", err)
 	}
-	var regResp models.APIResponse
-	_ = json.Unmarshal(rr.Body.Bytes(), &regResp)
-	return regResp.Data.(map[string]any)["userId"].(string)
+	return app
 }
 
 func sampleRouteSnapshot() models.RouteOption {
@@ -104,13 +106,12 @@ func postCreateBooking(t *testing.T, mux http.Handler, body []byte) *httptest.Re
 }
 
 func TestCreateBooking_PersistsSnapshotVerbatim(t *testing.T) {
-	app := New(config.Load())
+	app := newAppWithBypassUser(t, "uid_snapshot", "snapshot@verdify.dev")
 	mux := app.Routes()
-	userID := registerTestUser(t, mux, "snapshot@verdify.dev")
 	snap := sampleRouteSnapshot()
 
 	body, _ := json.Marshal(models.CreateBookingRequest{
-		UserID:        userID,
+		UserID:        "uid_snapshot",
 		RouteID:       snap.RouteID,
 		RouteSnapshot: snap,
 		Passengers:    2,
@@ -132,7 +133,10 @@ func TestCreateBooking_PersistsSnapshotVerbatim(t *testing.T) {
 		t.Fatalf("response missing bookingReference: %s", rr.Body.String())
 	}
 
-	stored, ok := app.Store.GetBooking(bookingID)
+	stored, ok, err := app.Store.GetBooking(context.Background(), bookingID)
+	if err != nil {
+		t.Fatalf("GetBooking err: %v", err)
+	}
 	if !ok {
 		t.Fatalf("booking not persisted under id %s", bookingID)
 	}
@@ -150,18 +154,19 @@ func TestCreateBooking_PersistsSnapshotVerbatim(t *testing.T) {
 	}
 }
 
-func TestCreateBooking_DoesNotCallGetRoute(t *testing.T) {
-	app := New(config.Load())
+func TestCreateBooking_SucceedsWithoutAnyRouteLookup(t *testing.T) {
+	// Per ADR-0004 the booking handler must not touch any routes collection
+	// (the Store interface no longer has Save/GetRoute). This test fakes a
+	// brand-new RouteID that has never been "seen" by anything and asserts
+	// the handler still creates a booking from the snapshot.
+	app := newAppWithBypassUser(t, "uid_noroute", "noroute@verdify.dev")
 	mux := app.Routes()
-	userID := registerTestUser(t, mux, "noroute@verdify.dev")
 
-	// Snapshot has a RouteID that the in-memory routes map has never seen.
-	// If the handler still consulted Store.GetRoute, this would 404.
 	snap := sampleRouteSnapshot()
 	snap.RouteID = "route_never_seeded_xyz"
 
 	body, _ := json.Marshal(models.CreateBookingRequest{
-		UserID:        userID,
+		UserID:        "uid_noroute",
 		RouteID:       snap.RouteID,
 		RouteSnapshot: snap,
 		Passengers:    1,
@@ -170,16 +175,11 @@ func TestCreateBooking_DoesNotCallGetRoute(t *testing.T) {
 	if rr.Code != http.StatusCreated {
 		t.Fatalf("want 201 got %d body=%s", rr.Code, rr.Body.String())
 	}
-
-	if _, ok := app.Store.GetRoute(snap.RouteID); ok {
-		t.Fatalf("handler must not write to routes store; GetRoute(%q) found something", snap.RouteID)
-	}
 }
 
 func TestCreateBooking_RejectsMissingFields(t *testing.T) {
-	app := New(config.Load())
+	app := newAppWithBypassUser(t, "uid_reject", "reject@verdify.dev")
 	mux := app.Routes()
-	userID := registerTestUser(t, mux, "reject@verdify.dev")
 	snap := sampleRouteSnapshot()
 
 	cases := []struct {
@@ -193,11 +193,11 @@ func TestCreateBooking_RejectsMissingFields(t *testing.T) {
 		},
 		{
 			name: "missing routeId",
-			req:  models.CreateBookingRequest{UserID: userID, RouteSnapshot: snap, Passengers: 1},
+			req:  models.CreateBookingRequest{UserID: "uid_reject", RouteSnapshot: snap, Passengers: 1},
 		},
 		{
 			name: "empty routeSnapshot",
-			req:  models.CreateBookingRequest{UserID: userID, RouteID: snap.RouteID, Passengers: 1},
+			req:  models.CreateBookingRequest{UserID: "uid_reject", RouteID: snap.RouteID, Passengers: 1},
 		},
 	}
 	for _, tc := range cases {
@@ -212,10 +212,7 @@ func TestCreateBooking_RejectsMissingFields(t *testing.T) {
 }
 
 // createBookingForLifecycle posts a booking whose RouteID is never seeded
-// into the routes map. Returns the bookingID. If the lifecycle handlers
-// still consulted Store.GetRoute, they'd 404 (verify) or return zeros (get)
-// for this booking — so any non-zero derived value can only come from the
-// snapshot.
+// into the routes map. Returns the bookingID.
 func createBookingForLifecycle(t *testing.T, app *App, mux http.Handler, userID string, snap models.RouteOption) string {
 	t.Helper()
 	body, _ := json.Marshal(models.CreateBookingRequest{
@@ -234,28 +231,20 @@ func createBookingForLifecycle(t *testing.T, app *App, mux http.Handler, userID 
 	if bookingID == "" {
 		t.Fatalf("create booking missing bookingId: %s", rr.Body.String())
 	}
-	// Sanity: the route is genuinely absent from the routes map. If this
-	// fails, the test no longer proves what it claims to.
-	if _, ok := app.Store.GetRoute(snap.RouteID); ok {
-		t.Fatalf("precondition failed: route %q already seeded in store", snap.RouteID)
-	}
 	return bookingID
 }
 
 func TestVerifyBookingHandler_ReadsFromSnapshotNotStoreGetRoute(t *testing.T) {
-	app := New(config.Load())
+	app := newAppWithBypassUser(t, "uid_verify_snap", "verify-snapshot@verdify.dev")
 	mux := app.Routes()
-	userID := registerTestUser(t, mux, "verify-snapshot@verdify.dev")
 
 	snap := sampleRouteSnapshot()
 	snap.RouteID = "route_ephemeral_verify_abc"
-	// TotalDistance=24.7 -> baseline=4940g; CarbonEstimate=820 ->
-	// carbonSaved = 4940 - 820 = 4120g (then Round2).
 	snap.TotalDistance = 24.7
 	snap.CarbonEstimate = 820.0
 	snap.GreenPointsEstimate = 150
 
-	bookingID := createBookingForLifecycle(t, app, mux, userID, snap)
+	bookingID := createBookingForLifecycle(t, app, mux, "uid_verify_snap", snap)
 
 	rr := httptest.NewRecorder()
 	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/v1/bookings/"+bookingID+"/verify", nil))
@@ -283,16 +272,15 @@ func TestVerifyBookingHandler_ReadsFromSnapshotNotStoreGetRoute(t *testing.T) {
 }
 
 func TestGetBookingHandler_ReadsFromSnapshotNotStoreGetRoute(t *testing.T) {
-	app := New(config.Load())
+	app := newAppWithBypassUser(t, "uid_get_snap", "get-snapshot@verdify.dev")
 	mux := app.Routes()
-	userID := registerTestUser(t, mux, "get-snapshot@verdify.dev")
 
 	snap := sampleRouteSnapshot()
 	snap.RouteID = "route_ephemeral_get_xyz"
 	snap.TotalDistance = 18.0
 	snap.CarbonEstimate = 600.0
 
-	bookingID := createBookingForLifecycle(t, app, mux, userID, snap)
+	bookingID := createBookingForLifecycle(t, app, mux, "uid_get_snap", snap)
 
 	rr := httptest.NewRecorder()
 	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodGet, "/api/v1/bookings/"+bookingID, nil))
@@ -312,7 +300,7 @@ func TestGetBookingHandler_ReadsFromSnapshotNotStoreGetRoute(t *testing.T) {
 		t.Fatalf("totalDistance = %v want %v (must come from snapshot)", gotDistance, snap.TotalDistance)
 	}
 
-	wantCarbonSaved := 18.0*200 - 600.0 // baseline - estimate = 3000
+	wantCarbonSaved := 18.0*200 - 600.0
 	gotCarbonSaved, _ := data["carbonSaved"].(float64)
 	if gotCarbonSaved != wantCarbonSaved {
 		t.Fatalf("carbonSaved = %v want %v (must derive from snapshot, not zero)", gotCarbonSaved, wantCarbonSaved)
@@ -320,14 +308,13 @@ func TestGetBookingHandler_ReadsFromSnapshotNotStoreGetRoute(t *testing.T) {
 }
 
 func TestGetBookingHandler_EmbedsRouteSnapshotInResponse(t *testing.T) {
-	app := New(config.Load())
+	app := newAppWithBypassUser(t, "uid_embed_snap", "get-embed-snap@verdify.dev")
 	mux := app.Routes()
-	userID := registerTestUser(t, mux, "get-embed-snap@verdify.dev")
 
 	snap := sampleRouteSnapshot()
 	snap.RouteID = "route_ephemeral_embed_xyz"
 
-	bookingID := createBookingForLifecycle(t, app, mux, userID, snap)
+	bookingID := createBookingForLifecycle(t, app, mux, "uid_embed_snap", snap)
 
 	rr := httptest.NewRecorder()
 	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodGet, "/api/v1/bookings/"+bookingID, nil))
@@ -362,16 +349,15 @@ func TestGetBookingHandler_EmbedsRouteSnapshotInResponse(t *testing.T) {
 }
 
 func TestGetUserBookingsHandler_EmbedsRouteSnapshotPerItem(t *testing.T) {
-	app := New(config.Load())
+	app := newAppWithBypassUser(t, "uid_list_snap", "list-embed-snap@verdify.dev")
 	mux := app.Routes()
-	userID := registerTestUser(t, mux, "list-embed-snap@verdify.dev")
 
 	snap := sampleRouteSnapshot()
 	snap.RouteID = "route_ephemeral_list_xyz"
-	_ = createBookingForLifecycle(t, app, mux, userID, snap)
+	_ = createBookingForLifecycle(t, app, mux, "uid_list_snap", snap)
 
 	rr := httptest.NewRecorder()
-	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodGet, "/api/v1/user/"+userID+"/bookings", nil))
+	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodGet, "/api/v1/user/uid_list_snap/bookings", nil))
 	if rr.Code != http.StatusOK {
 		t.Fatalf("list want 200 got %d body=%s", rr.Code, rr.Body.String())
 	}
@@ -400,15 +386,14 @@ func TestGetUserBookingsHandler_EmbedsRouteSnapshotPerItem(t *testing.T) {
 }
 
 func TestPayBookingHandler_LeavesConfirmedStatusUntouched(t *testing.T) {
-	app := New(config.Load())
+	app := newAppWithBypassUser(t, "uid_pay_conf", "pay-confirmed@verdify.dev")
 	mux := app.Routes()
-	userID := registerTestUser(t, mux, "pay-confirmed@verdify.dev")
 
 	snap := sampleRouteSnapshot()
 	snap.RouteID = "route_pay_confirmed_xyz"
-	bookingID := createBookingForLifecycle(t, app, mux, userID, snap)
+	bookingID := createBookingForLifecycle(t, app, mux, "uid_pay_conf", snap)
 
-	before, _ := app.Store.GetBooking(bookingID)
+	before, _, _ := app.Store.GetBooking(context.Background(), bookingID)
 	if before.Status != "confirmed" {
 		t.Fatalf("precondition: want status=confirmed got %q", before.Status)
 	}
@@ -419,7 +404,7 @@ func TestPayBookingHandler_LeavesConfirmedStatusUntouched(t *testing.T) {
 		t.Fatalf("pay want 200 got %d body=%s", rr.Code, rr.Body.String())
 	}
 
-	after, _ := app.Store.GetBooking(bookingID)
+	after, _, _ := app.Store.GetBooking(context.Background(), bookingID)
 	if after.Status != "confirmed" {
 		t.Fatalf("status flipped to %q; pay must leave confirmed untouched", after.Status)
 	}
@@ -429,17 +414,18 @@ func TestPayBookingHandler_LeavesConfirmedStatusUntouched(t *testing.T) {
 }
 
 func TestPayBookingHandler_RejectsCompletedBooking(t *testing.T) {
-	app := New(config.Load())
+	app := newAppWithBypassUser(t, "uid_pay_done", "pay-completed@verdify.dev")
 	mux := app.Routes()
-	userID := registerTestUser(t, mux, "pay-completed@verdify.dev")
 
 	snap := sampleRouteSnapshot()
 	snap.RouteID = "route_pay_completed_abc"
-	bookingID := createBookingForLifecycle(t, app, mux, userID, snap)
+	bookingID := createBookingForLifecycle(t, app, mux, "uid_pay_done", snap)
 
-	b, _ := app.Store.GetBooking(bookingID)
+	b, _, _ := app.Store.GetBooking(context.Background(), bookingID)
 	b.Status = "completed"
-	app.Store.UpdateBooking(b)
+	if err := app.Store.UpdateBooking(context.Background(), b); err != nil {
+		t.Fatalf("UpdateBooking: %v", err)
+	}
 
 	rr := httptest.NewRecorder()
 	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/v1/bookings/"+bookingID+"/pay", nil))
@@ -449,17 +435,18 @@ func TestPayBookingHandler_RejectsCompletedBooking(t *testing.T) {
 }
 
 func TestPayBookingHandler_RejectsCancelledBooking(t *testing.T) {
-	app := New(config.Load())
+	app := newAppWithBypassUser(t, "uid_pay_canc", "pay-cancelled@verdify.dev")
 	mux := app.Routes()
-	userID := registerTestUser(t, mux, "pay-cancelled@verdify.dev")
 
 	snap := sampleRouteSnapshot()
 	snap.RouteID = "route_pay_cancelled_abc"
-	bookingID := createBookingForLifecycle(t, app, mux, userID, snap)
+	bookingID := createBookingForLifecycle(t, app, mux, "uid_pay_canc", snap)
 
-	b, _ := app.Store.GetBooking(bookingID)
+	b, _, _ := app.Store.GetBooking(context.Background(), bookingID)
 	b.Status = "cancelled"
-	app.Store.UpdateBooking(b)
+	if err := app.Store.UpdateBooking(context.Background(), b); err != nil {
+		t.Fatalf("UpdateBooking: %v", err)
+	}
 
 	rr := httptest.NewRecorder()
 	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/v1/bookings/"+bookingID+"/pay", nil))
@@ -469,22 +456,83 @@ func TestPayBookingHandler_RejectsCancelledBooking(t *testing.T) {
 }
 
 func TestCancelBookingHandler_RejectsCompletedBooking(t *testing.T) {
-	app := New(config.Load())
+	app := newAppWithBypassUser(t, "uid_cancel_done", "cancel-completed@verdify.dev")
 	mux := app.Routes()
-	userID := registerTestUser(t, mux, "cancel-completed@verdify.dev")
 
 	snap := sampleRouteSnapshot()
 	snap.RouteID = "route_cancel_completed_abc"
-	bookingID := createBookingForLifecycle(t, app, mux, userID, snap)
+	bookingID := createBookingForLifecycle(t, app, mux, "uid_cancel_done", snap)
 
-	b, _ := app.Store.GetBooking(bookingID)
+	b, _, _ := app.Store.GetBooking(context.Background(), bookingID)
 	b.Status = "completed"
-	app.Store.UpdateBooking(b)
+	if err := app.Store.UpdateBooking(context.Background(), b); err != nil {
+		t.Fatalf("UpdateBooking: %v", err)
+	}
 
 	rr := httptest.NewRecorder()
 	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodPost, "/api/v1/bookings/"+bookingID+"/cancel", nil))
 	if rr.Code != http.StatusConflict {
 		t.Fatalf("cancel on completed want 409 got %d body=%s", rr.Code, rr.Body.String())
+	}
+}
+
+func TestGetUserHandler_HappyPath(t *testing.T) {
+	uid := "uid_getuser_happy"
+	app := newAppWithBypassUser(t, uid, "getuser@verdify.dev")
+	mux := app.Routes()
+
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodGet, "/api/v1/user/"+uid, nil))
+	if rr.Code != http.StatusOK {
+		t.Fatalf("want 200 got %d body=%s", rr.Code, rr.Body.String())
+	}
+	var env models.APIResponse
+	_ = json.Unmarshal(rr.Body.Bytes(), &env)
+	data, _ := env.Data.(map[string]any)
+	if data == nil {
+		t.Fatalf("response has no data envelope: %s", rr.Body.String())
+	}
+	if gotUID, _ := data["userId"].(string); gotUID != uid {
+		t.Fatalf("userId = %q want %q", gotUID, uid)
+	}
+	if gotEmail, _ := data["email"].(string); gotEmail != "getuser@verdify.dev" {
+		t.Fatalf("email = %q want %q", gotEmail, "getuser@verdify.dev")
+	}
+}
+
+func TestGetUserHandler_MissingUser_Returns404(t *testing.T) {
+	app := newAppWithBypassUser(t, "uid_requester", "req@verdify.dev")
+	mux := app.Routes()
+
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, httptest.NewRequest(http.MethodGet, "/api/v1/user/uid_requester", nil))
+	// The bypass sets uid_requester but no matching store doc was seeded; however
+	// newAppWithBypassUser seeds the user, so let's test a truly unseeded uid.
+	// We need a fresh app with a bypass uid that's NOT seeded.
+	app2 := New(config.Load())
+	app2.Auth = auth.New(nil, "uid_unseeded")
+	mux2 := app2.Routes()
+
+	rr2 := httptest.NewRecorder()
+	mux2.ServeHTTP(rr2, httptest.NewRequest(http.MethodGet, "/api/v1/user/uid_unseeded", nil))
+	if rr2.Code != http.StatusNotFound {
+		t.Fatalf("want 404 got %d body=%s", rr2.Code, rr2.Body.String())
+	}
+}
+
+func TestGetUserHandler_UidMismatch_Returns403(t *testing.T) {
+	// Real auth: token uid "uid_other" does not match path uid "uid_target".
+	// Use the shared stubVerifier with identity uid_other.
+	app := New(config.Load())
+	app.Auth = auth.New(&stubVerifier{id: &auth.Identity{UID: "uid_other"}}, "")
+	mux := app.Routes()
+
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/user/uid_target", nil)
+	req.Header.Set("Authorization", "Bearer fake_token")
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, req)
+	if rr.Code != http.StatusForbidden {
+		t.Fatalf("want 403 got %d body=%s", rr.Code, rr.Body.String())
 	}
 }
 
@@ -511,5 +559,165 @@ func TestBatchedCalculate_ReturnsThreeOptionsInFixedOrder(t *testing.T) {
 		if o.Mode != want[i] {
 			t.Errorf("position %d mode = %q want %q", i, o.Mode, want[i])
 		}
+	}
+}
+
+func TestPatchUserHandler_ValidPatch_Returns200(t *testing.T) {
+	uid := "uid_patch_happy"
+	app := newAppWithBypassUser(t, uid, "patch@verdify.dev")
+	mux := app.Routes()
+
+	body := `{"displayName":"Patched Name","presetAvatar":"🌿"}`
+	req := httptest.NewRequest(http.MethodPatch, "/api/v1/user/"+uid, bytes.NewBufferString(body))
+	req.Header.Set("Content-Type", "application/json")
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("want 200 got %d body=%s", rr.Code, rr.Body.String())
+	}
+	var env models.APIResponse
+	_ = json.Unmarshal(rr.Body.Bytes(), &env)
+	data, _ := env.Data.(map[string]any)
+	if data == nil {
+		t.Fatalf("no data in response: %s", rr.Body.String())
+	}
+	if gotName, _ := data["displayName"].(string); gotName != "Patched Name" {
+		t.Fatalf("displayName = %q want %q", gotName, "Patched Name")
+	}
+	if gotAvatar, _ := data["presetAvatar"].(string); gotAvatar != "🌿" {
+		t.Fatalf("presetAvatar = %q want 🌿", gotAvatar)
+	}
+}
+
+func TestPatchUserHandler_InvalidPatch_Returns400(t *testing.T) {
+	uid := "uid_patch_bad"
+	app := newAppWithBypassUser(t, uid, "patchbad@verdify.dev")
+	mux := app.Routes()
+
+	// Send PATCH with TWO invalid fields: displayName too long AND presetAvatar not in allow-list.
+	body := `{"displayName":"` + strings.Repeat("X", 61) + `","presetAvatar":"🐉"}`
+	req := httptest.NewRequest(http.MethodPatch, "/api/v1/user/"+uid, bytes.NewBufferString(body))
+	req.Header.Set("Content-Type", "application/json")
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusBadRequest {
+		t.Fatalf("want 400 got %d body=%s", rr.Code, rr.Body.String())
+	}
+	// Decode response and verify the error shape: {errors: [{field, message}, ...]}
+	var envelope struct {
+		Success bool `json:"success"`
+		Data    any  `json:"data"`
+		Error   map[string]any `json:"error"`
+	}
+	if err := json.Unmarshal(rr.Body.Bytes(), &envelope); err != nil {
+		t.Fatalf("response not JSON: %s", rr.Body.String())
+	}
+	if envelope.Error == nil {
+		t.Fatalf("want non-nil error field in 400 response; got %s", rr.Body.String())
+	}
+
+	// Extract the errors array from the Error map.
+	errorsRaw, ok := envelope.Error["errors"]
+	if !ok {
+		t.Fatalf("want 'errors' key in error object; got %v", envelope.Error)
+	}
+	errorsIface, ok := errorsRaw.([]any)
+	if !ok {
+		t.Fatalf("errors is not an array: %T = %v", errorsRaw, errorsRaw)
+	}
+	if len(errorsIface) != 2 {
+		t.Fatalf("want 2 field errors got %d: %v", len(errorsIface), errorsIface)
+	}
+
+	// Verify both errors are present: one for displayName, one for presetAvatar.
+	fieldsSeen := make(map[string]bool)
+	for _, errItem := range errorsIface {
+		errMap, ok := errItem.(map[string]any)
+		if !ok {
+			t.Fatalf("error item is not an object: %T", errItem)
+		}
+		field, _ := errMap["field"].(string)
+		message, _ := errMap["message"].(string)
+		if field == "" {
+			t.Fatalf("error item missing 'field': %v", errMap)
+		}
+		if message == "" {
+			t.Fatalf("error item missing 'message': %v", errMap)
+		}
+		fieldsSeen[field] = true
+	}
+
+	if !fieldsSeen["displayName"] {
+		t.Errorf("want displayName error; saw fields: %v", fieldsSeen)
+	}
+	if !fieldsSeen["presetAvatar"] {
+		t.Errorf("want presetAvatar error; saw fields: %v", fieldsSeen)
+	}
+}
+
+func TestPatchUserHandler_UidMismatch_Returns403(t *testing.T) {
+	// Token uid is "uid_other"; path uid is "uid_target" — middleware rejects.
+	app := New(config.Load())
+	app.Auth = auth.New(&stubVerifier{id: &auth.Identity{UID: "uid_other"}}, "")
+	mux := app.Routes()
+
+	body := `{"displayName":"Hacked"}`
+	req := httptest.NewRequest(http.MethodPatch, "/api/v1/user/uid_target", bytes.NewBufferString(body))
+	req.Header.Set("Authorization", "Bearer fake_token")
+	req.Header.Set("Content-Type", "application/json")
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusForbidden {
+		t.Fatalf("want 403 got %d body=%s", rr.Code, rr.Body.String())
+	}
+}
+
+// readBodyRequest builds an *http.Request whose Body is set to the given
+// reader, suitable for passing directly to readBody.
+func readBodyRequest(body io.Reader) *http.Request {
+	req := httptest.NewRequest(http.MethodPatch, "/", body)
+	return req
+}
+
+func TestReadBody_EmptyBody_ReturnsNil(t *testing.T) {
+	// Zero-byte body: json.Decoder returns io.EOF — must be treated as no-op.
+	req := readBodyRequest(strings.NewReader(""))
+	got, err := readBody(req)
+	if err != nil {
+		t.Fatalf("empty body: want nil err, got %v", err)
+	}
+	if got != nil {
+		t.Fatalf("empty body: want nil bytes, got %q", got)
+	}
+}
+
+func TestReadBody_TruncatedBody_ReturnsError(t *testing.T) {
+	// Truncated JSON: json.Decoder returns io.ErrUnexpectedEOF — must be treated
+	// as a decode error (not an empty-body no-op).
+	req := readBodyRequest(strings.NewReader(`{"display`))
+	_, err := readBody(req)
+	if err == nil {
+		t.Fatal("truncated body: want error, got nil")
+	}
+}
+
+func TestPatchUserHandler_OversizedBody_Returns400Or413(t *testing.T) {
+	uid := "uid_oversize"
+	app := newAppWithBypassUser(t, uid, "oversize@verdify.dev")
+	mux := app.Routes()
+
+	// Body well above the 64 KB limit.
+	bigName := strings.Repeat("A", 200*1024)
+	body := `{"displayName":"` + bigName + `"}`
+	req := httptest.NewRequest(http.MethodPatch, "/api/v1/user/"+uid, strings.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	rr := httptest.NewRecorder()
+	mux.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusBadRequest && rr.Code != http.StatusRequestEntityTooLarge {
+		t.Fatalf("want 400 or 413 for oversized body, got %d body=%s", rr.Code, rr.Body.String())
 	}
 }

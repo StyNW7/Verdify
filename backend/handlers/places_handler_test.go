@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/verdify/backend/auth"
 	"github.com/verdify/backend/config"
 	"github.com/verdify/backend/db"
 	"github.com/verdify/backend/models"
@@ -34,6 +35,7 @@ func placesTestApp(p places.PlacesAPI) *App {
 		Store:     db.NewStore(),
 		Builder:   routes.NewCandidateBuilder(nil),
 		Places:    p,
+		Auth:      auth.New(nil, "uid_test_bypass"),
 		StartTime: services.NowUTC(),
 	}
 }

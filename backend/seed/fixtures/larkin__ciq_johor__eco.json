@@ -1,0 +1,224 @@
+{
+  "routeId": "fixture_larkin__ciq_johor__eco",
+  "mode": "eco",
+  "totalDistance": 8.195,
+  "totalDuration": 69,
+  "carbonEstimate": 417.6,
+  "carbonBaseline": 1639,
+  "carbonSavedGrams": 1221.4,
+  "carbonSavingsPercent": 75,
+  "carbonEstimateKg": 0.42,
+  "estimatedCost": 4.46,
+  "greenPointsEstimate": 48,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4909451999999999,
+        "longitude": 103.74108249999999
+      },
+      "endLocation": {
+        "latitude": 1.49081,
+        "longitude": 103.7413502
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:11:38.99306Z",
+      "arrival": "2026-05-14T09:12:38.99306Z",
+      "instruction": "Tuju tenggara ke arah Jalan Tun Abdul Razak (Susur 5)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.49081,
+        "longitude": 103.7413502
+      },
+      "endLocation": {
+        "latitude": 1.4914163999999999,
+        "longitude": 103.7409086
+      },
+      "distance": 0.08,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:12:38.99306Z",
+      "arrival": "2026-05-14T09:13:38.99306Z",
+      "instruction": "Belok tajam ke kiri ke Jalan Tun Abdul Razak (Susur 5)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4914163999999999,
+        "longitude": 103.7409086
+      },
+      "endLocation": {
+        "latitude": 1.4916379,
+        "longitude": 103.74083809999999
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:13:38.99306Z",
+      "arrival": "2026-05-14T09:14:38.99306Z",
+      "instruction": "Teruskan perjalanan ke Jln Datin Halimah/J3\nDestinasi berada di sebelah kanan"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 1.4916699999999998,
+        "longitude": 103.740917
+      },
+      "endLocation": {
+        "latitude": 1.4715019999999999,
+        "longitude": 103.76639899999999
+      },
+      "distance": 4.26,
+      "duration": 8,
+      "carbonPerKm": 60,
+      "totalCarbon": 255.6,
+      "estimatedCost": 2.37,
+      "departure": "2026-05-14T09:14:38.99306Z",
+      "arrival": "2026-05-14T09:22:38.99306Z",
+      "transitLine": "CWL : Larkin Sentral - CIQ",
+      "departureStop": "Dewan JKR Johor Bharu",
+      "arrivalStop": "Sekolah Dato Jaafar",
+      "headsign": "JB Custom",
+      "stopCount": 3,
+      "instruction": "Bas menuju JB Custom"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 1.4715019999999999,
+        "longitude": 103.76639899999999
+      },
+      "endLocation": {
+        "latitude": 1.4634406,
+        "longitude": 103.7643935
+      },
+      "distance": 2.7,
+      "duration": 4,
+      "carbonPerKm": 60,
+      "totalCarbon": 162,
+      "estimatedCost": 2.09,
+      "departure": "2026-05-14T09:22:38.99306Z",
+      "arrival": "2026-05-14T09:26:38.99306Z",
+      "transitLine": "39 : JB Sentral - Masai",
+      "departureStop": "Sekolah Dato Jaafar",
+      "arrivalStop": "JB Sentral Bus Terminal",
+      "headsign": "Terminal Bas JB Sentral",
+      "stopCount": 2,
+      "instruction": "Bas menuju Terminal Bas JB Sentral"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4640844,
+        "longitude": 103.7646798
+      },
+      "endLocation": {
+        "latitude": 1.4628545,
+        "longitude": 103.76535589999999
+      },
+      "distance": 0.16,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:26:38.99306Z",
+      "arrival": "2026-05-14T09:28:38.99306Z",
+      "instruction": "Tuju tenggara di Jalan Jim Quee"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4628545,
+        "longitude": 103.76535589999999
+      },
+      "endLocation": {
+        "latitude": 1.4629398,
+        "longitude": 103.7654711
+      },
+      "distance": 0.02,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:28:38.99306Z",
+      "arrival": "2026-05-14T09:29:38.99306Z",
+      "instruction": "Belok kiri ke arah Jalan Jim Quee\nJalan penggunaan terhad"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4629398,
+        "longitude": 103.7654711
+      },
+      "endLocation": {
+        "latitude": 1.4602887,
+        "longitude": 103.76690789999999
+      },
+      "distance": 0.34,
+      "duration": 4,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:29:38.99306Z",
+      "arrival": "2026-05-14T09:33:38.99306Z",
+      "instruction": "Belok kanan ke Jalan Jim Quee"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4602887,
+        "longitude": 103.76690789999999
+      },
+      "endLocation": {
+        "latitude": 1.4633922,
+        "longitude": 103.7685527
+      },
+      "distance": 0.4,
+      "duration": 5,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:33:38.99306Z",
+      "arrival": "2026-05-14T09:38:38.99306Z",
+      "instruction": "Belok kiri ke Jalan Lumba Kuda"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4633922,
+        "longitude": 103.7685527
+      },
+      "endLocation": {
+        "latitude": 1.4625645999999999,
+        "longitude": 103.7684589
+      },
+      "distance": 0.19,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:38:38.99306Z",
+      "arrival": "2026-05-14T09:40:38.99306Z",
+      "instruction": "Belok kanan\nDestinasi berada di sebelah kanan"
+    }
+  ],
+  "polyline": "mebHw|dxRZu@yBvAk@LEODNj@MxBwAPOtBgAbAc@r@i@r@[f@o@Ve@Li@j@uAjA_CbFgJrByDlBgDx@cBZmAJi@?ONsAb@_@NYPwDRoC\\{BLa@p@cAr@{@r@o@r@i@r@_@`AU|AOtACz@DzFz@~Dr@bBNhACr@QjGmC`D{A`FmBfBm@HS`Ac@`GsB\\e@aBiEs@oBKk@AUU_AIk@IsAJoBbBuKhAsGhAiEhAgD@QtBgFXo@l@_AWQVPj@}@|AiBZ[rDsC|E{C`CgA|MkFz@a@v@e@v@u@j@w@hAiBd@}@lAmBtAcBbAy@TIx@QN`At@tHJ`@Zv@|@|AhA`Bd@z@dBvCpBjEJPr@fBJHS\\a@b@ITiE`Cg@TcCt@YL]R@NERQT{CfB}CbBXh@_Cy@tFgCQUfDaBzBgAbBc@hCqAUSSCyAC[EqEwCGQ}@g@sDsAJe@DIdAo@XEHBhAp@GVWh@",
+  "reasoning": "Recorded Google Routes response for Larkin -\u003e CIQ Johor (eco).",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z"
+}

@@ -1,0 +1,180 @@
+{
+  "routeId": "fixture_putrajaya_sentral__putrajaya_mosque__eco",
+  "mode": "eco",
+  "totalDistance": 9.251,
+  "totalDuration": 27,
+  "carbonEstimate": 501,
+  "carbonBaseline": 1850.2,
+  "carbonSavedGrams": 1349.2,
+  "carbonSavingsPercent": 73,
+  "carbonEstimateKg": 0.5,
+  "estimatedCost": 3.1,
+  "greenPointsEstimate": 51,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.9449986,
+        "longitude": 101.6712012
+      },
+      "endLocation": {
+        "latitude": 2.9451122,
+        "longitude": 101.671706
+      },
+      "distance": 0.06,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:11:40.76364Z",
+      "arrival": "2026-05-14T09:12:40.76364Z",
+      "instruction": "Tuju timur laut di Jln Rajawali P9B1/14"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.9451122,
+        "longitude": 101.671706
+      },
+      "endLocation": {
+        "latitude": 2.9447647,
+        "longitude": 101.67176649999999
+      },
+      "distance": 0.04,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:12:40.76364Z",
+      "arrival": "2026-05-14T09:13:40.76364Z",
+      "instruction": "Belok kanan untuk kekal di Jln Rajawali P9B1/14"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.9447647,
+        "longitude": 101.67176649999999
+      },
+      "endLocation": {
+        "latitude": 2.9437093,
+        "longitude": 101.67453019999999
+      },
+      "distance": 0.37,
+      "duration": 4,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:13:40.76364Z",
+      "arrival": "2026-05-14T09:17:40.76364Z",
+      "instruction": "Belok kiri ke Jalan P9b1"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.9437093,
+        "longitude": 101.67453019999999
+      },
+      "endLocation": {
+        "latitude": 2.9440987,
+        "longitude": 101.6754661
+      },
+      "distance": 0.11,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:17:40.76364Z",
+      "arrival": "2026-05-14T09:18:40.76364Z",
+      "instruction": "Belok kiri ke Jalan P9b"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.9440987,
+        "longitude": 101.6754661
+      },
+      "endLocation": {
+        "latitude": 2.9442071,
+        "longitude": 101.6754247
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:18:40.76364Z",
+      "arrival": "2026-05-14T09:19:40.76364Z",
+      "instruction": "Belok kiri\nDestinasi berada di sebelah kanan"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 2.944311,
+        "longitude": 101.675809
+      },
+      "endLocation": {
+        "latitude": 2.9349309999999997,
+        "longitude": 101.690167
+      },
+      "distance": 8.35,
+      "duration": 15,
+      "carbonPerKm": 60,
+      "totalCarbon": 501,
+      "estimatedCost": 3.1,
+      "departure": "2026-05-14T09:19:40.76364Z",
+      "arrival": "2026-05-14T09:34:40.76364Z",
+      "transitLine": "T523 : Hab Lebuh Pudu - Putrajaya Sentral via KTM Serdang",
+      "departureStop": "Presint 9 Fasa 5B",
+      "arrivalStop": "Masjid Putrajaya/Putra Square",
+      "headsign": "Hab Lebuh Pudu (LP)",
+      "stopCount": 11,
+      "instruction": "Bas menuju Hab Lebuh Pudu (LP)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.9348492999999998,
+        "longitude": 101.6902037
+      },
+      "endLocation": {
+        "latitude": 2.9349212,
+        "longitude": 101.6903647
+      },
+      "distance": 0.02,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:34:40.76364Z",
+      "arrival": "2026-05-14T09:35:40.76364Z",
+      "instruction": "Tuju timur laut"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.9349212,
+        "longitude": 101.6903647
+      },
+      "endLocation": {
+        "latitude": 2.9355409,
+        "longitude": 101.6918973
+      },
+      "distance": 0.29,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:35:40.76364Z",
+      "arrival": "2026-05-14T09:38:40.76364Z"
+    }
+  ],
+  "polyline": "ge~P_tpkRIQEUE}@dAK_@eH@WxB_Cn@_AdAi@k@}Aa@}AUHSmAPEMi@IiBFqAF]L[?Sx@yApBeDzBaFv@uBtAiEv@yBl@uBpBn@~A~@vA|@jBfAVZtBfAbCfAhMpEpDdALJpI|CrF|ArUxFnPvDnCb@nGv@|EXtGPpFEtCIlE[b@ElCMlBUdCg@|A]~IaCdFgBpEsAhAYtBeAl@c@jBoA~AwAlAuAbAoAZ[nA}B`@{@h@_B]{@{RuE}AWoBIi@Qu@][Wi@QuCu@aGcBiFyA}EqAiPyDaJqB}PeE_IqBgFkAiKgCe@FUEMKGY@S}KgCuG{A_Cm@uC{@O`@QVWTYN[JL^NEM_@JEXOVUPWRo@Bg@Ei@Oe@W_@_@Ye@QSE]Aq@FKB",
+  "reasoning": "Recorded Google Routes response for Putrajaya Sentral -\u003e Putrajaya Mosque (eco).",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z"
+}

@@ -1,0 +1,124 @@
+{
+  "routeId": "fixture_rts_woodlands__ciq_johor__eco",
+  "mode": "eco",
+  "totalDistance": 4.147,
+  "totalDuration": 37,
+  "carbonEstimate": 149.4,
+  "carbonBaseline": 829.4,
+  "carbonSavedGrams": 680,
+  "carbonSavingsPercent": 82,
+  "carbonEstimateKg": 0.15,
+  "estimatedCost": 2.05,
+  "greenPointsEstimate": 35,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4488013,
+        "longitude": 103.7703095
+      },
+      "endLocation": {
+        "latitude": 1.4443264,
+        "longitude": 103.768445
+      },
+      "distance": 0.54,
+      "duration": 8,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:11:40.959639Z",
+      "arrival": "2026-05-14T09:19:40.959639Z",
+      "instruction": "Head south\nDestination will be on the right"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 1.444608,
+        "longitude": 103.76774599999999
+      },
+      "endLocation": {
+        "latitude": 1.464917,
+        "longitude": 103.76548
+      },
+      "distance": 2.49,
+      "duration": 8,
+      "carbonPerKm": 60,
+      "totalCarbon": 149.4,
+      "estimatedCost": 2.05,
+      "departure": "2026-05-14T09:19:40.959639Z",
+      "arrival": "2026-05-14T09:27:40.959639Z",
+      "transitLine": "170X",
+      "departureStop": "W'lands Checkpt",
+      "arrivalStop": "Johor Bahru Checkpt",
+      "headsign": "Jln Jim Quee",
+      "stopCount": 2,
+      "instruction": "Bus towards Jln Jim Quee"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.464403,
+        "longitude": 103.7646613
+      },
+      "endLocation": {
+        "latitude": 1.4602887,
+        "longitude": 103.76690789999999
+      },
+      "distance": 0.52,
+      "duration": 7,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:27:40.959639Z",
+      "arrival": "2026-05-14T09:34:40.959639Z",
+      "instruction": "Head southeast on Jalan Jim Quee"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4602887,
+        "longitude": 103.76690789999999
+      },
+      "endLocation": {
+        "latitude": 1.4633922,
+        "longitude": 103.7685527
+      },
+      "distance": 0.4,
+      "duration": 5,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:34:40.959639Z",
+      "arrival": "2026-05-14T09:39:40.959639Z",
+      "instruction": "Turn left onto Jalan Lumba Kuda"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4633922,
+        "longitude": 103.7685527
+      },
+      "endLocation": {
+        "latitude": 1.4625645999999999,
+        "longitude": 103.7684589
+      },
+      "distance": 0.19,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:39:40.959639Z",
+      "arrival": "2026-05-14T09:41:40.959639Z",
+      "instruction": "Turn right\nDestination will be on the right"
+    }
+  ],
+  "polyline": "_~yGmsjxR~@Jx@NrC|@bA\\NBvH~BNJLRVPlDfAw@hCHUkGyBcCg@_Cm@c@YKUe@c@eAs@wAo@oAc@}@K}@E_@BwTxEmN|CqAb@qAf@eAZkAN_ADsD@gAFmAV_AZoGjDsKdFs@Rw@Je@EaA]]A]Fu@V[BQCWc@Sk@MDfBbDlDcB~DeBxEaCbBc@hCqAUSSCyAC[EqEwCGQ}@g@sDsAJe@DIdAo@XEHBhAp@GVWh@",
+  "reasoning": "Recorded Google Routes response for RTS Woodlands -\u003e CIQ Johor (eco).",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z"
+}

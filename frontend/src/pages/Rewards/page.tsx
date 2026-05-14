@@ -19,6 +19,8 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router';
 
+import { useUserDoc } from '@/lib/user-doc-provider';
+
 type Reward = {
   title: string;
   partner: string;
@@ -46,7 +48,6 @@ type LedgerEntry = {
   kind: 'gain' | 'use';
 };
 
-const TOTAL_POINTS = 2450;
 const NEXT_TIER_POINTS = 3000;
 
 const rewards: Reward[] = [
@@ -170,16 +171,20 @@ const SERIF_ITALIC = {
 const fmt = (value: number) => Math.abs(value).toLocaleString('en-US');
 
 export default function RewardsPage() {
-  const tierProgress = Math.round((TOTAL_POINTS / NEXT_TIER_POINTS) * 100);
+  const { doc: userDoc, loading } = useUserDoc();
+  const totalPoints = userDoc?.greenPointsBalance ?? 0;
+  const tierProgress = Math.min(100, Math.round((totalPoints / NEXT_TIER_POINTS) * 100));
   const readyRewards = rewards.filter((reward) => reward.availability === 'Ready').length;
   const activeChallenges = challenges.filter((challenge) => challenge.status === 'Active').length;
-  const pointsToNext = NEXT_TIER_POINTS - TOTAL_POINTS;
+  const pointsToNext = Math.max(0, NEXT_TIER_POINTS - totalPoints);
 
   const summary = {
+    totalPoints,
     tierProgress,
     readyRewards,
     activeChallenges,
     pointsToNext,
+    loading,
   };
 
   return (
@@ -197,10 +202,12 @@ function RewardsHeader({
   summary,
 }: {
   summary: {
+    totalPoints: number;
     tierProgress: number;
     readyRewards: number;
     activeChallenges: number;
     pointsToNext: number;
+    loading: boolean;
   };
 }) {
   return (
@@ -363,10 +370,12 @@ function BalancePanel({
   summary,
 }: {
   summary: {
+    totalPoints: number;
     tierProgress: number;
     readyRewards: number;
     activeChallenges: number;
     pointsToNext: number;
+    loading: boolean;
   };
 }) {
   return (
@@ -389,7 +398,9 @@ function BalancePanel({
                 fontSize: 'clamp(2.8rem, 6vw, 3.6rem)',
               }}
             >
-              {TOTAL_POINTS.toLocaleString('en-US')}
+              {summary.loading && summary.totalPoints === 0
+                ? '—'
+                : summary.totalPoints.toLocaleString('en-US')}
             </span>
             <span className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
               pts

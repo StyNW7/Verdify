@@ -1,17 +1,29 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowUpRight,
   Flame,
   Leaf,
   MapPin,
-  Sparkles,
   Star,
   TrendingUp,
   Trophy,
   type LucideIcon,
 } from 'lucide-react';
 import { Link } from 'react-router';
+
+import { useAuth } from '@/lib/auth-provider';
+import { useUserDoc } from '@/lib/user-doc-provider';
+import { useBookingUserId } from '@/hooks/useBookingUserId';
+import {
+  getUserCarbonTrend,
+  listUserBookings,
+  type BookingRecord,
+  type CarbonTrendDay,
+} from '@/lib/api';
+import { formatTodayInKL } from '@/lib/format-today-kl';
+import { computeImpactLedger } from '@/lib/impact-ledger';
+import { originFromSnapshot, destinationFromSnapshot } from '@/lib/booking-corridor';
 
 type Stat = {
   label: string;
@@ -30,73 +42,95 @@ type Trip = {
   points: number;
 };
 
-const USER_FIRST_NAME = 'Stanley';
+function buildStats(
+  greenPoints: number,
+  totalTrips: number,
+  totalCarbonSaved: number,
+  totalEarned: number,
+): Stat[] {
+  return [
+    {
+      label: 'Total CO₂ saved',
+      value: totalCarbonSaved > 0 ? (totalCarbonSaved / 1000).toFixed(1) : '0',
+      unit: 'kg',
+      delta: { value: '+0', direction: 'flat', note: 'all time' },
+      icon: Leaf,
+    },
+    {
+      label: 'Green points',
+      value: greenPoints.toLocaleString('en-US'),
+      delta: { value: `+${totalEarned}`, direction: 'up', note: 'total earned' },
+      icon: Star,
+    },
+    {
+      label: 'Global rank',
+      value: '#—',
+      delta: { value: '—', direction: 'flat', note: '' },
+      icon: Trophy,
+    },
+    {
+      label: 'Trips completed',
+      value: String(totalTrips),
+      unit: '',
+      delta: { value: '+0', direction: 'flat', note: 'keep going' },
+      icon: Flame,
+    },
+  ];
+}
 
-const stats: Stat[] = [
-  {
-    label: 'Total CO₂ saved',
-    value: '125.4',
-    unit: 'kg',
-    delta: { value: '+12.3', direction: 'up', note: 'vs last month' },
-    icon: Leaf,
-  },
-  {
-    label: 'Green points',
-    value: '2,450',
-    delta: { value: '+180', direction: 'up', note: 'this week' },
-    icon: Star,
-  },
-  {
-    label: 'Global rank',
-    value: '#42',
-    delta: { value: '+3', direction: 'up', note: 'climbed' },
-    icon: Trophy,
-  },
-  {
-    label: 'Streak',
-    value: '14',
-    unit: 'days',
-    delta: { value: '+1', direction: 'up', note: 'keep going' },
-    icon: Flame,
-  },
-];
+// placeholderTrendDays returns 7 zero-filled buckets ending today, in the
+// browser's local timezone. Used as the loading/error fallback so the SVG
+// path math has a stable, non-empty input even before the real data lands.
+function placeholderTrendDays(): CarbonTrendDay[] {
+  const out: CarbonTrendDay[] = [];
+  const today = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    out.push({
+      date: d.toISOString().slice(0, 10),
+      dayLabel: d.toLocaleDateString('en-US', { weekday: 'short' }),
+      kg: 0,
+    });
+  }
+  return out;
+}
 
-const weeklyTrend: { day: string; kg: number }[] = [
-  { day: 'Mon', kg: 3.2 },
-  { day: 'Tue', kg: 5.8 },
-  { day: 'Wed', kg: 4.1 },
-  { day: 'Thu', kg: 6.9 },
-  { day: 'Fri', kg: 8.4 },
-  { day: 'Sat', kg: 2.1 },
-  { day: 'Sun', kg: 3.7 },
-];
+function bookingToTrip(b: BookingRecord): Trip {
+  const snap = b.routeSnapshot;
+  const createdAt = new Date(b.createdAt);
+  const now = new Date();
+  const diffDays = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
 
-const recentTrips: Trip[] = [
-  {
-    when: 'Today · 08:04',
-    from: 'Bukit Indah',
-    to: 'CIQ Johor',
-    mode: 'Transit',
-    co2Saved: '1.24',
-    points: 80,
-  },
-  {
-    when: 'Yesterday · 17:40',
-    from: 'Home',
-    to: 'Office Tower',
-    mode: 'Carpool',
-    co2Saved: '0.82',
-    points: 50,
-  },
-  {
-    when: 'Mon · 07:55',
-    from: 'Taman Molek',
-    to: 'Plaza Pelangi',
-    mode: 'Cycle',
-    co2Saved: '1.60',
-    points: 120,
-  },
-];
+  let whenPrefix: string;
+  if (diffDays === 0) whenPrefix = 'Today';
+  else if (diffDays === 1) whenPrefix = 'Yesterday';
+  else {
+    whenPrefix = createdAt.toLocaleDateString('en-US', { weekday: 'short' });
+  }
+  const timeStr = createdAt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+  const when = `${whenPrefix} · ${timeStr}`;
+
+  const from = originFromSnapshot(snap);
+  const to = destinationFromSnapshot(snap);
+
+  const modeMap: Record<string, Trip['mode']> = {
+    fast: 'Transit',
+    eco: 'Transit',
+    cheap: 'Transit',
+    transit: 'Transit',
+    cycle: 'Cycle',
+    carpool: 'Carpool',
+    walk: 'Walk',
+  };
+  const mode = modeMap[snap.mode?.toLowerCase() ?? ''] ?? 'Transit';
+
+  const carbonSavedGrams = snap.carbonSavedGrams ?? 0;
+  const co2Saved = carbonSavedGrams > 0 ? (carbonSavedGrams / 1000).toFixed(2) : '0.00';
+  const points = b.actualPoints > 0 ? b.actualPoints : b.estimatedPoints;
+
+  return { when, from, to, mode, co2Saved, points };
+}
 
 type MobileTab = 'overview' | 'trends' | 'trips' | 'impact';
 
@@ -109,6 +143,68 @@ const mobileTabs: { id: MobileTab; num: string; label: string }[] = [
 
 export default function DashboardPage() {
   const [tab, setTab] = useState<MobileTab>('overview');
+  const { user } = useAuth();
+  const { doc: userDoc } = useUserDoc();
+  const userId = useBookingUserId();
+
+  const firstName = (user?.displayName?.trim().split(/\s+/)[0]) ?? 'there';
+
+  const greenPoints = userDoc?.greenPointsBalance ?? 0;
+  const totalTrips = userDoc?.totalTripsCompleted ?? 0;
+  const totalCarbonSaved = userDoc?.totalCarbonSaved ?? 0;
+  const totalEarned = userDoc?.totalEarned ?? 0;
+
+  const stats = buildStats(greenPoints, totalTrips, totalCarbonSaved, totalEarned);
+
+  const [trips, setTrips] = useState<Trip[]>([]);
+  const [tripsLoading, setTripsLoading] = useState(true);
+  const [tripsError, setTripsError] = useState(false);
+
+  const [trendDays, setTrendDays] = useState<CarbonTrendDay[]>(() => placeholderTrendDays());
+  const [trendLoading, setTrendLoading] = useState(true);
+  const [trendError, setTrendError] = useState(false);
+
+  useEffect(() => {
+    if (!userId) {
+      setTrips([]);
+      setTripsLoading(false);
+      setTripsError(false);
+      return;
+    }
+    setTripsLoading(true);
+    setTripsError(false);
+    listUserBookings(userId, { limit: 3 })
+      .then(({ bookings }) => {
+        setTrips(bookings.map(bookingToTrip));
+        setTripsLoading(false);
+      })
+      .catch(() => {
+        setTrips([]);
+        setTripsLoading(false);
+        setTripsError(true);
+      });
+  }, [userId]);
+
+  useEffect(() => {
+    if (!userId) {
+      setTrendDays(placeholderTrendDays());
+      setTrendLoading(false);
+      setTrendError(false);
+      return;
+    }
+    setTrendLoading(true);
+    setTrendError(false);
+    getUserCarbonTrend(userId)
+      .then(({ days }) => {
+        setTrendDays(days);
+        setTrendLoading(false);
+      })
+      .catch(() => {
+        setTrendDays(placeholderTrendDays());
+        setTrendLoading(false);
+        setTrendError(true);
+      });
+  }, [userId]);
 
   return (
     <div
@@ -118,7 +214,7 @@ export default function DashboardPage() {
       <header className="mb-8 flex flex-col items-start gap-5 sm:mb-10 lg:flex-row lg:flex-wrap lg:items-end lg:justify-between lg:gap-6">
         <div>
           <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
-            Wednesday · 19 April
+            {formatTodayInKL()}
           </p>
           <h1
             className="theme-display mt-2 text-[clamp(2rem,8vw,3.6rem)] leading-[0.95]"
@@ -129,7 +225,7 @@ export default function DashboardPage() {
               className="theme-italic"
               style={{ color: 'var(--theme-accent)' }}
             >
-              {USER_FIRST_NAME}.
+              {firstName}.
             </span>
           </h1>
           <p
@@ -201,18 +297,17 @@ export default function DashboardPage() {
       </section>
 
       <section
-        className={`${tab === 'trends' ? '' : 'hidden'} mt-0 grid grid-cols-1 gap-5 lg:!grid lg:mt-8 lg:grid-cols-[1.35fr_1fr]`}
+        className={`${tab === 'trends' ? '' : 'hidden'} mt-0 grid grid-cols-1 gap-5 lg:!grid lg:mt-8`}
       >
-        <WeeklyTrendCard />
-        <AIRecommendationCard />
+        <WeeklyTrendCard days={trendDays} loading={trendLoading} error={trendError} />
       </section>
 
       <section className="mt-0 grid grid-cols-1 gap-5 lg:mt-8 lg:grid-cols-[1.1fr_0.9fr]">
         <div className={`${tab === 'trips' ? '' : 'hidden'} lg:!block`}>
-          <RecentTripsCard trips={recentTrips} />
+          <RecentTripsCard trips={trips} loading={tripsLoading} error={tripsError} />
         </div>
         <div className={`${tab === 'impact' ? '' : 'hidden'} lg:!block`}>
-          <ImpactLedgerCard />
+          <ImpactLedgerCard totalCarbonKg={totalCarbonSaved / 1000} />
         </div>
       </section>
     </div>
@@ -275,24 +370,37 @@ function StatCard({ stat, index }: { stat: Stat; index: number }) {
   );
 }
 
-function WeeklyTrendCard() {
+function WeeklyTrendCard({
+  days,
+  loading,
+  error,
+}: {
+  days: CarbonTrendDay[];
+  loading: boolean;
+  error: boolean;
+}) {
   const W = 640;
   const H = 240;
   const padX = 28;
   const padTop = 24;
   const padBottom = 36;
 
-  const max = Math.max(...weeklyTrend.map((d) => d.kg));
+  // Defensive: if a caller ever hands us an empty array, fall back to a
+  // zero-filled placeholder so the SVG math (which divides by length-1)
+  // does not produce NaN.
+  const safeDays = days.length === 7 ? days : placeholderTrendDays();
+
+  const max = Math.max(...safeDays.map((d) => d.kg));
   const min = 0;
 
   const points = useMemo(() => {
-    return weeklyTrend.map((d, i) => {
-      const x = padX + (i / (weeklyTrend.length - 1)) * (W - padX * 2);
+    return safeDays.map((d, i) => {
+      const x = padX + (i / (safeDays.length - 1)) * (W - padX * 2);
       const y =
         padTop + (1 - (d.kg - min) / (max - min || 1)) * (H - padTop - padBottom);
-      return { x, y, kg: d.kg, day: d.day };
+      return { x, y, kg: d.kg, day: d.dayLabel };
     });
-  }, [max]);
+  }, [safeDays, max]);
 
   const linePath = points
     .map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`)
@@ -301,7 +409,22 @@ function WeeklyTrendCard() {
   const areaPath = `${linePath} L ${points[points.length - 1].x} ${H - padBottom} L ${points[0].x
     } ${H - padBottom} Z`;
 
-  const totalKg = weeklyTrend.reduce((acc, d) => acc + d.kg, 0);
+  const totalKg = safeDays.reduce((acc, d) => acc + d.kg, 0);
+  const peak = safeDays.reduce(
+    (best, d) => (d.kg > best.kg ? d : best),
+    safeDays[0],
+  );
+  const avgKg = totalKg / safeDays.length;
+  const weekLabel = (() => {
+    const last = safeDays[safeDays.length - 1];
+    if (!last) return '';
+    const d = new Date(`${last.date}T00:00:00`);
+    if (Number.isNaN(d.getTime())) return '';
+    const yearStart = new Date(d.getFullYear(), 0, 1);
+    const diffDays = Math.floor((d.getTime() - yearStart.getTime()) / 86_400_000);
+    const weekNum = Math.ceil((diffDays + yearStart.getDay() + 1) / 7);
+    return `Week ${weekNum} · ${d.getFullYear()}`;
+  })();
 
   return (
     <motion.div
@@ -443,117 +566,33 @@ function WeeklyTrendCard() {
           color: 'var(--theme-fg-muted)',
         }}
       >
-        <span>
-          Peak · <span style={{ color: 'var(--theme-fg)' }}>Fri 8.4 kg</span>
-        </span>
-        <span>
-          Avg ·{' '}
-          <span style={{ color: 'var(--theme-fg)' }}>
-            {(totalKg / weeklyTrend.length).toFixed(1)} kg/day
-          </span>
-        </span>
+        {error ? (
+          <span style={{ color: 'var(--theme-fg-muted)' }}>Trend unavailable</span>
+        ) : (
+          <>
+            <span>
+              Peak ·{' '}
+              <span style={{ color: 'var(--theme-fg)' }}>
+                {loading ? '—' : `${peak.dayLabel} ${peak.kg.toFixed(1)} kg`}
+              </span>
+            </span>
+            <span>
+              Avg ·{' '}
+              <span style={{ color: 'var(--theme-fg)' }}>
+                {loading ? '—' : `${avgKg.toFixed(1)} kg/day`}
+              </span>
+            </span>
+          </>
+        )}
         <span className="ml-auto theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
-          Week 16 · 2026
+          {weekLabel}
         </span>
       </div>
     </motion.div>
   );
 }
 
-function AIRecommendationCard() {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.55, delay: 0.36, ease: [0.2, 0.7, 0.2, 1] }}
-      className="theme-card relative overflow-hidden p-6 md:p-7"
-    >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full"
-        style={{
-          background:
-            'radial-gradient(circle at 30% 30%, var(--theme-accent-soft), transparent 70%)',
-        }}
-      />
-
-      <div className="relative flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span
-            className="flex h-6 w-6 items-center justify-center rounded-[7px]"
-            style={{
-              background: 'var(--theme-accent)',
-              color: 'var(--theme-accent-fg)',
-            }}
-          >
-            <Sparkles className="h-[12px] w-[12px]" strokeWidth={2} />
-          </span>
-          <span
-            className="theme-mono-sm"
-            style={{ color: 'var(--theme-fg-dim)' }}
-          >
-            AI recommendation
-          </span>
-        </div>
-        <span
-          className="theme-mono-sm rounded-full border px-2 py-1"
-          style={{
-            borderColor: 'var(--theme-border)',
-            color: 'var(--theme-fg-dim)',
-            fontSize: '0.56rem',
-          }}
-        >
-          Preview
-        </span>
-      </div>
-
-      <blockquote
-        className="theme-display relative mt-5 text-[1.35rem] leading-[1.25]"
-        style={{ color: 'var(--theme-fg)' }}
-      >
-        <span
-          className="theme-italic absolute -left-3 -top-2 text-[2.5rem]"
-          style={{ color: 'var(--theme-accent-muted)' }}
-          aria-hidden
-        >
-          “
-        </span>
-        Leave at{' '}
-        <span
-          className="theme-italic"
-          style={{ color: 'var(--theme-accent)' }}
-        >
-          08:32
-        </span>{' '}
-        tomorrow to slip past the causeway crush — save{' '}
-        <span style={{ color: 'var(--theme-accent)' }}>18 min</span> and earn{' '}
-        <span style={{ color: 'var(--theme-accent)' }}>2× points</span>.
-      </blockquote>
-
-      <div
-        className="mt-6 flex items-center justify-between border-t pt-4 text-[0.78rem]"
-        style={{
-          borderColor: 'var(--theme-border)',
-          color: 'var(--theme-fg-muted)',
-        }}
-      >
-        <span>Based on your last 14 days of patterns</span>
-        <button
-          type="button"
-          disabled
-          className="theme-link-underline opacity-60"
-          title="LLM integration coming soon"
-          style={{ color: 'var(--theme-fg-muted)' }}
-        >
-          Ask Verdify AI
-          <ArrowUpRight size={12} strokeWidth={1.8} />
-        </button>
-      </div>
-    </motion.div>
-  );
-}
-
-function RecentTripsCard({ trips }: { trips: Trip[] }) {
+function RecentTripsCard({ trips, loading, error }: { trips: Trip[]; loading: boolean; error: boolean }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -584,91 +623,123 @@ function RecentTripsCard({ trips }: { trips: Trip[] }) {
         </div>
       </div>
 
-      <ul className="mt-5 flex flex-col gap-3">
-        {trips.map((trip, i) => (
-          <motion.li
-            key={i}
-            initial={{ opacity: 0, x: -8 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.55 + i * 0.08 }}
-            className="group flex items-center gap-4 rounded-[14px] border p-4 transition-colors duration-300 hover:border-[var(--theme-accent-muted)]"
-            style={{
-              borderColor: 'var(--theme-border)',
-              background: 'var(--theme-surface-muted)',
-            }}
-          >
-            <span
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
+      {loading ? (
+        <div className="mt-5 flex items-center justify-center py-8">
+          <div
+            className="h-5 w-5 animate-spin rounded-full"
+            style={{ border: '2px solid var(--theme-border-strong)', borderTopColor: 'var(--theme-accent)' }}
+          />
+        </div>
+      ) : error ? (
+        <p
+          className="mt-5 py-8 text-center text-[0.9rem]"
+          style={{ color: 'var(--theme-fg-muted)' }}
+        >
+          Couldn't load recent trips
+        </p>
+      ) : trips.length === 0 ? (
+        <p
+          className="mt-5 py-8 text-center text-[0.9rem]"
+          style={{ color: 'var(--theme-fg-muted)' }}
+        >
+          No trips yet — plan one
+        </p>
+      ) : (
+        <ul className="mt-5 flex flex-col gap-3">
+          {trips.map((trip, i) => (
+            <motion.li
+              key={i}
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.4, delay: 0.55 + i * 0.08 }}
+              className="group flex items-center gap-4 rounded-[14px] border p-4 transition-colors duration-300 hover:border-[var(--theme-accent-muted)]"
               style={{
-                background: 'var(--theme-accent-soft)',
-                color: 'var(--theme-accent)',
-                border: '1px solid var(--theme-accent-muted)',
+                borderColor: 'var(--theme-border)',
+                background: 'var(--theme-surface-muted)',
               }}
             >
-              <MapPin className="h-[15px] w-[15px]" strokeWidth={1.8} />
-            </span>
+              <span
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
+                style={{
+                  background: 'var(--theme-accent-soft)',
+                  color: 'var(--theme-accent)',
+                  border: '1px solid var(--theme-accent-muted)',
+                }}
+              >
+                <MapPin className="h-[15px] w-[15px]" strokeWidth={1.8} />
+              </span>
 
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                <span
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="theme-mono-sm"
+                    style={{ color: 'var(--theme-fg-dim)' }}
+                  >
+                    {trip.when}
+                  </span>
+                  <span
+                    className="theme-mono-sm rounded-full border px-1.5 py-0.5"
+                    style={{
+                      borderColor: 'var(--theme-border)',
+                      color: 'var(--theme-fg-muted)',
+                      fontSize: '0.52rem',
+                    }}
+                  >
+                    {trip.mode}
+                  </span>
+                </div>
+                <p
+                  className="mt-1 truncate text-[0.95rem]"
+                  style={{ color: 'var(--theme-fg)' }}
+                >
+                  {trip.from}{' '}
+                  <span
+                    className="theme-italic mx-1"
+                    style={{ color: 'var(--theme-fg-dim)' }}
+                  >
+                    to
+                  </span>{' '}
+                  {trip.to}
+                </p>
+              </div>
+
+              <div className="text-right">
+                <p
+                  className="text-[0.92rem]"
+                  style={{ color: 'var(--theme-accent)' }}
+                >
+                  {trip.co2Saved} kg
+                </p>
+                <p
                   className="theme-mono-sm"
                   style={{ color: 'var(--theme-fg-dim)' }}
                 >
-                  {trip.when}
-                </span>
-                <span
-                  className="theme-mono-sm rounded-full border px-1.5 py-0.5"
-                  style={{
-                    borderColor: 'var(--theme-border)',
-                    color: 'var(--theme-fg-muted)',
-                    fontSize: '0.52rem',
-                  }}
-                >
-                  {trip.mode}
-                </span>
+                  +{trip.points} pts
+                </p>
               </div>
-              <p
-                className="mt-1 truncate text-[0.95rem]"
-                style={{ color: 'var(--theme-fg)' }}
-              >
-                {trip.from}{' '}
-                <span
-                  className="theme-italic mx-1"
-                  style={{ color: 'var(--theme-fg-dim)' }}
-                >
-                  to
-                </span>{' '}
-                {trip.to}
-              </p>
-            </div>
-
-            <div className="text-right">
-              <p
-                className="text-[0.92rem]"
-                style={{ color: 'var(--theme-accent)' }}
-              >
-                {trip.co2Saved} kg
-              </p>
-              <p
-                className="theme-mono-sm"
-                style={{ color: 'var(--theme-fg-dim)' }}
-              >
-                +{trip.points} pts
-              </p>
-            </div>
-          </motion.li>
-        ))}
-      </ul>
+            </motion.li>
+          ))}
+        </ul>
+      )}
     </motion.div>
   );
 }
 
-function ImpactLedgerCard() {
+function currentMonthYearKL(): string {
+  return new Intl.DateTimeFormat('en-MY', {
+    timeZone: 'Asia/Kuala_Lumpur',
+    month: 'short',
+    year: 'numeric',
+  }).format(new Date());
+}
+
+function ImpactLedgerCard({ totalCarbonKg }: { totalCarbonKg: number }) {
+  const { treesEquivalent, fuelAvoidedLitres, costSavedRM } = computeImpactLedger(totalCarbonKg);
+
   const rows = [
-    { label: 'Trees equivalent', value: '6.2', unit: 'saplings / year' },
-    { label: 'Fuel avoided', value: '54', unit: 'litres' },
-    { label: 'Cost saved', value: 'RM 312', unit: 'est.' },
-    { label: 'Next tier', value: '550', unit: 'pts to Forest' },
+    { label: 'Trees equivalent', value: treesEquivalent.toFixed(1), unit: 'saplings / year' },
+    { label: 'Fuel avoided', value: fuelAvoidedLitres.toFixed(0), unit: 'litres' },
+    { label: 'Cost saved', value: `RM ${costSavedRM.toFixed(0)}`, unit: 'est.' },
   ];
 
   return (
@@ -689,7 +760,7 @@ function ImpactLedgerCard() {
           className="theme-mono-sm"
           style={{ color: 'var(--theme-fg-dim)' }}
         >
-          Apr 2026
+          {currentMonthYearKL()}
         </span>
       </div>
 
@@ -738,13 +809,7 @@ function ImpactLedgerCard() {
         ))}
       </ul>
 
-      <div className="mt-5 flex items-center justify-between">
-        <span
-          className="text-[0.78rem]"
-          style={{ color: 'var(--theme-fg-muted)' }}
-        >
-          Next badge · Forest Guardian
-        </span>
+      <div className="mt-5 flex items-center justify-end">
         <Link to="/route" className="theme-link-underline text-[0.82rem]">
           Earn points
           <ArrowUpRight size={12} strokeWidth={1.8} />

@@ -16,6 +16,7 @@ import {
 import { useBookingUserId } from '@/hooks/useBookingUserId';
 import { BookingDialog } from '@/pages/Route/booking-dialog';
 import type { Booking, ConfirmedBooking } from '@/lib/booking-draft';
+import { originFromSnapshot, destinationFromSnapshot } from '@/lib/booking-corridor';
 
 const fmt = (n: number) => n.toLocaleString('en-US');
 
@@ -44,23 +45,11 @@ function pointsFor(record: BookingRecord): number {
   return record.estimatedPoints ?? record.routeSnapshot?.greenPointsEstimate ?? 0;
 }
 
-function originFromSnapshot(record: BookingRecord): string {
-  const first = record.routeSnapshot?.steps?.[0];
-  return first?.departureStop?.trim() || 'Origin';
-}
-
-function destinationFromSnapshot(record: BookingRecord): string {
-  const steps = record.routeSnapshot?.steps ?? [];
-  for (let i = steps.length - 1; i >= 0; i--) {
-    const s = steps[i];
-    const end = s.arrivalStop?.trim() || s.headsign?.trim();
-    if (end) return end;
-  }
-  return 'Destination';
-}
-
 function corridorLabel(record: BookingRecord): { from: string; to: string } {
-  return { from: originFromSnapshot(record), to: destinationFromSnapshot(record) };
+  return {
+    from: originFromSnapshot(record.routeSnapshot),
+    to: destinationFromSnapshot(record.routeSnapshot),
+  };
 }
 
 type Tone = 'green' | 'warm' | 'ink' | 'muted';

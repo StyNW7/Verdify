@@ -1,0 +1,318 @@
+{
+  "routeId": "fixture_melaka_sentral__kl_sentral__eco",
+  "mode": "eco",
+  "totalDistance": 165.724,
+  "totalDuration": 212,
+  "carbonEstimate": 9688.8,
+  "carbonBaseline": 33144.8,
+  "carbonSavedGrams": 23456,
+  "carbonSavingsPercent": 71,
+  "carbonEstimateKg": 9.69,
+  "estimatedCost": 35.59,
+  "greenPointsEstimate": 850,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.2113609,
+        "longitude": 102.25306139999999
+      },
+      "endLocation": {
+        "latitude": 2.2126106,
+        "longitude": 102.2539652
+      },
+      "distance": 0.18,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:11:39.428054Z",
+      "arrival": "2026-05-14T09:13:39.428054Z",
+      "instruction": "Tuju timur laut ke arah Lorong Mata Kucing 4"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.2126106,
+        "longitude": 102.2539652
+      },
+      "endLocation": {
+        "latitude": 2.211786,
+        "longitude": 102.255428
+      },
+      "distance": 0.19,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:13:39.428054Z",
+      "arrival": "2026-05-14T09:15:39.428054Z",
+      "instruction": "Belok kanan ke Jalan Mawar"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.211786,
+        "longitude": 102.255428
+      },
+      "endLocation": {
+        "latitude": 2.2123279000000005,
+        "longitude": 102.2558303
+      },
+      "distance": 0.08,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:15:39.428054Z",
+      "arrival": "2026-05-14T09:16:39.428054Z",
+      "instruction": "Belok kiri ke Jalan Taming Sari"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 2.21232,
+        "longitude": 102.25583999999999
+      },
+      "endLocation": {
+        "latitude": 2.22008,
+        "longitude": 102.25109
+      },
+      "distance": 17.45,
+      "duration": 27,
+      "carbonPerKm": 60,
+      "totalCarbon": 1047,
+      "estimatedCost": 4.74,
+      "departure": "2026-05-14T09:16:39.428054Z",
+      "arrival": "2026-05-14T09:43:39.428054Z",
+      "transitLine": "Bandaraya Melaka Feeder",
+      "departureStop": "RTM Melaka",
+      "arrivalStop": "Melaka Sentral",
+      "headsign": "Melaka Sentral 2",
+      "stopCount": 28,
+      "instruction": "Bas menuju Melaka Sentral 2"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.2200883,
+        "longitude": 102.251059
+      },
+      "endLocation": {
+        "latitude": 2.2223110999999998,
+        "longitude": 102.25004129999999
+      },
+      "distance": 0.27,
+      "duration": 4,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:43:39.428054Z",
+      "arrival": "2026-05-14T09:47:39.428054Z"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 2.2211551,
+        "longitude": 102.2500829
+      },
+      "endLocation": {
+        "latitude": 3.0780526,
+        "longitude": 101.7110798
+      },
+      "distance": 137.89,
+      "duration": 120,
+      "carbonPerKm": 60,
+      "totalCarbon": 8273.4,
+      "estimatedCost": 26.42,
+      "departure": "2026-05-14T09:47:39.428054Z",
+      "arrival": "2026-05-14T11:47:39.428054Z",
+      "transitLine": "Melaka Sentral - Terminal Bersepadu Selatan (TBS)",
+      "departureStop": "Melaka Sentral",
+      "arrivalStop": "Terminal Bersepadu Selatan",
+      "headsign": "Terminal Bersepadu Selatan (TBS)",
+      "stopCount": 2,
+      "instruction": "Bas menuju Terminal Bersepadu Selatan (TBS)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.078539,
+        "longitude": 101.711925
+      },
+      "endLocation": {
+        "latitude": 3.0768299999999997,
+        "longitude": 101.71085
+      },
+      "distance": 0.22,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T11:47:39.428054Z",
+      "arrival": "2026-05-14T11:50:39.428054Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.0768299999999997,
+        "longitude": 101.71085
+      },
+      "endLocation": {
+        "latitude": 3.0768299999999997,
+        "longitude": 101.71085
+      },
+      "distance": 0,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T11:50:39.428054Z",
+      "arrival": "2026-05-14T11:52:39.428054Z",
+      "instruction": "Ambil laluan masuk Bandar Tasik Selatan - ERL Entrance/Exit (TBS)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.0768299999999997,
+        "longitude": 101.71085
+      },
+      "endLocation": {
+        "latitude": 3.0768299999999997,
+        "longitude": 101.71085
+      },
+      "distance": 0,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T11:52:39.428054Z",
+      "arrival": "2026-05-14T11:54:39.428054Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.0768299999999997,
+        "longitude": 101.71085
+      },
+      "endLocation": {
+        "latitude": 3.07601,
+        "longitude": 101.71016
+      },
+      "distance": 0.12,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T11:54:39.428054Z",
+      "arrival": "2026-05-14T11:56:39.428054Z"
+    },
+    {
+      "type": "mrt",
+      "startLocation": {
+        "latitude": 3.07601,
+        "longitude": 101.71016
+      },
+      "endLocation": {
+        "latitude": 3.13399,
+        "longitude": 101.68708
+      },
+      "distance": 9.21,
+      "duration": 8,
+      "carbonPerKm": 40,
+      "totalCarbon": 368.4,
+      "estimatedCost": 4.43,
+      "departure": "2026-05-14T11:56:39.428054Z",
+      "arrival": "2026-05-14T12:04:39.428054Z",
+      "transitLine": "KLIA Transit",
+      "departureStop": "Bandar Tasik Selatan (KT2)",
+      "arrivalStop": "Kuala Lumpur Sentral (KJ15/KA01)",
+      "headsign": "ERL Platform 2\u00263 (KLIA2)",
+      "stopCount": 2,
+      "instruction": "Kereta api menuju ERL Platform 2\u00263 (KLIA2)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.13399,
+        "longitude": 101.68708
+      },
+      "endLocation": {
+        "latitude": 3.13399,
+        "longitude": 101.68708
+      },
+      "distance": 0,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T12:04:39.428054Z",
+      "arrival": "2026-05-14T12:05:39.428054Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.13399,
+        "longitude": 101.68708
+      },
+      "endLocation": {
+        "latitude": 3.13399,
+        "longitude": 101.68708
+      },
+      "distance": 0,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T12:05:39.428054Z",
+      "arrival": "2026-05-14T12:06:39.428054Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.13399,
+        "longitude": 101.68708
+      },
+      "endLocation": {
+        "latitude": 3.13367,
+        "longitude": 101.68652999999999
+      },
+      "distance": 0.07,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T12:06:39.428054Z",
+      "arrival": "2026-05-14T12:08:39.428054Z",
+      "instruction": "Ambil susur keluar KL Sentral - South Entrance/Exit"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1335515,
+        "longitude": 101.6866002
+      },
+      "endLocation": {
+        "latitude": 3.133747,
+        "longitude": 101.68693139999999
+      },
+      "distance": 0.04,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T12:08:39.428054Z",
+      "arrival": "2026-05-14T12:09:39.428054Z",
+      "instruction": "Tuju timur laut di Jalan Stesen Sentral/Jalan Stesen Sentral 3"
+    }
+  ],
+  "polyline": "_|nLshboROMAYAWKOo@W_Cy@i@Sr@eB`BgDLUOG{AgA@AA@zAfAhAf@lA`@pBf@rA`@xAl@fB|@lC~BXZz@j@t@\\l@PfALp@@`IGlDClCAzAJh@HVH|@Hn@@lEOfBH~Er@pB\\~GnA`C^~C|@l@`@`ArAVd@ZhA\\d@l@rA\\f@n@v@|@zAPCLFDNCJ`@\\HPz@hAZJPDb@TvHpFz@l@VDZAf@Mb@YP[Py@LgCHu@dAwGtA}Jj@oG?c@KSQS}Bs@s@[|@uBdB{EZkAFk@HcAb@qCVoBDoAFsF?sDHqCf@gKFoAFe@@gAEYSYc@IcEKgCMaBBcCZs@GoAc@M_@@]dBq@bAUvBIjCe@ZUh@g@b@UtCaA^GxBN^AZIFIVuBb@sGh@}HTaEPiAb@aBNoAF{@`@eF\\wAZkCXsHN{Bh@yElFb@CRmFc@QxAWrCQpCU|FYbC]~Aa@|ES|BMl@Y`AQhAa@zGaAvNc@tD[jB_@`DSlAA\\DVPJhDRvBZ`C`@nAN~Cd@vDd@fFt@zBf@h@Je@dAiFlJoAvB}AtCYp@w@`C_GdUW`AWfA_@hCUbA_@lAyAlDKb@u@fBOl@g@tDa@pDyBbNu@dCg@xAeBdGc@jAo@rA{A|ByQjVeDfE{@e@yH{FgFiEmKkJzB_DnFmHNQ@g@CKSOwAm@o@Qk@G{@W]Qc@_@uDmEoAuAeCiDSWUMOEKIa_@fNiAj@KEg@A]WcBkE{@qBOK]o@gAmAg@c@mAq@y@[iAYm@C}CCwB?eDD{QAkKFgLGC{CBcCHmARwB\\_Ch@iCFY]CSJkAVAJJ`BGBW?gB_@?b@ZDADAD{LjEdFG[w@Q@SKCGEYKmCxBC~@HtEr@LL?^Ez@M|AMfCGnCKZOLUFY?sEwA_B]SCaA@G?c@^@X{DBiAE{@Kw@OoAa@kFkCoBw@kASq@GsBCiAJ}FbA{Ez@cAJc@@u@Ke@Ss@g@}@eAvEwBbCwAZIl@c@r@k@v@y@b@i@pAsBP_@@QTq@t@mDb@wCn@{Cd@iEFqAA}AGcB_@uDAi@{@qDgBsFYw@_@e@KGKAa@?wAFoB?oDIeGk@kCQeBFqCNy@Hw@PmC|@yCnAeJnDwNbGkDzAiNzEiBj@gAZkCd@qC`@c@LyDdByBhAmDzA]X]`@U^MXOpAQfE[j@MHm@C}DcBg@WwA{@aCcAoBi@kAYo@Ak@BcAJsCt@sBf@oAb@yBd@yLvA]FWLONU@OKIKq@WuBg@yDq@cE[yDQaCUu@M{EeAeCy@gBy@mCsAiB}@UOqD_ByQ}I}HqD}CyAqA_@k@Im@EwEEkH?c@FEPSHUAMMAC]OoBWo@Mm@So@WsA{@mIaGmCgBcAa@s@S_@GgAMq@?wAB{Hb@uDVuDXU@@sB^_NDoELwC`@_En@yChC}Hf@eAb@qAv@qBzDwKlBiFp@}B`@mBTeBHaB?cDEiAOuAwFkb@aAeFcAgE{@}CeDgJ_E{IyAsDw@{Bu@gC_AkFi@sDMcAQuC]kIIkEQwBIm@YmA_@kAa@{@u@gAw@eAcBwAcAo@{DuBsBqAeBcB[a@u@sAuBcFkAkDa@c@[Ue@Uo@k@MSEMEk@?y@@mAGeAGUWc@wGsCyBgAkBs@cAWoBSu@EaDQi@IqCo@gCw@wA]gCc@eACkA?u@Bs@JyA\\q@TwA|@o@h@{@dAi@z@WH}A`DuCjF{BvDiMdS{EtHaDrF_HrKo@tAeCdEqD|FyE~G{EjIiGpJmEpGeFfIcDtFmF~H_BtBqDnEyAdBg@f@{@fAyD`E{BtB{F|E}BfBmCnB}DjC{ClBuDtBat@~^{IxEuUfLaG~C{BpA}E~CuEdDaBrAyDdDaBzA{DdEkD`EkBjC_CtD_KjQuN|WcBxCsBfDs@nAwBhD_@d@wA~BkE|FkIxJeBlBeBbB_ChC_N~LuDlDgFjEuM|L_MrK{BfBa@VqEpDmF`EkFnDoKzGuEjCsLfHqDtBuAbAcJtFeI|EeFpC{QfLgCjA{DnB_GlC}GlCgMdEuD|@oDl@iCf@sGbAyG|@a_@xDaF\\kDZ}SvByEp@sCl@qCr@wBt@iBp@yAp@iB|@_CtA]R}L|Iie@l]wo@|e@gJ|GmB|A_BxAcBjBqA`BmAbBiAfBiAtBaBxDq@jBgAxDg@xBk@fDIh@_@hDWtGKrFK~CGhDAdCW|IChCMdEIrBc@jTI`BQlBy@jFe@jBy@nCk@|Ay@~AqCzEe@r@_AjAaClCsAlAcAz@y@z@{BnBuAnAeCbCcBvAy@x@WPoBpBkGrF_@Zy@jAw@h@e@V_CrBqCnCaGbFeCdC}DjD}@x@kBdBuCrC{@r@sAxAk@f@e@^iC`CcB~AsCfDm@l@o@~@}@dBo@zA{@xAqBxEUp@iBlHQt@SzAI~@[nCEpAWnCCbB^zK|AjSbAzMd@hFLlDvB~WNnCJxFAfEUlI_@xCQpDWbDIh@{@tDe@jC}AxHw@pCSz@It@[pA_@tAkA~E}@jE_EdQiB~FuDfKkBvEaBnD{AtC}CjFcBpC_F|GcFbGgDpDmEbEmC|BoFdE{CrBaF`DyDtB_BhAgBbAcBl@wH|CcHhCoBp@qWdI_OjEmC~@cK|DkEfB_H`DaJpFuGdEkW`RqMnJib@xZaHtEaEjCcKzF}KrFaGjCeJrDwHnCy{@hYc@JmDrAaDfAoDxAmBz@iCrAaFnCyMnIcEtC_At@gFpEuEhEyHnIaFfFyHrIuEhFgCzCyEjGwCjE}B|CyBdC{K~N_@d@uDdEiClCgL|KmEhEiGvF}CfCqDlCoEtC}BpAcBbAeGzCaDzAuDzAcIpCoBn@wGfBuGxAsCj@{Et@qDf@oEd@kDVoDRwEb@gPhAqE`@uFr@eFz@_FbAyF|AiItC}D`ByCxAmEbC{A|@a@ZgAp@oDjCoC|BaA`A{BtBwAvAuCjDuCzDwCtEgB~CgBpDuCdHgShl@wAxDyAfDeAvB}AhCuApBcCzC{@bA{@z@qD~CsAbA{GnEsh@t\\aIdFqBjAcEnBqD`BmDtAeH~ByDdAqK~BuCd@yDt@qC`@qF|@gCd@cJfCwBj@eBf@gA`@_Bd@iDnAsMjFsS|HcDjAgGhBwFxAeCl@uHzAk[zFiEdAmBn@_C`AmBdAgEpCgDhC}DrDyB~BeAnAiA|A}@pAu@lAi@`AaA|BYv@u@tCSz@m@lE}@|Hk@rDu@rDu@lCcA|CyBvE{BfEqBrCqB`CsBxB}GvGaFhF{ExEoBzAeBlA_B`AuAt@iCdAuC~@qCp@eB\\wAT_CVgDTsE`@}ARmBZyAZiDbA_C`AuAr@eDzB{@p@yBzBw@`Ak@~@cB~C{@hBwAzEu@~CSpAKpBoArImCfW]`Eo@rIe@hIOpF_@b\\F|IPvEDlCAnDQlDa@rCOz@[pAWp@Qp@Un@yA|C_@p@}BfDoA`BiAfBg@l@s@p@kAzAO\\wAjBc@f@qF|He@j@_BvA}AjAeBfAcB`AgCjAqDpAoA\\wA`@uCr@yAVwHdAsI`AuEx@eDp@gCh@aCp@_EtAcLrEkPlGsGtCiFhC_F~CkClBkCpB{GzGoBzBMXsAbBwBfDqCbEq@hAeDbHyCzHoCtHuFrOmCbHyAtDiEbJeArBuGvKcDvEwAnByDzE_GvG_D`DmFfFyIdHsGvEqEpCsFtDqAx@c@b@iExCkChCcBtBm@v@aAxAcAhBgA~Bm@|AkA|DYjA]hBYzBo@nHaB`Pw@lHY~A{@hEmAdE{C`IiA~BYZoLpT{N~WkGjLeB~C_OxXwAvCsA|CwAzC]~@gA~CeBdGeA`EaAnE}@zFm@bFUjBYfBiGjg@c@pCeAjFSfBo@fCiArDo@fBwAhDqAbCsBnDaC`EsBzCaJtLkYn_@_JtL{PvTo@t@cBhB{AvAqD`DeBnAkCfBgC`B{C`BsCrAcCbAoBr@cCt@gDx@yGpAcDh@uBXoD^mFT_EF}XWeFIiNWs_@g@cJMaCBmBF{BNgEf@mB\\}A^}C~@{CpAcBx@iCzAcCnBaBvAsHlH{CnCcBnAkCvAkDxAaAZaJpCwG~BqBbA{BzAoAfAgBfBuCxDsEnGwCvDiBxBoDxDoTbRiCpB}AbAaEvBaBt@}Al@mBn@wEnAqBb@aBVuEl@oCNI@UJuMf@eAF{En@}Bj@qCfAmD~AoCvAyB|@iC`AwBh@cDf@eCPgBHsC@i@GiACgEE{BK}FSsAAaGTuCNsCX}Fd@uDLeC?qBEwCYcCa@yA_@aMmEiCw@_DgAuCy@wA]mCa@kDWqEMyDAaA@aFb@aC\\kCh@{Bh@sBl@uBv@gAd@mDpBqFxDkB~AcEfEuBdCeDnEiAhBiCrE_BjDsUvl@uElLoAvCk@jAy@rAgB|B}BbCwAdA}AbAwBfA}Ap@aA\\yBl@mAVcBViBR_DPkOByq@NyABqEXiAL}B\\uBd@aD|@gBj@{An@wDlBeBhAcDnCkDpD_AjAyAxBqLjP{AbBs@t@uCxBoC|AwCjAuBn@oCl@yBX}BN_BFcD?kCK{T{CiAQyE_@cDKiDFa@?aDPiD\\mF|@qBj@}JdDqMbEyFnBmJbC}FlAqDj@qJfAkD\\sFZaIRgOVgMb@iFp@mAVsAXkD~@iDhAaCbA}EfCs`@rTgExBkEpBeFjBoGlBkIlBuEv@{El@uE\\qI`@uFDk^QoBBcEJoBLkFj@cC`@_E~@eBd@sCbAeIjD_O|G{FlCsIvDiHdD}DfBkEvBgC|AmBvAk@\\eD~CwBdCwAjBgFtHgGbKoBlCaDnDqEjEyAhAgBdA_EjBaAj@qJrEyNhHeNvGkm@fZgCtAoCbBoCtBqChC}A`BmWnZo@r@mCbCeBtAcAp@wBhA{FxBwDdAsAZ}AX}C^kCR}KZaCPcI`@yBRwIVgM_@qBAwFFuMTaJPqHL{GDuFJoDJsFFqLl@kFd@yXtDiGp@iAJ]b@[^K\\@h@LZX\\r@Tz@Jb@A\\OLIHMNg@Ag@GUo@_A}BgC_CeCY][s@uBiCa@u@aAgCuBkHu@oCU_@_@[e@Ou@K}@?sEZsCDmCC{EUeCQ{@Q_A[{@g@uAkA_AiASEuA}AwBsCWa@OKwA{Ba@Wk@M_@?u@L}ElBKHAP~@bCkBp@aBgDtItEbDhCJMmBkBeB}BkAeBiAoBwCuEi@u@_AaAsAeA_Ak@kB_AoA_@aB]kAMuAGaCA}@B{AN}AZiA\\iBz@a@Tu@n@_AbA_D`Eu@`AsA~AqArAwAdAaAh@kAh@qA`@aAPk@HgBNoNbAoBTeCl@cAZaBp@oBjAgAx@aB|AeBrBoBnCeBvBsU`[mPpTaDpEgHlLiDzE{DjFsFtHeMnPw@hA]r@_@z@Yv@WbA]hBOxAGzAArIGrAUbBc@vBWv@c@`A{@`BgAxA{@|@sAfAkAt@_Bt@kA`@yAZoDh@uKtAoIbA}Fn@oBHkCB{CMaCUgASqCs@mDuAiCwAoGuE{GsFuDyCoDqCs@w@i@_Ak@oAaCuG{B_Fb@S~@lBVMg@aA",
+  "reasoning": "Recorded Google Routes response for Melaka Sentral -\u003e KL Sentral (eco).",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z"
+}

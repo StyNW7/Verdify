@@ -22,9 +22,15 @@ import {
   RouteMapStage,
   useRoutePlannerScene,
 } from './page-sections';
+import { useUserDoc } from '@/lib/user-doc-provider';
+import { initialPreferenceFromDoc } from './planner-phase';
 
 export default function RoutePlannerPage() {
-  const state = usePlannerState();
+  const { doc: userDoc } = useUserDoc();
+  // initialPreferenceFromDoc is called once at mount via useState's initializer
+  // so subsequent doc snapshot changes never override a user's in-session choice.
+  const [initialPref] = useState(() => initialPreferenceFromDoc(userDoc));
+  const state = usePlannerState(initialPref);
   const { mapVariant, routes, selectedRoute } = useRoutePlannerScene(state);
   const formSectionRef = useRef<HTMLElement | null>(null);
   const [activeBooking, setActiveBooking] = useState<Booking | null>(null);

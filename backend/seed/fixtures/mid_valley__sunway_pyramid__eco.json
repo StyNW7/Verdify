@@ -1,0 +1,412 @@
+{
+  "routeId": "fixture_mid_valley__sunway_pyramid__eco",
+  "mode": "eco",
+  "totalDistance": 14.6,
+  "totalDuration": 59,
+  "carbonEstimate": 764.4,
+  "carbonBaseline": 2920,
+  "carbonSavedGrams": 2155.6,
+  "carbonSavingsPercent": 74,
+  "carbonEstimateKg": 0.76,
+  "estimatedCost": 5.5,
+  "greenPointsEstimate": 84,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1181552,
+        "longitude": 101.67667499999999
+      },
+      "endLocation": {
+        "latitude": 3.1187891,
+        "longitude": 101.67697869999999
+      },
+      "distance": 0.08,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:11:39.992747Z",
+      "arrival": "2026-05-14T09:12:39.992747Z",
+      "instruction": "Tuju timur laut ke arah to Gardens / Petaling Jaya / Pusat Bandaraya"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1187891,
+        "longitude": 101.67697869999999
+      },
+      "endLocation": {
+        "latitude": 3.1195073000000004,
+        "longitude": 101.67730209999999
+      },
+      "distance": 0.09,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:12:39.992747Z",
+      "arrival": "2026-05-14T09:13:39.992747Z",
+      "instruction": "Teruskan perjalanan ke Boulevard Offices Block D"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1195073000000004,
+        "longitude": 101.67730209999999
+      },
+      "endLocation": {
+        "latitude": 3.1195649999999997,
+        "longitude": 101.6778585
+      },
+      "distance": 0.08,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:13:39.992747Z",
+      "arrival": "2026-05-14T09:14:39.992747Z",
+      "instruction": "Belok kanan ke arah Lingkaran Syed Putra"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1195649999999997,
+        "longitude": 101.6778585
+      },
+      "endLocation": {
+        "latitude": 3.1194968999999997,
+        "longitude": 101.6780361
+      },
+      "distance": 0.02,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:14:39.992747Z",
+      "arrival": "2026-05-14T09:15:39.992747Z",
+      "instruction": "Belok kanan ke Lingkaran Syed Putra"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1194968999999997,
+        "longitude": 101.6780361
+      },
+      "endLocation": {
+        "latitude": 3.1193689,
+        "longitude": 101.6786779
+      },
+      "distance": 0.07,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:15:39.992747Z",
+      "arrival": "2026-05-14T09:16:39.992747Z",
+      "instruction": "Teruskan perjalanan untuk kekal di Lingkaran Syed Putra"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1193689,
+        "longitude": 101.6786779
+      },
+      "endLocation": {
+        "latitude": 3.1186282,
+        "longitude": 101.67997179999999
+      },
+      "distance": 0.27,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:16:39.992747Z",
+      "arrival": "2026-05-14T09:19:39.992747Z",
+      "instruction": "Teruskan perjalanan ke Jalan 1/86"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1186282,
+        "longitude": 101.67997179999999
+      },
+      "endLocation": {
+        "latitude": 3.1186379,
+        "longitude": 101.6796613
+      },
+      "distance": 0.04,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:19:39.992747Z",
+      "arrival": "2026-05-14T09:20:39.992747Z",
+      "instruction": "Belok sedikit ke kanan untuk kekal di Jalan 1/86"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1186379,
+        "longitude": 101.6796613
+      },
+      "endLocation": {
+        "latitude": 3.1192218,
+        "longitude": 101.6796363
+      },
+      "distance": 0.07,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:20:39.992747Z",
+      "arrival": "2026-05-14T09:21:39.992747Z",
+      "instruction": "Belok kanan ke arah Jalan Bukit Raja"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1192218,
+        "longitude": 101.6796363
+      },
+      "endLocation": {
+        "latitude": 3.1193882000000004,
+        "longitude": 101.67963329999999
+      },
+      "distance": 0.02,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:21:39.992747Z",
+      "arrival": "2026-05-14T09:22:39.992747Z",
+      "instruction": "Belok sedikit ke kanan ke arah Jalan Bukit Raja"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1193882000000004,
+        "longitude": 101.67963329999999
+      },
+      "endLocation": {
+        "latitude": 3.119796,
+        "longitude": 101.67961969999999
+      },
+      "distance": 0.05,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:22:39.992747Z",
+      "arrival": "2026-05-14T09:23:39.992747Z",
+      "instruction": "Belok sedikit ke kiri ke arah Jalan Bukit Raja"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.119796,
+        "longitude": 101.67961969999999
+      },
+      "endLocation": {
+        "latitude": 3.1200902,
+        "longitude": 101.67961009999999
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:23:39.992747Z",
+      "arrival": "2026-05-14T09:24:39.992747Z",
+      "instruction": "Teruskan perjalanan ke Jalan Bukit Raja"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 3.12009,
+        "longitude": 101.6796
+      },
+      "endLocation": {
+        "latitude": 3.0890109999999997,
+        "longitude": 101.67435499999999
+      },
+      "distance": 3.75,
+      "duration": 12,
+      "carbonPerKm": 60,
+      "totalCarbon": 225,
+      "estimatedCost": 2.28,
+      "departure": "2026-05-14T09:24:39.992747Z",
+      "arrival": "2026-05-14T09:36:39.992747Z",
+      "transitLine": "Puchong Utama ~ Hab Pasar Seni",
+      "departureStop": "KL278 Komersial Taman Seputeh",
+      "arrivalStop": "KL1267 Plaza Prima",
+      "headsign": "Puchong Utama",
+      "stopCount": 10,
+      "instruction": "Bas menuju Puchong Utama"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 3.0890109999999997,
+        "longitude": 101.67435499999999
+      },
+      "endLocation": {
+        "latitude": 3.0736103,
+        "longitude": 101.60589639999999
+      },
+      "distance": 8.99,
+      "duration": 23,
+      "carbonPerKm": 60,
+      "totalCarbon": 539.4,
+      "estimatedCost": 3.22,
+      "departure": "2026-05-14T09:36:39.992747Z",
+      "arrival": "2026-05-14T09:59:39.992747Z",
+      "transitLine": "Stesen LRT Subang Jaya ~ Pearl Point",
+      "departureStop": "KL1267 Plaza Prima",
+      "arrivalStop": "Sunway Pyramid",
+      "headsign": "Stesen LRT Subang Jaya",
+      "stopCount": 15,
+      "instruction": "Bas menuju Stesen LRT Subang Jaya"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.0737125,
+        "longitude": 101.6058351
+      },
+      "endLocation": {
+        "latitude": 3.0738543999999997,
+        "longitude": 101.60905860000001
+      },
+      "distance": 0.36,
+      "duration": 4,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:59:39.992747Z",
+      "arrival": "2026-05-14T10:03:39.992747Z",
+      "instruction": "Tuju timur"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.0738543999999997,
+        "longitude": 101.60905860000001
+      },
+      "endLocation": {
+        "latitude": 3.073439,
+        "longitude": 101.60899219999999
+      },
+      "distance": 0.05,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:03:39.992747Z",
+      "arrival": "2026-05-14T10:04:39.992747Z",
+      "instruction": "Belok kanan ke Persiaran Lagoon"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.073439,
+        "longitude": 101.60899219999999
+      },
+      "endLocation": {
+        "latitude": 3.0734790999999997,
+        "longitude": 101.6059808
+      },
+      "distance": 0.33,
+      "duration": 4,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:04:39.992747Z",
+      "arrival": "2026-05-14T10:08:39.992747Z",
+      "instruction": "Belok kanan ke Jalan PJS 11/15"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.0734790999999997,
+        "longitude": 101.6059808
+      },
+      "endLocation": {
+        "latitude": 3.0733444,
+        "longitude": 101.605983
+      },
+      "distance": 0.02,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:08:39.992747Z",
+      "arrival": "2026-05-14T10:09:39.992747Z",
+      "instruction": "Belok kiri"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.0733444,
+        "longitude": 101.605983
+      },
+      "endLocation": {
+        "latitude": 3.0721201,
+        "longitude": 101.6077742
+      },
+      "distance": 0.29,
+      "duration": 4,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:09:39.992747Z",
+      "arrival": "2026-05-14T10:13:39.992747Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.0721201,
+        "longitude": 101.6077742
+      },
+      "endLocation": {
+        "latitude": 3.0721293,
+        "longitude": 101.60777429999999
+      },
+      "distance": 0,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:13:39.992747Z",
+      "arrival": "2026-05-14T10:14:39.992747Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.0721293,
+        "longitude": 101.60777429999999
+      },
+      "endLocation": {
+        "latitude": 3.0721293,
+        "longitude": 101.60777429999999
+      },
+      "distance": 0,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:14:39.992747Z",
+      "arrival": "2026-05-14T10:15:39.992747Z",
+      "instruction": "Tuju"
+    }
+  ],
+  "polyline": "o_`RevqkR}B}@uBu@YIZw@C]GQGCQCJc@FSRmAA]Ee@Mg@CcB?e@Bm@L]NONEz@DZJPLNVFb@IXM?OO[Aa@FWLa@@gADICy@@?@?PvKMP@PKpABpBTf@VxAd@dAVVBlB@`BLdKhAfFl@fAFND~CCrEUlF_@`AEp@@F[FCp@FFJ?RbMnA~Fv@`BX|Bl@nDnAvD~AhBb@bFn@|Ff@vAJ~El@|@HfBVnAPFi@iBQGd@bPpBL?fGp@hBZ|Df@`CRl@JBQCPpC^zFn@|AV`ARl@RlChAz@h@v@h@r@|@d@x@Vl@Xd@tCxF~@`Bp@`BlBlD^l@Nb@Vj@Tr@\\hC\\lA@PIZQXmBvFgEjLw@dCIz@Ab@Ll@jDlLpBxG|@dDLp@EJHx@E~DLHMfLFbCF|A@xAG\\AtGGfIGlBm@~GG^WdD_CjVGr@gAhK_@xE_@rDGhAOvAq@pIg@lFM|B@x@LvCEvBWtB{@~EObAHp@IpBExCDbCH`@HpCAn@Kt@Qt@O`@El@A`@JxC@l@Hx@H`@b@jAdApBZXr@fAVZRb@@L~ChFVf@j@pBfAxIt@tH~AvOXj@VLLBbKCvOMhGFNHh@h@FNLtDb@rFx@jJBpAGjC?~FHpA?f@VtBTCSJYeC?_@IqA?eGFeC\\Hr@BGxQZ?ZEZSHKT{@H{DPQdA[n@G@Q@ED??DA?",
+  "reasoning": "Recorded Google Routes response for Mid Valley -\u003e Sunway Pyramid (eco).",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z"
+}

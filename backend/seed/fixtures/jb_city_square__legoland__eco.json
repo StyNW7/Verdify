@@ -1,0 +1,299 @@
+{
+  "routeId": "fixture_jb_city_square__legoland__eco",
+  "mode": "eco",
+  "totalDistance": 29.795,
+  "totalDuration": 94,
+  "carbonEstimate": 1734.6,
+  "carbonBaseline": 5959,
+  "carbonSavedGrams": 4224.4,
+  "carbonSavingsPercent": 71,
+  "carbonEstimateKg": 1.73,
+  "estimatedCost": 8.4,
+  "greenPointsEstimate": 154,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4627999999999999,
+        "longitude": 103.76389999999999
+      },
+      "endLocation": {
+        "latitude": 1.4628771,
+        "longitude": 103.7639167
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:11:29.88452Z",
+      "arrival": "2026-05-14T09:12:29.88452Z"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 1.4631699999999999,
+        "longitude": 103.76467
+      },
+      "endLocation": {
+        "latitude": 1.4950872,
+        "longitude": 103.74264840000001
+      },
+      "distance": 7.8,
+      "duration": 18,
+      "carbonPerKm": 60,
+      "totalCarbon": 468,
+      "estimatedCost": 3,
+      "departure": "2026-05-14T09:12:29.88452Z",
+      "arrival": "2026-05-14T09:30:29.88452Z",
+      "transitLine": "P101 : Larkin Sentral - JB Sentral - Larkin Sentral",
+      "departureStop": "JB Sentral",
+      "arrivalStop": "Larkin Sentral",
+      "headsign": "Larkin Sentral",
+      "stopCount": 3,
+      "instruction": "Bas menuju Larkin Sentral"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4961855,
+        "longitude": 103.7414728
+      },
+      "endLocation": {
+        "latitude": 1.4951333999999998,
+        "longitude": 103.741693
+      },
+      "distance": 0.12,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:30:29.88452Z",
+      "arrival": "2026-05-14T09:31:29.88452Z",
+      "instruction": "Tuju selatan di Jalan Garoda 2"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4951333999999998,
+        "longitude": 103.741693
+      },
+      "endLocation": {
+        "latitude": 1.4951939,
+        "longitude": 103.7420004
+      },
+      "distance": 0.04,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:31:29.88452Z",
+      "arrival": "2026-05-14T09:32:29.88452Z",
+      "instruction": "Belok kiri"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4951939,
+        "longitude": 103.7420004
+      },
+      "endLocation": {
+        "latitude": 1.4947999,
+        "longitude": 103.7420885
+      },
+      "distance": 0.05,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:32:29.88452Z",
+      "arrival": "2026-05-14T09:33:29.88452Z",
+      "instruction": "Belok kanan"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4947999,
+        "longitude": 103.7420885
+      },
+      "endLocation": {
+        "latitude": 1.4948960999999998,
+        "longitude": 103.7426253
+      },
+      "distance": 0.06,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:33:29.88452Z",
+      "arrival": "2026-05-14T09:34:29.88452Z",
+      "instruction": "Belok kiri\nDestinasi berada di sebelah kanan"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 1.49487,
+        "longitude": 103.74262999999999
+      },
+      "endLocation": {
+        "latitude": 1.42762,
+        "longitude": 103.63418
+      },
+      "distance": 21.11,
+      "duration": 51,
+      "carbonPerKm": 60,
+      "totalCarbon": 1266.6,
+      "estimatedCost": 5.4,
+      "departure": "2026-05-14T09:34:29.88452Z",
+      "arrival": "2026-05-14T10:25:29.88452Z",
+      "transitLine": "Larkin Sentral - Terminal Feri Puteri Harbour melalui AEON Bukit Indah",
+      "departureStop": "Larkin Sentral",
+      "arrivalStop": "Opp Legoland",
+      "headsign": "Larkin Sentral - Terminal Feri Puteri Harbour 2.0",
+      "stopCount": 19,
+      "instruction": "Bas menuju Larkin Sentral - Terminal Feri Puteri Harbour 2.0"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4276761999999998,
+        "longitude": 103.63411599999999
+      },
+      "endLocation": {
+        "latitude": 1.4262363999999998,
+        "longitude": 103.6337088
+      },
+      "distance": 0.17,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:25:29.88452Z",
+      "arrival": "2026-05-14T10:27:29.88452Z",
+      "instruction": "Tuju barat daya di Lebuh Medini Utama ke arah Jalan Medini Utara 1"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4262363999999998,
+        "longitude": 103.6337088
+      },
+      "endLocation": {
+        "latitude": 1.4259334,
+        "longitude": 103.6328532
+      },
+      "distance": 0.1,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:27:29.88452Z",
+      "arrival": "2026-05-14T10:28:29.88452Z",
+      "instruction": "Belok kanan ke Jalan Medini Utara 2\nTeruskan mengikut Jln Legoland"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4259334,
+        "longitude": 103.6328532
+      },
+      "endLocation": {
+        "latitude": 1.4263466999999999,
+        "longitude": 103.63204220000001
+      },
+      "distance": 0.1,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:28:29.88452Z",
+      "arrival": "2026-05-14T10:29:29.88452Z",
+      "instruction": "Belok kanan ke Jalan Medini Utara 3"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4263466999999999,
+        "longitude": 103.63204220000001
+      },
+      "endLocation": {
+        "latitude": 1.4260727000000002,
+        "longitude": 103.6318551
+      },
+      "distance": 0.04,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:29:29.88452Z",
+      "arrival": "2026-05-14T10:30:29.88452Z",
+      "instruction": "Belok kiri"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4260727000000002,
+        "longitude": 103.6318551
+      },
+      "endLocation": {
+        "latitude": 1.4265257999999998,
+        "longitude": 103.63082999999999
+      },
+      "distance": 0.13,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:30:29.88452Z",
+      "arrival": "2026-05-14T10:31:29.88452Z",
+      "instruction": "Belok kanan"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4265257999999998,
+        "longitude": 103.63082999999999
+      },
+      "endLocation": {
+        "latitude": 1.4270273999999998,
+        "longitude": 103.63089459999999
+      },
+      "distance": 0.06,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:31:29.88452Z",
+      "arrival": "2026-05-14T10:32:29.88452Z",
+      "instruction": "Belok kanan"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4270273999999998,
+        "longitude": 103.63089459999999
+      },
+      "endLocation": {
+        "latitude": 1.4270148,
+        "longitude": 103.6310082
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:32:29.88452Z",
+      "arrival": "2026-05-14T10:33:29.88452Z",
+      "instruction": "Belok kanan\nDestinasi berada di sebelah kiri"
+    }
+  ],
+  "polyline": "ou|GkkixROCy@uCOYyF|CyAr@g@JSHUPQHWESSEYAa@G_@[s@m@gBm@{@c@]iDcAO@o@i@c@q@Oc@Ig@Au@}@CkDBu@FaB\\_AV_@Os@KKLOBs@?[b@cAdB{AhDyBpGcA|DqBtLKr@e@rCKbAChABjAHx@ZrAxAzDbFhL|@nBpBdDxAjBNFrAvAf@j@xBpDcKjFyE`CyBlAuE|B[JaAJwG^KJgHVyEXkALeHVeDB_ACs@O]O[[S_@e@yBSa@YSa@UyCaAmAM}C][HQPO~Bc@fB]z@cAjBcCbEqDzGkCrFa@nA]~AOz@i@`Fw@vINjAN\\^\\^N`@B`@GVONSJa@Bc@Ac@Ug@OQg@[mGwAuA_@k@MaAMsBAg@@g@FoFbAMAoANICm@_DQk@Yq@m@cBQg@kAy@q@sCiCZIJ?PRbBZnBlAQUuBc@D{EjFrEk@K}@lAQSkBD?E?UaCiALIJ?PRbBZnBJ|@vFu@TEv@dCtAbB`@XVHz@JrEaApBFxBNjANnAXvAVvCv@j@EXGROPSLWBi@AUEWKYOWUQUIYEY@UFUL[`@WdAe@`F]nAqBjF}@jD]tBMjAMzB@lBZrHFlC\\fF^zBdGzU~@fDZx@~CrFjApCTt@TpAJ~@VjE\\`ILb@Dh@DdD?zBB|BApAHbALn@Vr@h@d@vExCbDlBXZ~AtCjDbHr@vBzGvXd@nBpAfFp@nBl@dAb@j@|@|@`CfBd@d@`E`DpDvBhI`G`HbF\\Z|@dAv@lA`@|@Tt@zBrMtF|Y\\dBJrA?ZDb@@\\G|AOlA{AhJgBrOGjAK~COzCw@vHqBzUQhAs@dDKbACz@KfLQnOEjHJR@fBEjAItIFlAN~@~@zBJRkV~BqMhAqJlAwBZgBNSNMRCTxCrMsA^w@`@y@j@y@x@MPo@nAg@bBM|@CdAHxAZjBPn@r@tAfAnA|@l@x@`@XLx@Rr@Lf@Dr@@bA?p@EpAUpChLVj@LLd@NrFIlE@pDJfDXlGr@jEd@z\\nCdNlAtSvA~BN~I\\hB?rCGxC[bK_B`MyBDQVGnAe@TQLQFOBc@CcAOe@Q[_@c@k@c@{@_@}@OgAAi@Hc@R[ZSd@I~@Hf@HZDb@|ArB~DdHbHtLtIvP~DnHhCpE`EnHlExHrDtFnBhD~CfG`EnIfBbDhCpDrBzBrAhAbAt@dAn@|BlAzFvDr@Nr@TrMdHhBhA|GwGHYJOFCl@yARo@p@sAv@{@`BiAz@_@t@WrAWhB]|@Y~@c@lA}@l@m@V]|@bA~@x@JKKJJHr@\\bAXx@J`BBRbBDPHBPf@FHsA`Dv@b@c@dA]h@_@bADXa@?aAKBW",
+  "reasoning": "Recorded Google Routes response for JB City Square -\u003e Legoland (eco).",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z"
+}

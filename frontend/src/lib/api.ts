@@ -1,4 +1,7 @@
-const rawBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080';
+// Guard against import.meta.env being undefined in non-Vite runtimes
+// (e.g. `node --test` loading this module transitively).
+const rawBaseUrl = (import.meta as { env?: Record<string, string> }).env?.VITE_API_BASE_URL
+  ?? 'http://localhost:8080';
 const API_BASE_URL = rawBaseUrl.replace(/\/+$/, '');
 
 type ApiEnvelope<T> = {
@@ -21,14 +24,40 @@ export class ApiError extends Error {
   }
 }
 
-async function apiRequest<T>(path: string, init: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(init.headers ?? {}),
-    },
-  });
+// AuthProvider plugs a getter in via setAuthTokenGetter. We hold a function,
+// not a value, so token rotations land on the next request without any
+// re-wiring.
+//
+// The getter is async: it resolves immediately when a token is already in
+// hand, or waits briefly for the auth-store to deliver one (bridging the
+// race between subscribeAuthState and subscribeIdToken). See auth-store.ts.
+let tokenGetter: () => Promise<string | null> = () => Promise.resolve(null);
+
+export function setAuthTokenGetter(getter: () => Promise<string | null>) {
+  tokenGetter = getter;
+}
+
+type ApiRequestOptions = {
+  // Explicit bearer token. Bypasses the AuthProvider-installed getter; used by
+  // login/register where the new credential is in hand before onIdTokenChanged
+  // has plumbed it into the store.
+  bearerToken?: string;
+};
+
+async function apiRequest<T>(
+  path: string,
+  init: RequestInit,
+  opts: ApiRequestOptions = {},
+): Promise<T> {
+  const token = opts.bearerToken !== undefined ? opts.bearerToken : await tokenGetter();
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(init.headers as Record<string, string> | undefined ?? {}),
+  };
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  const response = await fetch(`${API_BASE_URL}${path}`, { ...init, headers });
 
   const body = (await response.json().catch(() => null)) as ApiEnvelope<T> | null;
   const errorMessage =
@@ -43,44 +72,30 @@ async function apiRequest<T>(path: string, init: RequestInit): Promise<T> {
   return body.data;
 }
 
-export type RegisterPayload = {
-  email: string;
-  password: string;
-  phone: string;
-};
+// ── Auth ─────────────────────────────────────────────────────────────────────
 
-export type RegisterResult = {
+export type SyncedUser = {
   userId: string;
   email: string;
-  phone: string;
-  token: string;
+  displayName: string;
+  photoURL: string;
+  greenPointsBalance: number;
+  totalTripsCompleted: number;
+  totalCarbonSaved: number;
+  totalEarned: number;
+  totalRedeemed: number;
   createdAt: string;
 };
 
-export function registerUser(payload: RegisterPayload) {
-  return apiRequest<RegisterResult>('/api/v1/auth/register', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  });
+// /auth/sync upserts the User row from the verified Firebase claims. The
+// optional bearerToken arg lets login/register pass the id token straight
+// from the UserCredential, sidestepping the onIdTokenChanged → store →
+// tokenGetter handoff race.
+export function syncAuthProfile(bearerToken?: string) {
+  return apiRequest<SyncedUser>('/auth/sync', { method: 'POST' }, { bearerToken });
 }
 
-export type LoginPayload = {
-  email: string;
-  password: string;
-};
-
-export type LoginResult = {
-  userId: string;
-  token: string;
-  expiresIn: number;
-};
-
-export function loginUser(payload: LoginPayload) {
-  return apiRequest<LoginResult>('/api/v1/auth/login', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  });
-}
+// ── Routes ───────────────────────────────────────────────────────────────────
 
 export type BackendLocation = {
   latitude: number;
@@ -170,7 +185,6 @@ export function rerouteBooking(bookingId: string, payload: ReroutePayload) {
 
 // ── Geocode / Places ──────────────────────────────────────────────────────────
 
-// Legacy geocode endpoint — still supported as a fallback for the autocomplete hook.
 export type GeocodeSuggestion = {
   formattedAddress: string;
   latitude: number;
@@ -291,6 +305,44 @@ export type UserBookingsResponse = {
   pagination: { total: number; limit: number; offset: number };
 };
 
+export type UserRecord = {
+  userId: string;
+  email: string;
+  displayName: string;
+  photoURL: string;
+  greenPointsBalance: number;
+  totalTripsCompleted: number;
+  totalCarbonSaved: number;
+  totalEarned: number;
+  totalRedeemed: number;
+  createdAt: string;
+  presetAvatar?: string;
+  preferredTransport?: string;
+  preferredRouteMode?: string;
+  language?: string;
+};
+
+// UserPatch mirrors the validator's allow-list on the backend. Only fields
+// included here are permitted by PATCH /api/v1/user/{userId}.
+export type UserPatch = {
+  displayName?: string;
+  presetAvatar?: '🌿' | '🦊' | '🌊' | '🌙' | '🐝' | '🪴';
+  preferredTransport?: 'Transit' | 'Cycle' | 'Carpool' | 'Walk';
+  preferredRouteMode?: 'Fastest' | 'Greenest' | 'Cheapest' | 'Balanced';
+  language?: 'en' | 'ms' | 'zh' | 'ta';
+};
+
+export function getUser(userId: string) {
+  return apiRequest<UserRecord>(`/api/v1/user/${encodeURIComponent(userId)}`, { method: 'GET' });
+}
+
+export function patchUser(userId: string, patch: UserPatch) {
+  return apiRequest<UserRecord>(`/api/v1/user/${encodeURIComponent(userId)}`, {
+    method: 'PATCH',
+    body: JSON.stringify(patch),
+  });
+}
+
 export function listUserBookings(userId: string, opts: { limit?: number; offset?: number } = {}) {
   const params = new URLSearchParams();
   if (opts.limit !== undefined) params.set('limit', String(opts.limit));
@@ -301,4 +353,46 @@ export function listUserBookings(userId: string, opts: { limit?: number; offset?
     `/api/v1/user/${encodeURIComponent(userId)}/bookings${suffix}`,
     { method: 'GET' },
   );
+}
+
+export type CarbonTrendDay = {
+  date: string;
+  dayLabel: string;
+  kg: number;
+};
+
+export type CarbonTrendResponse = {
+  days: CarbonTrendDay[];
+};
+
+export function getUserCarbonTrend(userId: string) {
+  return apiRequest<CarbonTrendResponse>(
+    `/api/v1/user/${encodeURIComponent(userId)}/carbon-trend`,
+    { method: 'GET' },
+  );
+}
+
+// ── Leaderboard ───────────────────────────────────────────────────────────────
+
+export type LeaderboardEntry = {
+  rank: number;
+  uid: string;
+  displayName: string;
+  photoURL: string;
+  greenPointsBalance: number;
+  totalTripsCompleted: number;
+};
+
+export type LeaderboardResponse = {
+  entries: LeaderboardEntry[];
+  me: LeaderboardEntry;
+  totalUsers: number;
+};
+
+export function getLeaderboard(limit?: number) {
+  const params = new URLSearchParams();
+  if (limit !== undefined) params.set('limit', String(limit));
+  const qs = params.toString();
+  const suffix = qs ? `?${qs}` : '';
+  return apiRequest<LeaderboardResponse>(`/api/v1/leaderboard${suffix}`, { method: 'GET' });
 }

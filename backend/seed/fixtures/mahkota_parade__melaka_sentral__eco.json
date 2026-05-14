@@ -1,0 +1,276 @@
+{
+  "routeId": "fixture_mahkota_parade__melaka_sentral__eco",
+  "mode": "eco",
+  "totalDistance": 14.738,
+  "totalDuration": 39,
+  "carbonEstimate": 793.8,
+  "carbonBaseline": 2947.6,
+  "carbonSavedGrams": 2153.8,
+  "carbonSavingsPercent": 73,
+  "carbonEstimateKg": 0.79,
+  "estimatedCost": 3.98,
+  "greenPointsEstimate": 82,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.1876831,
+        "longitude": 102.2509815
+      },
+      "endLocation": {
+        "latitude": 2.1880691,
+        "longitude": 102.2511079
+      },
+      "distance": 0.05,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:11:39.221203Z",
+      "arrival": "2026-05-14T09:12:39.221203Z",
+      "instruction": "Tuju utara ke arah Jalan Mahkota"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.1880691,
+        "longitude": 102.2511079
+      },
+      "endLocation": {
+        "latitude": 2.1889754,
+        "longitude": 102.2513073
+      },
+      "distance": 0.1,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:12:39.221203Z",
+      "arrival": "2026-05-14T09:13:39.221203Z",
+      "instruction": "Teruskan perjalanan ke Jalan Mahkota"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.1889754,
+        "longitude": 102.2513073
+      },
+      "endLocation": {
+        "latitude": 2.1892131,
+        "longitude": 102.2512155
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:13:39.221203Z",
+      "arrival": "2026-05-14T09:14:39.221203Z",
+      "instruction": "Belok sedikit ke kiri ke arah Jln Merdeka/Jln Tun Khalil Yaakob/Laluan 5"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.1892131,
+        "longitude": 102.2512155
+      },
+      "endLocation": {
+        "latitude": 2.1895027,
+        "longitude": 102.25070369999999
+      },
+      "distance": 0.07,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:14:39.221203Z",
+      "arrival": "2026-05-14T09:15:39.221203Z",
+      "instruction": "Belok sedikit ke kanan ke arah Jln Merdeka/Jln Tun Khalil Yaakob/Laluan 5"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.1895027,
+        "longitude": 102.25070369999999
+      },
+      "endLocation": {
+        "latitude": 2.1897598,
+        "longitude": 102.25077999999999
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:15:39.221203Z",
+      "arrival": "2026-05-14T09:16:39.221203Z",
+      "instruction": "Belok kanan ke arah Jln Merdeka/Jln Tun Khalil Yaakob/Laluan 5"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.1897598,
+        "longitude": 102.25077999999999
+      },
+      "endLocation": {
+        "latitude": 2.1898765,
+        "longitude": 102.250258
+      },
+      "distance": 0.06,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:16:39.221203Z",
+      "arrival": "2026-05-14T09:17:39.221203Z",
+      "instruction": "Belok kiri ke Jln Merdeka/Jln Tun Khalil Yaakob/Laluan 5\nDestinasi berada di sebelah kanan"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 2.18993,
+        "longitude": 102.25027
+      },
+      "endLocation": {
+        "latitude": 2.2166799999999998,
+        "longitude": 102.24798
+      },
+      "distance": 13.23,
+      "duration": 19,
+      "carbonPerKm": 60,
+      "totalCarbon": 793.8,
+      "estimatedCost": 3.98,
+      "departure": "2026-05-14T09:17:39.221203Z",
+      "arrival": "2026-05-14T09:36:39.221203Z",
+      "transitLine": "Bandaraya Melaka Feeder",
+      "departureStop": "Dataran Pahlawan",
+      "arrivalStop": "Lotus Melaka",
+      "headsign": "Melaka Sentral 2",
+      "stopCount": 20,
+      "instruction": "Bas menuju Melaka Sentral 2"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.2166802,
+        "longitude": 102.2479881
+      },
+      "endLocation": {
+        "latitude": 2.2158298,
+        "longitude": 102.2480068
+      },
+      "distance": 0.1,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:36:39.221203Z",
+      "arrival": "2026-05-14T09:37:39.221203Z",
+      "instruction": "Tuju selatan di Jalan Panglima Awang ke arah Jalan Seri Cempaka 13"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.2158298,
+        "longitude": 102.2480068
+      },
+      "endLocation": {
+        "latitude": 2.2157467,
+        "longitude": 102.2497222
+      },
+      "distance": 0.19,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:37:39.221203Z",
+      "arrival": "2026-05-14T09:39:39.221203Z",
+      "instruction": "Belok kiri ke Jalan Seri Cempaka 13"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.2157467,
+        "longitude": 102.2497222
+      },
+      "endLocation": {
+        "latitude": 2.2156941,
+        "longitude": 102.2513044
+      },
+      "distance": 0.18,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:39:39.221203Z",
+      "arrival": "2026-05-14T09:41:39.221203Z",
+      "instruction": "Teruskan perjalanan ke Jalan Melati 11"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.2156941,
+        "longitude": 102.2513044
+      },
+      "endLocation": {
+        "latitude": 2.2154295,
+        "longitude": 102.2518997
+      },
+      "distance": 0.1,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:41:39.221203Z",
+      "arrival": "2026-05-14T09:42:39.221203Z",
+      "instruction": "Belok kanan ke Jalan Melati 2"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.2154295,
+        "longitude": 102.2518997
+      },
+      "endLocation": {
+        "latitude": 2.2126106,
+        "longitude": 102.2539652
+      },
+      "distance": 0.43,
+      "duration": 5,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:42:39.221203Z",
+      "arrival": "2026-05-14T09:47:39.221203Z",
+      "instruction": "Belok kanan ke Jalan Mawar"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.2126106,
+        "longitude": 102.2539652
+      },
+      "endLocation": {
+        "latitude": 2.2113609,
+        "longitude": 102.25306139999999
+      },
+      "distance": 0.18,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:47:39.221203Z",
+      "arrival": "2026-05-14T09:49:39.221203Z",
+      "instruction": "Belok tajam ke kanan\nDestinasi berada di sebelah kanan"
+    }
+  ],
+  "polyline": "_hjLs{aoRcAQIGuDg@g@JED]HGFMt@E^s@OWfBIAH@j@aEj@oG?c@KSQS}Bs@s@[|@uBdB{EZkAFk@HcAb@qCVoBDoAFsF?sDHqCf@gKFoAFe@@gAEYSYc@IcEKgCMaBBcCZs@GoAc@M_@@]dBq@bAUvBIjCe@ZUh@g@b@UtCaA^GxBN^AZIFIVuBb@sGh@}HTaEPiAb@aBNoAF{@`@eF\\wAZkCXsHN{Bh@yElFb@CRmFc@QxAWrCQpCU|FYbC]~Aa@|ES|BMl@Y`AQhAa@zGaAvNc@tD[jB_@`DSlAA\\DVPJhDRvBZ`C`@nAN~Cd@vDd@fFt@zBf@h@Je@dAiFlJoAvB}AtCYp@w@`C_GdUW`AWfA_@hCUbA_@lAyAlDKb@u@fBOl@g@tDa@pDyBbNu@dCg@xAeBdGc@jAo@rA{A|ByQjVeDfE{@e@yH{FgFiEmKkJzB_DnFmHNQ@g@CKSOwAm@o@Qk@G{@W]Qc@_@uDmEoAuAeCiDSWUMOEKIa_@fNiAj@KEg@A]WcBkE{@qBOK]o@gAmAg@c@mAq@y@[iAYm@C}CCwB?eDD{QA_GD?AhDCNuIJ{Hf@JFG@m@@mAhC@l@A~@U\\Kz@q@lAkA`AsApAiDfC~@p@T^NJN@V@XNL",
+  "reasoning": "Recorded Google Routes response for Mahkota Parade -\u003e Melaka Sentral (eco).",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z"
+}

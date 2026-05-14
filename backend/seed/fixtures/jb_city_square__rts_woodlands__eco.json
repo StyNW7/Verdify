@@ -1,0 +1,161 @@
+{
+  "routeId": "fixture_jb_city_square__rts_woodlands__eco",
+  "mode": "eco",
+  "totalDistance": 3.365,
+  "totalDuration": 19,
+  "carbonEstimate": 93.6,
+  "carbonBaseline": 673,
+  "carbonSavedGrams": 579.4,
+  "carbonSavingsPercent": 86,
+  "carbonEstimateKg": 0.09,
+  "estimatedCost": 2.91,
+  "greenPointsEstimate": 36,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4627999999999999,
+        "longitude": 103.76389999999999
+      },
+      "endLocation": {
+        "latitude": 1.4628771,
+        "longitude": 103.7639167
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:11:30.032847Z",
+      "arrival": "2026-05-14T09:12:30.032847Z"
+    },
+    {
+      "type": "mrt",
+      "startLocation": {
+        "latitude": 1.46315,
+        "longitude": 103.76445
+      },
+      "endLocation": {
+        "latitude": 1.44372,
+        "longitude": 103.76955
+      },
+      "distance": 2.34,
+      "duration": 5,
+      "carbonPerKm": 40,
+      "totalCarbon": 93.6,
+      "estimatedCost": 2.91,
+      "departure": "2026-05-14T09:12:30.032847Z",
+      "arrival": "2026-05-14T09:17:30.032847Z",
+      "transitLine": "Intercity Shuttle Tebrau JB Sentral - Woodlands",
+      "departureStop": "JB Sentral",
+      "arrivalStop": "Woodlands",
+      "headsign": "Woodlands",
+      "stopCount": 2,
+      "instruction": "Kereta api menuju Woodlands"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.44372,
+        "longitude": 103.76955
+      },
+      "endLocation": {
+        "latitude": 1.4435874,
+        "longitude": 103.7695509
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:17:30.032847Z",
+      "arrival": "2026-05-14T09:18:30.032847Z",
+      "instruction": "Ambil susur keluar"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4435411,
+        "longitude": 103.7696388
+      },
+      "endLocation": {
+        "latitude": 1.4431587,
+        "longitude": 103.7695983
+      },
+      "distance": 0.05,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:18:30.032847Z",
+      "arrival": "2026-05-14T09:19:30.032847Z",
+      "instruction": "Tuju barat daya di Woodlands Train Station ke arah Woodlands Centre Rd"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4431587,
+        "longitude": 103.7695983
+      },
+      "endLocation": {
+        "latitude": 1.4429147999999998,
+        "longitude": 103.7709241
+      },
+      "distance": 0.17,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:19:30.032847Z",
+      "arrival": "2026-05-14T09:21:30.032847Z",
+      "instruction": "Belok kiri ke Woodlands Centre Rd"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4429147999999998,
+        "longitude": 103.7709241
+      },
+      "endLocation": {
+        "latitude": 1.4481093,
+        "longitude": 103.77037639999999
+      },
+      "distance": 0.7,
+      "duration": 9,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:21:30.032847Z",
+      "arrival": "2026-05-14T09:30:30.032847Z",
+      "instruction": "Belok kiri\nJalan penggunaan terhad"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4481093,
+        "longitude": 103.77037639999999
+      },
+      "endLocation": {
+        "latitude": 1.448645,
+        "longitude": 103.7703585
+      },
+      "distance": 0.08,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:30:30.032847Z",
+      "arrival": "2026-05-14T09:31:30.032847Z",
+      "instruction": "Belok sedikit ke kanan ke Woodlands Crossing"
+    }
+  ],
+  "polyline": "ou|GkkixROCu@iBn@q@pAm@tH_EpBkArCyAj@[hAw@xAu@dAWjDq@hFyA`c@_JjCm@tCk@dBWx@Gh@Cz@?pBFbC\\dFdAnDhAhBz@b@[X?HQ^LZBNIWSSe@Gi@@g@Ja@L[Z_@l@]yABMJI^Ex@Ij@ITIJWLUIqAm@_A_@i@KIEY]KEgD?qCz@EM{@T[?{@SsBSMBIRq@?s@@C@",
+  "reasoning": "Recorded Google Routes response for JB City Square -\u003e RTS Woodlands (eco).",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z"
+}

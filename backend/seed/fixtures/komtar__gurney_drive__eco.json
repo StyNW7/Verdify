@@ -1,0 +1,180 @@
+{
+  "routeId": "fixture_komtar__gurney_drive__eco",
+  "mode": "eco",
+  "totalDistance": 5.141,
+  "totalDuration": 30,
+  "carbonEstimate": 271.2,
+  "carbonBaseline": 1028.2,
+  "carbonSavedGrams": 757,
+  "carbonSavingsPercent": 74,
+  "carbonEstimateKg": 0.27,
+  "estimatedCost": 2.41,
+  "greenPointsEstimate": 29,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4139352,
+        "longitude": 100.329679
+      },
+      "endLocation": {
+        "latitude": 5.4137172,
+        "longitude": 100.3294469
+      },
+      "distance": 0.04,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:11:35.825649Z",
+      "arrival": "2026-05-14T09:12:35.825649Z",
+      "instruction": "Tuju barat daya di Jalan Ria ke arah Jalan Magazine"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4137172,
+        "longitude": 100.3294469
+      },
+      "endLocation": {
+        "latitude": 5.4131202,
+        "longitude": 100.3306161
+      },
+      "distance": 0.15,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:12:35.825649Z",
+      "arrival": "2026-05-14T09:14:35.825649Z",
+      "instruction": "Belok kiri ke Jalan Magazine"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4131202,
+        "longitude": 100.3306161
+      },
+      "endLocation": {
+        "latitude": 5.4137663,
+        "longitude": 100.3309517
+      },
+      "distance": 0.08,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:14:35.825649Z",
+      "arrival": "2026-05-14T09:15:35.825649Z",
+      "instruction": "Belok kiri ke Lebuh Lintang"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 5.41378,
+        "longitude": 100.33094
+      },
+      "endLocation": {
+        "latitude": 5.4359399999999996,
+        "longitude": 100.30881
+      },
+      "distance": 4.52,
+      "duration": 20,
+      "carbonPerKm": 60,
+      "totalCarbon": 271.2,
+      "estimatedCost": 2.41,
+      "departure": "2026-05-14T09:15:35.825649Z",
+      "arrival": "2026-05-14T09:35:35.825649Z",
+      "transitLine": "103",
+      "departureStop": "Komtar",
+      "arrivalStop": "Gurney Plaza",
+      "headsign": "Terminal Komtar",
+      "stopCount": 17,
+      "instruction": "Bas menuju Terminal Komtar"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4359771,
+        "longitude": 100.30887279999999
+      },
+      "endLocation": {
+        "latitude": 5.435247500000001,
+        "longitude": 100.30957289999999
+      },
+      "distance": 0.11,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:35:35.825649Z",
+      "arrival": "2026-05-14T09:36:35.825649Z",
+      "instruction": "Tuju tenggara di Jalan Kelawai ke arah Lebuhraya Maktab"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.435247500000001,
+        "longitude": 100.30957289999999
+      },
+      "endLocation": {
+        "latitude": 5.436617,
+        "longitude": 100.3099412
+      },
+      "distance": 0.16,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:36:35.825649Z",
+      "arrival": "2026-05-14T09:38:35.825649Z",
+      "instruction": "Belok kiri\nJalan mempunyai penggunaan separa terhad"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.436617,
+        "longitude": 100.3099412
+      },
+      "endLocation": {
+        "latitude": 5.4372717999999995,
+        "longitude": 100.3098275
+      },
+      "distance": 0.09,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:38:35.825649Z",
+      "arrival": "2026-05-14T09:39:35.825649Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4372717999999995,
+        "longitude": 100.3098275
+      },
+      "endLocation": {
+        "latitude": 5.4372717999999995,
+        "longitude": 100.3098275
+      },
+      "distance": 0,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:39:35.825649Z",
+      "arrival": "2026-05-14T09:40:35.825649Z",
+      "instruction": "Tuju\nDestinasi berada di sebelah kiri"
+    }
+  ],
+  "polyline": "cl``@osjcRj@l@Vs@JQrAcD}@a@cA_@A@@ASUKQcCwCg@SyAdAEJMN@NXh@@FnB`CXRdBlB|@dAq@nBa@RW?]EKBcFgA{Bi@o@a@[]a@WOAK@IFoA`Bw@|@iBxByAdBiB`CkBzBiBjCuAxA}@x@LNALSZKJWUMPUT[d@iAbCwA~BkDfF_CvDyA~BqGjKs@n@G@IAUMGAWWcBwA_@_@SWkBkByAkAa@MQ?MDc@Za@n@iAvAaAfAu@jAqA`DkAfD]lAsBbEg@|@u@hBkApBo@z@gBlB{CzFkD`Fu@rAy@hB{@`Bk@p@uAnAOHFJGKNItAoAj@q@_C_@eASU?u@UO`@q@F]GQKAEG@EB",
+  "reasoning": "Recorded Google Routes response for KOMTAR -\u003e Gurney Drive (eco).",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z"
+}

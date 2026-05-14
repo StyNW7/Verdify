@@ -3,7 +3,10 @@ import { Link, Navigate, NavLink, Outlet, useLocation } from 'react-router';
 import { LoadingScreen } from '@/components/loading-screen';
 import { getLastPath } from '@/utility/nav-history';
 import { parseAuthRequired, resolveAuthGuard } from '@/lib/auth-guard';
-import { getUserIdFromSession } from '@/lib/session';
+import { useAuth } from '@/lib/auth-provider';
+import { UserDocProvider, useUserDoc } from '@/lib/user-doc-provider';
+import { pickAvatar } from '@/lib/avatar-source';
+import { useAuthLoadingFallback } from '@/hooks/useAuthLoadingFallback';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ChevronsLeft,
@@ -57,20 +60,46 @@ const isAuthedPath = (p: string) =>
 
 export default function AuthedLayout() {
   const { pathname, search } = useLocation();
+  const { user, loading } = useAuth();
+  const stillLoading = useAuthLoadingFallback(loading);
+  if (stillLoading) {
+    // Show a visible spinner instead of nothing so the user knows the page
+    // is alive while Firebase Auth settles. After the fallback timeout
+    // (see useAuthLoadingFallback), we fall through and evaluate the guard
+    // so a stalled SDK never traps the user on a blank screen.
+    return (
+      <div
+        className="flex min-h-svh items-center justify-center"
+        style={{ background: 'var(--theme-bg)', color: 'var(--theme-fg-dim)' }}
+      >
+        <div
+          className="h-6 w-6 animate-spin rounded-full"
+          style={{ border: '2px solid var(--theme-border-strong)', borderTopColor: 'var(--theme-accent)' }}
+          aria-label="Loading"
+        />
+      </div>
+    );
+  }
   const guard = resolveAuthGuard({
     authRequired: parseAuthRequired(import.meta.env.VITE_AUTH_REQUIRED),
-    sessionUserId: getUserIdFromSession(),
+    sessionUserId: user?.uid ?? null,
     devUserId: import.meta.env.VITE_DEV_USER_ID ?? '',
     pathname: pathname + search,
   });
   if ('redirectTo' in guard) {
     return <Navigate to={guard.redirectTo} replace />;
   }
-  return <AuthedShell />;
+  return (
+    <UserDocProvider>
+      <AuthedShell />
+    </UserDocProvider>
+  );
 }
 
 function AuthedShell() {
   const { pathname } = useLocation();
+  const { user, signOut } = useAuth();
+  const { doc: userDoc } = useUserDoc();
   const [expanded, setExpanded] = useState<boolean>(() => {
     if (typeof window === 'undefined') return true;
     const v = window.localStorage.getItem('verdify:sidebar');
@@ -78,6 +107,10 @@ function AuthedShell() {
   });
 
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+  const avatar = pickAvatar(user, userDoc);
+  const profileName = user?.displayName?.trim() || user?.email || 'Verdify member';
+  const profileSubtitle = user?.email && user.email !== profileName ? user.email : 'Verdify member';
 
   useEffect(() => {
     setMobileNavOpen(false);
@@ -239,17 +272,30 @@ function AuthedShell() {
               <div
                 className={`flex items-center ${expanded ? 'gap-3 px-2' : 'justify-center'}`}
               >
-                <div
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[0.72rem] font-medium"
-                  style={{
-                    background: 'var(--theme-accent-soft)',
-                    color: 'var(--theme-accent)',
-                    border: '1px solid var(--theme-accent-muted)',
-                    letterSpacing: '0.04em',
-                  }}
-                >
-                  SR
-                </div>
+                {avatar.kind === 'photo' ? (
+                  <img
+                    src={avatar.value}
+                    alt=""
+                    className="h-9 w-9 shrink-0 rounded-full object-cover"
+                    style={{ border: '1px solid var(--theme-accent-muted)' }}
+                  />
+                ) : (
+                  <div
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[0.72rem] font-medium"
+                    style={{
+                      background: 'var(--theme-accent-soft)',
+                      color: 'var(--theme-accent)',
+                      border: '1px solid var(--theme-accent-muted)',
+                      letterSpacing: '0.04em',
+                    }}
+                  >
+                    {avatar.kind === 'preset' ? (
+                      <span className="text-[1rem] leading-none">{avatar.value}</span>
+                    ) : (
+                      avatar.value
+                    )}
+                  </div>
+                )}
                 <AnimatePresence initial={false}>
                   {expanded && (
                     <motion.div
@@ -264,13 +310,13 @@ function AuthedShell() {
                         className="truncate text-[0.82rem]"
                         style={{ color: 'var(--theme-fg)' }}
                       >
-                        Stanley Wijaya
+                        {profileName}
                       </p>
                       <p
                         className="theme-mono-sm truncate"
                         style={{ color: 'var(--theme-fg-dim)' }}
                       >
-                        Commuter · JB
+                        {profileSubtitle}
                       </p>
                     </motion.div>
                   )}
@@ -280,6 +326,7 @@ function AuthedShell() {
                     <motion.button
                       key="signout"
                       type="button"
+                      onClick={() => { void signOut(); }}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
@@ -464,33 +511,47 @@ function AuthedShell() {
                       style={{ borderColor: 'var(--theme-border)' }}
                     >
                       <div className="flex items-center gap-3">
-                        <div
-                          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[0.72rem] font-medium"
-                          style={{
-                            background: 'var(--theme-accent-soft)',
-                            color: 'var(--theme-accent)',
-                            border: '1px solid var(--theme-accent-muted)',
-                            letterSpacing: '0.04em',
-                          }}
-                        >
-                          SR
-                        </div>
+                        {avatar.kind === 'photo' ? (
+                          <img
+                            src={avatar.value}
+                            alt=""
+                            className="h-9 w-9 shrink-0 rounded-full object-cover"
+                            style={{ border: '1px solid var(--theme-accent-muted)' }}
+                          />
+                        ) : (
+                          <div
+                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[0.72rem] font-medium"
+                            style={{
+                              background: 'var(--theme-accent-soft)',
+                              color: 'var(--theme-accent)',
+                              border: '1px solid var(--theme-accent-muted)',
+                              letterSpacing: '0.04em',
+                            }}
+                          >
+                            {avatar.kind === 'preset' ? (
+                              <span className="text-[1rem] leading-none">{avatar.value}</span>
+                            ) : (
+                              avatar.value
+                            )}
+                          </div>
+                        )}
                         <div className="min-w-0 flex-1">
                           <p
                             className="truncate text-[0.82rem]"
                             style={{ color: 'var(--theme-fg)' }}
                           >
-                            Stanley Wijaya
+                            {profileName}
                           </p>
                           <p
                             className="theme-mono-sm truncate"
                             style={{ color: 'var(--theme-fg-dim)' }}
                           >
-                            Commuter · JB
+                            {profileSubtitle}
                           </p>
                         </div>
                         <button
                           type="button"
+                          onClick={() => { void signOut(); }}
                           className="inline-flex h-9 w-9 items-center justify-center rounded-full"
                           style={{
                             border: '1px solid var(--theme-border)',

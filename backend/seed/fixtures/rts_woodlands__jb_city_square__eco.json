@@ -1,0 +1,166 @@
+{
+  "routeId": "fixture_rts_woodlands__jb_city_square__eco",
+  "mode": "eco",
+  "totalDistance": 4.458,
+  "totalDuration": 36,
+  "carbonEstimate": 189.6,
+  "carbonBaseline": 891.6,
+  "carbonSavedGrams": 702,
+  "carbonSavingsPercent": 79,
+  "carbonEstimateKg": 0.19,
+  "estimatedCost": 3.77,
+  "greenPointsEstimate": 31,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4488013,
+        "longitude": 103.7703095
+      },
+      "endLocation": {
+        "latitude": 1.4443264,
+        "longitude": 103.768445
+      },
+      "distance": 0.54,
+      "duration": 8,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:11:41.221761Z",
+      "arrival": "2026-05-14T09:19:41.221761Z",
+      "instruction": "Head south\nDestination will be on the right"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 1.444608,
+        "longitude": 103.76774599999999
+      },
+      "endLocation": {
+        "latitude": 1.464917,
+        "longitude": 103.76548
+      },
+      "distance": 2.49,
+      "duration": 8,
+      "carbonPerKm": 60,
+      "totalCarbon": 149.4,
+      "estimatedCost": 2.05,
+      "departure": "2026-05-14T09:19:41.221761Z",
+      "arrival": "2026-05-14T09:27:41.221761Z",
+      "transitLine": "170",
+      "departureStop": "W'lands Checkpt",
+      "arrivalStop": "Johor Bahru Checkpt",
+      "headsign": "Jln Datin Halimah",
+      "stopCount": 2,
+      "instruction": "Bus towards Jln Datin Halimah"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.464403,
+        "longitude": 103.7646613
+      },
+      "endLocation": {
+        "latitude": 1.4598027999999998,
+        "longitude": 103.76736269999999
+      },
+      "distance": 0.6,
+      "duration": 8,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:27:41.221761Z",
+      "arrival": "2026-05-14T09:35:41.221761Z",
+      "instruction": "Head southeast on Jalan Jim Quee"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4598027999999998,
+        "longitude": 103.76736269999999
+      },
+      "endLocation": {
+        "latitude": 1.4594749999999999,
+        "longitude": 103.76760159999999
+      },
+      "distance": 0.05,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:35:41.221761Z",
+      "arrival": "2026-05-14T09:36:41.221761Z",
+      "instruction": "Turn right to stay on Jalan Jim Quee"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4594749999999999,
+        "longitude": 103.76760159999999
+      },
+      "endLocation": {
+        "latitude": 1.4598973,
+        "longitude": 103.76837499999999
+      },
+      "distance": 0.1,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:36:41.221761Z",
+      "arrival": "2026-05-14T09:37:41.221761Z",
+      "instruction": "Turn left onto Jalan Tanjung Puteri/Jln Ismail Sultan/Route 52\nDestination will be on the right"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 1.45987,
+        "longitude": 103.76839
+      },
+      "endLocation": {
+        "latitude": 1.4631699999999999,
+        "longitude": 103.76467
+      },
+      "distance": 0.67,
+      "duration": 2,
+      "carbonPerKm": 60,
+      "totalCarbon": 40.2,
+      "estimatedCost": 1.72,
+      "departure": "2026-05-14T09:37:41.221761Z",
+      "arrival": "2026-05-14T09:39:41.221761Z",
+      "transitLine": "CT : JB Sentral - Bayu Puteri",
+      "departureStop": "R\u0026F Mall",
+      "arrivalStop": "JB Sentral",
+      "headsign": "JB Sentral",
+      "stopCount": 2,
+      "instruction": "Bus towards JB Sentral"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4628771,
+        "longitude": 103.7639167
+      },
+      "endLocation": {
+        "latitude": 1.4627999999999999,
+        "longitude": 103.76389999999999
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:39:41.221761Z",
+      "arrival": "2026-05-14T09:40:41.221761Z"
+    }
+  ],
+  "polyline": "_~yGmsjxR~@Jx@NrC|@bA\\NBvH~BNJLRVPlDfAw@hCHUkGyBcCg@_Cm@c@YKUe@c@eAs@wAo@oAc@}@K}@E_@BwTxEmN|CqAb@qAf@eAZkAN_ADsD@gAFmAV_AZoGjDsKdFs@Rw@Je@EaA]]A]Fu@V[BQCWc@Sk@MDfBbDlDcB~DeBxEaCbBc@hCqAbB}@A[j@[RSw@qB[i@DAEB^p@r@fBJHS\\a@b@ITiE`Cg@TcCt@YL]R@NERQT{CfB}Az@NXx@tCNB",
+  "reasoning": "Recorded Google Routes response for RTS Woodlands -\u003e JB City Square (eco).",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z"
+}

@@ -38,7 +38,11 @@ func (app *App) rerouteBookingHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Load booking.
-	b, ok := app.Store.GetBooking(bookingID)
+	b, ok, err := app.Store.GetBooking(r.Context(), bookingID)
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, "booking_lookup_failed")
+		return
+	}
 	if !ok {
 		writeErr(w, http.StatusNotFound, "booking_not_found")
 		return
@@ -50,7 +54,9 @@ func (app *App) rerouteBookingHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Hard cap: 3 reroutes per booking.
+	// Hard cap: 3 reroutes per booking. The cap-event is a multi-stage write
+	// that follows a decision; detach from r.Context() so a client disconnect
+	// after the decision doesn't lose the audit trail.
 	if len(b.RerouteHistory) >= 3 {
 		event := models.RerouteEvent{
 			Ts:           services.NowUTC(),
@@ -60,7 +66,11 @@ func (app *App) rerouteBookingHandler(w http.ResponseWriter, r *http.Request) {
 			AgentSource:  "cap",
 		}
 		b.RerouteHistory = append(b.RerouteHistory, event)
-		app.Store.UpdateBooking(b)
+		writeCtx := context.WithoutCancel(r.Context())
+		if err := app.Store.UpdateBooking(writeCtx, b); err != nil {
+			writeErr(w, http.StatusInternalServerError, "booking_persistence_failed")
+			return
+		}
 		writeOK(w, http.StatusOK, map[string]any{
 			"action":      "abort",
 			"userMessage": "Please contact support.",
@@ -71,14 +81,8 @@ func (app *App) rerouteBookingHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Resolve destination from the booking's active route.
-	activeRouteID := b.ActiveRouteID
-	if activeRouteID == "" {
-		activeRouteID = b.RouteID
-	}
-	activeRoute, hasRoute := app.Store.GetRoute(activeRouteID)
-
-	// Run agent with a hard timeout.
+	// Run agent with a hard timeout. Per ADR-0004 the agent reads its mode +
+	// destination off b.RouteSnapshot, so no separate route lookup happens here.
 	ctx, cancel := context.WithTimeout(r.Context(), rerouteBudget)
 	defer cancel()
 
@@ -93,7 +97,9 @@ func (app *App) rerouteBookingHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// If rerouting, persist the new route and update activeRouteId.
+	// If rerouting, build the new option in-memory and tag the booking's
+	// activeRouteId with a fresh opaque lineage marker. The option is *not*
+	// persisted to any routes collection (ADR-0004).
 	var newRouteOpt *models.RouteOption
 	var newRouteID string
 
@@ -104,19 +110,14 @@ func (app *App) rerouteBookingHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		opt := buildOption(*result.NewCandidate, ann, b.Passengers)
 
-		origin := req.CurrentLocation
-		dest := models.Location{}
-		if hasRoute {
-			dest = activeRoute.Destination
-		}
-		rt := optionToRoute(origin, dest, opt, result.NewCandidate.Steps)
-		app.Store.SaveRoute(rt)
-
-		opt.RouteID = rt.ID
-		opt.CreatedAt = rt.CreatedAt
+		newRouteID = newID("route_")
+		opt.RouteID = newRouteID
+		opt.CreatedAt = services.NowUTC()
 		newRouteOpt = &opt
-		newRouteID = rt.ID
-		b.ActiveRouteID = rt.ID
+		b.ActiveRouteID = newRouteID
+		// Refresh the snapshot so subsequent reroutes/handlers see the latest
+		// remaining trip.
+		b.RouteSnapshot = opt
 	}
 
 	// Append history entry.
@@ -128,7 +129,15 @@ func (app *App) rerouteBookingHandler(w http.ResponseWriter, r *http.Request) {
 		NewRouteID:   newRouteID,
 		AgentSource:  result.Source,
 	})
-	app.Store.UpdateBooking(b)
+	// Detach the write context from the HTTP request: the agent decision has
+	// already been made; a client disconnect must not cancel the persistence
+	// of the reroute history. context.WithoutCancel preserves the parent's
+	// values (e.g. tracing) while ignoring its cancellation/deadline.
+	writeCtx := context.WithoutCancel(r.Context())
+	if err := app.Store.UpdateBooking(writeCtx, b); err != nil {
+		writeErr(w, http.StatusInternalServerError, "booking_persistence_failed")
+		return
+	}
 
 	log.Printf("event=reroute booking=%s action=%s source=%s rerouteCount=%d",
 		bookingID, result.Action, result.Source, len(b.RerouteHistory))

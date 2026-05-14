@@ -1,0 +1,44 @@
+{
+  "routeId": "fixture_kota_kinabalu__kundasang__fast",
+  "mode": "fast",
+  "totalDistance": 95.325,
+  "totalDuration": 169,
+  "carbonEstimate": 7626,
+  "carbonBaseline": 19065,
+  "carbonSavedGrams": 11439,
+  "carbonSavingsPercent": 60,
+  "carbonEstimateKg": 7.63,
+  "estimatedCost": 88.39,
+  "greenPointsEstimate": 357,
+  "steps": [
+    {
+      "type": "ev_taxi",
+      "startLocation": {
+        "latitude": 5.9804,
+        "longitude": 116.0735,
+        "address": "Kota Kinabalu City Centre"
+      },
+      "endLocation": {
+        "latitude": 6.0039,
+        "longitude": 116.5703,
+        "address": "Kundasang War Memorial, Sabah"
+      },
+      "distance": 95.33,
+      "duration": 169,
+      "carbonPerKm": 80,
+      "totalCarbon": 7626.4,
+      "estimatedCost": 88.39,
+      "departure": "2026-05-14T09:11:38.699457Z",
+      "arrival": "2026-05-14T10:38:38.699457Z"
+    }
+  ],
+  "polyline": "q`oc@irmcU_BhDpB`AJ@BHl@FzBbAl@mBXm@Em@IQqHiDeJkEqJkEcCeAsCsAk@[WWgAiBm@q@yGyC_HyCi@QeA{@i@k@_@g@KSIi@CyBGSEi@Sc@KSkBa@cBYi@SeAq@MMg@{@SWi@WcCgAuEmCcAs@{AgA_BcAqCiBmAkAmAwAaAaBq@_Bc@eBQiACs@Bk@LiALg@`@{@r@aAbA}@xGuC`D{AZK|@c@dAa@rBiAv@q@j@{@`@_A^{AF{@AUJQDCXeAZ_BxD{TVyAFeAAgAEk@My@Qq@_@}@gEwHaA{AsAmBmCiDkBsB{@eASGi@Wa@MgAMWGSIU[KYSiAg@uAc@q@W]kBcByB_BcEiC{BiA_EcB{DmA_Ds@gDm@{Ca@_Fc@sDK_B@eEUc@Is@SaA_@oBkAgE_Dg@WMGyCa@eC[uAEiIBeA@eBK}@Q{@_@q@g@_@_@_@k@mAuBk@s@]_@UKu@m@{CwAwBy@}MyFkAg@qEiAqBWkI{@cBYsA_@m@UsDqB{CoBwEqCqAaAuBsAsB_BeGwFgOyOs@iAs@uAk@yA]qA]cCKeB?{AJaBXeBVcAj@_BfAyBzBqDnAeCTu@Rw@\\_CH_AD{BIsBMoAUgAi@aBi@eAgBmCsAeBiJmMwC_EyB{CgGiHw@u@mAcAgFsEgFwDwCiBoFsCkFgCkCsAsAm@yEcCkDiCaF_D_AaAuAu@gBm@kAUmCS{BAuGReB@oAE_B[c@M_Ak@w@s@w@_AqEeGw@y@k@a@w@]e@Qn@mB`@{@hBeDl@y@r@q@dBoAxAy@zCoA|@WbEy@vA_@b@QbAi@p@a@x@o@lAwAjBmBvAaAtAs@hA_Ah@o@^q@t@mBDi@r@wBv@uApAmBNe@BOQcAkAsAwJcKcBmBkD_DmC_DqBmBq@i@mHyHqE_FgD}DiK{KeDyCaCmB}AaBiCmDqCaD{D{DcCmBaBkAgCsA{Am@oBm@cDw@eCe@wBUs@OgAYwCaA_Du@{Ac@cBu@cCuAqH}EaQwKkAm@_Ao@m@e@oDoBsAy@qFeDeDaBkCy@qFkAeOuC}Bm@wEiB{@i@iDaCkAgAe@]_BwAq@]qAi@o@]oAaAyDkDU[OYg@u@}MmLoIoHq@i@sBoAcBy@kBs@uAc@qBg@mCc@oG}@wHaAoNkBuDc@cH_AyJoAaAKkAC}Fs@oA]}E{@wK_B{@Q_BSwA[kAYqCaAaEuBsAaAgEcDiJyHoI_Ha@YqC_CoBkBmGyEcBaAqB_AcBm@aCm@eB]gNuBsFs@iO_CkEw@{Bo@aC{@aDaByFcDuDgBcDwAeC_AmBo@eBo@uE{AkNiFyAg@qA[}@Mc@F[?SMISBW@[Gk@[eBYmC]yBQuAqNsaAWoBImAEmBBoBLeBXoBR}@|@sC|@kB`@o@n@_Av@_AnAiAbIeGrBsB`@g@v@qAv@uBTaANaALuATuQF_MDuAJ{APaBZ{A^}Ab@_BL]fF}RjByGHK`@sA@M|AwFrAaFj@wAHYJ}@@OJIX{@FMdBwHHu@FeBDuFDqAA_DDmBJsABwB?eCC}@?KIMOy@Qg@aBoCc@{@i@c@cAs@_@g@EMCw@Bi@GeAG_@GSD[BEAk@FYKcAAeAKoB@cCDoC?qAB_BEkBWqCScB]qBGu@D}@H]`AcBf@aANw@@c@Kw@y@uEa@kAm@aA{F{HWi@[aAM_Aa@eG?u@@Mr@}CDq@C]Ic@i@{Ay@iBW{@Go@BoAF}@Ck@Mm@QY_@Y[OuBc@eA_@i@Aq@?g@A{@O_@UoAcAy@e@_@Kg@Aa@J{Al@a@HW?c@KSQUi@Ao@f@cD@m@Kk@Sa@c@a@_@QmBm@]]Ue@Ii@@c@FY\\q@dDcFp@mALa@L}@HaBFoDTaB~@{EF_AEy@Gi@Y_Ae@_Aq@mAKg@CsDKm@e@}@s@q@u@k@c@i@Wi@I]GcAD{@j@qEDBAk@Kc@g@kAKg@@i@Jm@Ri@tBoDhAwCl@uA^m@TY`CgBNIb@c@vDcBv@m@`AaAt@aAlDiFh@u@^aAp@wB~@aEVu@Xe@xDoDbBsBr@k@nAq@jF{BnDuBtAgAlBgBdLeMnAkA^W~@Yr@KzGIf@IxLcFzAw@jAs@b@[fDcDtB{A~CkBf@a@^c@hBmC`AcBt@eBzB_GTaAJgBP}Ah@yCh@{B?y@K_AWgBY{@]e@{BmBmGeG{@sA[u@QgAG_A?[J{@`AuDLaABgBCsDGu@kBiL@e@Le@Vc@d@e@hCiBh@k@bBwB`GcGZSRGP?b@LVTN\\B\\OpBFp@J\\Zd@`LzMRNd@Pp@JtBLh@N`@Xl@z@nAtB^\\x@`@jDlA\\RTVRj@Hr@N`CLf@T`@ZVZPh@Hp@@XC|B[lAErFZ^E\\Kb@]v@iAr@m@h@SlAOrMaAl@Ql@]~BaB`FaFT_@Fa@Eq@o@wDEq@?}AEqBS_ASg@c@s@eAwAUk@Is@AyADk@HWV_@j@_@zB}A^e@l@uAR{@jAyDVoAGy@a@qCEo@@SF]^m@ZQ|@U~@_@JId@y@BM?qAMcBIg@KWWg@UQq@WgAYm@Yi@g@ISUsAW{@U]OS}AgAk@s@{CqS?aABWPc@R[ZWp@c@j@WRQPYnAmCX]b@YlA[lBy@ZYN_@r@eCdBoHDkA[w@c@a@mAc@UG{@k@SUQc@YqAIcA_@wC[y@OUa@[WKq@c@]Yg@Y}@Q{@@a@LsAR{@Di@Im@MsDuAmA_@{Cg@q@a@WUUc@Y}@k@{@OGc@KcA?sADi@Eo@QWWO]Ka@YqBSaA[i@_@Yk@MaD[i@[[c@KS[oAg@wC?_B@aCCw@i@eDEi@@}AFyBBgAG}@cAwEAc@AiAK_BYu@_BuBe@{@K_@G}@AaBBiDI_Ba@mC?y@De@r@eBn@kA\\y@ZiAbBcHJ}@FkB^qRBm@Hy@JYz@oAhBoBXUZQj@MZCjBJl@Cd@UPWFYT_CHWfDwC^aA@_@QqAc@iBa@kDAgAFoCJuAP_APs@jAeBl@u@\\[ZOZIh@EtCDXFZNZXzAnBb@X\\Jh@Dd@ClFw@j@Cf@Bb@Lh@b@l@l@p@^h@H|CFh@Hf@^tAnAdAh@\\H^?j@Uj@YvAeA~@q@r@q@Lo@@[E]Wc@USSMy@q@_@o@Aw@HYdAsBHa@AUQq@MUWU[Ie@CgB@cGNmBEQISQK]?g@@i@]cASy@Ae@B[No@FgAMeAQs@_@k@m@U[GUAm@HcCf@s@Fc@COCo@YOIQ[I[Cc@BYp@mDbA}EJ_AAOK[g@e@mBqAIKEMIk@OyEBg@Ja@`@q@|CyBZQb@_@Xa@fAgCNs@Aq@Ko@Ua@}BuCM[Go@B_@h@yDJa@R[JMf@[bHsBj@_@`@q@He@R{BNg@V_@rBgBpAaAj@[ZM^GdBO|ASl@OrB}@x@U^EZAp@JfC~@NBf@@\\IlAk@ZC^Dz@Z~DvBl@TXFXAf@O^UbAw@VOTId@EXDl@d@dAlAZR`@N`@DXANEl@a@POP]DYAm@ESe@eAc@sAE]@[Hc@z@}BT_@l@k@pEcCf@c@LUH]B_@Ca@k@mBGs@Ag@Fo@`@}BfAqFP]JO\\Uf@Qn@]\\[Rc@DY@[IqAA_BFm@FWN]fCaDj@{@x@iBX]NKb@SvAe@l@[`@_@j@kA\\eAZs@`AyA`@e@ZQ`@Kl@GjA?j@Dj@T`Af@b@HV?f@Iz@Wr@KhA?~CPv@?n@KzAm@xFyCf@SdB_@tFs@`FaAvAUtE_@xAUjAW`Bc@xBcAfDgBbAo@|@w@f@m@xBqC^_@^O`@GZ?nBt@b@Fb@AhDW~BIlGZhANZJfBt@RDd@BfAAx@IxDu@pDk@fJuBp@Y~CmBz@a@fA_@|Ac@v@]n@e@p@s@v@q@v@_@z@UbCi@pB[dB]vDeAnCeA|EuBnPuFVIt@O~AOp@KdA[nCkAb@]f@o@x@uAh@{@dAqAv@{@bB{AdAcAXg@To@n@wCHm@BcBKeBSaBMa@U]MOYMUAQ@k@Tc@Rc@Da@ESGYOi@{@Uk@E_@F_@FMJO\\QbCKd@IVK\\Q`Aq@^Q\\C\\DNDdBbA`DfCt@Xh@@x@E`AOh@QzAu@^Gb@?jBp@^Hz@BbBCx@B^LNLRf@?b@U~A?PJZn@|@x@dA^\\b@Pp@LnBJd@@b@EZKj@_@vAwAj@[pB{@nAm@n@g@t@w@|@qAl@g@d@YbAe@X[H]@YGeAH_@PWjAcAZe@L]Hk@LYRSXO\\I^@VHPPjApBf@d@XLp@JtBFdILp@JZJ|@p@XJb@?VCXQbAoA`@Wr@Sl@ExBNXCfA_@VWJ[\\iBvAgHXw@zAaC`@g@\\q@Pc@\\uBDe@Rw@LW~BaDj@e@h@W|@Y|@e@PM|BkCv@}@fLmLnBkBb@o@V}@b@qCL[\\]ZOx@KrBMlAOf@StA_An@g@nAi@nCq@x@a@dEcDt@u@NQN_@d@{BHWb@s@tB}AXa@Nc@`ByG|AgGXcBJy@XyArAuCL[Lg@p@wEFo@?aBI_CEuBEc@[_Ay@mBc@iAmA_GWaB_@eIOq@KUa@e@{AaA[a@u@mBeAoCQq@M}ACOIOa@c@o@_@m@WcAeAgA}AoDiEuAsBo@oAcAkC[eAScAKmA@gAXwIJcARu@l@qAlBwDhAmBVSXGdB?ZEPKN_@Ac@ISW[YMc@CYFeBbAgDbCiB`B_DxCc@h@U`@w@hBKb@m@fAUZc@ZWJg@BWC]QKMMa@Gy@Bs@Ni@Xg@bC{B\\e@Nc@Ha@NsAVo@z@uA|A}Bt@qA`@iAl@{BHi@?e@I]QU][O[Ea@CmAa@kBUaCC}@@UNa@`@k@Te@v@iB\\WnB_Ad@c@d@o@To@z@wC^w@p@}@Xk@Fm@@q@S}EAWF}@~@_F@gCD]N{@d@cAjAkAZQTG\\Cf@@f@JXN~AdBz@fAn@^~@PdBHx@Jp@Np@R\\BJARIbBsAvCgBdCoAzEwE\\q@Lu@VuBZ{CF}AGe@Q]_@e@K_@ASBSJ]XYhA{@Za@BKBUBq@G_AG}AAu@D[FSZk@`@]tAw@VWP_@VgAPSj@SdCMn@Gz@Ab@IPKPQJUn@iCd@kAj@oAL]Fi@G{ABYDSJOnAgAl@u@d@eAT_AZcAd@cC^{AJaABe@Co@Me@g@_BEaA@mDCsAK_@O]s@w@sBy@a@UW[KYYoB_@wEBw@La@p@cA^e@NMPSRo@B_@Km@W{AEe@AWDm@H]lB}GF]Ce@Mk@YgAAk@Hg@^y@J_@Cc@EK[a@e@c@IY?WDU`@s@Le@D]Oe@Ya@Qm@Ca@BSFOl@e@^Mf@W\\YTYP[Tk@^m@|@y@v@g@h@[v@i@fAo@pAi@TYRs@R_@NKf@O`CC\\GNEXQLM`@m@f@mA`AmCjAoC`@i@x@m@xAy@h@Q`AGvDBrBCtA?j@EhAs@h@y@hBaDRo@TkB@g@CSYu@c@}@Ow@?e@F_@xAcDReAXsCLe@Va@j@_@pAk@vAaAd@i@`BoCdAwAnAkAb@Y~Ak@`Cm@jCe@^A~@Jt@XfCrAh@NR@ZCVITORWRy@Nw@Re@Zc@TSZOVIVEpCKpBKj@Dp@PxAv@h@Zd@Jz@Cv@U~@e@r@y@jA_Cr@_BRq@JaAJyAPgAz@mC@YMk@U_@YOeB]QKs@m@k@YeAUQK]g@Aq@Me@Yi@YcAAo@Fq@Re@v@}@JU@UGg@Wa@[Qu@M}B[[MOOMYGg@I}@GSUYmCqAgBw@[UQc@{@uGKwA?o@@_@v@sHCUBo@CGi@OIEg@OQUWq@E[@_@z@oHKI?Mo@Y_@Wm@o@m@YUG]QQOk@oAy@mA}@w@o@S_@CyADaBTmCb@mCRw@Ca@IZfBAXIZDbAu@K{@WQMw@aAQMW?QHMT@PZn@@RGLYVq@V[DOGMME?_@BQHKNGXAz@MX[\\g@Zg@PMLGd@?RL`@GBIBZ^\\RHH?J}@f@UHa@ZIDU@oJo@qG}AiLyA",
+  "reasoning": "Recorded Google Routes response for Kota Kinabalu -\u003e Kundasang (fast).",
+  "recommendedFor": [
+    "speed",
+    "luggage"
+  ],
+  "recommended": false,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z"
+}

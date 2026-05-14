@@ -1,0 +1,372 @@
+{
+  "routeId": "fixture_subang__klcc__eco",
+  "mode": "eco",
+  "totalDistance": 30.81,
+  "totalDuration": 105,
+  "carbonEstimate": 1720.2,
+  "carbonBaseline": 6162,
+  "carbonSavedGrams": 4441.8,
+  "carbonSavingsPercent": 72,
+  "carbonEstimateKg": 1.72,
+  "estimatedCost": 9.51,
+  "greenPointsEstimate": 166,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.0738399,
+        "longitude": 101.5184735
+      },
+      "endLocation": {
+        "latitude": 3.0735885,
+        "longitude": 101.5185315
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:11:41.646031Z",
+      "arrival": "2026-05-14T09:12:41.646031Z",
+      "instruction": "Tuju selatan di Persiaran Sultan ke arah Jalan Majlis"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.0735885,
+        "longitude": 101.5185315
+      },
+      "endLocation": {
+        "latitude": 3.073229,
+        "longitude": 101.51686500000001
+      },
+      "distance": 0.2,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:12:41.646031Z",
+      "arrival": "2026-05-14T09:14:41.646031Z",
+      "instruction": "Belok kanan ke Jalan Majlis\nDestinasi berada di sebelah kanan"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 3.073295,
+        "longitude": 101.516828
+      },
+      "endLocation": {
+        "latitude": 3.1426149999999997,
+        "longitude": 101.695304
+      },
+      "distance": 26.35,
+      "duration": 55,
+      "carbonPerKm": 60,
+      "totalCarbon": 1581,
+      "estimatedCost": 6.34,
+      "departure": "2026-05-14T09:14:41.646031Z",
+      "arrival": "2026-05-14T10:09:41.646031Z",
+      "transitLine": "Hab Sekysen 2 ~ Hab Pasar Seni",
+      "departureStop": "Shah Alam Walk",
+      "arrivalStop": "KL2214 Pasar Seni (Platform B1 - B2)",
+      "headsign": "Hab Pasar Seni",
+      "stopCount": 34,
+      "instruction": "Bas menuju Hab Pasar Seni"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1426152,
+        "longitude": 101.69525370000001
+      },
+      "endLocation": {
+        "latitude": 3.14289,
+        "longitude": 101.69534999999999
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:09:41.646031Z",
+      "arrival": "2026-05-14T10:10:41.646031Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.14289,
+        "longitude": 101.69534999999999
+      },
+      "endLocation": {
+        "latitude": 3.14289,
+        "longitude": 101.69534999999999
+      },
+      "distance": 0,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:10:41.646031Z",
+      "arrival": "2026-05-14T10:11:41.646031Z",
+      "instruction": "Ambil laluan masuk Pasar Seni - LRT Entrance/Exit"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.14289,
+        "longitude": 101.69534999999999
+      },
+      "endLocation": {
+        "latitude": 3.14289,
+        "longitude": 101.69534999999999
+      },
+      "distance": 0,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:11:41.646031Z",
+      "arrival": "2026-05-14T10:12:41.646031Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.14289,
+        "longitude": 101.69534999999999
+      },
+      "endLocation": {
+        "latitude": 3.14228,
+        "longitude": 101.69524
+      },
+      "distance": 0.07,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:12:41.646031Z",
+      "arrival": "2026-05-14T10:13:41.646031Z"
+    },
+    {
+      "type": "lrt",
+      "startLocation": {
+        "latitude": 3.14228,
+        "longitude": 101.69524
+      },
+      "endLocation": {
+        "latitude": 3.15938,
+        "longitude": 101.71341
+      },
+      "distance": 3.48,
+      "duration": 9,
+      "carbonPerKm": 40,
+      "totalCarbon": 139.2,
+      "estimatedCost": 3.17,
+      "departure": "2026-05-14T10:13:41.646031Z",
+      "arrival": "2026-05-14T10:22:41.646031Z",
+      "transitLine": "LRT Kelana Jaya Line",
+      "departureStop": "LRT Pasar Seni",
+      "arrivalStop": "KLCC (KJ10)",
+      "headsign": "From Putra Heights to Gombak",
+      "stopCount": 5,
+      "instruction": "Kereta api bawah tanah menuju From Putra Heights to Gombak"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.15938,
+        "longitude": 101.71341
+      },
+      "endLocation": {
+        "latitude": 3.15938,
+        "longitude": 101.71341
+      },
+      "distance": 0,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:22:41.646031Z",
+      "arrival": "2026-05-14T10:23:41.646031Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.15938,
+        "longitude": 101.71341
+      },
+      "endLocation": {
+        "latitude": 3.15944,
+        "longitude": 101.71336
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:23:41.646031Z",
+      "arrival": "2026-05-14T10:24:41.646031Z",
+      "instruction": "Ambil susur keluar KLCC - Entrance/Exit (Avenue K)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1597873,
+        "longitude": 101.7133508
+      },
+      "endLocation": {
+        "latitude": 3.1599586000000004,
+        "longitude": 101.7141034
+      },
+      "distance": 0.09,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:24:41.646031Z",
+      "arrival": "2026-05-14T10:25:41.646031Z",
+      "instruction": "Tuju timur di Lorong Mayang ke arah Jln Mayang"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1599586000000004,
+        "longitude": 101.7141034
+      },
+      "endLocation": {
+        "latitude": 3.1593250000000004,
+        "longitude": 101.7147352
+      },
+      "distance": 0.1,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:25:41.646031Z",
+      "arrival": "2026-05-14T10:26:41.646031Z",
+      "instruction": "Belok kanan ke Jln Mayang"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1593250000000004,
+        "longitude": 101.7147352
+      },
+      "endLocation": {
+        "latitude": 3.1588068999999996,
+        "longitude": 101.7132803
+      },
+      "distance": 0.17,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:26:41.646031Z",
+      "arrival": "2026-05-14T10:28:41.646031Z",
+      "instruction": "Belok kanan ke Jln Ampang"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1588068999999996,
+        "longitude": 101.7132803
+      },
+      "endLocation": {
+        "latitude": 3.1586958999999997,
+        "longitude": 101.713302
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:28:41.646031Z",
+      "arrival": "2026-05-14T10:29:41.646031Z",
+      "instruction": "Belok kiri"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1586958999999997,
+        "longitude": 101.713302
+      },
+      "endLocation": {
+        "latitude": 3.1587049000000005,
+        "longitude": 101.7131655
+      },
+      "distance": 0.02,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:29:41.646031Z",
+      "arrival": "2026-05-14T10:30:41.646031Z",
+      "instruction": "Belok kanan"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1587049000000005,
+        "longitude": 101.7131655
+      },
+      "endLocation": {
+        "latitude": 3.1584794,
+        "longitude": 101.7132187
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:30:41.646031Z",
+      "arrival": "2026-05-14T10:31:41.646031Z",
+      "instruction": "Belok kiri"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1584794,
+        "longitude": 101.7132187
+      },
+      "endLocation": {
+        "latitude": 3.158487,
+        "longitude": 101.7114508
+      },
+      "distance": 0.2,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:31:41.646031Z",
+      "arrival": "2026-05-14T10:33:41.646031Z",
+      "instruction": "Belok kanan"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.158487,
+        "longitude": 101.7114508
+      },
+      "endLocation": {
+        "latitude": 3.1582898,
+        "longitude": 101.7116662
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:33:41.646031Z",
+      "arrival": "2026-05-14T10:34:41.646031Z",
+      "instruction": "Belok kiri"
+    }
+  ],
+  "polyline": "ojwQmyrjRp@KZ|@Rx@Dr@AZLb@Mn@DTLXMFLEM[RWf@UjBUJ]?QmAqHSGEEi@uD]{BRYg@cExH{@r@HPJJXl@tEEPILMFkBVWAMGa@{CSSS{@MOOM}C\\E[[uFO{CO_GAy@DQTKzHEbCUjB?t@Dp@NnDfAb@?ZELGfA{DVcB@_@MwHg@aMCc@Sy@Q_@o@y@{@s@wBmAm@YaAYg@IsAE_AAsD@sAM]EoA_@a@E]?m@HUHc@@WGSMSWG]@YL_@TU^KXAVm@Pw@bB{Fz@iD^aAn@aA|@eAx@i@hDsAzC}@`@Yv@gAJ]Ta@NmA?c@Ii@qAgGq@kCHWuAkE{@}BgGmRwAgEUGc@s@g@cBcAyFYkCBQDG_BgJ]cCmFi[uA{GYqAwBeI_BmGoByHgC}Jc@_B}@cCqAqCqKoSg@kAc@gBUeBIeAUoJQkFUgJ_@qMS]Kq@CaBFQWsB]sA[_AaBkDwDeHe@u@s@}A_@oAY}AMaB?sA@qAH_CVyFDgFJgFJ_BXoCn@iEhAqIxC}X\\yDJwCGmMM}T@oCCcECuAQoE_@gEw@gGg@oGMqE@{CM}Di@sIu@oJa@{DqAoGs@aC{@_C_B}Cc@u@cCqDqB}CkFwHcG_J{E}Gy@cAsBsBeBsA{B}Au@e@g@a@_EkBeDoAeCq@sBc@}HoAmAQiBe@}Ak@mBeA}AoAeAiAm@{@q@oASCiBeDwAyCYW_@E_@?m@ZaAV}@LiCNi@CsADcCIwBUmAYiBk@iB_AaBcAaAcAc@g@SUUg@_@kAWuAEq@Ak@@oAFiAd@yCf@_BZ_AHMb@aAnAoBX_@z@u@xAaAd@_@d@S\\a@L]@MOq@mAmDi@wAFWsBoEc@s@qBiEmFgJmCuEgAcBgHoNkEmJe@kAgCcFM][Gs@kBs@qCSc@_@a@g@UUKMMgBEy@M{@[a@Y_EuCMGWYWe@Kc@C]`@{DJi@nDoJh@wAd@gBZ_EDiBKeEO{DQg@[c@i@a@iGw@gA[w@c@]]MWUW_BkAcGiFcD}CoEqEu@q@cBmAmBeAmCoA_Dy@cBm@y@_@aEmCyEsDyCyB{E{CoB_BkA{@h@o@rCcCdBeBXm@Lk@?k@Ik@Oo@qDaEyAeB}DkEw@w@}AqBq@m@QIy@k@sLmHOU}@_Dg@kBcAsB{EyFFY@oCI]@gBISKE]?aBTeARa@Be@CYKEEi@AWDWFYAUGMSo@Q[Ay@?{CIqBA?B?Hu@SxBTeD@gC@uAPoB`@{@F[?iHw@qBYqBk@YOe@a@]Uo@[cBs@mAq@sAiAqAsAe@WqE}@k@QSMi@y@]m@_BsDu@iAq@o@g@_@_Ag@qAk@iGcDg@Uc@MkCg@s@S{@_@{@e@kG}EwDyBqBuBeA_Bi@gAwAmHEgA@s@FgALo@l@qALUX]dBoAtA_Az@{@Zc@La@D{@MuDQaJC}@D?KHeA@Ey@Gi@Sq@hBoBROz@fBX|@Hh@FrATC?Xj@IIpDYrB@N^j@f@k@",
+  "reasoning": "Recorded Google Routes response for Subang -\u003e KLCC (eco).",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z"
+}

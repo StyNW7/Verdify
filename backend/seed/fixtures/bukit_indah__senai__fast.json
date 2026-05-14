@@ -1,0 +1,44 @@
+{
+  "routeId": "fixture_bukit_indah__senai__fast",
+  "mode": "fast",
+  "totalDistance": 26.958,
+  "totalDuration": 47,
+  "carbonEstimate": 2156.64,
+  "carbonBaseline": 5391.6,
+  "carbonSavedGrams": 3234.96,
+  "carbonSavingsPercent": 60,
+  "carbonEstimateKg": 2.16,
+  "estimatedCost": 28.22,
+  "greenPointsEstimate": 101,
+  "steps": [
+    {
+      "type": "ev_taxi",
+      "startLocation": {
+        "latitude": 1.4877,
+        "longitude": 103.6691,
+        "address": "Bukit Indah, Johor Bahru"
+      },
+      "endLocation": {
+        "latitude": 1.6406,
+        "longitude": 103.67,
+        "address": "Senai International Airport"
+      },
+      "distance": 26.96,
+      "duration": 47,
+      "carbonPerKm": 80,
+      "totalCarbon": 2156.8,
+      "estimatedCost": 28.22,
+      "departure": "2026-05-14T09:11:28.790911Z",
+      "arrival": "2026-05-14T09:43:28.790911Z"
+    }
+  ],
+  "polyline": "_raHovvwRi@Je@N}@vC?B|@zC]F{@qCKWSWcAq@q^}WeEaDuHiFgAgAQc@Eg@BoAAiGeI@_AKk@Y]WO_@qAcJ@[d@cBNWvAoApAsAz@{@jAqAHYDk@Gk@mSaSeAmAQ[k@{AMuACaADsAv@{GB_AIgAWgAiEaK]Wa@k@a@U_@Ii@A_@Ha@TmCtB_@XqBdA_@Ji@LeADU?yO~HuC|AwDzBgOhJmC~AoCfBqA`A_EhCeJpFgCfB}GbEuRbM}Al@g@b@mBnBkB`C{@rAmBpDk@zA_E|NcCpIq@~AwBjD}@hAuDvDqCdCuAdA}BzA{BvA{KdGeD`CqA|@mKjJ_HvGyG`G{AtAcAt@mDtBuFpB_AVyDnA}A`@}B\\_EZ_BHeDC_Fg@sBYgFiAeIyBaC]WA_Gm@yBIaG?gEHcFRcC@aBEyAMcAO{EsA_JmD_B[gBa@cC[mBKqBE_AGeDM_JSiB?{DZuAPcBXaB^cBh@cG`CwD|AmDrA_HtCwBx@mEhBqEdC}@n@gCdCkB|BiAdB_BdD}AnEq@xAcAlBa@h@mBrBsApAyDrCiAn@iBv@oDnAqA\\q@LqBTgHd@wD\\aC`@aDx@iFpBqLjF_Bd@iAPy@BwBIiCSmBH_ALo@XaB|@oA`@i@HcA@iAGcCe@_Cw@_Ai@_@a@aAgA[UKYqEmDiAq@a@SwAi@oAU]K]Q[YQ]Ga@IoCYyEGaEMwB]mByAoF_AmCcA}Bs@kAcAqAgAkA}@{@oAgAwBqAqC}Ah@oAvAeBz@qARe@@k@FYLoBJaCX}DD]DOBuAEkDMmCEc@Mm@a@sCc@sB]wA?Cq@}Bu@{BgAmCMOKWOw@KmAAeEHW`@gJGwKUcDUaAc@_A}DeGgGeJgBuB{@iAcBcCeE_GwHaL}@sAiA{AeAcBcK}NKIc@m@e@{@[s@I]a@eASYSQu@ZkEvBaAl@{IdGaE|CiItF{A|@wHjFELMDGCuUlOaIpFk@V]Fk@F_A?_AK{@Um@]q@o@oHqKQM]KYAWKU?MByIjGLVfPhVpFdIr@`AYTs@VOLKNMAmAeASI{AdAu@f@MTmE~CSFa@?uCR",
+  "reasoning": "Recorded Google Routes response for Bukit Indah -\u003e Senai (fast).",
+  "recommendedFor": [
+    "speed",
+    "luggage"
+  ],
+  "recommended": false,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z"
+}

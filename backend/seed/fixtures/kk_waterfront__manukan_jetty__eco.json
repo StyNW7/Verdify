@@ -1,0 +1,46 @@
+{
+  "routeId": "fixture_kk_waterfront__manukan_jetty__eco",
+  "mode": "eco",
+  "totalDistance": 0.84,
+  "totalDuration": 14,
+  "carbonEstimate": 0,
+  "carbonBaseline": 168,
+  "carbonSavedGrams": 168,
+  "carbonSavingsPercent": 100,
+  "carbonEstimateKg": 0,
+  "estimatedCost": 0,
+  "greenPointsEstimate": 17,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.984,
+        "longitude": 116.0731,
+        "address": "KK Waterfront Esplanade, Kota Kinabalu"
+      },
+      "endLocation": {
+        "latitude": 5.979,
+        "longitude": 116.0696,
+        "address": "Jesselton Point Ferry Terminal, Kota Kinabalu"
+      },
+      "distance": 0.84,
+      "duration": 14,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk along KK Esplanade to Jesselton Point Ferry Terminal"
+    }
+  ],
+  "polyline": "_ofd@en|tA~Y~U",
+  "reasoning": "Walking-only stroll from KK Waterfront to Jesselton Point — boarding pier for Manukan Island ferries.",
+  "recommendedFor": [
+    "low-carbon",
+    "tourist"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

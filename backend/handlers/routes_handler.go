@@ -67,13 +67,15 @@ func (app *App) calculateRouteHandler(w http.ResponseWriter, r *http.Request) {
 		result = templatedResult(rankIn)
 	}
 
+	// Ranked options are returned to the client but not persisted. Per
+	// ADR-0004 the route's authoritative copy is the booking's RouteSnapshot
+	// (written on confirm). RouteID is an opaque lineage tag.
 	opts := make([]models.RouteOption, 0, len(candidates))
+	now := services.NowUTC()
 	for i, c := range candidates {
 		opt := buildOption(c, result.Items[i], passengers)
-		rt := optionToRoute(req.Origin, req.Destination, opt, opt.Steps)
-		app.Store.SaveRoute(rt)
-		opt.RouteID = rt.ID
-		opt.CreatedAt = rt.CreatedAt
+		opt.RouteID = newID("route_")
+		opt.CreatedAt = now
 		opts = append(opts, opt)
 	}
 
@@ -189,27 +191,6 @@ func buildOption(c models.RouteCandidate, ann ranker.Annotation, passengers int)
 		opt.RecommendedFor = []string{}
 	}
 	return opt
-}
-
-func optionToRoute(origin, dest models.Location, opt models.RouteOption, steps []models.TransportSegment) models.Route {
-	return models.Route{
-		ID:                   newID("route_"),
-		Origin:               origin,
-		Destination:          dest,
-		Mode:                 opt.Mode,
-		TotalDistance:        opt.TotalDistance,
-		TotalDuration:        opt.TotalDuration,
-		CarbonEstimate:       opt.CarbonEstimate,
-		CarbonBaseline:       opt.CarbonBaseline,
-		CarbonSavedGrams:     opt.CarbonSavedGrams,
-		CarbonSavingsPercent: opt.CarbonSavingsPercent,
-		CarbonEstimateKg:     opt.CarbonEstimateKg,
-		EstimatedCost:        opt.EstimatedCost,
-		GreenPointsEstimate:  opt.GreenPointsEstimate,
-		Steps:                steps,
-		Polyline:             opt.Polyline,
-		CreatedAt:            services.NowUTC(),
-	}
 }
 
 func totalStepCost(c models.RouteCandidate, passengers int) float64 {

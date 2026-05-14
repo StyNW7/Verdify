@@ -33,14 +33,16 @@ test('flag on, session present → returns session user', () => {
   assert.deepEqual(result, { userId: 'usr_abc' });
 });
 
-test('flag on, no session → redirects to /auth/login with next param', () => {
+test('flag on, no session → redirects to landing with openAuth + next', () => {
   const result = resolveAuthGuard({
     authRequired: true,
     sessionUserId: null,
     devUserId: 'usr_dev_001',
     pathname: '/dashboard',
   });
-  assert.deepEqual(result, { redirectTo: '/auth/login?next=%2Fdashboard' });
+  assert.deepEqual(result, {
+    redirectTo: '/?openAuth=login&next=%2Fdashboard',
+  });
 });
 
 test('flag on, no session → encodes nested path with query in next', () => {
@@ -51,7 +53,7 @@ test('flag on, no session → encodes nested path with query in next', () => {
     pathname: '/route?origin=jb&dest=ws',
   });
   assert.deepEqual(result, {
-    redirectTo: '/auth/login?next=%2Froute%3Forigin%3Djb%26dest%3Dws',
+    redirectTo: '/?openAuth=login&next=%2Froute%3Forigin%3Djb%26dest%3Dws',
   });
 });
 

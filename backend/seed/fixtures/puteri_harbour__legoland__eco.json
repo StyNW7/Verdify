@@ -1,0 +1,157 @@
+{
+  "routeId": "fixture_puteri_harbour__legoland__eco",
+  "mode": "eco",
+  "totalDistance": 1.802,
+  "totalDuration": 24,
+  "carbonEstimate": 0,
+  "carbonBaseline": 360.4,
+  "carbonSavedGrams": 360.4,
+  "carbonSavingsPercent": 99,
+  "carbonEstimateKg": 0,
+  "estimatedCost": 0,
+  "greenPointsEstimate": 0,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4147987,
+        "longitude": 103.6299899
+      },
+      "endLocation": {
+        "latitude": 1.4261085999999998,
+        "longitude": 103.633524
+      },
+      "distance": 1.39,
+      "duration": 19,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:11:40.333384Z",
+      "arrival": "2026-05-14T09:30:40.333384Z",
+      "instruction": "Tuju utara di Lebuh Medini Utama ke arah Jalan Medini Sentral 6"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4261085999999998,
+        "longitude": 103.633524
+      },
+      "endLocation": {
+        "latitude": 1.4259334,
+        "longitude": 103.6328532
+      },
+      "distance": 0.08,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:30:40.333384Z",
+      "arrival": "2026-05-14T09:31:40.333384Z",
+      "instruction": "Belok kiri ke Jalan Medini Utara 2\nTeruskan mengikut Jln Legoland"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4259334,
+        "longitude": 103.6328532
+      },
+      "endLocation": {
+        "latitude": 1.4263466999999999,
+        "longitude": 103.63204220000001
+      },
+      "distance": 0.1,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:31:40.333384Z",
+      "arrival": "2026-05-14T09:32:40.333384Z",
+      "instruction": "Belok kanan ke Jalan Medini Utara 3"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4263466999999999,
+        "longitude": 103.63204220000001
+      },
+      "endLocation": {
+        "latitude": 1.4260727000000002,
+        "longitude": 103.6318551
+      },
+      "distance": 0.04,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:32:40.333384Z",
+      "arrival": "2026-05-14T09:33:40.333384Z",
+      "instruction": "Belok kiri"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4260727000000002,
+        "longitude": 103.6318551
+      },
+      "endLocation": {
+        "latitude": 1.4265257999999998,
+        "longitude": 103.63082999999999
+      },
+      "distance": 0.13,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:33:40.333384Z",
+      "arrival": "2026-05-14T09:34:40.333384Z",
+      "instruction": "Belok kanan"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4265257999999998,
+        "longitude": 103.63082999999999
+      },
+      "endLocation": {
+        "latitude": 1.4270273999999998,
+        "longitude": 103.63089459999999
+      },
+      "distance": 0.06,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:34:40.333384Z",
+      "arrival": "2026-05-14T09:35:40.333384Z",
+      "instruction": "Belok kanan"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4270273999999998,
+        "longitude": 103.63089459999999
+      },
+      "endLocation": {
+        "latitude": 1.4270148,
+        "longitude": 103.6310082
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:35:40.333384Z",
+      "arrival": "2026-05-14T09:36:40.333384Z",
+      "instruction": "Belok kanan\nDestinasi berada di sebelah kiri"
+    }
+  ],
+  "polyline": "oisGmfowR{Jd@g@FcCHsBI}AM}AUiA[aA_@y@e@gFwB_EwB_@UoC}BoCsCo@a@y@[kASu@CcFBHrAPf@FHsA`Dv@b@c@dA]h@_@bADXa@?aAKBW",
+  "reasoning": "Recorded Google Routes response for Puteri Harbour -\u003e Legoland (eco).",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z"
+}
