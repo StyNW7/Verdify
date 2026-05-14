@@ -1,0 +1,46 @@
+{
+  "routeId": "fixture_jonker_street__a_famosa__eco",
+  "mode": "eco",
+  "totalDistance": 0.71,
+  "totalDuration": 10,
+  "carbonEstimate": 0,
+  "carbonBaseline": 142,
+  "carbonSavedGrams": 142,
+  "carbonSavingsPercent": 100,
+  "carbonEstimateKg": 0,
+  "estimatedCost": 0,
+  "greenPointsEstimate": 14,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.1965,
+        "longitude": 102.247,
+        "address": "Jonker Street, Melaka"
+      },
+      "endLocation": {
+        "latitude": 2.1917,
+        "longitude": 102.251,
+        "address": "A Famosa, Bandar Hilir, Melaka"
+      },
+      "distance": 0.71,
+      "duration": 10,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk through Dutch Square to A Famosa fort"
+    }
+  ],
+  "polyline": "qdnLcfboRpYsT",
+  "reasoning": "Walking-only heritage trail from Jonker Street through Dutch Square to A Famosa.",
+  "recommendedFor": [
+    "low-carbon",
+    "tourist"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

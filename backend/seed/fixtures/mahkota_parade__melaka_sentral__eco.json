@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_mahkota_parade__melaka_sentral__eco",
+  "mode": "eco",
+  "totalDistance": 2.84,
+  "totalDuration": 17,
+  "carbonEstimate": 156,
+  "carbonBaseline": 568,
+  "carbonSavedGrams": 412,
+  "carbonSavingsPercent": 73,
+  "carbonEstimateKg": 0.16,
+  "estimatedCost": 2.0,
+  "greenPointsEstimate": 41,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.1877,
+        "longitude": 102.2509,
+        "address": "Mahkota Parade, Bandar Hilir, Melaka"
+      },
+      "endLocation": {
+        "latitude": 2.187924,
+        "longitude": 102.250716
+      },
+      "distance": 0.21,
+      "duration": 4,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Mahkota Parade Bus Stop"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 2.187924,
+        "longitude": 102.250716
+      },
+      "endLocation": {
+        "latitude": 2.211224,
+        "longitude": 102.252852
+      },
+      "distance": 2.6,
+      "duration": 10,
+      "carbonPerKm": 60,
+      "totalCarbon": 156,
+      "estimatedCost": 2.0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "Panorama Melaka 17",
+      "departureStop": "Mahkota Parade Bus Stop",
+      "arrivalStop": "Melaka Sentral Bus Hub",
+      "headsign": "Towards Melaka Sentral",
+      "stopCount": 6,
+      "instruction": "Board Panorama Melaka 17 Towards Melaka Sentral"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.211224,
+        "longitude": 102.252852
+      },
+      "endLocation": {
+        "latitude": 2.2114,
+        "longitude": 102.253,
+        "address": "Melaka Sentral"
+      },
+      "distance": 0.03,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Melaka Sentral"
+    }
+  ],
+  "polyline": "qbnLwhboR}rByA",
+  "reasoning": "Lowest-carbon option from Mahkota Parade to Melaka Sentral on Panorama Melaka 17 bus.",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

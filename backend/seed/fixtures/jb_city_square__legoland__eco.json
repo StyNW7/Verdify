@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_jb_city_square__legoland__eco",
+  "mode": "eco",
+  "totalDistance": 18.71,
+  "totalDuration": 47,
+  "carbonEstimate": 1496.8,
+  "carbonBaseline": 3742,
+  "carbonSavedGrams": 2245.2,
+  "carbonSavingsPercent": 60,
+  "carbonEstimateKg": 1.5,
+  "estimatedCost": 4.5,
+  "greenPointsEstimate": 225,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4628,
+        "longitude": 103.7639,
+        "address": "Johor Bahru City Square"
+      },
+      "endLocation": {
+        "latitude": 1.46306,
+        "longitude": 103.764716
+      },
+      "distance": 0.13,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to JB Sentral Bus Hub"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 1.46306,
+        "longitude": 103.764716
+      },
+      "endLocation": {
+        "latitude": 1.426984,
+        "longitude": 103.631544
+      },
+      "distance": 18.45,
+      "duration": 42,
+      "carbonPerKm": 80,
+      "totalCarbon": 1476,
+      "estimatedCost": 4.5,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "Causeway Link CW6",
+      "departureStop": "JB Sentral Bus Hub",
+      "arrivalStop": "Legoland Terminal",
+      "headsign": "Towards Iskandar Puteri",
+      "stopCount": 12,
+      "instruction": "Board Causeway Link CW6 Towards Iskandar Puteri"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.426984,
+        "longitude": 103.631544
+      },
+      "endLocation": {
+        "latitude": 1.4271,
+        "longitude": 103.631,
+        "address": "Legoland Malaysia, Iskandar Puteri"
+      },
+      "distance": 0.13,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Legoland Malaysia"
+    }
+  ],
+  "polyline": "wt`Gctjxr~r@niW",
+  "reasoning": "Lowest-carbon option from JB City Square to Legoland on Causeway Link CW6.",
+  "recommendedFor": [
+    "low-carbon",
+    "tourist"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

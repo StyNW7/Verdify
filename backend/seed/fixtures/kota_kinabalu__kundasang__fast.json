@@ -1,0 +1,46 @@
+{
+  "routeId": "fixture_kota_kinabalu__kundasang__fast",
+  "mode": "fast",
+  "totalDistance": 87.42,
+  "totalDuration": 122,
+  "carbonEstimate": 6993.6,
+  "carbonBaseline": 17484,
+  "carbonSavedGrams": 10490.4,
+  "carbonSavingsPercent": 60,
+  "carbonEstimateKg": 6.99,
+  "estimatedCost": 134.0,
+  "greenPointsEstimate": 1049,
+  "steps": [
+    {
+      "type": "ev_taxi",
+      "startLocation": {
+        "latitude": 5.9804,
+        "longitude": 116.0735,
+        "address": "Kota Kinabalu City Centre"
+      },
+      "endLocation": {
+        "latitude": 6.0039,
+        "longitude": 116.5703,
+        "address": "Kundasang War Memorial, Sabah"
+      },
+      "distance": 87.42,
+      "duration": 122,
+      "carbonPerKm": 80,
+      "totalCarbon": 6993.6,
+      "estimatedCost": 134.0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Drive from KK City to Kundasang via the Kinabalu Park route"
+    }
+  ],
+  "polyline": "qjfd@en|tAaPmsrA",
+  "reasoning": "Fastest day-trip ride from KK to Kundasang along the Crocker Range highway.",
+  "recommendedFor": [
+    "speed",
+    "tourist"
+  ],
+  "recommended": false,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

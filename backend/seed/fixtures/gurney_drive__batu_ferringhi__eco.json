@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_gurney_drive__batu_ferringhi__eco",
+  "mode": "eco",
+  "totalDistance": 7.62,
+  "totalDuration": 28,
+  "carbonEstimate": 444,
+  "carbonBaseline": 1524,
+  "carbonSavedGrams": 1080,
+  "carbonSavingsPercent": 71,
+  "carbonEstimateKg": 0.44,
+  "estimatedCost": 2.0,
+  "greenPointsEstimate": 108,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4374,
+        "longitude": 100.3094,
+        "address": "Gurney Drive, Georgetown"
+      },
+      "endLocation": {
+        "latitude": 5.437048,
+        "longitude": 100.309684
+      },
+      "distance": 0.16,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Gurney Plaza Bus Stop"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 5.437048,
+        "longitude": 100.309684
+      },
+      "endLocation": {
+        "latitude": 5.475264,
+        "longitude": 100.250768
+      },
+      "distance": 7.4,
+      "duration": 22,
+      "carbonPerKm": 60,
+      "totalCarbon": 444,
+      "estimatedCost": 2.0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "Rapid Penang 101",
+      "departureStop": "Gurney Plaza",
+      "arrivalStop": "Batu Ferringhi Beach Stop",
+      "headsign": "Towards Teluk Bahang",
+      "stopCount": 14,
+      "instruction": "Board Rapid Penang 101 Towards Teluk Bahang"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.475264,
+        "longitude": 100.250768
+      },
+      "endLocation": {
+        "latitude": 5.4754,
+        "longitude": 100.2503,
+        "address": "Batu Ferringhi, Penang"
+      },
+      "distance": 0.06,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Batu Ferringhi Beach"
+    }
+  ],
+  "polyline": "csa``@_skcRctEnoH",
+  "reasoning": "Lowest-carbon option from Gurney Drive to Batu Ferringhi on Rapid Penang 101 coastal bus.",
+  "recommendedFor": [
+    "low-carbon",
+    "tourist"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

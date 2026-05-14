@@ -1,0 +1,94 @@
+{
+  "routeId": "fixture_mid_valley__sunway_pyramid__eco",
+  "mode": "eco",
+  "totalDistance": 9.42,
+  "totalDuration": 32,
+  "carbonEstimate": 565.2,
+  "carbonBaseline": 1884,
+  "carbonSavedGrams": 1318.8,
+  "carbonSavingsPercent": 70,
+  "carbonEstimateKg": 0.57,
+  "estimatedCost": 4.2,
+  "greenPointsEstimate": 132,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.118,
+        "longitude": 101.677,
+        "address": "Mid Valley Megamall, Kuala Lumpur"
+      },
+      "endLocation": {
+        "latitude": 3.118368,
+        "longitude": 101.679752
+      },
+      "distance": 0.32,
+      "duration": 5,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Mid Valley KTM Komuter Station"
+    },
+    {
+      "type": "train",
+      "startLocation": {
+        "latitude": 3.118368,
+        "longitude": 101.679752
+      },
+      "endLocation": {
+        "latitude": 3.072512,
+        "longitude": 101.607648
+      },
+      "distance": 8.78,
+      "duration": 22,
+      "carbonPerKm": 60,
+      "totalCarbon": 526.8,
+      "estimatedCost": 4.2,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "KTM Komuter Port Klang Line",
+      "departureStop": "Mid Valley Komuter",
+      "arrivalStop": "Setia Jaya Komuter",
+      "headsign": "Towards Pelabuhan Klang",
+      "stopCount": 4,
+      "instruction": "Board KTM Komuter Port Klang Line Towards Pelabuhan Klang"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 3.072512,
+        "longitude": 101.607648
+      },
+      "endLocation": {
+        "latitude": 3.0723,
+        "longitude": 101.6071,
+        "address": "Sunway Pyramid, Bandar Sunway"
+      },
+      "distance": 0.32,
+      "duration": 5,
+      "carbonPerKm": 120,
+      "totalCarbon": 38.4,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "BRT Sunway Line",
+      "departureStop": "Setia Jaya BRT",
+      "arrivalStop": "SunMed BRT",
+      "headsign": "Towards USJ 7",
+      "stopCount": 1,
+      "instruction": "Board BRT Sunway Line Towards USJ 7"
+    }
+  ],
+  "polyline": "ot|Q_l~jR~aBb`L",
+  "reasoning": "Lowest-carbon option from Mid Valley to Sunway Pyramid combining KTM Komuter and BRT Sunway.",
+  "recommendedFor": [
+    "low-carbon",
+    "shopping"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}
