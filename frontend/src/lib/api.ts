@@ -177,6 +177,7 @@ export type RerouteResult = {
   newRoute: BackendRouteOption | null;
   reasoning: string;
   agentSource: 'gemini' | 'fallback' | 'cap';
+  journeyProgress?: JourneyProgressRecord;
 };
 
 export function rerouteBooking(bookingId: string, payload: ReroutePayload) {
