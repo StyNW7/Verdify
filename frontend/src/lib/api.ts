@@ -252,6 +252,7 @@ export type CreateBookingResponse = {
   qrCode?: string;
   createdAt?: string;
   expiresAt?: string;
+  journeyProgress?: JourneyProgressRecord;
 };
 
 export function createBooking(payload: CreateBookingPayload) {

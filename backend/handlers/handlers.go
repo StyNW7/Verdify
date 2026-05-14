@@ -103,6 +103,7 @@ func (app *App) createBookingHandler(w http.ResponseWriter, r *http.Request) {
 		"passengers":       b.Passengers,
 		"createdAt":        b.CreatedAt,
 		"expiresAt":        bookingExpiresAt(now),
+		"journeyProgress":  b.JourneyProgress,
 	})
 }
 
