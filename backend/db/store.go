@@ -48,6 +48,12 @@ type Store interface {
 	UpdateBooking(ctx context.Context, b models.Booking) error
 	ListUserBookings(ctx context.Context, userID, status string, limit, offset int) ([]models.Booking, int, error)
 
+	// ListCompletedBookingsSince returns the user's bookings with status
+	// "completed" whose createdAt is >= since. Used by the dashboard's weekly
+	// carbon-trend aggregator. Order is unspecified — callers bucket and sort
+	// in application code.
+	ListCompletedBookingsSince(ctx context.Context, userID string, since time.Time) ([]models.Booking, error)
+
 	// ApplyCompletedTrip atomically (a) flips the booking to "completed" with
 	// actualPoints + completedAt, and (b) increments the user's counters.
 	// Idempotent on Booking.Status == "completed" — calling it twice for the
@@ -207,6 +213,25 @@ func (s *MemoryStore) ListUserBookings(_ context.Context, userID, status string,
 		end = total
 	}
 	return all[offset:end], total, nil
+}
+
+func (s *MemoryStore) ListCompletedBookingsSince(_ context.Context, userID string, since time.Time) ([]models.Booking, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	out := make([]models.Booking, 0)
+	for _, b := range s.bookings {
+		if b.UserID != userID {
+			continue
+		}
+		if b.Status != "completed" {
+			continue
+		}
+		if b.CreatedAt.Before(since) {
+			continue
+		}
+		out = append(out, b)
+	}
+	return out, nil
 }
 
 // leaderboardSorted returns all users sorted by greenPointsBalance desc,
