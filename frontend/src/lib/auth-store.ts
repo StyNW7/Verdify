@@ -41,7 +41,7 @@ export type AuthSeams = {
   // Optional override of the api.ts token-getter installer. Tests inject a
   // spy; production leaves this undefined and uses lib/api's module-level
   // setter.
-  setTokenGetter?: (getter: () => string | null) => void;
+  setTokenGetter?: (getter: () => Promise<string | null>) => void;
 };
 
 export type AuthStore = {
@@ -53,6 +53,10 @@ export type AuthStore = {
   // the store is already started. Returns the matching teardown function so
   // the caller can pair it with useEffect cleanup.
   start: () => () => void;
+  // Resolves with the current idToken when one is available. If idToken is
+  // already set, resolves immediately. Otherwise waits up to timeoutMs for
+  // subscribeIdToken to deliver a token. Resolves null on timeout.
+  awaitToken: (timeoutMs?: number) => Promise<string | null>;
 };
 
 function toAuthUser(u: AuthSeamUser | null): AuthUser | null {
@@ -81,19 +85,52 @@ export function createAuthStore(seams: AuthSeams): AuthStore {
   const listeners = new Set<() => void>();
   let started = false;
 
+  // Pending awaitToken resolvers. Drained whenever a non-null idToken lands.
+  const pendingResolvers = new Set<(token: string | null) => void>();
+
+  const drainPending = (token: string | null) => {
+    for (const resolve of pendingResolvers) {
+      resolve(token);
+    }
+    pendingResolvers.clear();
+  };
+
   const emit = () => {
     for (const l of listeners) l();
   };
 
   const setSnapshot = (next: AuthSnapshot) => {
+    const tokenChanged = next.idToken !== snapshot.idToken;
     snapshot = next;
     emit();
+    if (tokenChanged && next.idToken !== null) {
+      drainPending(next.idToken);
+    }
+  };
+
+  const awaitToken = (timeoutMs = 2000): Promise<string | null> => {
+    if (snapshot.idToken !== null) {
+      return Promise.resolve(snapshot.idToken);
+    }
+    return new Promise<string | null>((resolve) => {
+      const timer = setTimeout(() => {
+        pendingResolvers.delete(resolve);
+        resolve(null);
+      }, timeoutMs);
+
+      const wrappedResolve = (token: string | null) => {
+        clearTimeout(timer);
+        resolve(token);
+      };
+
+      pendingResolvers.add(wrappedResolve);
+    });
   };
 
   const installTokenGetter = seams.setTokenGetter ?? setAuthTokenGetter;
-  // Read the *current* token via closure so refreshes land on the next
-  // request without any re-subscription.
-  installTokenGetter(() => snapshot.idToken);
+  // Install an async getter: resolves immediately when a token is cached,
+  // otherwise waits up to 2 s for subscribeIdToken to deliver one.
+  installTokenGetter(() => awaitToken());
 
   return {
     getSnapshot: () => snapshot,
@@ -104,6 +141,7 @@ export function createAuthStore(seams: AuthSeams): AuthStore {
       };
     },
     signOut: () => seams.signOut(),
+    awaitToken,
     start: () => {
       if (started) {
         // Already started; return a no-op teardown so the caller can still
@@ -156,7 +194,7 @@ export function createAuthStore(seams: AuthSeams): AuthStore {
         started = false;
         unsubAuth();
         unsubToken();
-        installTokenGetter(() => null);
+        installTokenGetter(() => Promise.resolve(null));
       };
     },
   };
