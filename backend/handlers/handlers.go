@@ -14,6 +14,7 @@ import (
 	"github.com/verdify/backend/models"
 	"github.com/verdify/backend/services"
 	"github.com/verdify/backend/services/carbontrend"
+	"github.com/verdify/backend/services/journeyprogress"
 	"github.com/verdify/backend/services/pricing"
 	"github.com/verdify/backend/validate"
 )
@@ -149,6 +150,10 @@ func (app *App) verifyBookingHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	if b.Status == "cancelled" {
 		writeErr(w, http.StatusConflict, "booking cancelled")
+		return
+	}
+	if !journeyprogress.CanMarkCompleted(b.JourneyProgress, len(b.RouteSnapshot.Steps)) {
+		writeErr(w, http.StatusConflict, "trip still in progress")
 		return
 	}
 	rt := b.RouteSnapshot
