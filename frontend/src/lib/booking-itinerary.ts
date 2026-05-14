@@ -123,6 +123,28 @@ export function bookingMapEndpoints(
   return { start, end };
 }
 
+// Used as a map fallback when the route polyline is missing or fails the
+// sanity check — stitches the per-step coordinates into an approximate
+// piecewise path. The map renders this dashed to signal "approximate, not
+// a routed line."
+export function bookingFallbackPath(
+  steps: BackendTransportSegment[],
+): MapPoint[] {
+  const out: MapPoint[] = [];
+  const push = (loc: BackendTransportSegment['startLocation']) => {
+    if (!loc) return;
+    if (!Number.isFinite(loc.latitude) || !Number.isFinite(loc.longitude)) return;
+    const last = out[out.length - 1];
+    if (last && last.latitude === loc.latitude && last.longitude === loc.longitude) return;
+    out.push({ latitude: loc.latitude, longitude: loc.longitude });
+  };
+  for (const s of steps) {
+    push(s.startLocation);
+    push(s.endLocation);
+  }
+  return out;
+}
+
 export function buildItineraryRows(
   steps: BackendTransportSegment[],
 ): ItineraryRow[] {

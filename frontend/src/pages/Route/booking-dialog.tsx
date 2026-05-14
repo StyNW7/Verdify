@@ -50,6 +50,7 @@ import {
 } from '@/lib/booking-lifecycle';
 import {
   bookingMapEndpoints,
+  bookingFallbackPath,
   buildItineraryRows,
   type ItineraryIconKey,
   type ItineraryRow,
@@ -677,6 +678,7 @@ function PersistedBookingPane({
 
   const itinerary = buildItineraryRows(steps);
   const mapEndpoints = bookingMapEndpoints(steps);
+  const mapFallbackPath = bookingFallbackPath(steps);
 
   const [busy, setBusy] = useState<LifecycleAction | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -782,6 +784,7 @@ function PersistedBookingPane({
           polyline={booking.routeSnapshot.polyline}
           start={mapEndpoints.start}
           end={mapEndpoints.end}
+          fallbackPath={mapFallbackPath}
           mode={booking.routeSnapshot.mode}
         />
       )}
@@ -1134,11 +1137,13 @@ function BookingRouteMapPanel({
   polyline,
   start,
   end,
+  fallbackPath,
   mode,
 }: {
   polyline?: string;
   start: MapPoint | null;
   end: MapPoint | null;
+  fallbackPath?: MapPoint[];
   mode?: string;
 }) {
   return (
@@ -1149,7 +1154,13 @@ function BookingRouteMapPanel({
         border: '1px solid var(--theme-border)',
       }}
     >
-      <BookingRouteMap polyline={polyline} start={start} end={end} mode={mode} />
+      <BookingRouteMap
+        polyline={polyline}
+        start={start}
+        end={end}
+        fallbackPath={fallbackPath}
+        mode={mode}
+      />
     </div>
   );
 }
