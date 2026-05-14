@@ -21,6 +21,7 @@ import {
   type BookingRecord,
   type CarbonTrendDay,
 } from '@/lib/api';
+import { formatTodayInKL } from '@/lib/format-today-kl';
 import { computeImpactLedger } from '@/lib/impact-ledger';
 
 type Stat = {
@@ -215,7 +216,7 @@ export default function DashboardPage() {
       <header className="mb-8 flex flex-col items-start gap-5 sm:mb-10 lg:flex-row lg:flex-wrap lg:items-end lg:justify-between lg:gap-6">
         <div>
           <p className="theme-mono-sm" style={{ color: 'var(--theme-fg-dim)' }}>
-            Wednesday · 19 April
+            {formatTodayInKL()}
           </p>
           <h1
             className="theme-display mt-2 text-[clamp(2rem,8vw,3.6rem)] leading-[0.95]"
