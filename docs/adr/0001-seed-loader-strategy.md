@@ -53,10 +53,11 @@ Skip-if-exists, additive-only:
   but the auth-account precondition above means we never reach the booking
   writes for an already-seeded persona, so duplicates are not possible
   through this path.
-- There is **no wipe mode**. Removing a persona from the dataset and
-  re-running does NOT delete their existing Firestore docs. Removal is a
-  separate concern (and at demo cardinality, manual deletion via the
-  Firebase console is acceptable).
+- The default `go run ./cmd/seed` invocation NEVER deletes anything.
+  Removing a persona from the dataset and re-running does NOT delete
+  their existing Firestore docs through the default path. The `--wipe`
+  flag (see "Wipe mode" below) is the explicit destructive opt-in for
+  refreshing demo data; without it, removal is a separate concern.
 
 ### Targeting / safety
 
@@ -189,3 +190,49 @@ recognises the `_stub` marker so a later refresh overwrites them
 without operator intervention. ADR consequence: until an operator
 runs the recorder against a real key, the dataset is plausible-
 looking but not authoritative.
+
+## Wipe mode (`--wipe` flag)
+
+The default skip-if-exists contract above is preserved: invoking
+`go run ./cmd/seed` with no flag never deletes anything. To refresh
+demo data between iterations of the seed dataset (new personas,
+regenerated bookings, generator changes) without manually deleting
+accounts in the Firebase console, the seeder accepts a destructive
+opt-in flag.
+
+### Behaviour
+
+- `--wipe` runs a two-phase pass: **wipe first, create second.** For
+  each persona in `seed.Personas` the wipe phase looks up the Firebase
+  Auth user by email and, if present, deletes the Auth account, the
+  matching `/users/{uid}` doc, and every `/bookings` document where
+  `userId == uid`. Bookings are batched through a Firestore
+  `BulkWriter`. The create phase that follows is the unchanged
+  `seed.Run` flow, so all `IsEmailAlreadyExists` checks miss and every
+  persona is freshly created.
+- The flag is the only safeguard. There is intentionally no interactive
+  confirmation prompt and no `--dry-run` mode — the explicit `--wipe`
+  argument is what makes the destruction visible in shell history and
+  CI logs.
+
+### Scope and safety
+
+- The wipe is scoped to the 10 known persona emails. The seeder cannot
+  delete data tied to any other email, so pointing `--wipe` at a
+  shared dev project will not touch real test accounts as long as
+  nobody is squatting on `*@verdify.demo` addresses.
+- Re-running `--wipe` against an already-wiped state is a no-op:
+  Auth lookups returning `IsUserNotFound` and Firestore `Delete`
+  calls returning `codes.NotFound` are both treated as success.
+- If the wipe phase partially fails (e.g. transient network on one
+  persona), the create phase still runs for every persona — the
+  successfully-wiped ones get freshly created, the failed ones either
+  hit the existing `IsEmailAlreadyExists` skip path or also fail
+  loudly. Per-persona wipe errors surface in `WipeResult.Err` and the
+  formatted report.
+- Defensive cleanup: if the Auth lookup misses but a stale
+  `/users/{uid}` doc exists for that email, we have no uid to scope
+  the doc/booking deletes against, so those steps are skipped (the
+  persona is reported as `ABSENT`). Orphan Firestore docs without an
+  Auth account remain an out-of-band condition, consistent with the
+  consequence already documented above.
