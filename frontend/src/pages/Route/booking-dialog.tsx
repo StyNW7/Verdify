@@ -49,9 +49,11 @@ import {
   type BookingLifecycleStatus,
 } from '@/lib/booking-lifecycle';
 import {
+  bookingMapEndpoints,
   buildItineraryRows,
   type ItineraryIconKey,
   type ItineraryRow,
+  type MapPoint,
 } from '@/lib/booking-itinerary';
 import { useBookingUserId } from '@/hooks/useBookingUserId';
 import BookingRouteMap from '@/components/BookingRouteMap';
@@ -1126,30 +1128,6 @@ function PlainDetail({ label, value }: { label: string; value: string }) {
       </div>
     </div>
   );
-}
-
-type MapPoint = { latitude: number; longitude: number };
-
-function bookingMapEndpoints(
-  steps: BackendTransportSegment[],
-): { start: MapPoint | null; end: MapPoint | null } {
-  let start: MapPoint | null = null;
-  for (const step of steps) {
-    const loc = step.startLocation;
-    if (loc && Number.isFinite(loc.latitude) && Number.isFinite(loc.longitude)) {
-      start = { latitude: loc.latitude, longitude: loc.longitude };
-      break;
-    }
-  }
-  let end: MapPoint | null = null;
-  for (let i = steps.length - 1; i >= 0; i--) {
-    const loc = steps[i].endLocation;
-    if (loc && Number.isFinite(loc.latitude) && Number.isFinite(loc.longitude)) {
-      end = { latitude: loc.latitude, longitude: loc.longitude };
-      break;
-    }
-  }
-  return { start, end };
 }
 
 function BookingRouteMapPanel({

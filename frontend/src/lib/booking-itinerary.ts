@@ -99,6 +99,30 @@ function cleanInstruction(raw: string | undefined): string | null {
   return text.length > 0 ? text : null;
 }
 
+export type MapPoint = { latitude: number; longitude: number };
+
+export function bookingMapEndpoints(
+  steps: BackendTransportSegment[],
+): { start: MapPoint | null; end: MapPoint | null } {
+  let start: MapPoint | null = null;
+  for (const step of steps) {
+    const loc = step.startLocation;
+    if (loc && Number.isFinite(loc.latitude) && Number.isFinite(loc.longitude)) {
+      start = { latitude: loc.latitude, longitude: loc.longitude };
+      break;
+    }
+  }
+  let end: MapPoint | null = null;
+  for (let i = steps.length - 1; i >= 0; i--) {
+    const loc = steps[i].endLocation;
+    if (loc && Number.isFinite(loc.latitude) && Number.isFinite(loc.longitude)) {
+      end = { latitude: loc.latitude, longitude: loc.longitude };
+      break;
+    }
+  }
+  return { start, end };
+}
+
 export function buildItineraryRows(
   steps: BackendTransportSegment[],
 ): ItineraryRow[] {
