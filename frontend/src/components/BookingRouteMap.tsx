@@ -10,6 +10,7 @@ import {
 
 import { useIsDark } from '@/components/AnimatedThemeToggler';
 import RouteMap from '@/components/RouteMap';
+import { isPolylinePathSane } from '@/lib/polyline';
 
 const DARK_MAP_STYLE: google.maps.MapTypeStyle[] = [
   { elementType: 'geometry', stylers: [{ color: '#1a1f1c' }] },
@@ -118,7 +119,23 @@ function GoogleBookingMap({
     () => (end ? { lat: end.latitude, lng: end.longitude } : null),
     [end],
   );
-  const decoded = useDecodedPath(polyline);
+  const rawDecoded = useDecodedPath(polyline);
+
+  const decoded = useMemo<LatLng[]>(() => {
+    if (rawDecoded.length === 0) return rawDecoded;
+    if (isPolylinePathSane(rawDecoded, start, end)) return rawDecoded;
+    if (import.meta.env.DEV) {
+      console.warn(
+        '[BookingRouteMap] Dropping polyline: decoded endpoints do not connect to booking start/end.',
+        {
+          bookingStart: start,
+          polylineFirst: rawDecoded[0],
+          polylineLast: rawDecoded[rawDecoded.length - 1],
+        },
+      );
+    }
+    return [];
+  }, [rawDecoded, start, end]);
 
   const path: LatLng[] = useMemo(() => {
     if (decoded.length > 0) return decoded;
