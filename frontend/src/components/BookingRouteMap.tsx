@@ -129,6 +129,7 @@ function GoogleBookingMap({
         '[BookingRouteMap] Dropping polyline: decoded endpoints do not connect to booking start/end.',
         {
           bookingStart: start,
+          bookingEnd: end,
           polylineFirst: rawDecoded[0],
           polylineLast: rawDecoded[rawDecoded.length - 1],
         },
