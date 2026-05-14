@@ -36,9 +36,11 @@ import {
   rerouteBooking,
   type BackendLocation,
   type BackendRouteOption,
+  type JourneyProgressRecord,
   type RerouteResult,
   type RouteMode,
 } from '@/lib/api';
+import type { ConfirmedBooking } from '@/lib/booking-draft';
 import { usePlacesAutocomplete } from '@/hooks/usePlacesAutocomplete';
 
 export type Preference = PlannerPreference;
@@ -551,6 +553,7 @@ export function usePlannerState(initialPreference: Preference = 'eco') {
   const triggerMissedStop = async (
     route: RouteOption,
     currentLocation: BackendLocation,
+    onBookingUpdate?: (patch: { routeSnapshot: BackendRouteOption; journeyProgress: JourneyProgressRecord }) => void,
   ) => {
     if (!bookingId || rerouteInFlight) return;
     setRerouteInFlight(true);
@@ -570,6 +573,14 @@ export function usePlannerState(initialPreference: Preference = 'eco') {
         const label = destination.trim() || route.name;
         const newOpt = toRouteOption(result.newRoute, label);
         setRoutes((prev) => prev.map((r) => (r.id === route.id ? newOpt : r)));
+        // Propagate the server-authoritative reset so the dialog re-renders
+        // with the new snapshot and step 0 from the same write.
+        if (result.journeyProgress) {
+          onBookingUpdate?.({
+            routeSnapshot: result.newRoute,
+            journeyProgress: result.journeyProgress,
+          });
+        }
       }
     } catch {
       toast.error('Could not reach the server. Please try again.');

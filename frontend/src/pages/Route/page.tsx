@@ -243,7 +243,12 @@ export default function RoutePlannerPage() {
                   activeBooking.status !== 'draft' &&
                   r.id === activeBooking.routeSnapshot.mode,
               );
-              if (live) state.triggerMissedStop(live, currentLocation);
+              if (live) state.triggerMissedStop(live, currentLocation, (patch) => {
+                setActiveBooking((prev) => prev && prev.status !== 'draft'
+                  ? { ...prev, ...patch }
+                  : prev,
+                );
+              });
             }}
           />
         )}
