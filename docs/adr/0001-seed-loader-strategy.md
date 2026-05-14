@@ -104,6 +104,12 @@ Skip-if-exists, additive-only:
   will write new docs alongside the orphans. Acceptable because the auth
   account is the primary key in our model; orphan Firestore docs without an
   auth account are an out-of-band condition we do not try to repair.
+- If `auth.CreateUser` succeeds but the subsequent `/users/{uid}` or any
+  `/bookings/*` write fails, the auth account exists with partial Firestore
+  state. The next run will hit `IsEmailAlreadyExists` and skip — leaving the
+  persona permanently half-seeded with no automatic recovery path. The
+  orchestrator surfaces the failure via `Result.Err` so the operator can
+  manually delete the auth account in the Firebase console and re-run.
 - The orchestrator is not unit-tested in this slice (skip-if-exists logic is
   exercised against a real Firestore + Auth project rather than mocks).
   Adding emulator-backed integration tests is left as follow-up.

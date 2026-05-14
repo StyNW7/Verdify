@@ -59,8 +59,8 @@ func TestGenerateBookingsForPersona_StatusMix(t *testing.T) {
 		if completed < 1 {
 			t.Errorf("persona %s: want >=1 completed, got %d", p.Email, completed)
 		}
-		if confirmed > 3 {
-			t.Errorf("persona %s: want at most 3 confirmed, got %d", p.Email, confirmed)
+		if confirmed != 2 {
+			t.Errorf("persona %s: want exactly 2 confirmed, got %d", p.Email, confirmed)
 		}
 		if cancelled > 3 {
 			t.Errorf("persona %s: want at most 3 cancelled, got %d", p.Email, cancelled)
@@ -110,8 +110,14 @@ func TestGenerateBookingsForPersona_SnapshotIsSynthetic(t *testing.T) {
 		if b.RouteSnapshot.Polyline != "" {
 			t.Errorf("booking %s: synthetic snapshot should have empty Polyline, got %q", b.ID, b.RouteSnapshot.Polyline)
 		}
-		if len(b.RouteSnapshot.Steps) == 0 {
-			t.Errorf("booking %s: snapshot has no steps", b.ID)
+		if len(b.RouteSnapshot.Steps) != 3 {
+			t.Errorf("booking %s: want exactly 3 steps (walk/transit/walk), got %d", b.ID, len(b.RouteSnapshot.Steps))
+		}
+		if b.RouteSnapshot.TotalDistance <= 0 {
+			t.Errorf("booking %s: TotalDistance must be > 0, got %f", b.ID, b.RouteSnapshot.TotalDistance)
+		}
+		if b.RouteSnapshot.CarbonSavedGrams <= 0 {
+			t.Errorf("booking %s: CarbonSavedGrams must be > 0, got %f", b.ID, b.RouteSnapshot.CarbonSavedGrams)
 		}
 	}
 }

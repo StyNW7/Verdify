@@ -10,9 +10,6 @@ import (
 	"github.com/verdify/backend/models"
 )
 
-// bookingsPerPersona is the target count emitted by GenerateBookingsForPersona;
-// the actual count varies by ±1 because confirmed-vs-cancelled distribution is
-// derived from a hash of the persona email.
 const bookingsPerPersona = 12
 
 // GenerateBookingsForPersona returns a deterministic slice of synthetic
