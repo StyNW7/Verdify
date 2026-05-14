@@ -44,7 +44,7 @@ func newRerouteApp(agent ranker.RerouteRunner) *App {
 }
 
 func seedBookingWithHistory(app *App, id, status string, history []models.RerouteEvent) {
-	app.Store.CreateBooking(models.Booking{
+	_ = app.Store.CreateBooking(context.Background(), models.Booking{
 		ID:             id,
 		UserID:         "u_test",
 		RouteID:        "rt_test",
@@ -211,7 +211,7 @@ func TestRerouteHandler_HappyPath_WaitAndContinue(t *testing.T) {
 	}
 
 	// Verify history entry appended.
-	b, ok := app.Store.GetBooking("bk_wait")
+	b, ok, _ := app.Store.GetBooking(context.Background(), "bk_wait")
 	if !ok {
 		t.Fatal("booking not found after reroute")
 	}
@@ -285,7 +285,7 @@ func TestRerouteHandler_HappyPath_Reroute(t *testing.T) {
 	}
 
 	// ActiveRouteID must be updated on the booking.
-	b, ok := app.Store.GetBooking("bk_reroute")
+	b, ok, _ := app.Store.GetBooking(context.Background(), "bk_reroute")
 	if !ok {
 		t.Fatal("booking not found after reroute")
 	}
