@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"log"
 	"os"
 	"time"
@@ -13,6 +14,9 @@ import (
 )
 
 func main() {
+	wipe := flag.Bool("wipe", false, "DESTRUCTIVE: delete the 10 seeded personas (Auth users + /users/ + /bookings/ docs) before re-creating them")
+	flag.Parse()
+
 	_ = godotenv.Load()
 
 	creds := os.Getenv("FIREBASE_CREDENTIALS_JSON")
@@ -31,7 +35,15 @@ func main() {
 	}
 	defer fs.Close()
 
-	results := seed.Run(ctx, fb.Auth(), fs, time.Now().UTC())
+	now := time.Now().UTC()
+
+	if *wipe {
+		log.Printf("wipe mode: deleting %d personas + their docs before recreate...", len(seed.Personas))
+		wipeResults := seed.Wipe(ctx, fb.Auth(), fs, seed.Personas, now)
+		seed.LogWipeResults(wipeResults)
+	}
+
+	results := seed.Run(ctx, fb.Auth(), fs, now)
 	seed.LogResults(results)
 
 	for _, r := range results {
