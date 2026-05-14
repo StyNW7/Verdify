@@ -6,7 +6,8 @@
 ## Context
 
 The Verdify demo needs a repeatable way to populate a Firebase project with
-ten Malaysian-flavoured personas plus ~12 historical bookings each, so the
+ten Malaysian-flavoured personas plus 3–7 historical bookings each (count
+deterministically derived from the persona's email), so the
 dashboard, leaderboard, and booking-history views have realistic data the
 moment a fresh project boots. Seed data must:
 

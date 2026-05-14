@@ -21,8 +21,9 @@ const (
 func TestGenerateBookingsForPersona_CountInRange(t *testing.T) {
 	for _, p := range Personas {
 		got := GenerateBookingsForPersona(p, fixedNow)
-		if len(got) < 10 || len(got) > 14 {
-			t.Errorf("persona %s: got %d bookings, want 10..14", p.Email, len(got))
+		if len(got) < minBookingsPerPersona || len(got) > maxBookingsPerPersona {
+			t.Errorf("persona %s: got %d bookings, want %d..%d",
+				p.Email, len(got), minBookingsPerPersona, maxBookingsPerPersona)
 		}
 	}
 }

@@ -42,10 +42,13 @@ func (k FixtureKey) String() string {
 // at least one intercity link, and biases toward eco-mode (transit) so the
 // dashboard stats are dominated by real transit data.
 //
-// Curation rule: pairs must be land-routable by the Google Routes API. No
-// flight legs across the South China Sea (Peninsular Malaysia ↔ Sabah) — the
-// recorder has no road answer for them and they don't fit the low-carbon
-// ground-travel narrative the demo is selling.
+// Curation rule: pairs must be land-routable by the Google Routes API AND
+// Google must actually return a route for the requested mode. No flight legs
+// across the South China Sea (Peninsular Malaysia ↔ Sabah). KLIA legs and
+// KK-area transit pairs were tried and removed because the Routes API
+// consistently falls back to synthetic for them — Sabah has no indexed
+// transit network, and airport-side DRIVE responses are unreliable from
+// `cmd/seed-fixtures`.
 var PoolByCity = map[string][]FixtureKey{
 	"Kuala Lumpur": {
 		{"KLCC", "KL Sentral", "eco"},
@@ -55,8 +58,6 @@ var PoolByCity = map[string][]FixtureKey{
 		{"Bukit Bintang", "KLCC", "eco"},
 		{"KLCC", "Mid Valley", "eco"},
 		{"Subang", "KLCC", "eco"},
-		{"KL Sentral", "KLIA", "fast"},
-		{"KLIA", "KL Sentral", "eco"},
 		{"KL Sentral", "Putrajaya Sentral", "eco"},
 		{"KLCC", "Batu Caves", "eco"},
 		{"Bukit Bintang", "Petaling Street", "eco"},
@@ -65,7 +66,6 @@ var PoolByCity = map[string][]FixtureKey{
 	},
 	"Putrajaya": {
 		{"Putrajaya Sentral", "KL Sentral", "eco"},
-		{"Putrajaya Sentral", "KLIA", "fast"},
 		{"KL Sentral", "Putrajaya Sentral", "eco"},
 		{"Putrajaya Sentral", "KLCC", "eco"},
 		{"Putrajaya Sentral", "Putrajaya Mosque", "eco"},
@@ -112,12 +112,7 @@ var PoolByCity = map[string][]FixtureKey{
 		{"Melaka Sentral", "Stadhuys", "eco"},
 	},
 	"Kota Kinabalu": {
-		{"KK Waterfront", "Manukan Jetty", "eco"},
-		{"Filipino Market", "Sabah State Mosque", "eco"},
-		{"Kota Kinabalu", "Signal Hill", "eco"},
-		{"KK City Mosque", "UMS", "eco"},
 		{"Kota Kinabalu", "Kundasang", "fast"},
-		{"UMS", "KK Waterfront", "eco"},
 	},
 }
 
