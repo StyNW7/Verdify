@@ -53,10 +53,11 @@ Skip-if-exists, additive-only:
   but the auth-account precondition above means we never reach the booking
   writes for an already-seeded persona, so duplicates are not possible
   through this path.
-- There is **no wipe mode**. Removing a persona from the dataset and
-  re-running does NOT delete their existing Firestore docs. Removal is a
-  separate concern (and at demo cardinality, manual deletion via the
-  Firebase console is acceptable).
+- The default `go run ./cmd/seed` invocation NEVER deletes anything.
+  Removing a persona from the dataset and re-running does NOT delete
+  their existing Firestore docs through the default path. The `--wipe`
+  flag (see "Wipe mode" below) is the explicit destructive opt-in for
+  refreshing demo data; without it, removal is a separate concern.
 
 ### Targeting / safety
 
