@@ -32,7 +32,7 @@
       "instruction": "Walk to Melaka Sentral Intercity Platform"
     },
     {
-      "type": "mrt",
+      "type": "train",
       "startLocation": {
         "latitude": 2.285192,
         "longitude": 102.207712

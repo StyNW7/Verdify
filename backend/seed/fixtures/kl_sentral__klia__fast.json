@@ -1,18 +1,18 @@
 {
   "routeId": "fixture_kl_sentral__klia__fast",
   "mode": "fast",
-  "totalDistance": 43.24,
-  "totalDuration": 53,
-  "carbonEstimate": 3459.31,
-  "carbonBaseline": 8648.27,
-  "carbonSavedGrams": 5188.96,
-  "carbonSavingsPercent": 60,
-  "carbonEstimateKg": 3.46,
-  "estimatedCost": 42.55,
-  "greenPointsEstimate": 162,
+  "totalDistance": 57.0,
+  "totalDuration": 33,
+  "carbonEstimate": 2280.0,
+  "carbonBaseline": 11400.0,
+  "carbonSavedGrams": 9120.0,
+  "carbonSavingsPercent": 80,
+  "carbonEstimateKg": 2.28,
+  "estimatedCost": 55.0,
+  "greenPointsEstimate": 428,
   "steps": [
     {
-      "type": "ev_taxi",
+      "type": "train",
       "startLocation": {
         "latitude": 3.1338,
         "longitude": 101.6869,
@@ -23,23 +23,27 @@
         "longitude": 101.7099,
         "address": "KLIA, Sepang"
       },
-      "distance": 43.24,
-      "duration": 53,
-      "carbonPerKm": 80,
-      "totalCarbon": 3459.31,
-      "estimatedCost": 42.55,
+      "distance": 57.0,
+      "duration": 33,
+      "carbonPerKm": 40,
+      "totalCarbon": 2280.0,
+      "estimatedCost": 55.0,
       "departure": "0001-01-01T00:00:00Z",
       "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Drive from KL Sentral to KLIA"
+      "transitLine": "KLIA Ekspres",
+      "departureStop": "KL Sentral",
+      "arrivalStop": "KLIA T1",
+      "headsign": "KLIA",
+      "stopCount": 1,
+      "instruction": "Take KLIA Ekspres from KL Sentral to KLIA"
     }
   ],
   "polyline": "gacRcvskRfyjAwnC",
-  "reasoning": "Fastest direct ride from KL Sentral to KLIA, traffic-aware ETA.",
+  "reasoning": "Fastest option from KL Sentral to KLIA using KLIA Ekspres (33 min, no traffic).",
   "recommendedFor": [
-    "speed",
-    "luggage"
+    "fast"
   ],
-  "recommended": false,
+  "recommended": true,
   "dataSource": "google_routes",
   "createdAt": "0001-01-01T00:00:00Z",
   "_stub": true
