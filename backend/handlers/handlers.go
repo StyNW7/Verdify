@@ -7,11 +7,13 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/verdify/backend/auth"
 	"github.com/verdify/backend/db"
 	"github.com/verdify/backend/models"
 	"github.com/verdify/backend/services"
+	"github.com/verdify/backend/services/carbontrend"
 	"github.com/verdify/backend/services/pricing"
 	"github.com/verdify/backend/validate"
 )
@@ -304,6 +306,42 @@ func readBody(r *http.Request) ([]byte, error) {
 		return nil, err
 	}
 	return raw, nil
+}
+
+// carbonTrendKL is the timezone for the dashboard's weekly carbon-trend
+// window (ADR-0002). Loaded once at package init; falls back to UTC if the
+// IANA db is unavailable so the handler stays total.
+var carbonTrendKL = func() *time.Location {
+	loc, err := time.LoadLocation("Asia/Kuala_Lumpur")
+	if err != nil {
+		return time.UTC
+	}
+	return loc
+}()
+
+func (app *App) getUserCarbonTrendHandler(w http.ResponseWriter, r *http.Request) {
+	userID := r.PathValue("userId")
+	if _, ok, err := app.Store.GetUser(r.Context(), userID); err != nil {
+		writeErr(w, http.StatusInternalServerError, "user_lookup_failed")
+		return
+	} else if !ok {
+		writeErr(w, http.StatusNotFound, "user not found")
+		return
+	}
+
+	now := services.NowUTC()
+	localNow := now.In(carbonTrendKL)
+	startOfToday := time.Date(localNow.Year(), localNow.Month(), localNow.Day(), 0, 0, 0, 0, carbonTrendKL)
+	since := startOfToday.AddDate(0, 0, -6)
+
+	bookings, err := app.Store.ListCompletedBookingsSince(r.Context(), userID, since)
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, "carbon_trend_failed")
+		return
+	}
+
+	days := carbontrend.BucketCarbonByDay(bookings, now, carbonTrendKL, 7)
+	writeOK(w, http.StatusOK, map[string]any{"days": days})
 }
 
 func (app *App) getUserBookingsHandler(w http.ResponseWriter, r *http.Request) {
