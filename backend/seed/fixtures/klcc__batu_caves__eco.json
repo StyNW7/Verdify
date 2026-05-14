@@ -1,0 +1,305 @@
+{
+  "routeId": "fixture_klcc__batu_caves__eco",
+  "mode": "eco",
+  "totalDistance": 16.064,
+  "totalDuration": 65,
+  "carbonEstimate": 826.2,
+  "carbonBaseline": 3212.8,
+  "carbonSavedGrams": 2386.6,
+  "carbonSavingsPercent": 74,
+  "carbonEstimateKg": 0.83,
+  "estimatedCost": 8.49,
+  "greenPointsEstimate": 94,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1582898,
+        "longitude": 101.7116662
+      },
+      "endLocation": {
+        "latitude": 3.158487,
+        "longitude": 101.7114508
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:11:33.360824Z",
+      "arrival": "2026-05-14T09:12:33.360824Z",
+      "instruction": "Tuju barat laut"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.158487,
+        "longitude": 101.7114508
+      },
+      "endLocation": {
+        "latitude": 3.1584794,
+        "longitude": 101.7132187
+      },
+      "distance": 0.2,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:12:33.360824Z",
+      "arrival": "2026-05-14T09:14:33.360824Z",
+      "instruction": "Belok kanan"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1584794,
+        "longitude": 101.7132187
+      },
+      "endLocation": {
+        "latitude": 3.1587049000000005,
+        "longitude": 101.7131655
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:14:33.360824Z",
+      "arrival": "2026-05-14T09:15:33.360824Z",
+      "instruction": "Belok kiri"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1587049000000005,
+        "longitude": 101.7131655
+      },
+      "endLocation": {
+        "latitude": 3.1589345,
+        "longitude": 101.71234820000001
+      },
+      "distance": 0.09,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:15:33.360824Z",
+      "arrival": "2026-05-14T09:16:33.360824Z",
+      "instruction": "Belok kiri\nDestinasi berada di sebelah kiri"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 3.158876,
+        "longitude": 101.71233099999999
+      },
+      "endLocation": {
+        "latitude": 3.154652,
+        "longitude": 101.698375
+      },
+      "distance": 3.08,
+      "duration": 6,
+      "carbonPerKm": 60,
+      "totalCarbon": 184.8,
+      "estimatedCost": 2.15,
+      "departure": "2026-05-14T09:16:33.360824Z",
+      "arrival": "2026-05-14T09:22:33.360824Z",
+      "transitLine": "Terminal Maluri ~ Lebuh Ampang",
+      "departureStop": "KL94 KLCC (Utara)",
+      "arrivalStop": "Cap Square",
+      "headsign": "Lebuh Ampang",
+      "stopCount": 12,
+      "instruction": "Bas menuju Lebuh Ampang"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 3.154652,
+        "longitude": 101.698375
+      },
+      "endLocation": {
+        "latitude": 3.2054147,
+        "longitude": 101.67588599999999
+      },
+      "distance": 7.89,
+      "duration": 16,
+      "carbonPerKm": 60,
+      "totalCarbon": 473.4,
+      "estimatedCost": 3.02,
+      "departure": "2026-05-14T09:22:33.360824Z",
+      "arrival": "2026-05-14T09:38:33.360824Z",
+      "transitLine": "Taman Jasa Utama ~ Lebuh Ampang",
+      "departureStop": "Cap Square",
+      "arrivalStop": "KL594 MRT KG Batu",
+      "headsign": "Taman Jasa Utama",
+      "stopCount": 21,
+      "instruction": "Bas menuju Taman Jasa Utama"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.2053822,
+        "longitude": 101.67580230000002
+      },
+      "endLocation": {
+        "latitude": 3.2048129,
+        "longitude": 101.6761631
+      },
+      "distance": 0.08,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:38:33.360824Z",
+      "arrival": "2026-05-14T09:39:33.360824Z",
+      "instruction": "Tuju tenggara"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.2048129,
+        "longitude": 101.6761631
+      },
+      "endLocation": {
+        "latitude": 3.2047333,
+        "longitude": 101.6760518
+      },
+      "distance": 0.02,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:39:33.360824Z",
+      "arrival": "2026-05-14T09:40:33.360824Z",
+      "instruction": "Belok kanan"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.2047333,
+        "longitude": 101.6760518
+      },
+      "endLocation": {
+        "latitude": 3.20476,
+        "longitude": 101.67602579999999
+      },
+      "distance": 0,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:40:33.360824Z",
+      "arrival": "2026-05-14T09:41:33.360824Z",
+      "instruction": "Belok kanan\nDestinasi berada di sebelah kiri"
+    },
+    {
+      "type": "mrt",
+      "startLocation": {
+        "latitude": 3.20489,
+        "longitude": 101.67558
+      },
+      "endLocation": {
+        "latitude": 3.2378,
+        "longitude": 101.68122
+      },
+      "distance": 4.2,
+      "duration": 6,
+      "carbonPerKm": 40,
+      "totalCarbon": 168,
+      "estimatedCost": 3.32,
+      "departure": "2026-05-14T09:41:33.360824Z",
+      "arrival": "2026-05-14T09:47:33.360824Z",
+      "transitLine": "KTM Batu Caves - Pulau Sebang/Tampin",
+      "departureStop": "Kampung Batu",
+      "arrivalStop": "Batu Caves",
+      "headsign": "Batu Caves",
+      "stopCount": 3,
+      "instruction": "Kereta api menuju Batu Caves"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.237775,
+        "longitude": 101.68151069999999
+      },
+      "endLocation": {
+        "latitude": 3.2380769,
+        "longitude": 101.6815906
+      },
+      "distance": 0.04,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:47:33.360824Z",
+      "arrival": "2026-05-14T09:48:33.360824Z",
+      "instruction": "Tuju utara"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.2380769,
+        "longitude": 101.6815906
+      },
+      "endLocation": {
+        "latitude": 3.2368493999999997,
+        "longitude": 101.6833436
+      },
+      "distance": 0.27,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:48:33.360824Z",
+      "arrival": "2026-05-14T09:51:33.360824Z",
+      "instruction": "Belok sedikit ke kiri"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.2368493999999997,
+        "longitude": 101.6833436
+      },
+      "endLocation": {
+        "latitude": 3.2368395999999997,
+        "longitude": 101.6834184
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:51:33.360824Z",
+      "arrival": "2026-05-14T09:52:33.360824Z",
+      "instruction": "Belok kiri ke Subramanyam St"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.2368395999999997,
+        "longitude": 101.6834184
+      },
+      "endLocation": {
+        "latitude": 3.2378041000000004,
+        "longitude": 101.6840189
+      },
+      "distance": 0.13,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:52:33.360824Z",
+      "arrival": "2026-05-14T09:54:33.360824Z",
+      "instruction": "Belok kiri\nGunakan tangga"
+    }
+  ],
+  "polyline": "izgR}pxkRg@j@_@k@AOZeCF_Dk@HIp@c@pBHBICe@tBIHYdCGlA?`@RlARv@f@fATp@|A`DlDrHZv@vAzCb@fAp@hCBVKdC@Zb@lCV|@d@|@lApAx@l@vB|@bBl@n@ZzA`Ah@j@jCdD^x@Z`Ap@rAt@lB`@^f@Vn@Pl@AZCTBv@?FFAVHV|A~Az@|@VPf@FbBwAuD}DM@m@XWHqCRm@?i@Gg@Ko@Y_@_@Ye@Um@OO[GU?eAJmDRgED@PAQi@@oGOk@LMLYz@OrAk@jD?ZZlC?PFTLpCBfAqEFaDBuAMgBa@aEmAmAe@_ASw@Ic@@qCW}Bs@wCUcACcAKoLe@mA?kFSaA@i@Je@RQLcChDkD`FuC~DoAvAeApAaBdBkB~AWNuFpE}@~@oEnFmDfEoA`BmBxBcApAeAnAoCtEqAtBgBxCaAzAi@|@_DhFCDQH[\\m@`@q@Vo@Lk@DS?SDmAIk@IyEaA_AW}FiAm@Si@IQJaB?_ANSAaCp@w@TmAh@wAv@eA\\y@JyBr@mCdAcCt@cE~@uAFm@A_AIeAEsAGcL\\}@P{EjBiDdBkJlE{C|Au@f@o@n@Yb@aArBOFSFwBy@o@[c@]oGcHQIyCqCn@m@XITA`@JT\\j@tARN|@Vh@`@TZNb@Dd@EVQ^MLm@\\GHs@b@e@R`@p@yAbAYVM@KGCODMHEEQDPRG|A_ANTEBYxA@@{MtKyAbAwAt@yAn@gBj@yAZ_Dd@iBLmBBs@?mf@{@iMUiR_@sU]{BKaBSoBc@wAk@uAq@qAaAkAmAc@i@mA_B}CuEwGgJaDyEaEoFuB}Bm@a@k@W_AWeAImA?aDF?CBy@o@AIIACK?ASFc@RWxDqGLGL?PJ@O_EwB",
+  "reasoning": "Recorded Google Routes response for KLCC -\u003e Batu Caves (eco).",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z"
+}

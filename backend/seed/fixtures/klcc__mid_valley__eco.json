@@ -1,0 +1,376 @@
+{
+  "routeId": "fixture_klcc__mid_valley__eco",
+  "mode": "eco",
+  "totalDistance": 7.383,
+  "totalDuration": 46,
+  "carbonEstimate": 305.4,
+  "carbonBaseline": 1476.6,
+  "carbonSavedGrams": 1171.2,
+  "carbonSavingsPercent": 79,
+  "carbonEstimateKg": 0.31,
+  "estimatedCost": 7.75,
+  "greenPointsEstimate": 54,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1582898,
+        "longitude": 101.7116662
+      },
+      "endLocation": {
+        "latitude": 3.158487,
+        "longitude": 101.7114508
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:11:33.555085Z",
+      "arrival": "2026-05-14T09:12:33.555085Z",
+      "instruction": "Tuju barat laut"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.158487,
+        "longitude": 101.7114508
+      },
+      "endLocation": {
+        "latitude": 3.1584794,
+        "longitude": 101.7132187
+      },
+      "distance": 0.2,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:12:33.555085Z",
+      "arrival": "2026-05-14T09:14:33.555085Z",
+      "instruction": "Belok kanan"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1584794,
+        "longitude": 101.7132187
+      },
+      "endLocation": {
+        "latitude": 3.1587049000000005,
+        "longitude": 101.7131655
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:14:33.555085Z",
+      "arrival": "2026-05-14T09:15:33.555085Z",
+      "instruction": "Belok kiri"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1587049000000005,
+        "longitude": 101.7131655
+      },
+      "endLocation": {
+        "latitude": 3.1589345,
+        "longitude": 101.71234820000001
+      },
+      "distance": 0.09,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:15:33.555085Z",
+      "arrival": "2026-05-14T09:16:33.555085Z",
+      "instruction": "Belok kiri\nDestinasi berada di sebelah kiri"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 3.158876,
+        "longitude": 101.71233099999999
+      },
+      "endLocation": {
+        "latitude": 3.1497260000000002,
+        "longitude": 101.696874
+      },
+      "distance": 2.19,
+      "duration": 4,
+      "carbonPerKm": 60,
+      "totalCarbon": 131.4,
+      "estimatedCost": 1.99,
+      "departure": "2026-05-14T09:16:33.555085Z",
+      "arrival": "2026-05-14T09:20:33.555085Z",
+      "transitLine": "Terminal Maluri ~ Lebuh Ampang",
+      "departureStop": "KL94 KLCC (Utara)",
+      "arrivalStop": "KL1937 LRT Masjid Jamek",
+      "headsign": "Lebuh Ampang",
+      "stopCount": 8,
+      "instruction": "Bas menuju Lebuh Ampang"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1497614,
+        "longitude": 101.6968416
+      },
+      "endLocation": {
+        "latitude": 3.14972,
+        "longitude": 101.69676
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:20:33.555085Z",
+      "arrival": "2026-05-14T09:21:33.555085Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.14972,
+        "longitude": 101.69676
+      },
+      "endLocation": {
+        "latitude": 3.14972,
+        "longitude": 101.69676
+      },
+      "distance": 0,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:21:33.555085Z",
+      "arrival": "2026-05-14T09:22:33.555085Z",
+      "instruction": "Ambil laluan masuk Masjid Jamek - Entrance/Exit (Jalan Melaka Gate B)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.14972,
+        "longitude": 101.69676
+      },
+      "endLocation": {
+        "latitude": 3.1495599999999997,
+        "longitude": 101.69672
+      },
+      "distance": 0.02,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:22:33.555085Z",
+      "arrival": "2026-05-14T09:24:33.555085Z"
+    },
+    {
+      "type": "lrt",
+      "startLocation": {
+        "latitude": 3.1495599999999997,
+        "longitude": 101.69672
+      },
+      "endLocation": {
+        "latitude": 3.13448,
+        "longitude": 101.68673
+      },
+      "distance": 2.3,
+      "duration": 5,
+      "carbonPerKm": 40,
+      "totalCarbon": 92,
+      "estimatedCost": 2.91,
+      "departure": "2026-05-14T09:24:33.555085Z",
+      "arrival": "2026-05-14T09:29:33.555085Z",
+      "transitLine": "LRT Kelana Jaya Line",
+      "departureStop": "Masjid Jamek",
+      "arrivalStop": "Kuala Lumpur Sentral (KJ15/KA01)",
+      "headsign": "From Gombak to Putra Heights",
+      "stopCount": 3,
+      "instruction": "Kereta api bawah tanah menuju From Gombak to Putra Heights"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.13448,
+        "longitude": 101.68673
+      },
+      "endLocation": {
+        "latitude": 3.13448,
+        "longitude": 101.68673
+      },
+      "distance": 0,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:29:33.555085Z",
+      "arrival": "2026-05-14T09:30:33.555085Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.13448,
+        "longitude": 101.68673
+      },
+      "endLocation": {
+        "latitude": 3.13448,
+        "longitude": 101.68673
+      },
+      "distance": 0,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:30:33.555085Z",
+      "arrival": "2026-05-14T09:31:33.555085Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.13448,
+        "longitude": 101.68673
+      },
+      "endLocation": {
+        "latitude": 3.13367,
+        "longitude": 101.68652999999999
+      },
+      "distance": 0.09,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:31:33.555085Z",
+      "arrival": "2026-05-14T09:33:33.555085Z",
+      "instruction": "Ambil susur keluar KL Sentral - South Entrance/Exit"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.13367,
+        "longitude": 101.68652999999999
+      },
+      "endLocation": {
+        "latitude": 3.1336955,
+        "longitude": 101.68672169999999
+      },
+      "distance": 0.02,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:33:33.555085Z",
+      "arrival": "2026-05-14T09:34:33.555085Z"
+    },
+    {
+      "type": "mrt",
+      "startLocation": {
+        "latitude": 3.13417,
+        "longitude": 101.68611
+      },
+      "endLocation": {
+        "latitude": 3.11921,
+        "longitude": 101.67886999999999
+      },
+      "distance": 2.05,
+      "duration": 7,
+      "carbonPerKm": 40,
+      "totalCarbon": 82,
+      "estimatedCost": 2.85,
+      "departure": "2026-05-14T09:34:33.555085Z",
+      "arrival": "2026-05-14T09:41:33.555085Z",
+      "transitLine": "KTM Batu Caves - Pulau Sebang/Tampin",
+      "departureStop": "Kuala Lumpur Sentral (KJ15/KA01)",
+      "arrivalStop": "Mid Valley",
+      "headsign": "Pulau Sebang (Tampin)",
+      "stopCount": 2,
+      "instruction": "Kereta api menuju Pulau Sebang (Tampin)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1193798999999998,
+        "longitude": 101.678741
+      },
+      "endLocation": {
+        "latitude": 3.1193689,
+        "longitude": 101.6786779
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:41:33.555085Z",
+      "arrival": "2026-05-14T09:42:33.555085Z",
+      "instruction": "Tuju barat di Jalan 1/86"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1193689,
+        "longitude": 101.6786779
+      },
+      "endLocation": {
+        "latitude": 3.1195649999999997,
+        "longitude": 101.6778585
+      },
+      "distance": 0.1,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:42:33.555085Z",
+      "arrival": "2026-05-14T09:43:33.555085Z",
+      "instruction": "Teruskan perjalanan ke Lingkaran Syed Putra"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1195649999999997,
+        "longitude": 101.6778585
+      },
+      "endLocation": {
+        "latitude": 3.1195073000000004,
+        "longitude": 101.67730209999999
+      },
+      "distance": 0.08,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:43:33.555085Z",
+      "arrival": "2026-05-14T09:44:33.555085Z",
+      "instruction": "Belok kiri ke arah Boulevard Offices Block D"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1195073000000004,
+        "longitude": 101.67730209999999
+      },
+      "endLocation": {
+        "latitude": 3.1181552,
+        "longitude": 101.67667499999999
+      },
+      "distance": 0.17,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:44:33.555085Z",
+      "arrival": "2026-05-14T09:46:33.555085Z",
+      "instruction": "Belok kiri ke Boulevard Offices Block D\nDestinasi berada di sebelah kiri"
+    }
+  ],
+  "polyline": "izgR}pxkRg@j@_@k@AOZeCF_Dk@HIp@c@pBHBICe@tBIHYdCGlA?`@RlARv@f@fATp@|A`DlDrHZv@vAzCb@fAp@hCBVKdC@Zb@lCV|@d@|@lApAx@l@vB|@bBl@n@ZzA`Ah@j@jCdD^x@Z`Ap@rAt@lB`@^f@Vn@Pl@AZCTBv@?FFAVHV|A~Ab@d@C@EDFN^F@CXTnDfBj@Z~AlAvBj@|Dj@vEd@Z@z@IzCm@x@OhAKjFCtA@|@HbF`ApGvAt@Rn@^XX`@l@jB`FXj@t@lAh@hApApExA|D|@nBpA`CzBlDj@hAv@dBo@X`Df@Ee@}AxBYLtBpEfAjB~AtBPR~FxE|OvLlHdFn@b@HHvBbAhBn@`Bb@pB\\xBRvADhBAbCOnFs@xCYtGw@AKa@X@J@\\SpASr@VDHNBXALYp@v@TtEfB",
+  "reasoning": "Recorded Google Routes response for KLCC -\u003e Mid Valley (eco).",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z"
+}

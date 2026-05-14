@@ -8,6 +8,7 @@ import Layout from "@/layouts/root-layout";
 import AuthedLayout from "@/layouts/authed-layout";
 import { LoadingScreen } from "@/components/loading-screen";
 import { NavHistoryTracker } from "@/utility/nav-history";
+import { AuthProvider } from "@/lib/auth-provider";
 
 import ScrollToTop from "./utility/ScrollToTop";
 import ScrollToTopFunction from "./utility/ScrollToTopFunction";
@@ -16,6 +17,7 @@ import RegisterPage from "./pages/Auth/register";
 import LandingPage from "@/pages/Landing/page";
 import LoginPage from "./pages/Auth/login";
 import AuthLayout from "./pages/Auth/layout";
+import ForgotPasswordPage from "./pages/Auth/forgot-password";
 import RoutePlannerPage from "./pages/Route/page";
 import DashboardPage from "./pages/Dashboard/page";
 import ProfilePage from "./pages/Profile/page";
@@ -37,6 +39,7 @@ function App() {
 
   return (
     <APIProvider apiKey={googleMapsApiKey}>
+    <AuthProvider>
     <BrowserRouter>
       {!introDone && (
         <LoadingScreen
@@ -86,11 +89,20 @@ function App() {
               </AuthLayout>
             }
           />
+          <Route
+            path="/auth/forgot-password"
+            element={
+              <AuthLayout>
+                <ForgotPasswordPage />
+              </AuthLayout>
+            }
+          />
         </Routes>
       </AnimatePresence>
 
       <Toaster position="top-center" />
     </BrowserRouter>
+    </AuthProvider>
     </APIProvider>
   );
 }

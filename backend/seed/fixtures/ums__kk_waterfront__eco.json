@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_ums__kk_waterfront__eco",
+  "mode": "eco",
+  "totalDistance": 7.32,
+  "totalDuration": 27,
+  "carbonEstimate": 432,
+  "carbonBaseline": 1464,
+  "carbonSavedGrams": 1032,
+  "carbonSavingsPercent": 70,
+  "carbonEstimateKg": 0.43,
+  "estimatedCost": 2.0,
+  "greenPointsEstimate": 103,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 6.0353,
+        "longitude": 116.1198,
+        "address": "Universiti Malaysia Sabah, Kota Kinabalu"
+      },
+      "endLocation": {
+        "latitude": 6.035164,
+        "longitude": 116.120216
+      },
+      "distance": 0.13,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to UMS Main Gate Bus Stop"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 6.035164,
+        "longitude": 116.120216
+      },
+      "endLocation": {
+        "latitude": 5.984232,
+        "longitude": 116.072868
+      },
+      "distance": 7.0,
+      "duration": 20,
+      "carbonPerKm": 60,
+      "totalCarbon": 420,
+      "estimatedCost": 2.0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "Sabah State Bus 12",
+      "departureStop": "UMS Main Gate",
+      "arrivalStop": "KK Waterfront Esplanade",
+      "headsign": "Towards City Centre",
+      "stopCount": 11,
+      "instruction": "Board Sabah State Bus 12 Towards City Centre"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.984232,
+        "longitude": 116.072868
+      },
+      "endLocation": {
+        "latitude": 5.984,
+        "longitude": 116.0731,
+        "address": "KK Waterfront Esplanade, Kota Kinabalu"
+      },
+      "distance": 0.19,
+      "duration": 4,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to KK Waterfront"
+    }
+  ],
+  "polyline": "swyc@wsvcUr_IzbH",
+  "reasoning": "Lowest-carbon option from UMS to KK Waterfront on Sabah State Bus 12 (student commute).",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

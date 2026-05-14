@@ -1,0 +1,46 @@
+{
+  "routeId": "fixture_putrajaya_sentral__klia__fast",
+  "mode": "fast",
+  "totalDistance": 22.58,
+  "totalDuration": 31,
+  "carbonEstimate": 1806.8,
+  "carbonBaseline": 4517,
+  "carbonSavedGrams": 2710.2,
+  "carbonSavingsPercent": 60,
+  "carbonEstimateKg": 1.81,
+  "estimatedCost": 24.37,
+  "greenPointsEstimate": 85,
+  "steps": [
+    {
+      "type": "ev_taxi",
+      "startLocation": {
+        "latitude": 2.945,
+        "longitude": 101.6712,
+        "address": "Putrajaya Sentral"
+      },
+      "endLocation": {
+        "latitude": 2.7456,
+        "longitude": 101.7099,
+        "address": "KLIA, Sepang"
+      },
+      "distance": 22.58,
+      "duration": 31,
+      "carbonPerKm": 80,
+      "totalCarbon": 1806.8,
+      "estimatedCost": 24.37,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Drive from Putrajaya Sentral to KLIA"
+    }
+  ],
+  "polyline": "ge~P_tpkRf}e@{pF",
+  "reasoning": "Fastest direct ride from Putrajaya Sentral to KLIA, traffic-aware ETA.",
+  "recommendedFor": [
+    "speed",
+    "luggage"
+  ],
+  "recommended": false,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

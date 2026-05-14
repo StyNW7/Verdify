@@ -19,6 +19,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cross-env": "^10.1.0",
+    "firebase": "^12.13.0",
     "framer-motion": "^12.11.0",
     "lucide-react": "^0.510.0",
     "qrcode.react": "^4.2.0",

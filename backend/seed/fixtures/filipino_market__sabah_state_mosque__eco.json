@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_filipino_market__sabah_state_mosque__eco",
+  "mode": "eco",
+  "totalDistance": 2.94,
+  "totalDuration": 16,
+  "carbonEstimate": 168,
+  "carbonBaseline": 588,
+  "carbonSavedGrams": 420,
+  "carbonSavingsPercent": 71,
+  "carbonEstimateKg": 0.17,
+  "estimatedCost": 1.5,
+  "greenPointsEstimate": 42,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.9849,
+        "longitude": 116.0742,
+        "address": "Filipino Market, Kota Kinabalu"
+      },
+      "endLocation": {
+        "latitude": 5.984576,
+        "longitude": 116.074508
+      },
+      "distance": 0.13,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Wawasan Plaza Bus Stop"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 5.984576,
+        "longitude": 116.074508
+      },
+      "endLocation": {
+        "latitude": 5.962308,
+        "longitude": 116.078744
+      },
+      "distance": 2.8,
+      "duration": 11,
+      "carbonPerKm": 60,
+      "totalCarbon": 168,
+      "estimatedCost": 1.5,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "Sabah State Bus 5A",
+      "departureStop": "Wawasan Plaza Bus Stop",
+      "arrivalStop": "Sabah State Mosque",
+      "headsign": "Towards Sembulan",
+      "stopCount": 6,
+      "instruction": "Board Sabah State Bus 5A Towards Sembulan"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.962308,
+        "longitude": 116.078744
+      },
+      "endLocation": {
+        "latitude": 5.9621,
+        "longitude": 116.079,
+        "address": "Masjid Negeri Sabah, Kota Kinabalu"
+      },
+      "distance": 0.04,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Sabah State Mosque"
+    }
+  ],
+  "polyline": "s|oc@wvmcUnmC_]",
+  "reasoning": "Lowest-carbon option from Filipino Market to Sabah State Mosque on Sabah State Bus 5A.",
+  "recommendedFor": [
+    "low-carbon",
+    "tourist"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

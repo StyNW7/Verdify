@@ -1,0 +1,206 @@
+import { setAuthTokenGetter } from './api.ts';
+
+export type AuthUser = {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL: string | null;
+  emailVerified: boolean;
+};
+
+export type AuthSnapshot = {
+  user: AuthUser | null;
+  idToken: string | null;
+  loading: boolean;
+};
+
+// Minimal user shape the seam needs. Production callbacks (firebase/auth's
+// User) satisfy this structurally, so no adapter required at the call sites.
+export type AuthSeamUser = {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL: string | null;
+  emailVerified: boolean;
+  getIdToken: () => Promise<string>;
+};
+
+export type RedirectResult = {
+  user: AuthSeamUser;
+  idToken: string;
+};
+
+export type AuthSeams = {
+  subscribeAuthState: (cb: (user: AuthSeamUser | null) => void) => () => void;
+  subscribeIdToken: (cb: (user: AuthSeamUser | null) => void) => () => void;
+  signOut: () => Promise<void>;
+  // Called once on store construction to handle the return leg of
+  // signInWithRedirect. Resolves to { user, idToken } if a redirect just
+  // completed, null otherwise.
+  getRedirectResult?: () => Promise<RedirectResult | null>;
+  // Optional override of the api.ts token-getter installer. Tests inject a
+  // spy; production leaves this undefined and uses lib/api's module-level
+  // setter.
+  setTokenGetter?: (getter: () => Promise<string | null>) => void;
+};
+
+export type AuthStore = {
+  getSnapshot: () => AuthSnapshot;
+  subscribe: (listener: () => void) => () => void;
+  signOut: () => Promise<void>;
+  // start() wires up the seam subscriptions and installs the api.ts token
+  // getter. Safe to call multiple times; subsequent calls are no-ops while
+  // the store is already started. Returns the matching teardown function so
+  // the caller can pair it with useEffect cleanup.
+  start: () => () => void;
+  // Resolves with the current idToken when one is available. If idToken is
+  // already set, resolves immediately. Otherwise waits up to timeoutMs for
+  // subscribeIdToken to deliver a token. Resolves null on timeout.
+  awaitToken: (timeoutMs?: number) => Promise<string | null>;
+};
+
+function toAuthUser(u: AuthSeamUser | null): AuthUser | null {
+  if (!u) return null;
+  return {
+    uid: u.uid,
+    email: u.email,
+    displayName: u.displayName,
+    photoURL: u.photoURL,
+    emailVerified: u.emailVerified ?? false,
+  };
+}
+
+// Pure factory — no React. AuthProvider wraps this via useSyncExternalStore;
+// tests drive it directly with fake seams to verify the wiring (auth-state
+// callbacks → snapshot, token callbacks → setTokenGetter, signOut).
+//
+// IMPORTANT: subscriptions are NOT registered at construction time. The
+// React layer (or tests) must call start() to wire them up, and call the
+// returned teardown function to clean them up. This pattern survives
+// React 18 Strict Mode's mount → cleanup → remount cycle, where a store
+// constructed inside useMemo could otherwise be disposed without ever
+// being re-subscribed (useMemo returns the cached, dead store).
+export function createAuthStore(seams: AuthSeams): AuthStore {
+  let snapshot: AuthSnapshot = { user: null, idToken: null, loading: true };
+  const listeners = new Set<() => void>();
+  let started = false;
+
+  // Pending awaitToken resolvers. Drained whenever a non-null idToken lands.
+  const pendingResolvers = new Set<(token: string | null) => void>();
+
+  const drainPending = (token: string | null) => {
+    for (const resolve of pendingResolvers) {
+      resolve(token);
+    }
+    pendingResolvers.clear();
+  };
+
+  const emit = () => {
+    for (const l of listeners) l();
+  };
+
+  const setSnapshot = (next: AuthSnapshot) => {
+    const tokenChanged = next.idToken !== snapshot.idToken;
+    snapshot = next;
+    emit();
+    if (tokenChanged && next.idToken !== null) {
+      drainPending(next.idToken);
+    }
+  };
+
+  const awaitToken = (timeoutMs = 2000): Promise<string | null> => {
+    if (snapshot.idToken !== null) {
+      return Promise.resolve(snapshot.idToken);
+    }
+    return new Promise<string | null>((resolve) => {
+      const timer = setTimeout(() => {
+        pendingResolvers.delete(resolve);
+        resolve(null);
+      }, timeoutMs);
+
+      const wrappedResolve = (token: string | null) => {
+        clearTimeout(timer);
+        resolve(token);
+      };
+
+      pendingResolvers.add(wrappedResolve);
+    });
+  };
+
+  const installTokenGetter = seams.setTokenGetter ?? setAuthTokenGetter;
+
+  return {
+    getSnapshot: () => snapshot,
+    subscribe: (listener) => {
+      listeners.add(listener);
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+    signOut: () => seams.signOut(),
+    awaitToken,
+    start: () => {
+      if (started) {
+        // Already started; return a no-op teardown so the caller can still
+        // pair it with useEffect cleanup without double-unsubscribing.
+        return () => {};
+      }
+      started = true;
+
+      // (Re-)install the async getter: resolves immediately when a token is
+      // cached, otherwise waits up to 2 s for subscribeIdToken to deliver
+      // one. Re-installing here (instead of once at construction) is what
+      // makes the getter survive React 18 Strict Mode's mount → cleanup →
+      // remount cycle, since the teardown wipes the getter and useMemo
+      // returns the same cached store on remount.
+      installTokenGetter(() => awaitToken());
+
+      const unsubAuth = seams.subscribeAuthState((u) => {
+        setSnapshot({ ...snapshot, user: toAuthUser(u), loading: false });
+      });
+
+      const unsubToken = seams.subscribeIdToken((u) => {
+        if (!u) {
+          setSnapshot({ ...snapshot, idToken: null });
+          return;
+        }
+        void u
+          .getIdToken()
+          .then((token) => {
+            setSnapshot({ ...snapshot, idToken: token });
+          })
+          .catch(() => {
+            setSnapshot({ ...snapshot, idToken: null });
+          });
+      });
+
+      // Handle the return leg of signInWithRedirect. Fires once per start();
+      // if a redirect just completed, populate user + idToken immediately so
+      // the caller can call syncAuthProfile with the explicit token before
+      // onAuthStateChanged fires.
+      if (seams.getRedirectResult) {
+        void seams
+          .getRedirectResult()
+          .then((result) => {
+            if (!result) return;
+            setSnapshot({
+              user: toAuthUser(result.user),
+              idToken: result.idToken,
+              loading: false,
+            });
+          })
+          .catch(() => {
+            // Redirect result errors (e.g. auth/popup-closed) are non-fatal;
+            // onAuthStateChanged will still fire and settle the loading state.
+          });
+      }
+
+      return () => {
+        started = false;
+        unsubAuth();
+        unsubToken();
+        installTokenGetter(() => Promise.resolve(null));
+      };
+    },
+  };
+}

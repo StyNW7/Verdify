@@ -10,6 +10,15 @@ type Config struct {
 	GeminiModel      string
 	GeminiAgentModel string // reroute agent model; defaults to gemini-2.5-flash
 	GoogleMapsAPIKey string
+	// DevUserID, when non-empty, makes the auth middleware skip Firebase
+	// verification and trust this uid for every protected call. Bypass also
+	// has matching frontend semantics in ADR-0003.
+	DevUserID                string
+	FirebaseCredentialsJSON  string
+	// DBDriver selects the persistence backend. "firestore" (default) uses
+	// the Firebase Firestore Admin SDK; "memory" uses the in-process map
+	// store and is intended for tests and short-lived demos.
+	DBDriver string
 }
 
 func Load() Config {
@@ -23,13 +32,16 @@ func Load() Config {
 	}
 
 	return Config{
-		Port:             getenv("PORT", "8080"),
-		FrontendOrigin:   getenv("FRONTEND_ORIGIN", "http://localhost:5173"),
-		VertexProjectID:  getenv("VERTEX_PROJECT_ID", ""),
-		VertexLocation:   getenv("VERTEX_LOCATION", "us-central1"),
-		GeminiModel:      model,
-		GeminiAgentModel: agentModel,
-		GoogleMapsAPIKey: getenv("GOOGLE_MAPS_API_KEY", ""),
+		Port:                    getenv("PORT", "8080"),
+		FrontendOrigin:          getenv("FRONTEND_ORIGIN", "http://localhost:5173"),
+		VertexProjectID:         getenv("VERTEX_PROJECT_ID", ""),
+		VertexLocation:          getenv("VERTEX_LOCATION", "us-central1"),
+		GeminiModel:             model,
+		GeminiAgentModel:        agentModel,
+		GoogleMapsAPIKey:        getenv("GOOGLE_MAPS_API_KEY", ""),
+		DevUserID:               getenv("DEV_USER_ID", ""),
+		FirebaseCredentialsJSON: getenv("FIREBASE_CREDENTIALS_JSON", ""),
+		DBDriver:                getenv("DB_DRIVER", "firestore"),
 	}
 }
 

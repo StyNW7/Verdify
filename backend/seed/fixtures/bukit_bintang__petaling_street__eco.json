@@ -1,0 +1,162 @@
+{
+  "routeId": "fixture_bukit_bintang__petaling_street__eco",
+  "mode": "eco",
+  "totalDistance": 2.551,
+  "totalDuration": 13,
+  "carbonEstimate": 118.2,
+  "carbonBaseline": 510.2,
+  "carbonSavedGrams": 392,
+  "carbonSavingsPercent": 77,
+  "carbonEstimateKg": 0.12,
+  "estimatedCost": 1.95,
+  "greenPointsEstimate": 17,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1465821,
+        "longitude": 101.7104143
+      },
+      "endLocation": {
+        "latitude": 3.1473554999999998,
+        "longitude": 101.7106636
+      },
+      "distance": 0.1,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:11:28.640526Z",
+      "arrival": "2026-05-14T09:12:28.640526Z",
+      "instruction": "Tuju timur laut ke arah Jalan Berangan"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1473554999999998,
+        "longitude": 101.7106636
+      },
+      "endLocation": {
+        "latitude": 3.1474737,
+        "longitude": 101.7110166
+      },
+      "distance": 0.04,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:12:28.640526Z",
+      "arrival": "2026-05-14T09:13:28.640526Z",
+      "instruction": "Belok kanan ke Jalan Berangan"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1474737,
+        "longitude": 101.7110166
+      },
+      "endLocation": {
+        "latitude": 3.1477333,
+        "longitude": 101.71096879999999
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:13:28.640526Z",
+      "arrival": "2026-05-14T09:14:28.640526Z",
+      "instruction": "Belok kiri ke Jln Sultan Ismail\nDestinasi berada di sebelah kiri"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 3.147718,
+        "longitude": 101.71085199999999
+      },
+      "endLocation": {
+        "latitude": 3.146474,
+        "longitude": 101.69971199999999
+      },
+      "distance": 1.97,
+      "duration": 5,
+      "carbonPerKm": 60,
+      "totalCarbon": 118.2,
+      "estimatedCost": 1.95,
+      "departure": "2026-05-14T09:14:28.640526Z",
+      "arrival": "2026-05-14T09:19:28.640526Z",
+      "transitLine": "Hentian Taman Dagang ~ Menara Maybank via Bukit Bintang",
+      "departureStop": "KL86 MRT Bukit Bintang/HSBC",
+      "arrivalStop": "KL118 Menara Maybank",
+      "headsign": "Menara Maybank Via Bukit Bintang",
+      "stopCount": 6,
+      "instruction": "Bas menuju Menara Maybank Via Bukit Bintang"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1463973999999997,
+        "longitude": 101.69968329999999
+      },
+      "endLocation": {
+        "latitude": 3.1462515,
+        "longitude": 101.6999931
+      },
+      "distance": 0.04,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:19:28.640526Z",
+      "arrival": "2026-05-14T09:20:28.640526Z",
+      "instruction": "Tuju timur ke arah Jln Pudu"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1462515,
+        "longitude": 101.6999931
+      },
+      "endLocation": {
+        "latitude": 3.1455013,
+        "longitude": 101.69858459999999
+      },
+      "distance": 0.19,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:20:28.640526Z",
+      "arrival": "2026-05-14T09:22:28.640526Z",
+      "instruction": "Belok tajam ke kanan ke Jln Pudu"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1455013,
+        "longitude": 101.69858459999999
+      },
+      "endLocation": {
+        "latitude": 3.1438004,
+        "longitude": 101.6986467
+      },
+      "distance": 0.19,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:22:28.640526Z",
+      "arrival": "2026-05-14T09:24:28.640526Z",
+      "instruction": "Belok kiri ke Jalan Sultan\nDestinasi berada di sebelah kanan"
+    }
+  ],
+  "polyline": "cqeRaixkRi@u@g@IG?aALUgAs@H@VAWaAD}EK_AH]JKFa@b@Sb@IT[bDq@xDM~@KJe@dFAx@TvAb@|AT~@`@zEXvENfAZ`At@pAf@t@f@fATt@v@tFNnAJd@p@fBT`@b@h@fA~@`@VfCuBLQHQf@o@Pa@Js@MELD\\}@Dr@pAjAb@j@J^LlAnAElECNCd@?",
+  "reasoning": "Recorded Google Routes response for Bukit Bintang -\u003e Petaling Street (eco).",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z"
+}

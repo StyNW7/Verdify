@@ -1,0 +1,44 @@
+{
+  "routeId": "fixture_komtar__penang_hill__fast",
+  "mode": "fast",
+  "totalDistance": 10.819,
+  "totalDuration": 31,
+  "carbonEstimate": 865.52,
+  "carbonBaseline": 2163.8,
+  "carbonSavedGrams": 1298.28,
+  "carbonSavingsPercent": 60,
+  "carbonEstimateKg": 0.87,
+  "estimatedCost": 14.02,
+  "greenPointsEstimate": 41,
+  "steps": [
+    {
+      "type": "ev_taxi",
+      "startLocation": {
+        "latitude": 5.4143,
+        "longitude": 100.3296,
+        "address": "KOMTAR, Georgetown"
+      },
+      "endLocation": {
+        "latitude": 5.4239,
+        "longitude": 100.2734,
+        "address": "Penang Hill"
+      },
+      "distance": 10.82,
+      "duration": 31,
+      "carbonPerKm": 80,
+      "totalCarbon": 865.6,
+      "estimatedCost": 14.02,
+      "departure": "2026-05-14T09:11:38.620863Z",
+      "arrival": "2026-05-14T09:28:38.620863Z"
+    }
+  ],
+  "polyline": "{l``@ktjcRbAhAi@|Aa@RW?]EKBcFgA{Bi@o@a@[]a@WOAK@IFoA`Bw@|@qA~AqB~BiB`CkBzBiBjCuAxA}@x@y@`AUTEb@LZdFzC~JrGqCxE}CfFwEnIeB`DEXDJPNzETd@NHTE\\EPeErIc@r@qAjCw@vAGRU\\Kb@@v@TnATd@V^PLDHPNp@TdBd@nCdA~@PjCt@vC`At@TTJv@p@SLc@z@wC~GsC~E_ClEtCnDRn@?PKTe@b@cJjFs@VcAT_ADiB@o@D{@JmBl@mHtDoBt@iCr@g@PaCn@wAl@eJxFgDpAc@LgC`AsBl@oAp@{@t@kA|A}@rAqApCi@nAuAzCYz@m@nC[r@oAxA{BhDuCvEXzAAREHmBbB[Ne@@GLODMI?ASf@SbASnAC`BFtD?JHTPVPLZBz@CDHEHcA~@Q^ENS`BDJLA^a@N?JFDNAn@Cj@BZLVNJnA\\f@VDNEVQ\\DVPNd@\\n@n@RZDPCRKF]LILAR@RNpA^dD@l@Ep@IVe@j@`ETbC\\bFd@`ABj@AdBFtBRdFvArBZzAZzD^tD@pDK[`AkAnF?ZDPHBd@KL?^RX|@X`@?JMBSEk@c@SEOFAZHj@Ab@SbA?XF`@h@z@BRAPyAdAuAz@WZCLL~@Gr@Qt@Mz@IXGh@?f@HNPFx@El@AF?\\ZFT?fAKvADb@?TGf@HPJD`@CbA_@\\E~AANGRURi@?ARCHDXb@DH",
+  "reasoning": "Recorded Google Routes response for KOMTAR -\u003e Penang Hill (fast).",
+  "recommendedFor": [
+    "speed",
+    "luggage"
+  ],
+  "recommended": false,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z"
+}

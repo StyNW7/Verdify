@@ -3,3 +3,7 @@
 
 # Hidden from public repo (shared internally via Discord/WhatsApp)
 backend/docs/
+
+# Firebase Admin SDK service account — never commit.
+# Shared internally; rotate the key after merge (see Issue 01 follow-up).
+backend/firebase-credentials.json
