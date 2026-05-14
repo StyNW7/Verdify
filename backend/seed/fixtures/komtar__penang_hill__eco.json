@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_komtar__penang_hill__eco",
+  "mode": "eco",
+  "totalDistance": 6.31,
+  "totalDuration": 23,
+  "carbonEstimate": 325.8,
+  "carbonBaseline": 1262,
+  "carbonSavedGrams": 936.2,
+  "carbonSavingsPercent": 74,
+  "carbonEstimateKg": 0.33,
+  "estimatedCost": 2.58,
+  "greenPointsEstimate": 37,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4143,
+        "longitude": 100.3296,
+        "address": "KOMTAR, Georgetown"
+      },
+      "endLocation": {
+        "latitude": 5.415068,
+        "longitude": 100.325104
+      },
+      "distance": 0.44,
+      "duration": 5,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to KOMTAR Bus Hub"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 5.415068,
+        "longitude": 100.325104
+      },
+      "endLocation": {
+        "latitude": 5.423132,
+        "longitude": 100.277896
+      },
+      "distance": 5.43,
+      "duration": 13,
+      "carbonPerKm": 60,
+      "totalCarbon": 325.8,
+      "estimatedCost": 2.58,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "Rapid Penang 204",
+      "departureStop": "KOMTAR Bus Hub",
+      "arrivalStop": "Penang Hill Bus Stop",
+      "headsign": "Towards Penang Hill",
+      "stopCount": 8,
+      "instruction": "Board Rapid Penang 204 Towards Penang Hill"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.423132,
+        "longitude": 100.277896
+      },
+      "endLocation": {
+        "latitude": 5.4239,
+        "longitude": 100.2734,
+        "address": "Penang Hill"
+      },
+      "distance": 0.44,
+      "duration": 5,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Penang Hill"
+    }
+  ],
+  "polyline": "kn``@_sjcR_{@f~I",
+  "reasoning": "Lowest-carbon option from KOMTAR to Penang Hill using Rapid Penang 204.",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

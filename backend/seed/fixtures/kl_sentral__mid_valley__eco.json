@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_kl_sentral__mid_valley__eco",
+  "mode": "eco",
+  "totalDistance": 2.08,
+  "totalDuration": 10,
+  "carbonEstimate": 71.2,
+  "carbonBaseline": 416,
+  "carbonSavedGrams": 344.8,
+  "carbonSavingsPercent": 83,
+  "carbonEstimateKg": 0.07,
+  "estimatedCost": 2.79,
+  "greenPointsEstimate": 18,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1338,
+        "longitude": 101.6869,
+        "address": "KL Sentral, Kuala Lumpur"
+      },
+      "endLocation": {
+        "latitude": 3.132536,
+        "longitude": 101.68610799999999
+      },
+      "distance": 0.15,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to KL Sentral MRT Station"
+    },
+    {
+      "type": "mrt",
+      "startLocation": {
+        "latitude": 3.132536,
+        "longitude": 101.68610799999999
+      },
+      "endLocation": {
+        "latitude": 3.119264,
+        "longitude": 101.67779200000001
+      },
+      "distance": 1.78,
+      "duration": 6,
+      "carbonPerKm": 40,
+      "totalCarbon": 71.2,
+      "estimatedCost": 2.79,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "Kajang Line (MRT)",
+      "departureStop": "KL Sentral MRT Station",
+      "arrivalStop": "Mid Valley MRT Station",
+      "headsign": "Towards Kajang",
+      "stopCount": 4,
+      "instruction": "Board Kajang Line (MRT) Towards Kajang"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.119264,
+        "longitude": 101.67779200000001
+      },
+      "endLocation": {
+        "latitude": 3.118,
+        "longitude": 101.677,
+        "address": "Mid Valley Megamall, Kuala Lumpur"
+      },
+      "distance": 0.15,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Mid Valley"
+    }
+  ],
+  "polyline": "gacRcvskRvaBz|@",
+  "reasoning": "Lowest-carbon option from KL Sentral to Mid Valley using Kajang Line (MRT).",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

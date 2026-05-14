@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_ciq_johor__bukit_indah__eco",
+  "mode": "eco",
+  "totalDistance": 11.41,
+  "totalDuration": 41,
+  "carbonEstimate": 588.6,
+  "carbonBaseline": 2282,
+  "carbonSavedGrams": 1693.4,
+  "carbonSavingsPercent": 74,
+  "carbonEstimateKg": 0.59,
+  "estimatedCost": 3.37,
+  "greenPointsEstimate": 66,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4628,
+        "longitude": 103.7686,
+        "address": "Sultan Iskandar CIQ, Johor Bahru"
+      },
+      "endLocation": {
+        "latitude": 1.464792,
+        "longitude": 103.76064000000001
+      },
+      "distance": 0.8,
+      "duration": 10,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to CIQ Johor Bus Terminal"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 1.464792,
+        "longitude": 103.76064000000001
+      },
+      "endLocation": {
+        "latitude": 1.485708,
+        "longitude": 103.67706
+      },
+      "distance": 9.81,
+      "duration": 21,
+      "carbonPerKm": 60,
+      "totalCarbon": 588.6,
+      "estimatedCost": 3.37,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "Causeway Link CW2",
+      "departureStop": "CIQ Johor Bus Terminal",
+      "arrivalStop": "Bukit Indah Bus Terminal",
+      "headsign": "Towards Bukit Indah",
+      "stopCount": 7,
+      "instruction": "Board Causeway Link CW2 Towards Bukit Indah"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.485708,
+        "longitude": 103.67706
+      },
+      "endLocation": {
+        "latitude": 1.4877,
+        "longitude": 103.6691,
+        "address": "Bukit Indah, Johor Bahru"
+      },
+      "distance": 0.8,
+      "duration": 10,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Bukit Indah"
+    }
+  ],
+  "polyline": "ou|GwhjxRszCzlR",
+  "reasoning": "Lowest-carbon option from CIQ Johor to Bukit Indah using Causeway Link CW2.",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}

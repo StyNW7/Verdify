@@ -1,0 +1,89 @@
+{
+  "routeId": "fixture_larkin__bukit_indah__eco",
+  "mode": "eco",
+  "totalDistance": 8.01,
+  "totalDuration": 30,
+  "carbonEstimate": 413.4,
+  "carbonBaseline": 1602,
+  "carbonSavedGrams": 1188.6,
+  "carbonSavingsPercent": 74,
+  "carbonEstimateKg": 0.41,
+  "estimatedCost": 2.84,
+  "greenPointsEstimate": 47,
+  "steps": [
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.491,
+        "longitude": 103.7411,
+        "address": "Larkin Sentral, Johor Bahru"
+      },
+      "endLocation": {
+        "latitude": 1.490736,
+        "longitude": 103.73534000000001
+      },
+      "distance": 0.56,
+      "duration": 7,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Larkin Bus Terminal"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 1.490736,
+        "longitude": 103.73534000000001
+      },
+      "endLocation": {
+        "latitude": 1.487964,
+        "longitude": 103.67486
+      },
+      "distance": 6.89,
+      "duration": 16,
+      "carbonPerKm": 60,
+      "totalCarbon": 413.4,
+      "estimatedCost": 2.84,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "transitLine": "Causeway Link CW2",
+      "departureStop": "Larkin Bus Terminal",
+      "arrivalStop": "Bukit Indah Bus Terminal",
+      "headsign": "Towards Bukit Indah",
+      "stopCount": 7,
+      "instruction": "Board Causeway Link CW2 Towards Bukit Indah"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.487964,
+        "longitude": 103.67486
+      },
+      "endLocation": {
+        "latitude": 1.4877,
+        "longitude": 103.6691,
+        "address": "Bukit Indah, Johor Bahru"
+      },
+      "distance": 0.56,
+      "duration": 7,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "0001-01-01T00:00:00Z",
+      "arrival": "0001-01-01T00:00:00Z",
+      "instruction": "Walk to Bukit Indah"
+    }
+  ],
+  "polyline": "webH{|dxRrS~`M",
+  "reasoning": "Lowest-carbon option from Larkin to Bukit Indah using Causeway Link CW2.",
+  "recommendedFor": [
+    "low-carbon",
+    "commute"
+  ],
+  "recommended": true,
+  "dataSource": "google_routes",
+  "createdAt": "0001-01-01T00:00:00Z",
+  "_stub": true
+}
