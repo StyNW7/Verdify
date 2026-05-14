@@ -84,6 +84,7 @@ func (app *App) createBookingHandler(w http.ResponseWriter, r *http.Request) {
 		BookingReference: fmt.Sprintf("VERD-%d", now.Unix()),
 		EstimatedPoints:  req.RouteSnapshot.GreenPointsEstimate,
 		PaymentStatus:    "pending",
+		JourneyProgress:  models.JourneyProgress{CurrentStepIndex: 0, UpdatedAt: now},
 		CreatedAt:        now,
 	}
 	if err := app.Store.CreateBooking(r.Context(), b); err != nil {

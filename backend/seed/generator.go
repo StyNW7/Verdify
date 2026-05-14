@@ -112,6 +112,7 @@ func GenerateBookingsForPersona(p Persona, now time.Time) []models.Booking {
 			EstimatedPoints:  points,
 			ActualPoints:     actualPoints,
 			PaymentStatus:    paymentStatus,
+			JourneyProgress:  models.JourneyProgress{CurrentStepIndex: 0},
 			RerouteHistory:   nil,
 			CreatedAt:        createdAt,
 			CompletedAt:      completedAt,
