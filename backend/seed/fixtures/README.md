@@ -52,20 +52,30 @@ GOOGLE_MAPS_API_KEY=... go run ./cmd/seed-fixtures
 
 ## Curation rationale
 
-The pool covers each persona's home-city commute patterns plus at least
-one intercity link, biased toward eco-mode (transit) so dashboard stats
-are dominated by real transit step data and polylines. Coverage by city:
+Each persona's pool covers home-city commute patterns plus a mix of
+tourist day-trip routes, biased toward eco-mode (transit + walks) so
+dashboard stats are dominated by real transit step data and polylines.
+Every persona has at least six distinct routes so dashboards never look
+like a single repeated booking. Coverage by city:
 
-- **KL / Klang Valley (10 fixtures):** intra-CBD LRT + MRT loops
-  (KLCC, KL Sentral, Mid Valley, Bukit Bintang) plus KLIA Ekspres and
-  Putrajaya Line connections.
-- **Putrajaya (4):** Putrajaya Sentral hub linking KL Sentral, KLCC, KLIA.
-- **Johor Bahru (7):** Bukit Indah / Larkin / CIQ / Senai cross-city bus
-  loops covering Daniel and Hafiz's commute spread.
-- **Singapore Border (4):** RTS Link station to Larkin and CIQ Johor in
-  both directions for Marcus.
-- **Penang (3):** KOMTAR ↔ Penang Hill in eco and fast.
-- **Melaka (2):** ETS intercity to and from KL Sentral.
-- **Kota Kinabalu (2):** KK ↔ KLIA fast surrogate (long-haul flight
-  proxy) — the catalogue lacks intra-Sabah locations, so Rajesh's
-  bookings lean intercity.
+- **KL / Klang Valley (14 fixtures):** intra-CBD LRT + MRT loops
+  (KLCC, KL Sentral, Mid Valley, Bukit Bintang), KLIA Ekspres and
+  Putrajaya Line links, plus tourist hops to Batu Caves, Petaling Street,
+  Sunway Pyramid, and the MRT terminus at Sungai Buloh.
+- **Putrajaya (6):** Putrajaya Sentral hub linking KL Sentral, KLCC,
+  KLIA, and the Masjid Putra waterfront in both directions.
+- **Johor Bahru (11):** Bukit Indah / Larkin / CIQ / Senai cross-city
+  bus loops plus tourist hops (Legoland, Puteri Harbour) and suburban
+  commutes (Mount Austin, Danga Bay).
+- **Singapore Border (6):** RTS Link to Larkin, CIQ Johor, and JB City
+  Square in both directions for Marcus.
+- **Penang (8):** KOMTAR ↔ Penang Hill (eco + fast), coastal Rapid Penang
+  hops to Gurney Drive, Batu Ferringhi, Kek Lok Si, the Clan Jetties
+  heritage walk, and a Penang National Park day ride.
+- **Melaka (7):** ETS intercity to and from KL Sentral plus heritage
+  bus + walk routes between Melaka Sentral, Jonker Street, A Famosa,
+  the Stadthuys Dutch quarter, Taming Sari Tower, and Mahkota Parade.
+- **Kota Kinabalu (8):** KK ↔ KLIA fast surrogate (long-haul flight
+  proxy), the Manukan Island ferry walk via Jesselton Point, Sabah State
+  Bus links to Sabah State Mosque, UMS, KK City Mosque (Likas), the
+  Filipino Market and Signal Hill, plus a Kundasang day-trip ride.
