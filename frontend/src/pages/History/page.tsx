@@ -199,6 +199,7 @@ export default function HistoryPage() {
               status: updated.status,
               paymentStatus: updated.paymentStatus,
               actualPoints: updated.actualPoints ?? b.actualPoints,
+              journeyProgress: updated.journeyProgress,
             }
           : b,
       ),
