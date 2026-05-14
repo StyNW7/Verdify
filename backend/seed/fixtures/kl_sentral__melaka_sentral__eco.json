@@ -1,89 +1,283 @@
 {
   "routeId": "fixture_kl_sentral__melaka_sentral__eco",
   "mode": "eco",
-  "totalDistance": 120.3,
-  "totalDuration": 92,
-  "carbonEstimate": 4138.4,
-  "carbonBaseline": 24060,
-  "carbonSavedGrams": 19921.6,
-  "carbonSavingsPercent": 83,
-  "carbonEstimateKg": 4.14,
-  "estimatedCost": 25.16,
-  "greenPointsEstimate": 1049,
+  "totalDistance": 147.5,
+  "totalDuration": 187,
+  "carbonEstimate": 8605,
+  "carbonBaseline": 29500,
+  "carbonSavedGrams": 20895,
+  "carbonSavingsPercent": 71,
+  "carbonEstimateKg": 8.61,
+  "estimatedCost": 32.33,
+  "greenPointsEstimate": 758,
   "steps": [
     {
       "type": "walking",
       "startLocation": {
         "latitude": 3.1338,
-        "longitude": 101.6869,
-        "address": "KL Sentral, Kuala Lumpur"
+        "longitude": 101.6869
       },
       "endLocation": {
-        "latitude": 3.060008,
-        "longitude": 101.732188
+        "latitude": 3.1336955,
+        "longitude": 101.68672169999999
       },
-      "distance": 8.42,
-      "duration": 12,
+      "distance": 0.02,
+      "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to KL Sentral Intercity Platform"
+      "departure": "2026-05-14T09:11:32.921109Z",
+      "arrival": "2026-05-14T09:12:32.921109Z"
     },
     {
       "type": "mrt",
       "startLocation": {
-        "latitude": 3.060008,
-        "longitude": 101.732188
+        "latitude": 3.13417,
+        "longitude": 101.68611
       },
       "endLocation": {
-        "latitude": 2.285192,
-        "longitude": 102.207712
+        "latitude": 3.07623,
+        "longitude": 101.71112
       },
-      "distance": 103.46,
-      "duration": 68,
+      "distance": 9.19,
+      "duration": 14,
       "carbonPerKm": 40,
-      "totalCarbon": 4138.4,
-      "estimatedCost": 25.16,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "transitLine": "ETS Gold",
-      "departureStop": "KL Sentral Intercity Platform",
-      "arrivalStop": "Melaka Sentral Intercity Platform",
-      "headsign": "Towards Melaka Sentral",
-      "stopCount": 5,
-      "instruction": "Board ETS Gold Towards Melaka Sentral"
+      "totalCarbon": 367.6,
+      "estimatedCost": 4.42,
+      "departure": "2026-05-14T09:12:32.921109Z",
+      "arrival": "2026-05-14T09:26:32.921109Z",
+      "transitLine": "ETS Padang Besar - JB Sentral",
+      "departureStop": "Kuala Lumpur Sentral (KJ15/KA01)",
+      "arrivalStop": "Bandar Tasek (S)",
+      "headsign": "JB Sentral",
+      "stopCount": 2,
+      "instruction": "Kereta api menuju JB Sentral"
     },
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 2.285192,
-        "longitude": 102.207712
+        "latitude": 3.0761144,
+        "longitude": 101.7117485
       },
       "endLocation": {
-        "latitude": 2.2114,
-        "longitude": 102.253,
-        "address": "Melaka Sentral"
+        "latitude": 3.0760886,
+        "longitude": 101.7117839
       },
-      "distance": 8.42,
-      "duration": 12,
+      "distance": 0.01,
+      "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to Melaka Sentral"
+      "departure": "2026-05-14T09:26:32.921109Z",
+      "arrival": "2026-05-14T09:27:32.921109Z",
+      "instruction": "Tuju tenggara"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.0760886,
+        "longitude": 101.7117839
+      },
+      "endLocation": {
+        "latitude": 3.0758023,
+        "longitude": 101.7115719
+      },
+      "distance": 0.04,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:27:32.921109Z",
+      "arrival": "2026-05-14T09:28:32.921109Z",
+      "instruction": "Belok kanan ke arah Bandar Tasik Selatan TBS link bridge\nGunakan tangga"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.0758023,
+        "longitude": 101.7115719
+      },
+      "endLocation": {
+        "latitude": 3.0763107,
+        "longitude": 101.7113511
+      },
+      "distance": 0.07,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:28:32.921109Z",
+      "arrival": "2026-05-14T09:29:32.921109Z",
+      "instruction": "Belok kanan ke Bandar Tasik Selatan TBS link bridge\nGunakan tangga"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.0763107,
+        "longitude": 101.7113511
+      },
+      "endLocation": {
+        "latitude": 3.0775177,
+        "longitude": 101.710776
+      },
+      "distance": 0.18,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:29:32.921109Z",
+      "arrival": "2026-05-14T09:32:32.921109Z"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 3.0780526,
+        "longitude": 101.7110798
+      },
+      "endLocation": {
+        "latitude": 2.2211551,
+        "longitude": 102.2500829
+      },
+      "distance": 135.63,
+      "duration": 120,
+      "carbonPerKm": 60,
+      "totalCarbon": 8137.8,
+      "estimatedCost": 26.01,
+      "departure": "2026-05-14T09:32:32.921109Z",
+      "arrival": "2026-05-14T11:32:32.921109Z",
+      "transitLine": "Terminal Bersepadu Selatan (TBS) - Melaka Sentral",
+      "departureStop": "Terminal Bersepadu Selatan",
+      "arrivalStop": "Melaka Sentral",
+      "headsign": "Melaka Sentral",
+      "stopCount": 2,
+      "instruction": "Bas menuju Melaka Sentral"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.2223110999999998,
+        "longitude": 102.25004129999999
+      },
+      "endLocation": {
+        "latitude": 2.2201646999999998,
+        "longitude": 102.2510775
+      },
+      "distance": 0.26,
+      "duration": 4,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T11:32:32.921109Z",
+      "arrival": "2026-05-14T11:36:32.921109Z"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 2.22016,
+        "longitude": 102.2511
+      },
+      "endLocation": {
+        "latitude": 2.21232,
+        "longitude": 102.25583999999999
+      },
+      "distance": 1.66,
+      "duration": 6,
+      "carbonPerKm": 60,
+      "totalCarbon": 99.6,
+      "estimatedCost": 1.9,
+      "departure": "2026-05-14T11:36:32.921109Z",
+      "arrival": "2026-05-14T11:42:32.921109Z",
+      "transitLine": "Bandaraya Melaka Feeder",
+      "departureStop": "Melaka Sentral",
+      "arrivalStop": "RTM Melaka",
+      "headsign": "Melaka Sentral 2",
+      "stopCount": 3,
+      "instruction": "Bas menuju Melaka Sentral 2"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.2123279000000005,
+        "longitude": 102.2558303
+      },
+      "endLocation": {
+        "latitude": 2.211786,
+        "longitude": 102.255428
+      },
+      "distance": 0.08,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T11:42:32.921109Z",
+      "arrival": "2026-05-14T11:43:32.921109Z",
+      "instruction": "Tuju barat daya di Jalan Taming Sari ke arah Jalan Mawar"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.211786,
+        "longitude": 102.255428
+      },
+      "endLocation": {
+        "latitude": 2.2126106,
+        "longitude": 102.2539652
+      },
+      "distance": 0.19,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T11:43:32.921109Z",
+      "arrival": "2026-05-14T11:45:32.921109Z",
+      "instruction": "Belok kanan ke Jalan Mawar"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.2126106,
+        "longitude": 102.2539652
+      },
+      "endLocation": {
+        "latitude": 2.2114613999999997,
+        "longitude": 102.2533832
+      },
+      "distance": 0.14,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T11:45:32.921109Z",
+      "arrival": "2026-05-14T11:46:32.921109Z",
+      "instruction": "Belok kiri"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.2114613999999997,
+        "longitude": 102.2533832
+      },
+      "endLocation": {
+        "latitude": 2.2113609,
+        "longitude": 102.25306139999999
+      },
+      "distance": 0.04,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T11:46:32.921109Z",
+      "arrival": "2026-05-14T11:47:32.921109Z",
+      "instruction": "Belok sedikit ke kanan\nDestinasi berada di sebelah kanan"
     }
   ],
-  "polyline": "gacRcvskR~csDcqmB",
-  "reasoning": "Lowest-carbon option from KL Sentral to Melaka Sentral using ETS Gold.",
+  "polyline": "gacRcvskRRb@}AxBYLtBpEfAjB~AtBPR~FxE|OvLlHdFn@b@HHvBbAhBn@`Bb@pB\\xBRvADhBAbCOnFs@xCYjPoB`Gw@b@GlBi@vAk@pAm@l@a@zAkAr@u@vAqBh@{@t@iBVu@XmANw@PyAHyB?cBCoDH}BZeCd@uB\\_AbAwBdAwAxAkBbOgShOsSvFsHbEyFlJaMnOsStCgExNkRxA}Ar@m@~@i@hBaArBw@|@UjB]hBOfTcAjDSn@If@Ih@Qr@Yl@]`@[j@k@`@i@b@u@`@eATkA`@oDXyAd@kA`@q@b@g@n@k@|@o@bAa@l@QzAUdAEdAB|Fl@rC`@|AZ~Al@j@Tx@h@t@h@|@z@dBfCfDnFzAvBj@r@hAhAHIV}BBEx@h@k@f@SJMAMEI?k@f@eA~@ECM]Q?yAj@iB{@BAlApD\\h@f@VrEhAbAd@j@b@PPfCpD^Xj@RpHrAPAz@Lp@Th@^XXNTzAhDTj@PR\\Rh@DXANJrEa@pLmC|GaADMLK`Ac@LSDWEYOUWK]E[B[ROVKn@b@|AVx@lA|BT`@PB`@f@`@Xr@Zv@NbADvB@n@Fb@Lb@TlB`B\\Rr@Tl@@XAl@J|LgBnHy@bF]nHWfOSbZc@r^k@rEQlDa@jHi@^C`CArEJdJXfHMbES`CWrAQrAU`Du@nA_@tBu@hCaA`CoAjCgB`Aw@fCgC|GcIxOwQhAoAlBiBjB}AxB}AvA{@tBkAbCgAhEyBxIiEz[}OdFkChHgDlG_DbTmKvBoArA{@~BkB`@_@bGuGd@m@bH}KhE}GnAeBfByBjDqDfAeAhAu@hBuA~ByA~C_BlCiAfM}FlQaIvCwAdCeAvJoEbDsAtH{B~Cm@nC_@xEc@~DIbIGv[LhEEpFSnBKlD[jH_AhCe@dGsAnCu@zFiB`C}@jBw@bCkApEcCte@{WbEeBxAi@fEmAvEaAfFo@xBOdEOtLSrB?v@GbM[nAMtBM`Ea@fKoAxJqBb@Mh@KrCy@n@ObJ{C|Bu@pDeAxPsFbAW|B_@tASxCYfEU^?`AIhDChBDtCVrAVjAZbSnCfCLdB@lDI~BS|Cg@fCo@hC}@hCmAnAw@n@g@lBmBfBoBbG{HpH_K`BoBtBuB`B}AhBwA|@k@pAs@pAo@nBy@rDoAjCq@pEu@hAOfBO`AE`MM~i@IfBC|IAh@AbBIxBStB_@xBg@`Cy@vCsAtAw@nA{@|BmBv@{@nA{AhBwC`AwBlFaN~IeUlDcJZeAtD_Jt@eBhBoDx@uApAqBrAmBnBgCvCcDrCoCpBgBjB}ApCoBzC_BbCiA|@]`D_AnCm@|Ba@pEc@tBM~BEzA?pDJhEX|ATpAVxAZx@V`B`@vAd@~@V`J~CdBt@xBr@zA^fBZjD\\~CFlD?rCK~D]\\GpEa@jBIfDGl@Gl@Ct@?fPh@bBD|CA^KfA?tE_@hCi@tA_@`FmBrEwBhGgClCo@pAYdEe@hFUnQqA`De@rEaAnBm@pDsAhCoA~Ay@rCiBvCuBnDgDr@m@rB}ArD_DbDcDjDeDvAgBfKkNtAkBbAkAvAwAnAeAvAaAdAo@~Ay@tBw@`QsFvB{@|BkAdBkAhEyDlHcHxCgCzB{A~@k@vC{ApB{@~CaAdBe@pCi@`Fi@bCOlEGpMNxOTnLNjS`@hEB`SV|AAvEOfAEfFc@vEs@pIaBlCo@xBo@tBs@pCgAtB_AhFsCjFkDvC{BxCkCzB{BtBcCrJkM|HgKbKeNhTcYxHaKfCoD~@{AbB{CpBgEtCkHv@eC|@aDf@oBdAsF~@cGrAqK|Ee`@hAeIf@_DlAmFrBkHvAiEbBoE|@sB`DqGbk@_eArKwRrAeCvAmD`ByEx@{Ch@gCj@oDxAaN|@oJJsB?KNu@N{Ar@aFv@sCv@qCtAgDlC{EvAmBb@i@|A}Ab@m@~C{Bb@[rAgA~HiF`DqB|EiDl@g@dCiB~DeD~CoChDaDxD_EfF{F|DaFvAoB|EkHt@mA|BoDr@oA~A{CvAwC|CgHlA{C|Pkf@Pc@Tm@Xc@jDkHpEwHvAiB~EoFvBwB~EiElByA~FwDfBeAvEcCnCoAnYgLvFwB|DsAhA_@bEaAjE}@nCa@vVaDhCm@dF}AbBo@~Aq@|C_BvA_AhBsA|@y@dAeAzAqB~AcCrDcF~EwGZc@zAgBdDcFrAuC`@mA~@cFX_CLoBDaCAwCScNCeCZwPDeIPcIPgCRsEVoEv@eJnC_U~@eKb@_E^oB^{ApAuDbAsBb@w@nAiBlCsCvBoBfA}@bE{BfDuAr@WxCu@bCc@rAQdKu@zC]vCi@dEeApDuAxAs@jBcApBsAhA_AdDuCzFaGjGiGbGkGhBaC|BqD`AiBfA{BdAmC|AaF`@_Bd@wBl@iEbA{Ih@iDVkAr@cCx@wB|@eBdBqCpBkChBuBbEeEbBuArDqC|AaAjBgAbCoAnDqAzJwBjSwDtCg@lIgBvEkAbEoAfBc@nEaBpD}AvOaGjAa@lGgCh@MvEgBhC{@hEoA~GgBtH}AxCk@pJ{A~GsAtBe@bD{@tEwA~EcBzAk@zDcB`EoBlF{CtNaJfAw@lNyI|WyPxD}C~ByBdBoBdC}CpCuEpB}DfDeJzJwYdCeHhAoD|A{DtA}CxDoHnAwBpAsBjCmD~BwC|BcC|DuDlAeA|CcC~DoCdGoDbD_BrEoBtAk@pBs@zCaAfFuA~Bi@|FeAhDi@dHs@h_@iCzGo@xAOtCa@xF_ArGsA`GwArGiBxEeB|Am@rEmBhGyClNgIpBwAtB{AhDoCtCgC`WmVrBwBfE_FpGmItBuCbCsCjEcGfBiC~EsGrGuHvYq[`@e@nIyHbEiDbEwCtFwDdGoDhE}BfCqAxGsCrFwBh^oLbOcFrU{HlJoDhIoDvHqD|HcEzG}DnGaEzEcDxx@cl@dCkBnB_BvAaA|C}BxCmB|J_GnE{BnDaBbGcCjAg@pJkDxDgArBs@vBk@`DgA~GsBfH{BvBo@dFcBtIcDxAu@fEgB|LmHdDyBvAmAnCgBbEkDlA_AvDmDbEqEbD{DpB_Cl@w@r@iAl@w@bBkClDiGrAgCd@mAbDgHpBuFd@{At@uBfCoInDoOx@kEh@iBt@wCRcAFy@Ji@r@cClB_JRkAfAcFJy@^eEDyA`@mDVmJI{JGmBi@_IeAeMOuBMiDIkAg@cFGqAiC_\\]aHGkEJ{BNeBHmBV_Cl@mDnBgIz@{Bn@{AbEiIz@iAhBqBlAyAf@e@~@y@jGiGnAaAzIyIjCwB`EyDfFkEbA}@xDyDrB{A|@iAfIgHdDiDn@k@|@o@zCuCnBoBnCeCtAiAzA_BrCeDfBmCvBaEh@mAf@_B\\mAn@mC^yBd@uEFgAJ}HPwGFwAFcCB}Cf@uSP{JLuFRsDLsB^kD|@sEr@sCl@mBn@gBt@kBzAyCpAsBlAgBtAgBxA_B~ByBx@s@ldAgv@nQmMvTiPhBqArBoAhBcAhAi@lEgBjDgAl@QdE{@tAUlBUtYuC`F]v_@yDrG{@dIwAfLiCnCs@pGmB~EqBpEqBxGiDrEcC|@a@`E_ChM{HfKcGfNmIfNwIxCgBpC{AtJcGzIaGjDoCdEkDvC{B~LsKbNgMvIqHhAoA|CoCbEkDrBiBv@y@zFgGnHyIvC}DlDeFvCsEzGiLnRy]nEeIfBuClC{DrBmC`DqDdCeCfBeBvDeDhByA~FcEzGgErH}DtUgL`WaNdLaGlHyD`K}ExGsDnIkFrHuFxD}CdBaBhGmGz@cAzBiClG}HtFkIjK_QrDmFbHuKtDmG|@yAvHgLnAsBlDkGbGsJnEyHvDoFbC{D~@_BxEiHrA{BxB}DEWxBgFNu@?m@G_@GSSc@eA{A]s@I[Cm@@a@Je@Te@PU\\Wh@Qf@In@Ap@F|PxCxAPnDn@j@NbARrANdAFdEr@v@VjAXzAT|Cx@j@NzB|@~@f@l@VbBx@`Bh@bC|At@l@p@r@xAhBtBnDVVt@fA|@v@zAp@lCx@|Dt@dDh@tE@fGAhDFzAJ|APfARd@L|B|@~DtBrDvBbI~FrHzFxD`Dh@b@lBlAlAb@pCz@~MtDfBRlC|@`An@|@b@|@j@tBfB|FdHlGfHhDvD`A|@bB~@nB^hBHr@AbAO`@IlGeBz@ShBY|@IrNEvEDpVFjJHzBFlEE|@EdDe@rBQbF_ArBWtAGxA@h@FrAThBj@hGhC`DzAbAl@zA`@xDr@bHdAxBb@zA`@p@TjAp@jAv@rAvA`A~@rDpDdEjElAnAhAzAf@j@zBvBrB~BrAfClBhEfDhItBvEnA`DrB~EFVFtBGzAOvAG~ADvBLpAJvBP`BTnAPx@v@nBfEvGXf@|@tB`AfDtAlF|BlIzAbE|BfHr@zArAzAfA~@hAz@|@jAtAnC\\j@r@z@ZXbAn@j@PtDbArB`@|@Dp@Al@G`HoA`AKjBMlCEt@@|@P^Pp@`@n@j@~AvAz@p@mAlC}B|FWn@mArBGHuDzI}B~FuA~Du@`D[pBQzAWfFElF}BCk@K}E{A{AWc@AaBB?YP?GwKESL[V[VKt@E`DA~@HlBXDxBMXYBMGEOG_@U[WQWG_@@SF[VITIp@CDZv@eFFlLoE?CII?c@vAXBa@@}@LG|A[RK\\BT{@v@}Bt@wA`IuSX_BhA_DhC{FL_@jBxAnBtBt@bAVb@FTzAdC`@t@z@~@|BfB@AA@zAfANFg@|@gA~Bs@dBfC~@p@T^NJN@V@XNL",
+  "reasoning": "Recorded Google Routes response for KL Sentral -\u003e Melaka Sentral (eco).",
   "recommendedFor": [
     "low-carbon",
     "commute"
   ],
   "recommended": true,
   "dataSource": "google_routes",
-  "createdAt": "0001-01-01T00:00:00Z",
-  "_stub": true
+  "createdAt": "0001-01-01T00:00:00Z"
 }

@@ -1,89 +1,257 @@
 {
   "routeId": "fixture_ciq_johor__larkin__eco",
   "mode": "eco",
-  "totalDistance": 4.39,
-  "totalDuration": 18,
-  "carbonEstimate": 226.2,
-  "carbonBaseline": 878,
-  "carbonSavedGrams": 651.8,
-  "carbonSavingsPercent": 74,
-  "carbonEstimateKg": 0.23,
-  "estimatedCost": 2.28,
-  "greenPointsEstimate": 26,
+  "totalDistance": 8.257,
+  "totalDuration": 35,
+  "carbonEstimate": 397.2,
+  "carbonBaseline": 1651.4,
+  "carbonSavedGrams": 1254.2,
+  "carbonSavingsPercent": 76,
+  "carbonEstimateKg": 0.4,
+  "estimatedCost": 2.79,
+  "greenPointsEstimate": 51,
   "steps": [
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 1.4628,
-        "longitude": 103.7686,
-        "address": "Sultan Iskandar CIQ, Johor Bahru"
+        "latitude": 1.4625645999999999,
+        "longitude": 103.7684589
       },
       "endLocation": {
-        "latitude": 1.4650560000000001,
-        "longitude": 103.7664
+        "latitude": 1.4633922,
+        "longitude": 103.7685527
       },
-      "distance": 0.31,
-      "duration": 4,
+      "distance": 0.19,
+      "duration": 2,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to CIQ Johor Bus Terminal"
-    },
-    {
-      "type": "bus",
-      "startLocation": {
-        "latitude": 1.4650560000000001,
-        "longitude": 103.7664
-      },
-      "endLocation": {
-        "latitude": 1.488744,
-        "longitude": 103.7433
-      },
-      "distance": 3.77,
-      "duration": 10,
-      "carbonPerKm": 60,
-      "totalCarbon": 226.2,
-      "estimatedCost": 2.28,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "transitLine": "Causeway Link CW2",
-      "departureStop": "CIQ Johor Bus Terminal",
-      "arrivalStop": "Larkin Bus Terminal",
-      "headsign": "Towards Larkin",
-      "stopCount": 7,
-      "instruction": "Board Causeway Link CW2 Towards Larkin"
+      "departure": "2026-05-14T09:11:29.165037Z",
+      "arrival": "2026-05-14T09:13:29.165037Z",
+      "instruction": "Tuju tenggara ke arah Jalan Lumba Kuda"
     },
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 1.488744,
-        "longitude": 103.7433
+        "latitude": 1.4633922,
+        "longitude": 103.7685527
       },
       "endLocation": {
-        "latitude": 1.491,
-        "longitude": 103.7411,
-        "address": "Larkin Sentral, Johor Bahru"
+        "latitude": 1.4621822999999998,
+        "longitude": 103.76792510000001
       },
-      "distance": 0.31,
+      "distance": 0.15,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:13:29.165037Z",
+      "arrival": "2026-05-14T09:14:29.165037Z",
+      "instruction": "Belok kiri ke Jalan Lumba Kuda"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4621822999999998,
+        "longitude": 103.76792510000001
+      },
+      "endLocation": {
+        "latitude": 1.4602887,
+        "longitude": 103.76690789999999
+      },
+      "distance": 0.25,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:14:29.165037Z",
+      "arrival": "2026-05-14T09:17:29.165037Z",
+      "instruction": "Belok sedikit ke kanan untuk kekal di Jalan Lumba Kuda"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4602887,
+        "longitude": 103.76690789999999
+      },
+      "endLocation": {
+        "latitude": 1.464403,
+        "longitude": 103.7646613
+      },
+      "distance": 0.52,
+      "duration": 6,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:17:29.165037Z",
+      "arrival": "2026-05-14T09:23:29.165037Z",
+      "instruction": "Belok kanan ke Jalan Jim Quee"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 1.464917,
+        "longitude": 103.76548
+      },
+      "endLocation": {
+        "latitude": 1.493904,
+        "longitude": 103.74403400000001
+      },
+      "distance": 6.62,
+      "duration": 13,
+      "carbonPerKm": 60,
+      "totalCarbon": 397.2,
+      "estimatedCost": 2.79,
+      "departure": "2026-05-14T09:23:29.165037Z",
+      "arrival": "2026-05-14T09:36:29.165037Z",
+      "transitLine": "170",
+      "departureStop": "Johor Bahru Checkpt",
+      "arrivalStop": "Larkin Ter",
+      "headsign": "Jln Datin Halimah",
+      "stopCount": 2,
+      "instruction": "Bas menuju Jln Datin Halimah"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4935566,
+        "longitude": 103.7433796
+      },
+      "endLocation": {
+        "latitude": 1.4929253,
+        "longitude": 103.74317099999999
+      },
+      "distance": 0.09,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:36:29.165037Z",
+      "arrival": "2026-05-14T09:37:29.165037Z",
+      "instruction": "Tuju tenggara"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4929253,
+        "longitude": 103.74317099999999
+      },
+      "endLocation": {
+        "latitude": 1.4910651,
+        "longitude": 103.7419594
+      },
+      "distance": 0.27,
       "duration": 4,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to Larkin"
+      "departure": "2026-05-14T09:37:29.165037Z",
+      "arrival": "2026-05-14T09:41:29.165037Z",
+      "instruction": "Belok kiri"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4910651,
+        "longitude": 103.7419594
+      },
+      "endLocation": {
+        "latitude": 1.4911052999999999,
+        "longitude": 103.7419449
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:41:29.165037Z",
+      "arrival": "2026-05-14T09:42:29.165037Z",
+      "instruction": "Belok kanan ke arah Jalan Tun Abdul Razak (Susur 5)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4911052999999999,
+        "longitude": 103.7419449
+      },
+      "endLocation": {
+        "latitude": 1.4905761,
+        "longitude": 103.74164739999999
+      },
+      "distance": 0.08,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:42:29.165037Z",
+      "arrival": "2026-05-14T09:43:29.165037Z",
+      "instruction": "Belok kiri ke arah Jalan Tun Abdul Razak (Susur 5)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4905761,
+        "longitude": 103.74164739999999
+      },
+      "endLocation": {
+        "latitude": 1.490507,
+        "longitude": 103.7415644
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:43:29.165037Z",
+      "arrival": "2026-05-14T09:44:29.165037Z",
+      "instruction": "Belok kanan ke arah Jalan Tun Abdul Razak (Susur 5)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.490507,
+        "longitude": 103.7415644
+      },
+      "endLocation": {
+        "latitude": 1.49081,
+        "longitude": 103.7413502
+      },
+      "distance": 0.04,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:44:29.165037Z",
+      "arrival": "2026-05-14T09:45:29.165037Z",
+      "instruction": "Belok kanan ke Jalan Tun Abdul Razak (Susur 5)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.49081,
+        "longitude": 103.7413502
+      },
+      "endLocation": {
+        "latitude": 1.4909451999999999,
+        "longitude": 103.74108249999999
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:45:29.165037Z",
+      "arrival": "2026-05-14T09:46:29.165037Z",
+      "instruction": "Belok sedikit ke kiri\nDestinasi berada di sebelah kanan"
     }
   ],
-  "polyline": "ou|GwhjxRgoDzjD",
-  "reasoning": "Lowest-carbon option from CIQ Johor to Larkin using Causeway Link CW2.",
+  "polyline": "_t|G{gjxRZq@@QkAq@Q?MBeAn@ING^rDrA|@f@FPpEvCZDdBDTJFHiCpAcBb@yE`CyErBsCtAgBcDl@WyGuOSQSImBYwD[mACKBiAh@iFzCwA`A}CtCgCjEmAjCyCdJcAfEeAdHGl@m@~DMhB?p@FvAn@dBjDzHHVBXEf@I`@MPMJeHbDiABoMxEaFvBkCp@m@B}@EgBUmDm@kDq@kAIqB@i@@eATs@Vu@h@CEYN{@r@{@dA[h@Wl@Ql@Mr@QlCe@jIUnA[dAc@bAuBxD}HxMaArB}@hDc@~CuAdN@`AFf@Zh@`@Zp@Jj@Kb@e@Ls@Cs@Wg@s@m@mA]oD{@wDs@oCWc@B_ANcAToFbAQ}Ao@_Ck@eBqCwG`CmCbA`Cf@SJ?HB~@x@b@EXMPC^JPJpFpFGBp@fAN@f@OLPi@XQNQd@IN",
+  "reasoning": "Recorded Google Routes response for CIQ Johor -\u003e Larkin (eco).",
   "recommendedFor": [
     "low-carbon",
     "commute"
   ],
   "recommended": true,
   "dataSource": "google_routes",
-  "createdAt": "0001-01-01T00:00:00Z",
-  "_stub": true
+  "createdAt": "0001-01-01T00:00:00Z"
 }

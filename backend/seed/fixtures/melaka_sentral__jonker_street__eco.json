@@ -1,89 +1,200 @@
 {
   "routeId": "fixture_melaka_sentral__jonker_street__eco",
   "mode": "eco",
-  "totalDistance": 1.94,
-  "totalDuration": 13,
-  "carbonEstimate": 100.8,
-  "carbonBaseline": 388,
-  "carbonSavedGrams": 287.2,
-  "carbonSavingsPercent": 74,
-  "carbonEstimateKg": 0.1,
-  "estimatedCost": 2.0,
-  "greenPointsEstimate": 29,
+  "totalDistance": 3.049,
+  "totalDuration": 15,
+  "carbonEstimate": 135,
+  "carbonBaseline": 609.8,
+  "carbonSavedGrams": 474.8,
+  "carbonSavingsPercent": 78,
+  "carbonEstimateKg": 0.14,
+  "estimatedCost": 2.01,
+  "greenPointsEstimate": 21,
   "steps": [
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 2.2114,
-        "longitude": 102.253,
-        "address": "Melaka Sentral"
+        "latitude": 2.2113609,
+        "longitude": 102.25306139999999
       },
       "endLocation": {
-        "latitude": 2.211624,
-        "longitude": 102.252556
+        "latitude": 2.2126106,
+        "longitude": 102.2539652
       },
-      "distance": 0.13,
+      "distance": 0.18,
       "duration": 2,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to Melaka Sentral Bus Hub"
-    },
-    {
-      "type": "bus",
-      "startLocation": {
-        "latitude": 2.211624,
-        "longitude": 102.252556
-      },
-      "endLocation": {
-        "latitude": 2.196412,
-        "longitude": 102.247132
-      },
-      "distance": 1.68,
-      "duration": 8,
-      "carbonPerKm": 60,
-      "totalCarbon": 100.8,
-      "estimatedCost": 2.0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "transitLine": "Panorama Melaka 17",
-      "departureStop": "Melaka Sentral Bus Hub",
-      "arrivalStop": "Jonker Walk Stop",
-      "headsign": "Towards Bandar Hilir",
-      "stopCount": 5,
-      "instruction": "Board Panorama Melaka 17 Towards Bandar Hilir"
+      "departure": "2026-05-14T09:11:39.345442Z",
+      "arrival": "2026-05-14T09:13:39.345442Z",
+      "instruction": "Tuju timur laut ke arah Lorong Mata Kucing 4"
     },
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 2.196412,
-        "longitude": 102.247132
+        "latitude": 2.2126106,
+        "longitude": 102.2539652
       },
       "endLocation": {
-        "latitude": 2.1965,
-        "longitude": 102.247,
-        "address": "Jonker Street, Melaka"
+        "latitude": 2.211786,
+        "longitude": 102.255428
       },
-      "distance": 0.13,
-      "duration": 3,
+      "distance": 0.19,
+      "duration": 2,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to Jonker Street"
+      "departure": "2026-05-14T09:13:39.345442Z",
+      "arrival": "2026-05-14T09:15:39.345442Z",
+      "instruction": "Belok kanan ke Jalan Mawar"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.211786,
+        "longitude": 102.255428
+      },
+      "endLocation": {
+        "latitude": 2.2123279000000005,
+        "longitude": 102.2558303
+      },
+      "distance": 0.08,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:15:39.345442Z",
+      "arrival": "2026-05-14T09:16:39.345442Z",
+      "instruction": "Belok kiri ke Jalan Taming Sari"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 2.21232,
+        "longitude": 102.25583999999999
+      },
+      "endLocation": {
+        "latitude": 2.19448,
+        "longitude": 102.24902999999999
+      },
+      "distance": 2.25,
+      "duration": 4,
+      "carbonPerKm": 60,
+      "totalCarbon": 135,
+      "estimatedCost": 2.01,
+      "departure": "2026-05-14T09:16:39.345442Z",
+      "arrival": "2026-05-14T09:20:39.345442Z",
+      "transitLine": "Bandaraya Melaka Feeder",
+      "departureStop": "RTM Melaka",
+      "arrivalStop": "Jongker Walk/Stadhuys",
+      "headsign": "Melaka Sentral 2",
+      "stopCount": 5,
+      "instruction": "Bas menuju Melaka Sentral 2"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.1945036,
+        "longitude": 102.24901469999999
+      },
+      "endLocation": {
+        "latitude": 2.1944789,
+        "longitude": 102.24856869999999
+      },
+      "distance": 0.05,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:20:39.345442Z",
+      "arrival": "2026-05-14T09:21:39.345442Z",
+      "instruction": "Tuju barat daya di Jalan Laksamana/Laluan 5 ke arah Jalan Hang Jebat/Laluan 5\nSebahagian daripada jalan ini mungkin ditutup pada masa atau hari tertentu"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.1944789,
+        "longitude": 102.24856869999999
+      },
+      "endLocation": {
+        "latitude": 2.1948832,
+        "longitude": 102.248271
+      },
+      "distance": 0.06,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:21:39.345442Z",
+      "arrival": "2026-05-14T09:22:39.345442Z",
+      "instruction": "Belok kanan ke Jalan Hang Jebat/Laluan 5"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.1948832,
+        "longitude": 102.248271
+      },
+      "endLocation": {
+        "latitude": 2.1949636999999997,
+        "longitude": 102.24831520000001
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:22:39.345442Z",
+      "arrival": "2026-05-14T09:23:39.345442Z",
+      "instruction": "Belok kanan ke Lorong Hang Jebat"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.1949636999999997,
+        "longitude": 102.24831520000001
+      },
+      "endLocation": {
+        "latitude": 2.1963086,
+        "longitude": 102.2469713
+      },
+      "distance": 0.21,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:23:39.345442Z",
+      "arrival": "2026-05-14T09:25:39.345442Z",
+      "instruction": "Belok kiri ke Jalan Hang Jebat"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.1963086,
+        "longitude": 102.2469713
+      },
+      "endLocation": {
+        "latitude": 2.196453,
+        "longitude": 102.24706929999999
+      },
+      "distance": 0.02,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:25:39.345442Z",
+      "arrival": "2026-05-14T09:26:39.345442Z",
+      "instruction": "Belok kanan ke Jalan Hang Lekiu\nDestinasi berada di sebelah kiri"
     }
   ],
-  "polyline": "k`oLghboRfvAfa@",
-  "reasoning": "Lowest-carbon option from Melaka Sentral to Jonker Street on Panorama Melaka 17 bus.",
+  "polyline": "_|nLshboROMAYAWKOo@W_Cy@i@Sr@eB`BgDLUOG{AgA@AA@zAfAhAf@lA`@pBf@rA`@xAl@fB|@lC~BXZz@j@t@\\l@PfALp@@`IGlDClCAzAJh@HVH|@Hn@@lEOfBH~Er@pB\\~GnA`C^~C|@l@`@`ArAVd@ZhA\\d@l@rA\\f@n@v@\\j@BCCBJRB`@K`@_AXMNAPOIkCfCaCdC[S",
+  "reasoning": "Recorded Google Routes response for Melaka Sentral -\u003e Jonker Street (eco).",
   "recommendedFor": [
     "low-carbon",
-    "tourist"
+    "commute"
   ],
   "recommended": true,
   "dataSource": "google_routes",
-  "createdAt": "0001-01-01T00:00:00Z",
-  "_stub": true
+  "createdAt": "0001-01-01T00:00:00Z"
 }

@@ -1,89 +1,277 @@
 {
   "routeId": "fixture_klcc__kl_sentral__eco",
   "mode": "eco",
-  "totalDistance": 3.84,
-  "totalDuration": 15,
-  "carbonEstimate": 132,
-  "carbonBaseline": 768,
-  "carbonSavedGrams": 636,
-  "carbonSavingsPercent": 83,
-  "carbonEstimateKg": 0.13,
-  "estimatedCost": 3.13,
+  "totalDistance": 5.007,
+  "totalDuration": 32,
+  "carbonEstimate": 223.4,
+  "carbonBaseline": 1001.4,
+  "carbonSavedGrams": 778,
+  "carbonSavingsPercent": 78,
+  "carbonEstimateKg": 0.22,
+  "estimatedCost": 4.9,
   "greenPointsEstimate": 34,
   "steps": [
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 3.1579,
-        "longitude": 101.7116,
-        "address": "KLCC, Kuala Lumpur"
+        "latitude": 3.1582898,
+        "longitude": 101.7116662
       },
       "endLocation": {
-        "latitude": 3.155972,
-        "longitude": 101.709624
+        "latitude": 3.158487,
+        "longitude": 101.7114508
       },
-      "distance": 0.27,
-      "duration": 3,
+      "distance": 0.03,
+      "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to KLCC Station"
-    },
-    {
-      "type": "lrt",
-      "startLocation": {
-        "latitude": 3.155972,
-        "longitude": 101.709624
-      },
-      "endLocation": {
-        "latitude": 3.135728,
-        "longitude": 101.688876
-      },
-      "distance": 3.3,
-      "duration": 9,
-      "carbonPerKm": 40,
-      "totalCarbon": 132,
-      "estimatedCost": 3.13,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "transitLine": "Kelana Jaya LRT",
-      "departureStop": "KLCC Station",
-      "arrivalStop": "KL Sentral Station",
-      "headsign": "Towards Putra Heights",
-      "stopCount": 6,
-      "instruction": "Board Kelana Jaya LRT Towards Putra Heights"
+      "departure": "2026-05-14T09:11:33.459039Z",
+      "arrival": "2026-05-14T09:12:33.459039Z",
+      "instruction": "Tuju barat laut"
     },
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 3.135728,
-        "longitude": 101.688876
+        "latitude": 3.158487,
+        "longitude": 101.7114508
       },
       "endLocation": {
-        "latitude": 3.1338,
-        "longitude": 101.6869,
-        "address": "KL Sentral, Kuala Lumpur"
+        "latitude": 3.1584794,
+        "longitude": 101.7132187
       },
-      "distance": 0.27,
-      "duration": 3,
+      "distance": 0.2,
+      "duration": 2,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to KL Sentral"
+      "departure": "2026-05-14T09:12:33.459039Z",
+      "arrival": "2026-05-14T09:14:33.459039Z",
+      "instruction": "Belok kanan"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1584794,
+        "longitude": 101.7132187
+      },
+      "endLocation": {
+        "latitude": 3.1587049000000005,
+        "longitude": 101.7131655
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:14:33.459039Z",
+      "arrival": "2026-05-14T09:15:33.459039Z",
+      "instruction": "Belok kiri"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1587049000000005,
+        "longitude": 101.7131655
+      },
+      "endLocation": {
+        "latitude": 3.1589345,
+        "longitude": 101.71234820000001
+      },
+      "distance": 0.09,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:15:33.459039Z",
+      "arrival": "2026-05-14T09:16:33.459039Z",
+      "instruction": "Belok kiri\nDestinasi berada di sebelah kiri"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 3.158876,
+        "longitude": 101.71233099999999
+      },
+      "endLocation": {
+        "latitude": 3.1497260000000002,
+        "longitude": 101.696874
+      },
+      "distance": 2.19,
+      "duration": 4,
+      "carbonPerKm": 60,
+      "totalCarbon": 131.4,
+      "estimatedCost": 1.99,
+      "departure": "2026-05-14T09:16:33.459039Z",
+      "arrival": "2026-05-14T09:20:33.459039Z",
+      "transitLine": "Terminal Maluri ~ Lebuh Ampang",
+      "departureStop": "KL94 KLCC (Utara)",
+      "arrivalStop": "KL1937 LRT Masjid Jamek",
+      "headsign": "Lebuh Ampang",
+      "stopCount": 8,
+      "instruction": "Bas menuju Lebuh Ampang"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1497614,
+        "longitude": 101.6968416
+      },
+      "endLocation": {
+        "latitude": 3.14972,
+        "longitude": 101.69676
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:20:33.459039Z",
+      "arrival": "2026-05-14T09:21:33.459039Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.14972,
+        "longitude": 101.69676
+      },
+      "endLocation": {
+        "latitude": 3.14972,
+        "longitude": 101.69676
+      },
+      "distance": 0,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:21:33.459039Z",
+      "arrival": "2026-05-14T09:22:33.459039Z",
+      "instruction": "Ambil laluan masuk Masjid Jamek - Entrance/Exit (Jalan Melaka Gate B)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.14972,
+        "longitude": 101.69676
+      },
+      "endLocation": {
+        "latitude": 3.1495599999999997,
+        "longitude": 101.69672
+      },
+      "distance": 0.02,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:22:33.459039Z",
+      "arrival": "2026-05-14T09:24:33.459039Z"
+    },
+    {
+      "type": "lrt",
+      "startLocation": {
+        "latitude": 3.1495599999999997,
+        "longitude": 101.69672
+      },
+      "endLocation": {
+        "latitude": 3.13448,
+        "longitude": 101.68673
+      },
+      "distance": 2.3,
+      "duration": 5,
+      "carbonPerKm": 40,
+      "totalCarbon": 92,
+      "estimatedCost": 2.91,
+      "departure": "2026-05-14T09:24:33.459039Z",
+      "arrival": "2026-05-14T09:29:33.459039Z",
+      "transitLine": "LRT Kelana Jaya Line",
+      "departureStop": "Masjid Jamek",
+      "arrivalStop": "Kuala Lumpur Sentral (KJ15/KA01)",
+      "headsign": "From Gombak to Putra Heights",
+      "stopCount": 3,
+      "instruction": "Kereta api bawah tanah menuju From Gombak to Putra Heights"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.13448,
+        "longitude": 101.68673
+      },
+      "endLocation": {
+        "latitude": 3.13448,
+        "longitude": 101.68673
+      },
+      "distance": 0,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:29:33.459039Z",
+      "arrival": "2026-05-14T09:30:33.459039Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.13448,
+        "longitude": 101.68673
+      },
+      "endLocation": {
+        "latitude": 3.13448,
+        "longitude": 101.68673
+      },
+      "distance": 0,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:30:33.459039Z",
+      "arrival": "2026-05-14T09:31:33.459039Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.13448,
+        "longitude": 101.68673
+      },
+      "endLocation": {
+        "latitude": 3.13367,
+        "longitude": 101.68652999999999
+      },
+      "distance": 0.09,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:31:33.459039Z",
+      "arrival": "2026-05-14T09:33:33.459039Z",
+      "instruction": "Ambil susur keluar KL Sentral - South Entrance/Exit"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1335515,
+        "longitude": 101.6866002
+      },
+      "endLocation": {
+        "latitude": 3.133747,
+        "longitude": 101.68693139999999
+      },
+      "distance": 0.04,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:33:33.459039Z",
+      "arrival": "2026-05-14T09:34:33.459039Z",
+      "instruction": "Tuju timur laut di Jalan Stesen Sentral/Jalan Stesen Sentral 3"
     }
   ],
-  "polyline": "{wgRopxkRruCjyC",
-  "reasoning": "Lowest-carbon option from KLCC to KL Sentral using Kelana Jaya LRT.",
+  "polyline": "izgR}pxkRg@j@_@k@AOZeCF_Dk@HIp@c@pBHBICe@tBIHYdCGlA?`@RlARv@f@fATp@|A`DlDrHZv@vAzCb@fAp@hCBVKdC@Zb@lCV|@d@|@lApAx@l@vB|@bBl@n@ZzA`Ah@j@jCdD^x@Z`Ap@rAt@lB`@^f@Vn@Pl@AZCTBv@?FFAVHV|A~Ab@d@C@EDFN^F@CXTnDfBj@Z~AlAvBj@|Dj@vEd@Z@z@IzCm@x@OhAKjFCtA@|@HbF`ApGvAt@Rn@^XX`@l@jB`FXj@t@lAh@hApApExA|D|@nBpA`CzBlDj@hAv@dBo@X`Df@VMg@aA",
+  "reasoning": "Recorded Google Routes response for KLCC -\u003e KL Sentral (eco).",
   "recommendedFor": [
     "low-carbon",
     "commute"
   ],
   "recommended": true,
   "dataSource": "google_routes",
-  "createdAt": "0001-01-01T00:00:00Z",
-  "_stub": true
+  "createdAt": "0001-01-01T00:00:00Z"
 }

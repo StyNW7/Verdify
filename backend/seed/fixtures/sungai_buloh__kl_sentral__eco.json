@@ -1,89 +1,104 @@
 {
   "routeId": "fixture_sungai_buloh__kl_sentral__eco",
   "mode": "eco",
-  "totalDistance": 18.42,
-  "totalDuration": 41,
-  "carbonEstimate": 720.8,
-  "carbonBaseline": 3684,
-  "carbonSavedGrams": 2963.2,
+  "totalDistance": 18.893,
+  "totalDuration": 34,
+  "carbonEstimate": 751.2,
+  "carbonBaseline": 3778.6,
+  "carbonSavedGrams": 3027.4,
   "carbonSavingsPercent": 80,
-  "carbonEstimateKg": 0.72,
-  "estimatedCost": 5.6,
-  "greenPointsEstimate": 296,
+  "carbonEstimateKg": 0.75,
+  "estimatedCost": 6.53,
+  "greenPointsEstimate": 143,
   "steps": [
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 3.2071,
-        "longitude": 101.5808,
-        "address": "Sungai Buloh MRT, Selangor"
+        "latitude": 3.2066743,
+        "longitude": 101.5806597
       },
       "endLocation": {
-        "latitude": 3.207316,
-        "longitude": 101.581256
+        "latitude": 3.2064051,
+        "longitude": 101.58113569999999
       },
-      "distance": 0.21,
-      "duration": 3,
+      "distance": 0.06,
+      "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to Sungai Buloh MRT Station"
-    },
-    {
-      "type": "mrt",
-      "startLocation": {
-        "latitude": 3.207316,
-        "longitude": 101.581256
-      },
-      "endLocation": {
-        "latitude": 3.134232,
-        "longitude": 101.687508
-      },
-      "distance": 18,
-      "duration": 35,
-      "carbonPerKm": 40,
-      "totalCarbon": 720,
-      "estimatedCost": 5.6,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "transitLine": "MRT Kajang Line",
-      "departureStop": "Sungai Buloh MRT",
-      "arrivalStop": "Muzium Negara MRT",
-      "headsign": "Towards Kajang",
-      "stopCount": 11,
-      "instruction": "Board MRT Kajang Line Towards Kajang"
+      "departure": "2026-05-14T09:11:41.842969Z",
+      "arrival": "2026-05-14T09:12:41.842969Z",
+      "instruction": "Tuju timur"
     },
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 3.134232,
-        "longitude": 101.687508
+        "latitude": 3.2064051,
+        "longitude": 101.58113569999999
       },
       "endLocation": {
-        "latitude": 3.1338,
-        "longitude": 101.6869,
-        "address": "KL Sentral, Kuala Lumpur"
+        "latitude": 3.2064277,
+        "longitude": 101.5809142
       },
-      "distance": 0.21,
-      "duration": 3,
+      "distance": 0.03,
+      "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to KL Sentral"
+      "departure": "2026-05-14T09:12:41.842969Z",
+      "arrival": "2026-05-14T09:13:41.842969Z",
+      "instruction": "Belok kanan\nDestinasi berada di sebelah kiri"
+    },
+    {
+      "type": "mrt",
+      "startLocation": {
+        "latitude": 3.2063599999999997,
+        "longitude": 101.58013
+      },
+      "endLocation": {
+        "latitude": 3.13417,
+        "longitude": 101.68611
+      },
+      "distance": 18.78,
+      "duration": 37,
+      "carbonPerKm": 40,
+      "totalCarbon": 751.2,
+      "estimatedCost": 6.53,
+      "departure": "2026-05-14T09:13:41.842969Z",
+      "arrival": "2026-05-14T09:50:41.842969Z",
+      "transitLine": "KTM Tanjung Malim - Pelabuhan Klang",
+      "departureStop": "MRT/KTM Sungai Buloh (SBK01 \u0026 KA08)",
+      "arrivalStop": "Kuala Lumpur Sentral (KJ15/KA01)",
+      "headsign": "Pel. Klang (S)",
+      "stopCount": 8,
+      "instruction": "Kereta api menuju Pel. Klang (S)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.1336955,
+        "longitude": 101.68672169999999
+      },
+      "endLocation": {
+        "latitude": 3.1338,
+        "longitude": 101.6869
+      },
+      "distance": 0.02,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:50:41.842969Z",
+      "arrival": "2026-05-14T09:51:41.842969Z"
     }
   ],
-  "polyline": "_v_S_qbjRzaIy_b@",
-  "reasoning": "Lowest-carbon option from Sungai Buloh to KL Sentral on the MRT Kajang Line.",
+  "polyline": "uhqRc~~jRTcAPWJCFFKd@LzCRDlAyFh@oBx@yBrDkHt@sA^i@lCoFlAgCbAwCd@eBlD_RfEeTRwAJyA?wAGuAyBgTKwACcCFwANuATuA^uA`AqC~@eCj@wBZeBVwBJyB@}BG_CQ}B[oBg@wBm@mB_AqBy@yAkAcBmAsAca@g`@gAqAk@}@i@gA_@iAUoAQsBaBas@@}BFsAn@qG\\aC\\uAh@eBn@aBp@uAhAcB`AkAfAkA~HsHd@k@pEiEfQoPdFqE~DwD|A_B`AyAj@kAbMc_@fN_b@xBqG|FiQjAsCnAiC|BqDhJuN~BmD`BkCnBwC|AwBlFkGhAgBt@yA\\_Ap@gClCkPj@kCj@gB\\_AjAcCbHsLrAgCnCoEtB_DbBuBrA{A|@_Af@q@bBaBxE{E`J_JdBwAdAu@`CoApBy@r@UVKvAe@h@IxDsAxBeAhAw@\\Yf@k@r@gAn@uAh@cBz@oCd@eAn@iAzAmBjDwDdB_B~@i@dAa@vA]tASh@E`HOzAKvAUh@MhGqBnJiCnAWx@Ml@Cz@@`AFdAR`AZzAx@rGbEjGzDn@\\z@^~A`@hBZdCPrA?fBKhIcAfAUfA[f@UnAw@vBaBxE{DbBoAz@e@f@Ux@WvB]bBKrA?|BPrARlJpB|@\\h@^dCzCp@pAj@hB`AfDf@bB\\z@pExJbCxFj@lAXM|AyBSc@",
+  "reasoning": "Recorded Google Routes response for Sungai Buloh -\u003e KL Sentral (eco).",
   "recommendedFor": [
     "low-carbon",
     "commute"
   ],
   "recommended": true,
   "dataSource": "google_routes",
-  "createdAt": "0001-01-01T00:00:00Z",
-  "_stub": true
+  "createdAt": "0001-01-01T00:00:00Z"
 }

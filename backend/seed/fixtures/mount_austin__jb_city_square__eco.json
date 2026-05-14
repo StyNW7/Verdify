@@ -1,89 +1,317 @@
 {
   "routeId": "fixture_mount_austin__jb_city_square__eco",
   "mode": "eco",
-  "totalDistance": 9.84,
-  "totalDuration": 32,
-  "carbonEstimate": 787.2,
-  "carbonBaseline": 1968,
-  "carbonSavedGrams": 1180.8,
-  "carbonSavingsPercent": 60,
-  "carbonEstimateKg": 0.79,
-  "estimatedCost": 2.8,
-  "greenPointsEstimate": 118,
+  "totalDistance": 17.525,
+  "totalDuration": 80,
+  "carbonEstimate": 903,
+  "carbonBaseline": 3505,
+  "carbonSavedGrams": 2602,
+  "carbonSavingsPercent": 74,
+  "carbonEstimateKg": 0.9,
+  "estimatedCost": 5.91,
+  "greenPointsEstimate": 102,
   "steps": [
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 1.5404,
-        "longitude": 103.7902,
-        "address": "Mount Austin, Johor Bahru"
+        "latitude": 1.5404835,
+        "longitude": 103.7901179
       },
       "endLocation": {
-        "latitude": 1.540624,
-        "longitude": 103.789672
+        "latitude": 1.5418600999999998,
+        "longitude": 103.7913883
       },
-      "distance": 0.18,
-      "duration": 3,
+      "distance": 0.21,
+      "duration": 2,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to Mount Austin Bus Stop"
-    },
-    {
-      "type": "bus",
-      "startLocation": {
-        "latitude": 1.540624,
-        "longitude": 103.789672
-      },
-      "endLocation": {
-        "latitude": 1.46298,
-        "longitude": 103.764132
-      },
-      "distance": 9.48,
-      "duration": 26,
-      "carbonPerKm": 80,
-      "totalCarbon": 758.4,
-      "estimatedCost": 2.8,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "transitLine": "myBAS T44",
-      "departureStop": "Mount Austin Bus Stop",
-      "arrivalStop": "JB Sentral Bus Hub",
-      "headsign": "Towards JB Sentral",
-      "stopCount": 18,
-      "instruction": "Board myBAS T44 Towards JB Sentral"
+      "departure": "2026-05-14T09:11:40.176543Z",
+      "arrival": "2026-05-14T09:13:40.176543Z",
+      "instruction": "Tuju timur laut"
     },
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 1.46298,
-        "longitude": 103.764132
+        "latitude": 1.5418600999999998,
+        "longitude": 103.7913883
       },
       "endLocation": {
-        "latitude": 1.4628,
-        "longitude": 103.7639,
-        "address": "Johor Bahru City Square"
+        "latitude": 1.5413390999999999,
+        "longitude": 103.79220149999999
       },
-      "distance": 0.18,
-      "duration": 3,
+      "distance": 0.11,
+      "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to JB City Square"
+      "departure": "2026-05-14T09:13:40.176543Z",
+      "arrival": "2026-05-14T09:14:40.176543Z",
+      "instruction": "Belok kanan ke Jalan Bakawali 55"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.5413390999999999,
+        "longitude": 103.79220149999999
+      },
+      "endLocation": {
+        "latitude": 1.5380972,
+        "longitude": 103.79606349999999
+      },
+      "distance": 0.57,
+      "duration": 7,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:14:40.176543Z",
+      "arrival": "2026-05-14T09:21:40.176543Z",
+      "instruction": "Belok kanan ke Jalan Bakawali 67"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.5380972,
+        "longitude": 103.79606349999999
+      },
+      "endLocation": {
+        "latitude": 1.5386574,
+        "longitude": 103.7963171
+      },
+      "distance": 0.07,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:21:40.176543Z",
+      "arrival": "2026-05-14T09:22:40.176543Z",
+      "instruction": "Belok kiri ke Jalan Bakawali 75"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.5386574,
+        "longitude": 103.7963171
+      },
+      "endLocation": {
+        "latitude": 1.5382295,
+        "longitude": 103.79777589999999
+      },
+      "distance": 0.17,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:22:40.176543Z",
+      "arrival": "2026-05-14T09:24:40.176543Z",
+      "instruction": "Belok kanan ke Jalan Bakawali 80"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.5382295,
+        "longitude": 103.79777589999999
+      },
+      "endLocation": {
+        "latitude": 1.5378157,
+        "longitude": 103.7978725
+      },
+      "distance": 0.05,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:24:40.176543Z",
+      "arrival": "2026-05-14T09:25:40.176543Z",
+      "instruction": "Belok kanan ke Jalan Bakawali 86"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.5378157,
+        "longitude": 103.7978725
+      },
+      "endLocation": {
+        "latitude": 1.5380140999999998,
+        "longitude": 103.79884399999999
+      },
+      "distance": 0.11,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:25:40.176543Z",
+      "arrival": "2026-05-14T09:26:40.176543Z",
+      "instruction": "Belok kiri untuk kekal di Jalan Bakawali 86"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.5380140999999998,
+        "longitude": 103.79884399999999
+      },
+      "endLocation": {
+        "latitude": 1.5373554999999999,
+        "longitude": 103.7990452
+      },
+      "distance": 0.08,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:26:40.176543Z",
+      "arrival": "2026-05-14T09:27:40.176543Z",
+      "instruction": "Belok kanan ke Jalan Bakawali 83"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.5373554999999999,
+        "longitude": 103.7990452
+      },
+      "endLocation": {
+        "latitude": 1.5315618000000002,
+        "longitude": 103.7940653
+      },
+      "distance": 0.86,
+      "duration": 12,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:27:40.176543Z",
+      "arrival": "2026-05-14T09:39:40.176543Z",
+      "instruction": "Belok kanan ke Jalan Rosmerah Utama"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.5315618000000002,
+        "longitude": 103.7940653
+      },
+      "endLocation": {
+        "latitude": 1.5310458999999998,
+        "longitude": 103.79340119999999
+      },
+      "distance": 0.09,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:39:40.176543Z",
+      "arrival": "2026-05-14T09:40:40.176543Z",
+      "instruction": "Belok sedikit ke kanan untuk kekal di Jalan Rosmerah Utama"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.5310458999999998,
+        "longitude": 103.79340119999999
+      },
+      "endLocation": {
+        "latitude": 1.5319854,
+        "longitude": 103.79261179999999
+      },
+      "distance": 0.14,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:40:40.176543Z",
+      "arrival": "2026-05-14T09:41:40.176543Z",
+      "instruction": "Belok kanan ke Jalan Masai Baru\nDestinasi berada di sebelah kiri"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 1.53196,
+        "longitude": 103.79258
+      },
+      "endLocation": {
+        "latitude": 1.46062,
+        "longitude": 103.75777
+      },
+      "distance": 12.75,
+      "duration": 37,
+      "carbonPerKm": 60,
+      "totalCarbon": 765,
+      "estimatedCost": 3.9,
+      "departure": "2026-05-14T09:41:40.176543Z",
+      "arrival": "2026-05-14T10:18:40.176543Z",
+      "transitLine": "JB Sentral - Terminal Bas Masai",
+      "departureStop": "Taman Molek",
+      "arrivalStop": "Wisma Persekutuan",
+      "headsign": "Terminal Bas Masai - JB Sentral",
+      "stopCount": 20,
+      "instruction": "Bas menuju Terminal Bas Masai - JB Sentral"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4605815,
+        "longitude": 103.7577304
+      },
+      "endLocation": {
+        "latitude": 1.4607214,
+        "longitude": 103.75777020000001
+      },
+      "distance": 0.02,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:18:40.176543Z",
+      "arrival": "2026-05-14T10:19:40.176543Z"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 1.460763,
+        "longitude": 103.757813
+      },
+      "endLocation": {
+        "latitude": 1.4631699999999999,
+        "longitude": 103.76467
+      },
+      "distance": 2.3,
+      "duration": 4,
+      "carbonPerKm": 60,
+      "totalCarbon": 138,
+      "estimatedCost": 2.01,
+      "departure": "2026-05-14T10:19:40.176543Z",
+      "arrival": "2026-05-14T10:23:40.176543Z",
+      "transitLine": "P101 : Larkin Sentral - JB Sentral - Larkin Sentral",
+      "departureStop": "Wisma Persekutuan Ayer Molek",
+      "arrivalStop": "JB Sentral",
+      "headsign": "Larkin Sentral",
+      "stopCount": 3,
+      "instruction": "Bas menuju Larkin Sentral"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 1.4628771,
+        "longitude": 103.7639167
+      },
+      "endLocation": {
+        "latitude": 1.4627999999999999,
+        "longitude": 103.76389999999999
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:23:40.176543Z",
+      "arrival": "2026-05-14T10:24:40.176543Z"
     }
   ],
-  "polyline": "amgGgqsxR~hHriD",
-  "reasoning": "Lowest-carbon option from Mount Austin to JB City Square on myBAS T44 bus.",
+  "polyline": "_{kHgonxR_DcDc@]oA{@dBaC@_@FARUx@m@|CsD`DuDvBgC`ByBVqAoBs@|@sBLo@NqAEm@pAQe@aEjB[TMrAvAv@|@PLbDxAtGnCr@b@fBxAhBtB|@dAnCtDzAdBBP`BrBw@j@cCpBDDEEcAt@mCzBkBvAw@l@w@l@sBhBY\\OVk@bBM`AU|GQ`AMjAKd@YhACd@Dh@Pf@X`@|CtCt@`ADRb@f@HPxBpBxAlAtDhDn@l@dBpAnAv@p@\\r@VxEpAn@DpB?bALd@Lh@Tb@X\\`@NXv@nCXfAFfAVlMXfC\\tAvBhG^nAdB~EhCrILt@FfABzAHbANn@Vl@tAzBtAjCj@lAHNt@dBd@vARv@`E~L|DzMl@fBVf@bAzAn@t@~@v@dAt@lAn@bA\\zFlAtCv@vBPh@ApA?fAI~Aa@jAg@f@[z@s@pB_Cf@a@lBoAfCeAlDcAbFqAzLqC|Ag@|@e@z@m@fAgApA_BzA_Bh@c@~@c@xBo@nFeAFMl@OpAY^Sb@E\\?Z@fAKVFjNyAlNyAn@KnPgBTEvI_Ax@Gz@CbCHpAPtCj@xE|@l@LxARjDr@zJjBvRlDhFz@jQzC|HnAp@P`@Gj@?zEj@f@`@LZDLHJBVAXaAdF]~BY`@e@rCKbAChABjAHx@ZrAxAzDbFhL|@nBpBdDxAjBNFrAvAf@j@bBpCb@F^Ar@[|E}BlFeCt@Y|@g@tCeCzCeCz@u@rC_CTWz@q@fAgA`DiChEmDx@u@FF[GGGNPzCsCt@g@d@K~Da@zBYhJkAtBY?EnBOi@mEMqAc@oCSgAi@qBc@oBi@gBgCeHm@s@aAmBc@g@c@a@o@[g@Ow@I}@Gy@OUIs@m@[KMCYAITiE`Cg@TcCt@YL]R@NERQT{CfB}Az@NXx@tCNB",
+  "reasoning": "Recorded Google Routes response for Mount Austin -\u003e JB City Square (eco).",
   "recommendedFor": [
     "low-carbon",
     "commute"
   ],
   "recommended": true,
   "dataSource": "google_routes",
-  "createdAt": "0001-01-01T00:00:00Z",
-  "_stub": true
+  "createdAt": "0001-01-01T00:00:00Z"
 }

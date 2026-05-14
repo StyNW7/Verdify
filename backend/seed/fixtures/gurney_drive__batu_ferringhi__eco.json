@@ -1,89 +1,142 @@
 {
   "routeId": "fixture_gurney_drive__batu_ferringhi__eco",
   "mode": "eco",
-  "totalDistance": 7.62,
-  "totalDuration": 28,
-  "carbonEstimate": 444,
-  "carbonBaseline": 1524,
-  "carbonSavedGrams": 1080,
+  "totalDistance": 11.754,
+  "totalDuration": 36,
+  "carbonEstimate": 679.2,
+  "carbonBaseline": 2350.8,
+  "carbonSavedGrams": 1671.6,
   "carbonSavingsPercent": 71,
-  "carbonEstimateKg": 0.44,
-  "estimatedCost": 2.0,
-  "greenPointsEstimate": 108,
+  "carbonEstimateKg": 0.68,
+  "estimatedCost": 3.64,
+  "greenPointsEstimate": 61,
   "steps": [
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 5.4374,
-        "longitude": 100.3094,
-        "address": "Gurney Drive, Georgetown"
+        "latitude": 5.4372717999999995,
+        "longitude": 100.3098275
       },
       "endLocation": {
-        "latitude": 5.437048,
-        "longitude": 100.309684
+        "latitude": 5.4372717999999995,
+        "longitude": 100.3098275
       },
-      "distance": 0.16,
-      "duration": 3,
+      "distance": 0,
+      "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to Gurney Plaza Bus Stop"
-    },
-    {
-      "type": "bus",
-      "startLocation": {
-        "latitude": 5.437048,
-        "longitude": 100.309684
-      },
-      "endLocation": {
-        "latitude": 5.475264,
-        "longitude": 100.250768
-      },
-      "distance": 7.4,
-      "duration": 22,
-      "carbonPerKm": 60,
-      "totalCarbon": 444,
-      "estimatedCost": 2.0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "transitLine": "Rapid Penang 101",
-      "departureStop": "Gurney Plaza",
-      "arrivalStop": "Batu Ferringhi Beach Stop",
-      "headsign": "Towards Teluk Bahang",
-      "stopCount": 14,
-      "instruction": "Board Rapid Penang 101 Towards Teluk Bahang"
+      "departure": "2026-05-14T09:11:29.793522Z",
+      "arrival": "2026-05-14T09:12:29.793522Z",
+      "instruction": "Tuju selatan"
     },
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 5.475264,
-        "longitude": 100.250768
+        "latitude": 5.4372717999999995,
+        "longitude": 100.3098275
       },
       "endLocation": {
-        "latitude": 5.4754,
-        "longitude": 100.2503,
-        "address": "Batu Ferringhi, Penang"
+        "latitude": 5.436617,
+        "longitude": 100.3099412
       },
-      "distance": 0.06,
-      "duration": 3,
+      "distance": 0.09,
+      "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to Batu Ferringhi Beach"
+      "departure": "2026-05-14T09:12:29.793522Z",
+      "arrival": "2026-05-14T09:13:29.793522Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.436617,
+        "longitude": 100.3099412
+      },
+      "endLocation": {
+        "latitude": 5.435247500000001,
+        "longitude": 100.30957289999999
+      },
+      "distance": 0.16,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:13:29.793522Z",
+      "arrival": "2026-05-14T09:15:29.793522Z",
+      "instruction": "Tuju selatan ke arah Jalan Kelawai\nJalan mempunyai penggunaan separa terhad"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.435247500000001,
+        "longitude": 100.30957289999999
+      },
+      "endLocation": {
+        "latitude": 5.4359771,
+        "longitude": 100.30887279999999
+      },
+      "distance": 0.11,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:15:29.793522Z",
+      "arrival": "2026-05-14T09:16:29.793522Z",
+      "instruction": "Belok kanan ke Jalan Kelawai\nDestinasi berada di sebelah kiri"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 5.4359399999999996,
+        "longitude": 100.30881
+      },
+      "endLocation": {
+        "latitude": 5.47488,
+        "longitude": 100.25003
+      },
+      "distance": 11.32,
+      "duration": 36,
+      "carbonPerKm": 60,
+      "totalCarbon": 679.2,
+      "estimatedCost": 3.64,
+      "departure": "2026-05-14T09:16:29.793522Z",
+      "arrival": "2026-05-14T09:52:29.793522Z",
+      "transitLine": "101",
+      "departureStop": "Gurney Plaza",
+      "arrivalStop": "Long Beach Food Court",
+      "headsign": "Jeti - Teluk Bahang",
+      "stopCount": 33,
+      "instruction": "Bas menuju Jeti - Teluk Bahang"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.474943100000001,
+        "longitude": 100.2500142
+      },
+      "endLocation": {
+        "latitude": 5.4752543,
+        "longitude": 100.25053779999999
+      },
+      "distance": 0.07,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:52:29.793522Z",
+      "arrival": "2026-05-14T09:53:29.793522Z",
+      "instruction": "Tuju timur di Jalan Batu Ferringhi/Jalan Tanjung Bungah/Laluan 6\nDestinasi berada di sebelah kiri"
     }
   ],
-  "polyline": "csa``@_skcRctEnoH",
-  "reasoning": "Lowest-carbon option from Gurney Drive to Batu Ferringhi on Rapid Penang 101 coastal bus.",
+  "polyline": "}}d`@mwfcRDCFA@DPJ\\Fp@GNa@t@T`@BfCb@p@Jk@p@uAnAOHFJGK{@\\aDr@uEv@eC\\aGz@sAl@iEdCu@ZeMtEuD`AcATgADcAB}@CsG]wDCkDJqAEi@EyAUuB[kBWeDm@oDgAaGkByB_@qEi@eBYaBQgASwHaAoASyBUq@B[Ju@l@w@`AgAxA]VOVc@hA}AnG{@rE{ApJg@xA{BzEgAxCIr@?d@HpA@nA[lCHtAEr@c@fCMrAGlB?hABbBCb@_ClL{@tF}@tGGlA@zAC|@OfDAbBJfB^`BhBjG\\|CBh@@xIEdAEz@Y~BeAhByB~C]l@qBrEu@tAQL[b@YR[JeAJk@AgAOiB[m@Cy@HmB^oAF{@A[Bg@Py@h@u@Te@Ba@E]IyAi@QOg@Wg@Gg@FqAReARSJONOTa@dAo@nA_Aj@y@`@eA`@[RgAnA]Ve@HSDQFSTW`@Mf@E^@j@JjAAb@m@dDMRe@F}@Je@X[XYt@_@zAAl@J~@APWh@E^Dj@`BjDp@lB^p@Nj@^tCJh@BDPx@BTEh@SdBQpB@RIt@]\\m@f@YXe@|@CRDZf@tA@NEdAH^h@~@p@p@f@\\r@ZLR?XK\\EDQ@w@EODKFa@h@UJm@@gADm@CY@w@J]P]\\OTy@TKJMPu@tBMx@GJOFQ@u@YOASFe@`@Y^GLC~@?f@Hn@bAvEPpAJrBHXZl@j@r@n@d@TFt@@t@@XD`@V`B|AnIpIr@~@xB`ERNf@fA^pAAPVv@TZd@d@jAp@PXL`@F\\JCKBMs@MUSUMI",
+  "reasoning": "Recorded Google Routes response for Gurney Drive -\u003e Batu Ferringhi (eco).",
   "recommendedFor": [
     "low-carbon",
-    "tourist"
+    "commute"
   ],
   "recommended": true,
   "dataSource": "google_routes",
-  "createdAt": "0001-01-01T00:00:00Z",
-  "_stub": true
+  "createdAt": "0001-01-01T00:00:00Z"
 }

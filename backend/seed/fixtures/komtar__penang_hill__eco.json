@@ -1,89 +1,333 @@
 {
   "routeId": "fixture_komtar__penang_hill__eco",
   "mode": "eco",
-  "totalDistance": 6.31,
-  "totalDuration": 23,
-  "carbonEstimate": 325.8,
-  "carbonBaseline": 1262,
-  "carbonSavedGrams": 936.2,
-  "carbonSavingsPercent": 74,
-  "carbonEstimateKg": 0.33,
-  "estimatedCost": 2.58,
-  "greenPointsEstimate": 37,
+  "totalDistance": 16.815,
+  "totalDuration": 175,
+  "carbonEstimate": 603,
+  "carbonBaseline": 3363,
+  "carbonSavedGrams": 2760,
+  "carbonSavingsPercent": 82,
+  "carbonEstimateKg": 0.6,
+  "estimatedCost": 3.41,
+  "greenPointsEstimate": 141,
   "steps": [
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 5.4143,
-        "longitude": 100.3296,
-        "address": "KOMTAR, Georgetown"
+        "latitude": 5.4139352,
+        "longitude": 100.329679
       },
       "endLocation": {
-        "latitude": 5.415068,
-        "longitude": 100.325104
+        "latitude": 5.4137172,
+        "longitude": 100.3294469
       },
-      "distance": 0.44,
-      "duration": 5,
+      "distance": 0.04,
+      "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to KOMTAR Bus Hub"
-    },
-    {
-      "type": "bus",
-      "startLocation": {
-        "latitude": 5.415068,
-        "longitude": 100.325104
-      },
-      "endLocation": {
-        "latitude": 5.423132,
-        "longitude": 100.277896
-      },
-      "distance": 5.43,
-      "duration": 13,
-      "carbonPerKm": 60,
-      "totalCarbon": 325.8,
-      "estimatedCost": 2.58,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "transitLine": "Rapid Penang 204",
-      "departureStop": "KOMTAR Bus Hub",
-      "arrivalStop": "Penang Hill Bus Stop",
-      "headsign": "Towards Penang Hill",
-      "stopCount": 8,
-      "instruction": "Board Rapid Penang 204 Towards Penang Hill"
+      "departure": "2026-05-14T09:11:38.618844Z",
+      "arrival": "2026-05-14T09:12:38.618844Z",
+      "instruction": "Tuju barat daya di Jalan Ria ke arah Jalan Magazine"
     },
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 5.423132,
-        "longitude": 100.277896
+        "latitude": 5.4137172,
+        "longitude": 100.3294469
       },
       "endLocation": {
-        "latitude": 5.4239,
-        "longitude": 100.2734,
-        "address": "Penang Hill"
+        "latitude": 5.4139295999999995,
+        "longitude": 100.32898469999999
       },
-      "distance": 0.44,
-      "duration": 5,
+      "distance": 0.06,
+      "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to Penang Hill"
+      "departure": "2026-05-14T09:12:38.618844Z",
+      "arrival": "2026-05-14T09:13:38.618844Z",
+      "instruction": "Belok kanan ke Jalan Magazine"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4139295999999995,
+        "longitude": 100.32898469999999
+      },
+      "endLocation": {
+        "latitude": 5.4140093,
+        "longitude": 100.3287713
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:13:38.618844Z",
+      "arrival": "2026-05-14T09:14:38.618844Z",
+      "instruction": "Teruskan perjalanan ke Jln Macalister"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4140093,
+        "longitude": 100.3287713
+      },
+      "endLocation": {
+        "latitude": 5.4138158,
+        "longitude": 100.3281012
+      },
+      "distance": 0.08,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:14:38.618844Z",
+      "arrival": "2026-05-14T09:15:38.618844Z",
+      "instruction": "Belok sedikit ke kiri ke Jalan Dato Keramat"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 5.413819,
+        "longitude": 100.3281
+      },
+      "endLocation": {
+        "latitude": 5.4078599999999994,
+        "longitude": 100.27749000000001
+      },
+      "distance": 10.05,
+      "duration": 48,
+      "carbonPerKm": 60,
+      "totalCarbon": 603,
+      "estimatedCost": 3.41,
+      "departure": "2026-05-14T09:15:38.618844Z",
+      "arrival": "2026-05-14T10:03:38.618844Z",
+      "transitLine": "204",
+      "departureStop": "Pasaraya Gama",
+      "arrivalStop": "Stesen Bukit Bendera",
+      "headsign": "Jeti- bkt.Bendera",
+      "stopCount": 33,
+      "instruction": "Bas menuju Jeti- bkt.Bendera"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.407909,
+        "longitude": 100.27749659999999
+      },
+      "endLocation": {
+        "latitude": 5.4058129,
+        "longitude": 100.28275339999999
+      },
+      "distance": 0.63,
+      "duration": 7,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:03:38.618844Z",
+      "arrival": "2026-05-14T10:10:38.618844Z",
+      "instruction": "Tuju tenggara di Jalan Bukit Bendera/P210 ke arah Taman Lintang"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4058129,
+        "longitude": 100.28275339999999
+      },
+      "endLocation": {
+        "latitude": 5.4057306,
+        "longitude": 100.28302649999999
+      },
+      "distance": 0.03,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:10:38.618844Z",
+      "arrival": "2026-05-14T10:11:38.618844Z",
+      "instruction": "Belok sedikit ke kiri untuk kekal di Jalan Bukit Bendera/P210"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4057306,
+        "longitude": 100.28302649999999
+      },
+      "endLocation": {
+        "latitude": 5.404523999999999,
+        "longitude": 100.28855709999999
+      },
+      "distance": 0.66,
+      "duration": 9,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:11:38.618844Z",
+      "arrival": "2026-05-14T10:20:38.618844Z",
+      "instruction": "Di bulatan, ambil susur keluar Ke-3 ke Jalan Air Itam/P13\nMelewati Crystal House (di sebelah kiri dalam 650 m)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.404523999999999,
+        "longitude": 100.28855709999999
+      },
+      "endLocation": {
+        "latitude": 5.4110884,
+        "longitude": 100.29048329999999
+      },
+      "distance": 0.81,
+      "duration": 11,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:20:38.618844Z",
+      "arrival": "2026-05-14T10:31:38.618844Z",
+      "instruction": "Belok ke kiri sebelum Tan Chye Geok Acupuncturist Centre\nMelewati O2 Klinik (Ayer Itam) Medical | 24 Hours | X-Ray | Ultrasound | Health Screening | 医疗诊所 | 24 小时 | X光 | 超声波 | 健康检查诊断 (di sebelah kiri)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4110884,
+        "longitude": 100.29048329999999
+      },
+      "endLocation": {
+        "latitude": 5.4111961,
+        "longitude": 100.29040239999999
+      },
+      "distance": 0.02,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:31:38.618844Z",
+      "arrival": "2026-05-14T10:32:38.618844Z",
+      "instruction": "Belok kiri ke Jln Padang Tembak"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4111961,
+        "longitude": 100.29040239999999
+      },
+      "endLocation": {
+        "latitude": 5.4116675999999995,
+        "longitude": 100.2889508
+      },
+      "distance": 0.18,
+      "duration": 2,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:32:38.618844Z",
+      "arrival": "2026-05-14T10:34:38.618844Z",
+      "instruction": "Belok sedikit ke kanan ke arah Jalan Padang Tembak"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4116675999999995,
+        "longitude": 100.2889508
+      },
+      "endLocation": {
+        "latitude": 5.412316199999999,
+        "longitude": 100.287629
+      },
+      "distance": 0.19,
+      "duration": 3,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:34:38.618844Z",
+      "arrival": "2026-05-14T10:37:38.618844Z",
+      "instruction": "Teruskan perjalanan ke Jalan Padang Tembak"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.412316199999999,
+        "longitude": 100.287629
+      },
+      "endLocation": {
+        "latitude": 5.4148327,
+        "longitude": 100.28483729999999
+      },
+      "distance": 0.8,
+      "duration": 24,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T10:37:38.618844Z",
+      "arrival": "2026-05-14T11:01:38.618844Z",
+      "instruction": "Belok kiri"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4148327,
+        "longitude": 100.28483729999999
+      },
+      "endLocation": {
+        "latitude": 5.4204928,
+        "longitude": 100.2847582
+      },
+      "distance": 0.77,
+      "duration": 25,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T11:01:38.618844Z",
+      "arrival": "2026-05-14T11:26:38.618844Z",
+      "instruction": "Belok kanan"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4204928,
+        "longitude": 100.2847582
+      },
+      "endLocation": {
+        "latitude": 5.4258787,
+        "longitude": 100.2729165
+      },
+      "distance": 2.43,
+      "duration": 52,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T11:26:38.618844Z",
+      "arrival": "2026-05-14T12:18:38.618844Z",
+      "instruction": "Belok tajam ke kiri"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 5.4258787,
+        "longitude": 100.2729165
+      },
+      "endLocation": {
+        "latitude": 5.4255816,
+        "longitude": 100.2726669
+      },
+      "distance": 0.05,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T12:18:38.618844Z",
+      "arrival": "2026-05-14T12:19:38.618844Z",
+      "instruction": "Belok kanan"
     }
   ],
-  "polyline": "kn``@_sjcR_{@f~I",
-  "reasoning": "Lowest-carbon option from KOMTAR to Penang Hill using Rapid Penang 204.",
+  "polyline": "cl``@osjcRj@l@i@|AOh@Jx@XjAhAbEr@vDZ|BdApEDJNj@zAnBTh@Ft@ExA[rDMjBeBpLG`A?vBBnCMrGMx@EJEB}AhGIj@El@DPGvBGRGv@@dEFLDdBL`AP|@?FZf@d@n@nB|BbDnDJBzE`F`CnBlBtAb@d@NXRl@Pz@B\\bBdHbAlDb@nBTr@~@xDC~A[dDg@~BKfA?|ABb@Hf@N^RXfApAfAbAd@ZhAf@jA\\ZLf@ZRZDLJtAGj@MFOA_@c@oAkCo@y@EE[HEDOb@S|@k@lB_@vBUv@k@tAuAbCGJWJyBj@sAd@WDwBm@]DI@U^kA~DpDfAp@\\BNAF{@bBOBq@SW?QC}Bu@{@jDCd@DHTPrFxCbCpAbJzCj@HrABnACPEbAg@`@URCH?ZIpAFXDz@T@TfAB`CJ~DLVDTX^~@JH|F|Bx@^hA`@NLDJ@^An@DJNF^FfAb@pBh@rExA@HyDhLnCbAkAvDe@fAwBtGERMzAJ`BXvCGdAEh@yCq@g@Io@[qDYOLEHSfDOv@IXWh@WRe@i@e@o@eAkBKYWcAYi@[a@o@_@KMaBcEwDeIoBgEm@uAIGUi@Ud@GHUh@_@rBgArEo@lCWx@[xAc@fAc@fB[`A]x@Yd@c@h@AHH@IA@Ib@i@Xe@j@yAVy@XoAb@gAZyAVy@bBiH`@gBPcATi@?MNi@AMHIBANYFChAyBfBsC\\aATqAHoBBcDMuCQuBEwAcAW_@GcAC[HQ?ODeAl@[LQDoABsACk@IcJ{CwJkFYUAEUNUFIJYx@Qn@IzAGfAOdCFVI^IFcALSFKJCR@JfAK`@BTF?JG@O@OTU~@o@~Ao@hAMBYC_@So@KUBOLATDx@NnBEZGFKB[GmByAOEKBSZOx@G@S]O[IAEFCfAIz@IFM@GIOo@Qe@]e@]Sa@Ic@Bg@Tk@DMA{A}@MGq@MSBEB[j@Q^SV_An@eAV}@Fo@Rg@XmAb@e@^QFe@@e@GuAq@i@]?JTv@@\\ATSn@GHYHeF`@kB|@aAv@s@|@Yp@I`@Dh@Hb@@XCf@KZGPUP{@Vc@DeBDkB@oCHiBNyA@]NMNq@jBuAhG?ZDPHBd@KL?^RX|@X`@?JMBSEk@c@SEOFAZHj@Ab@SbA?XF`@h@z@BRAPyAdAuAz@WZCLL~@Gr@Qt@Mz@IXGh@?f@HNPFx@El@AF?\\ZFT?fAKvADb@?TGf@HPJD`@CbA_@\\E~AANGRUPi@BCPAHDXb@DH",
+  "reasoning": "Recorded Google Routes response for KOMTAR -\u003e Penang Hill (eco).",
   "recommendedFor": [
     "low-carbon",
     "commute"
   ],
   "recommended": true,
   "dataSource": "google_routes",
-  "createdAt": "0001-01-01T00:00:00Z",
-  "_stub": true
+  "createdAt": "0001-01-01T00:00:00Z"
 }

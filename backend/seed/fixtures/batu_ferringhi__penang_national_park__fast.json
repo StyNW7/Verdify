@@ -1,15 +1,15 @@
 {
   "routeId": "fixture_batu_ferringhi__penang_national_park__fast",
   "mode": "fast",
-  "totalDistance": 5.84,
-  "totalDuration": 12,
-  "carbonEstimate": 467.2,
-  "carbonBaseline": 1168,
-  "carbonSavedGrams": 700.8,
+  "totalDistance": 6.439,
+  "totalDuration": 11,
+  "carbonEstimate": 515.12,
+  "carbonBaseline": 1287.8,
+  "carbonSavedGrams": 772.68,
   "carbonSavingsPercent": 60,
-  "carbonEstimateKg": 0.47,
-  "estimatedCost": 9.2,
-  "greenPointsEstimate": 35,
+  "carbonEstimateKg": 0.52,
+  "estimatedCost": 10.17,
+  "greenPointsEstimate": 24,
   "steps": [
     {
       "type": "ev_taxi",
@@ -23,24 +23,22 @@
         "longitude": 100.2003,
         "address": "Penang National Park, Teluk Bahang"
       },
-      "distance": 5.84,
-      "duration": 12,
+      "distance": 6.44,
+      "duration": 11,
       "carbonPerKm": 80,
-      "totalCarbon": 467.2,
-      "estimatedCost": 9.2,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Drive from Batu Ferringhi to Penang National Park"
+      "totalCarbon": 515.2,
+      "estimatedCost": 10.17,
+      "departure": "2026-05-14T09:11:28.177204Z",
+      "arrival": "2026-05-14T09:27:28.177204Z"
     }
   ],
-  "polyline": "atb``@_~`cR~`@nrG",
-  "reasoning": "Fastest direct ride from Batu Ferringhi to Penang National Park along the coastal road.",
+  "polyline": "ikl`@{d{bRTNPXL`@^tBVn@tCfEnAvArBlBpA|@xA|@bAp@dEfDxBjAfBp@hA~@vAzAPf@H^?jAAfAFr@J\\Xd@TRj@LrBVRDvAP~@PjBRrAXj@b@z@pBFRd@fCJpBTnAL\\l@fAVfA?VGx@@Tb@`BDv@?ZG^a@r@yBbCEZDVJLnAb@|@r@^^nAfBn@dAf@dAJ`@?t@Kp@Oj@Cf@Bd@Pz@t@dCPf@F\\?^GLKHcAVYN]~@MTMHWH{@ROJUV_@XEPDRPP`@Ln@HVJz@t@R\\b@dARdAFh@@h@Ef@Mn@eCzJ_@|@o@`Ai@pAk@bBoAzCOl@?\\BLX\\XThBjAn@Rf@Bj@@t@XZRrCvCLDtC~C`A~@fBlBh@t@@HfDvDl@~@vArCpDdG^j@v@~ANCLJ?NIH\\dFVhILjEDpBMhJGdAYzAo@pAc@d@g@Tw@T}Dx@c@Na@HSLWz@EJ",
+  "reasoning": "Recorded Google Routes response for Batu Ferringhi -\u003e Penang National Park (fast).",
   "recommendedFor": [
     "speed",
-    "tourist"
+    "luggage"
   ],
   "recommended": false,
   "dataSource": "google_routes",
-  "createdAt": "0001-01-01T00:00:00Z",
-  "_stub": true
+  "createdAt": "0001-01-01T00:00:00Z"
 }

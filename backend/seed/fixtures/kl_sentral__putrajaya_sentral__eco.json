@@ -1,89 +1,333 @@
 {
   "routeId": "fixture_kl_sentral__putrajaya_sentral__eco",
   "mode": "eco",
-  "totalDistance": 21.06,
+  "totalDistance": 34.443,
   "totalDuration": 61,
-  "carbonEstimate": 724.8,
-  "carbonBaseline": 4212,
-  "carbonSavedGrams": 3487.2,
-  "carbonSavingsPercent": 83,
-  "carbonEstimateKg": 0.72,
-  "estimatedCost": 6.39,
-  "greenPointsEstimate": 184,
+  "carbonEstimate": 1366.6,
+  "carbonBaseline": 6888.6,
+  "carbonSavedGrams": 5522,
+  "carbonSavingsPercent": 80,
+  "carbonEstimateKg": 1.37,
+  "estimatedCost": 11.27,
+  "greenPointsEstimate": 260,
   "steps": [
     {
       "type": "walking",
       "startLocation": {
         "latitude": 3.1338,
-        "longitude": 101.6869,
-        "address": "KL Sentral, Kuala Lumpur"
+        "longitude": 101.6869
       },
       "endLocation": {
-        "latitude": 3.118696,
-        "longitude": 101.685644
+        "latitude": 3.13367,
+        "longitude": 101.68652999999999
       },
-      "distance": 1.47,
-      "duration": 12,
+      "distance": 0.04,
+      "duration": 1,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to KL Sentral MRT Station"
-    },
-    {
-      "type": "mrt",
-      "startLocation": {
-        "latitude": 3.118696,
-        "longitude": 101.685644
-      },
-      "endLocation": {
-        "latitude": 2.960104,
-        "longitude": 101.672456
-      },
-      "distance": 18.12,
-      "duration": 37,
-      "carbonPerKm": 40,
-      "totalCarbon": 724.8,
-      "estimatedCost": 6.39,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "transitLine": "Putrajaya Line (MRT)",
-      "departureStop": "KL Sentral MRT Station",
-      "arrivalStop": "Putrajaya Sentral MRT Station",
-      "headsign": "Towards Putrajaya Sentral",
-      "stopCount": 12,
-      "instruction": "Board Putrajaya Line (MRT) Towards Putrajaya Sentral"
+      "departure": "2026-05-14T09:11:33.187981Z",
+      "arrival": "2026-05-14T09:12:33.187981Z"
     },
     {
       "type": "walking",
       "startLocation": {
-        "latitude": 2.960104,
-        "longitude": 101.672456
+        "latitude": 3.13367,
+        "longitude": 101.68652999999999
       },
       "endLocation": {
-        "latitude": 2.945,
-        "longitude": 101.6712,
-        "address": "Putrajaya Sentral"
+        "latitude": 3.13367,
+        "longitude": 101.68652999999999
       },
-      "distance": 1.47,
-      "duration": 12,
+      "distance": 0,
+      "duration": 2,
       "carbonPerKm": 0,
       "totalCarbon": 0,
       "estimatedCost": 0,
-      "departure": "0001-01-01T00:00:00Z",
-      "arrival": "0001-01-01T00:00:00Z",
-      "instruction": "Walk to Putrajaya Sentral"
+      "departure": "2026-05-14T09:12:33.187981Z",
+      "arrival": "2026-05-14T09:14:33.187981Z",
+      "instruction": "Ambil laluan masuk KL Sentral - South Entrance/Exit"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.13367,
+        "longitude": 101.68652999999999
+      },
+      "endLocation": {
+        "latitude": 3.13367,
+        "longitude": 101.68652999999999
+      },
+      "distance": 0,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:14:33.187981Z",
+      "arrival": "2026-05-14T09:15:33.187981Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 3.13367,
+        "longitude": 101.68652999999999
+      },
+      "endLocation": {
+        "latitude": 3.13399,
+        "longitude": 101.68708
+      },
+      "distance": 0.07,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:15:33.187981Z",
+      "arrival": "2026-05-14T09:16:33.187981Z"
+    },
+    {
+      "type": "mrt",
+      "startLocation": {
+        "latitude": 3.13399,
+        "longitude": 101.68708
+      },
+      "endLocation": {
+        "latitude": 2.93154,
+        "longitude": 101.67097000000001
+      },
+      "distance": 31.72,
+      "duration": 20,
+      "carbonPerKm": 40,
+      "totalCarbon": 1268.8,
+      "estimatedCost": 9.38,
+      "departure": "2026-05-14T09:16:33.187981Z",
+      "arrival": "2026-05-14T09:36:33.187981Z",
+      "transitLine": "KLIA Transit",
+      "departureStop": "Kuala Lumpur Sentral (KJ15/KA01)",
+      "arrivalStop": "Putrajaya Sentral",
+      "headsign": "ERL Platform B (KL Sentral)",
+      "stopCount": 3,
+      "instruction": "Kereta api menuju ERL Platform B (KL Sentral)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.93154,
+        "longitude": 101.67097000000001
+      },
+      "endLocation": {
+        "latitude": 2.93154,
+        "longitude": 101.67097000000001
+      },
+      "distance": 0,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:36:33.187981Z",
+      "arrival": "2026-05-14T09:37:33.187981Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.93154,
+        "longitude": 101.67097000000001
+      },
+      "endLocation": {
+        "latitude": 2.93154,
+        "longitude": 101.67097000000001
+      },
+      "distance": 0,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:37:33.187981Z",
+      "arrival": "2026-05-14T09:38:33.187981Z"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.93154,
+        "longitude": 101.67097000000001
+      },
+      "endLocation": {
+        "latitude": 2.9314199999999997,
+        "longitude": 101.6706
+      },
+      "distance": 0.04,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:38:33.187981Z",
+      "arrival": "2026-05-14T09:39:33.187981Z",
+      "instruction": "Ambil susur keluar Putrajaya \u0026 Cyberjaya - ERL Entrance/Exit (Link Bridge)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.9314202999999996,
+        "longitude": 101.67059809999999
+      },
+      "endLocation": {
+        "latitude": 2.9313875,
+        "longitude": 101.670592
+      },
+      "distance": 0,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:39:33.187981Z",
+      "arrival": "2026-05-14T09:40:33.187981Z",
+      "instruction": "Tuju selatan di Jalan P7 F"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.9313875,
+        "longitude": 101.670592
+      },
+      "endLocation": {
+        "latitude": 2.9329796999999997,
+        "longitude": 101.672023
+      },
+      "distance": 0.34,
+      "duration": 5,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:40:33.187981Z",
+      "arrival": "2026-05-14T09:45:33.187981Z",
+      "instruction": "Belok kiri\nLintasi 1 bulatan\nDestinasi berada di sebelah kiri"
+    },
+    {
+      "type": "bus",
+      "startLocation": {
+        "latitude": 2.93293,
+        "longitude": 101.67195
+      },
+      "endLocation": {
+        "latitude": 2.944311,
+        "longitude": 101.675809
+      },
+      "distance": 1.63,
+      "duration": 5,
+      "carbonPerKm": 60,
+      "totalCarbon": 97.8,
+      "estimatedCost": 1.89,
+      "departure": "2026-05-14T09:45:33.187981Z",
+      "arrival": "2026-05-14T09:50:33.187981Z",
+      "transitLine": "T523 : Hab Lebuh Pudu - Putrajaya Sentral via KTM Serdang",
+      "departureStop": "MRT Putrajaya Sentral",
+      "arrivalStop": "Presint 9 Fasa 5B",
+      "headsign": "Hab Lebuh Pudu (LP)",
+      "stopCount": 5,
+      "instruction": "Bas menuju Hab Lebuh Pudu (LP)"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.9442071,
+        "longitude": 101.6754247
+      },
+      "endLocation": {
+        "latitude": 2.9440987,
+        "longitude": 101.6754661
+      },
+      "distance": 0.01,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:50:33.187981Z",
+      "arrival": "2026-05-14T09:51:33.187981Z",
+      "instruction": "Tuju selatan ke arah Jalan P9b"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.9440987,
+        "longitude": 101.6754661
+      },
+      "endLocation": {
+        "latitude": 2.9437093,
+        "longitude": 101.67453019999999
+      },
+      "distance": 0.11,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:51:33.187981Z",
+      "arrival": "2026-05-14T09:52:33.187981Z",
+      "instruction": "Belok kanan ke Jalan P9b"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.9437093,
+        "longitude": 101.67453019999999
+      },
+      "endLocation": {
+        "latitude": 2.9447647,
+        "longitude": 101.67176649999999
+      },
+      "distance": 0.37,
+      "duration": 4,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:52:33.187981Z",
+      "arrival": "2026-05-14T09:56:33.187981Z",
+      "instruction": "Belok kanan ke Jalan P9b1"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.9447647,
+        "longitude": 101.67176649999999
+      },
+      "endLocation": {
+        "latitude": 2.9451122,
+        "longitude": 101.671706
+      },
+      "distance": 0.04,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:56:33.187981Z",
+      "arrival": "2026-05-14T09:57:33.187981Z",
+      "instruction": "Belok kanan ke Jln Rajawali P9B1/14"
+    },
+    {
+      "type": "walking",
+      "startLocation": {
+        "latitude": 2.9451122,
+        "longitude": 101.671706
+      },
+      "endLocation": {
+        "latitude": 2.9449986,
+        "longitude": 101.6712012
+      },
+      "distance": 0.06,
+      "duration": 1,
+      "carbonPerKm": 0,
+      "totalCarbon": 0,
+      "estimatedCost": 0,
+      "departure": "2026-05-14T09:57:33.187981Z",
+      "arrival": "2026-05-14T09:58:33.187981Z",
+      "instruction": "Belok kiri untuk kekal di Jln Rajawali P9B1/14"
     }
   ],
-  "polyline": "gacRcvskR~zc@baB",
-  "reasoning": "Lowest-carbon option from KL Sentral to Putrajaya Sentral using Putrajaya Line (MRT).",
+  "polyline": "gacRcvskRXhA_AmBc@RnCdGlBnFj@nAj@bAp@r@nElDpI|GnB`B~FfEhCvAlDtApCr@fAR`CTzCLfDErAG|JiApFq@nNiBhB]z@UlBw@bB_A`Au@x@u@fAsAz@sA`@y@b@aAVw@b@wBTcBFsA@iD?iDFcBNqA\\iBVcAXw@^{@\\s@v@iAdMoPjOuSbCwDpF}IhD{EtSsXdS_XbAmApCwDzAeBhAcAhBsAlAq@`Bq@fBi@`B_@zC]bM{@fBOxAU~@Ud@QjAi@`Ai@vAeApAsArA_BtCwDhB{Bl@k@\\WhB_AlAc@lA[vASp@GdCCdBBhAHj@H`B\\nA^jB~@fBjAj@d@~@`A`AvArCpEz@xAzB`Dn@x@lBjB~BfBfAl@xAr@~Aj@lBh@|Cn@hAJ`Lp@dWpAfZrA`Oz@jM|@|HVpj@v@tCEnBMdAMzCi@~IyBjDs@zCc@nBS~DSxBEtC?pWd@|BBrAExCWfAQlCm@jBq@|@c@xBuAz@q@pAqAx@aAhEgHh@w@x@}@zAoAz@k@x@c@dCmAzWaLpNgGrDgBhBeArCuB`B_BvA}AjGgIxCkDjBkBfCmBz@i@dDeBnEqBfNsFhHeCdGcBxFwAlK}B`HsAtC_@xAObDOxCCfEHrCRxC^zCn@nDbAtAf@rDbBdDtBz@p@`DxCzBfCpAhBfAjB|@jBb@bAd@rA\\fAjAdFjAtFvBzKn@hCj@hBlBrEx@tAdB`ClAtAxBrB|BdB~D`CtGxD`EjCz@p@|ArAfBjBr@|@n@~@r@jA~A|CtAxDr@rCn@vDv@xGn@|FfCzSl@lDx@rDp@~BlAbDnArCbAtBxItOrBdEv@pBlA|Dr@|Cb@`C^vCTfCL|C@nDG`DWtEwAjN[~EKnDC~DFjEVlFb@~E`@xCf@lCh@zBx@tCzApEdAbCxAvC`AbBhBrCtCtDjAvA~BdCjQdQzAvAlB~AdCbBdCzA|BfAzB|@`Bj@fD|@`Cf@lBXnCX|DX~DD`CAhCMrE_@rC_@xAYpBc@xBo@vAe@zAm@~Au@rBgAhCcBpBwAlAeAhAeArByBzAmBpP_V`D_E`BgB|BsBpByAdAo@tAs@tAm@~Am@lA_@fDy@zAUhCWfCOjAEhEAjB@vBFzDVpBTBQVhAD@h@cFqBa@OFOCECCGiBOw@Ei@DHLAOc@BQCKKCKCcA[c@EGi@WkEVgBD_CCyG_@eAMeAWa@HYR_@pAQ`@Gb@o@f@kA`@y@Ni@@q@C]Gu@[aAo@mAe@uAYo@UqBcAmAcAqAuAgAcBm@iAk@}Ay@gDQDRlATIr@dCXt@eAh@o@~@yB~BAV^dHeAJD|@Jb@BB",
+  "reasoning": "Recorded Google Routes response for KL Sentral -\u003e Putrajaya Sentral (eco).",
   "recommendedFor": [
     "low-carbon",
     "commute"
   ],
   "recommended": true,
   "dataSource": "google_routes",
-  "createdAt": "0001-01-01T00:00:00Z",
-  "_stub": true
+  "createdAt": "0001-01-01T00:00:00Z"
 }
