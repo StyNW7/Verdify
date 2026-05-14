@@ -11,7 +11,10 @@ import {
 import {
   ApiError,
   listUserBookings,
+  rerouteBooking,
+  type BackendLocation,
   type BookingRecord,
+  type RerouteResult,
 } from '@/lib/api';
 import { useBookingUserId } from '@/hooks/useBookingUserId';
 import { BookingDialog } from '@/pages/Route/booking-dialog';
@@ -88,6 +91,9 @@ export default function HistoryPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [active, setActive] = useState<Booking | null>(null);
+  const [rerouteInFlight, setRerouteInFlight] = useState(false);
+  const [rerouteCount, setRerouteCount] = useState(0);
+  const [lastRerouteResult, setLastRerouteResult] = useState<RerouteResult | null>(null);
 
   useEffect(() => {
     if (!userId) {
@@ -142,6 +148,42 @@ export default function HistoryPage() {
 
   const handleRowClick = (record: BookingRecord) => {
     setActive(bookingToConfirmed(record));
+    setRerouteCount(0);
+    setLastRerouteResult(null);
+  };
+
+  const handleMissedStop = async (currentLocation: BackendLocation) => {
+    if (!active || active.status === 'draft' || rerouteInFlight) return;
+    const bookingId = active.bookingId;
+    setRerouteInFlight(true);
+    try {
+      const result = await rerouteBooking(bookingId, {
+        currentLocation,
+        reason: 'missed_stop',
+      });
+      setRerouteCount((prev) => prev + 1);
+      setLastRerouteResult(result);
+      if (result.action === 'reroute' && result.newRoute && result.journeyProgress) {
+        const patch = {
+          routeSnapshot: result.newRoute,
+          journeyProgress: result.journeyProgress,
+        };
+        setActive((prev) =>
+          prev && prev.status !== 'draft' ? { ...prev, ...patch } : prev,
+        );
+        setBookings((prev) =>
+          prev.map((b) =>
+            b.bookingId === bookingId
+              ? { ...b, routeSnapshot: result.newRoute!, journeyProgress: result.journeyProgress }
+              : b,
+          ),
+        );
+      }
+    } catch {
+      // leave last result unchanged; the button re-enables for a retry
+    } finally {
+      setRerouteInFlight(false);
+    }
   };
 
   const handleDialogUpdate = (next: Booking) => {
@@ -199,6 +241,15 @@ export default function HistoryPage() {
             booking={active}
             onClose={() => setActive(null)}
             onUpdate={handleDialogUpdate}
+            rerouteInFlight={rerouteInFlight}
+            rerouteCount={rerouteCount}
+            lastRerouteResult={lastRerouteResult}
+            onDismissRerouteResult={() => setLastRerouteResult(null)}
+            onMissedStop={
+              active.status === 'confirmed' && active.paymentStatus === 'completed'
+                ? handleMissedStop
+                : undefined
+            }
           />
         )}
       </AnimatePresence>
