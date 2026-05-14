@@ -128,9 +128,6 @@ export function createAuthStore(seams: AuthSeams): AuthStore {
   };
 
   const installTokenGetter = seams.setTokenGetter ?? setAuthTokenGetter;
-  // Install an async getter: resolves immediately when a token is cached,
-  // otherwise waits up to 2 s for subscribeIdToken to deliver one.
-  installTokenGetter(() => awaitToken());
 
   return {
     getSnapshot: () => snapshot,
@@ -149,6 +146,14 @@ export function createAuthStore(seams: AuthSeams): AuthStore {
         return () => {};
       }
       started = true;
+
+      // (Re-)install the async getter: resolves immediately when a token is
+      // cached, otherwise waits up to 2 s for subscribeIdToken to deliver
+      // one. Re-installing here (instead of once at construction) is what
+      // makes the getter survive React 18 Strict Mode's mount → cleanup →
+      // remount cycle, since the teardown wipes the getter and useMemo
+      // returns the same cached store on remount.
+      installTokenGetter(() => awaitToken());
 
       const unsubAuth = seams.subscribeAuthState((u) => {
         setSnapshot({ ...snapshot, user: toAuthUser(u), loading: false });

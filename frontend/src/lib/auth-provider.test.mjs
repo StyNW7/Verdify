@@ -112,9 +112,9 @@ test('subsequent id-token events update idToken AND the api.ts token getter', as
   const store = createAuthStore(harness.seams);
   const teardown = store.start();
 
-  // setTokenGetter is installed at construction time (so the closure that
-  // reads snapshot.idToken is wired before subscriptions fire).
-  assert.ok(harness.calls.setTokenGetter >= 1, 'setTokenGetter must be wired on construction');
+  // setTokenGetter is installed by start() (so the closure that reads
+  // snapshot.idToken is re-wired on every Strict Mode remount).
+  assert.ok(harness.calls.setTokenGetter >= 1, 'setTokenGetter must be wired by start()');
 
   harness.emitIdToken(fakeUser('uid_abc', 'tok_1'));
   await new Promise((r) => setImmediate(r));
@@ -373,6 +373,68 @@ test('awaitToken resolves with null after timeout when subscribeIdToken never fi
   assert.equal(token, null, 'awaitToken must resolve null after timeout when token never arrives');
 
   teardown();
+});
+
+test('apiRequest still sends Authorization header after Strict Mode teardown/remount cycle', async () => {
+  // Strict Mode dev runs effects: mount → cleanup → remount on the same
+  // cached store. The teardown wipes the api.ts global token getter; the
+  // remount must re-install it or every subsequent apiRequest goes out with
+  // no Authorization header → 401.
+  const harness = makeFakeSeams();
+  let asyncGetter = null;
+  const seamsWithSpy = {
+    ...harness.seams,
+    setTokenGetter: (getter) => {
+      asyncGetter = getter;
+    },
+  };
+
+  const store = createAuthStore(seamsWithSpy);
+
+  // Strict Mode cycle: start → teardown → start.
+  const teardown1 = store.start();
+  teardown1();
+  const teardown2 = store.start();
+
+  // Token lands AFTER the remount (Firebase re-emits onIdTokenChanged once
+  // we re-subscribe).
+  harness.emitIdToken(fakeUser('uid_abc', 'tok_strict'));
+  await new Promise((r) => setImmediate(r));
+  assert.equal(store.getSnapshot().idToken, 'tok_strict', 'pre-condition: token landed after remount');
+
+  // Wire the captured getter into api.ts and fire a request.
+  setAuthTokenGetter(asyncGetter);
+
+  const capturedRequests = [];
+  const stubFetch = async (url, init) => {
+    capturedRequests.push({ url, headers: init?.headers ?? {} });
+    return {
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: { entries: [], me: { rank: 1, uid: 'u', displayName: 'u', photoURL: '', greenPointsBalance: 0, totalTripsCompleted: 0 }, totalUsers: 0 },
+        error: null,
+        metadata: { timestamp: '', version: '' },
+      }),
+    };
+  };
+
+  const origFetch = globalThis.fetch;
+  globalThis.fetch = stubFetch;
+  try {
+    await getLeaderboard();
+  } finally {
+    globalThis.fetch = origFetch;
+  }
+
+  teardown2();
+
+  assert.equal(capturedRequests.length, 1, 'exactly one request should have been made');
+  assert.equal(
+    capturedRequests[0].headers['Authorization'],
+    'Bearer tok_strict',
+    'Authorization header must survive the Strict Mode teardown/remount cycle',
+  );
 });
 
 test('apiRequest sends Authorization header even when request fires before subscribeIdToken emits', async () => {
