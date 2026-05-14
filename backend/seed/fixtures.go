@@ -42,13 +42,19 @@ func (k FixtureKey) String() string {
 // at least one intercity link, and biases toward eco-mode (transit) so the
 // dashboard stats are dominated by real transit data.
 //
-// Curation rule: pairs must be land-routable by the Google Routes API AND
-// Google must actually return a route for the requested mode. No flight legs
-// across the South China Sea (Peninsular Malaysia ↔ Sabah). KLIA legs and
-// KK-area transit pairs were tried and removed because the Routes API
-// consistently falls back to synthetic for them — Sabah has no indexed
-// transit network, and airport-side DRIVE responses are unreliable from
-// `cmd/seed-fixtures`.
+// Curation rule: pairs must be land-routable by the Google Routes API. No
+// flight legs across the South China Sea (Peninsular Malaysia ↔ Sabah).
+// KLIA-area and KK-area pairs where the Routes API consistently falls back
+// to synthetic (Sabah has no indexed transit, KLIA DRIVE responses are
+// unreliable from `cmd/seed-fixtures`) are kept here only when the fixture's
+// polyline has been hand-encoded to a correct 2-point line — those fixtures
+// retain `_stub: true` so the recorder will overwrite them if Google ever
+// adds coverage.
+//
+// Uniqueness rule: GenerateBookingsForPersona samples without replacement
+// from a persona's pool, so the pool must be at least as large as the
+// maximum desired booking count per persona for the rng draw to be
+// satisfiable end-to-end.
 var PoolByCity = map[string][]FixtureKey{
 	"Kuala Lumpur": {
 		{"KLCC", "KL Sentral", "eco"},
@@ -113,6 +119,10 @@ var PoolByCity = map[string][]FixtureKey{
 	},
 	"Kota Kinabalu": {
 		{"Kota Kinabalu", "Kundasang", "fast"},
+		{"Kota Kinabalu", "Signal Hill", "eco"},
+		{"Filipino Market", "Sabah State Mosque", "eco"},
+		{"KK City Mosque", "UMS", "eco"},
+		{"UMS", "KK Waterfront", "eco"},
 	},
 }
 
