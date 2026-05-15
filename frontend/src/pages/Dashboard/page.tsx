@@ -16,6 +16,7 @@ import { useAuth } from '@/lib/auth-provider';
 import { useUserDoc } from '@/lib/user-doc-provider';
 import { useBookingUserId } from '@/hooks/useBookingUserId';
 import {
+  getLeaderboard,
   getUserCarbonTrend,
   listUserBookings,
   type BookingRecord,
@@ -47,6 +48,7 @@ function buildStats(
   totalTrips: number,
   totalCarbonSaved: number,
   totalEarned: number,
+  rankInfo: { rank: number; totalUsers: number } | null,
 ): Stat[] {
   return [
     {
@@ -64,8 +66,14 @@ function buildStats(
     },
     {
       label: 'Global rank',
-      value: '#—',
-      delta: { value: '—', direction: 'flat', note: '' },
+      value: rankInfo && rankInfo.rank > 0 ? `#${rankInfo.rank}` : '#—',
+      delta: rankInfo
+        ? {
+            value: '',
+            direction: 'flat',
+            note: rankInfo.rank > 0 ? `of ${rankInfo.totalUsers}` : 'unranked',
+          }
+        : { value: '—', direction: 'flat', note: '' },
       icon: Trophy,
     },
     {
@@ -154,7 +162,9 @@ export default function DashboardPage() {
   const totalCarbonSaved = userDoc?.totalCarbonSaved ?? 0;
   const totalEarned = userDoc?.totalEarned ?? 0;
 
-  const stats = buildStats(greenPoints, totalTrips, totalCarbonSaved, totalEarned);
+  const [rankInfo, setRankInfo] = useState<{ rank: number; totalUsers: number } | null>(null);
+
+  const stats = buildStats(greenPoints, totalTrips, totalCarbonSaved, totalEarned, rankInfo);
 
   const [trips, setTrips] = useState<Trip[]>([]);
   const [tripsLoading, setTripsLoading] = useState(true);
@@ -203,6 +213,20 @@ export default function DashboardPage() {
         setTrendDays(placeholderTrendDays());
         setTrendLoading(false);
         setTrendError(true);
+      });
+  }, [userId]);
+
+  useEffect(() => {
+    if (!userId) {
+      setRankInfo(null);
+      return;
+    }
+    getLeaderboard(1)
+      .then(({ me, totalUsers }) => {
+        setRankInfo({ rank: me.rank, totalUsers });
+      })
+      .catch(() => {
+        setRankInfo(null);
       });
   }, [userId]);
 
