@@ -5,14 +5,19 @@ import {
   AlertCircle,
   AlertTriangle,
   ArrowRight,
+<<<<<<< HEAD
   Bus,
   Car,
+=======
+  ChevronDown,
+>>>>>>> cf1b885 (feat: Now shows gemini reasoning in Raw JSON to 'missed my stop' feature)
   CircleCheck,
   Footprints,
   Leaf,
   Loader2,
   Navigation,
   RefreshCw,
+  Sparkles,
   TicketCheck,
   TrainFront,
   Trophy,
@@ -1397,8 +1402,16 @@ function RerouteChat({
   result: RerouteResult | null;
   onDismiss?: () => void;
 }) {
-  // Color + heading per action. Reasoning is intentionally not surfaced —
-  // it's for logs only (see backend/docs/frontend-integration.md).
+  // Color + heading per action. The original brief was to hide `reasoning`
+  // and only show `userMessage`; for the competition demo we surface
+  // Gemini's reasoning behind a collapsible disclosure so judges can
+  // verify real AI thinking is happening behind the decision.
+  const [showReasoning, setShowReasoning] = useState(false);
+  useEffect(() => {
+    // Collapse the disclosure whenever a fresh result lands so the user
+    // sees the headline first.
+    setShowReasoning(false);
+  }, [result]);
   const palette = (() => {
     if (inFlight || !result) {
       return {
@@ -1491,13 +1504,114 @@ function RerouteChat({
               ? 'Locating you and checking what the next vehicle is doing…'
               : result?.userMessage}
           </p>
-          {!inFlight && result && result.agentSource === 'fallback' && (
-            <p
-              className="mt-1 theme-italic text-[0.75rem]"
-              style={{ color: 'var(--theme-fg-dim)' }}
-            >
-              Routed without AI assistance (Vertex unavailable).
-            </p>
+          {!inFlight && result && (
+            <div className="mt-2.5 flex flex-wrap items-center gap-2">
+              {result.agentSource === 'gemini' ? (
+                <span
+                  className="theme-mono-sm inline-flex items-center gap-1.5 rounded-full px-2 py-1"
+                  style={{
+                    background:
+                      'color-mix(in srgb, var(--theme-accent) 14%, transparent)',
+                    color: 'var(--theme-accent)',
+                    border: '1px solid var(--theme-accent-muted)',
+                    fontSize: '0.7rem',
+                  }}
+                >
+                  <Sparkles size={11} />
+                  Decided by Gemini 2.5
+                </span>
+              ) : result.agentSource === 'fallback' ? (
+                <span
+                  className="theme-italic text-[0.75rem]"
+                  style={{ color: 'var(--theme-fg-dim)' }}
+                >
+                  Routed without AI assistance (Vertex unavailable).
+                </span>
+              ) : null}
+              <button
+                type="button"
+                onClick={() => setShowReasoning((prev) => !prev)}
+                aria-expanded={showReasoning}
+                className="theme-mono-sm inline-flex items-center gap-1 rounded-full px-2 py-1 transition-colors"
+                style={{
+                  color: 'var(--theme-fg-muted)',
+                  border: '1px solid var(--theme-border)',
+                  fontSize: '0.7rem',
+                }}
+              >
+                {showReasoning ? 'Hide AI response' : 'Show AI response'}
+                <ChevronDown
+                  size={11}
+                  style={{
+                    transform: showReasoning ? 'rotate(180deg)' : undefined,
+                    transition: 'transform 0.2s',
+                  }}
+                />
+              </button>
+            </div>
+          )}
+          {!inFlight && result && showReasoning && (
+            <div className="mt-2.5 flex flex-col gap-2.5">
+              {result.reasoning && result.reasoning.trim().length > 0 && (
+                <div
+                  className="rounded-[10px] p-3"
+                  style={{
+                    background:
+                      'color-mix(in srgb, var(--theme-bg) 55%, transparent)',
+                    border: '1px solid var(--theme-border)',
+                  }}
+                >
+                  <div
+                    className="theme-mono-sm"
+                    style={{ color: 'var(--theme-fg-dim)', fontSize: '0.7rem' }}
+                  >
+                    Gemini's reasoning (summary)
+                  </div>
+                  <p
+                    className="mt-1 text-[0.85rem] leading-snug"
+                    style={{ color: 'var(--theme-fg-muted)' }}
+                  >
+                    {result.reasoning}
+                  </p>
+                </div>
+              )}
+              <div
+                className="rounded-[10px] p-3"
+                style={{
+                  background:
+                    'color-mix(in srgb, var(--theme-bg) 70%, transparent)',
+                  border: '1px solid var(--theme-border)',
+                }}
+              >
+                <div
+                  className="theme-mono-sm"
+                  style={{ color: 'var(--theme-fg-dim)', fontSize: '0.7rem' }}
+                >
+                  Raw model response (JSON)
+                </div>
+                <pre
+                  className="mt-1 overflow-x-auto text-[0.75rem] leading-snug"
+                  style={{
+                    color: 'var(--theme-fg-muted)',
+                    fontFamily:
+                      'var(--theme-font-mono, ui-monospace, monospace)',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word',
+                  }}
+                >
+                  {JSON.stringify(
+                    {
+                      action: result.action,
+                      userMessage: result.userMessage,
+                      reasoning: result.reasoning,
+                      agentSource: result.agentSource,
+                    },
+                    null,
+                    2,
+                  )}
+                </pre>
+              </div>
+            </div>
           )}
         </div>
       </div>
