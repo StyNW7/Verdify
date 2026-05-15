@@ -159,6 +159,10 @@ userMessage requirements (<=160 chars, second person, plain English, no emoji):
 - For "reroute": MUST state the new ETA in minutes and confirm the same destination, e.g. "New route ready — same destination, same mode. ETA 25 min from your location."
 - For "abort": state that we couldn't find an alternative and suggest contacting support.
 
+reasoning requirements (1-3 sentences, <=400 chars, plain text, third person):
+- This is shown to judges/evaluators to demonstrate AI involvement. Make it concrete: cite the specific inputs you weighed (e.g. "Next leg departs in 7 min so waiting saves a transfer", "Original route's next bus is gone; recomputed eco route via LRT saves 12 min").
+- Do NOT restate the userMessage. Explain WHY this action beat the other two options given the data.
+
 Output ONLY valid JSON: {"action":"reroute|wait_and_continue|abort","userMessage":"...","reasoning":"..."}.`
 
 	userPrompt := fmt.Sprintf(
@@ -199,6 +203,12 @@ func (a *RerouteAgent) buildResult(d *agentDecision, cand *models.RouteCandidate
 	if msg == "" {
 		msg = defaultMessage(d.Action)
 	}
+
+	reasoning := strings.TrimSpace(d.Reasoning)
+	if len(reasoning) > 500 {
+		reasoning = reasoning[:500]
+	}
+	d.Reasoning = reasoning
 
 	var finalCand *models.RouteCandidate
 	if d.Action == "reroute" {
