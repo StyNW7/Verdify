@@ -40,7 +40,6 @@ import {
   type RerouteResult,
   type RouteMode,
 } from '@/lib/api';
-import type { ConfirmedBooking } from '@/lib/booking-draft';
 import { usePlacesAutocomplete } from '@/hooks/usePlacesAutocomplete';
 
 export type Preference = PlannerPreference;

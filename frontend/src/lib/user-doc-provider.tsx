@@ -6,7 +6,14 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { doc, onSnapshot, getFirestore, type Firestore } from 'firebase/firestore';
+import {
+  doc,
+  onSnapshot,
+  getFirestore,
+  type DocumentReference,
+  type DocumentSnapshot,
+  type Firestore,
+} from 'firebase/firestore';
 
 import { parseAuthRequired } from '@/lib/auth-guard';
 import { useAuth } from '@/lib/auth-provider';
@@ -48,8 +55,9 @@ function makeFirestoreSeams(firestoreInstance?: Firestore): FirestoreSeams {
     makeDocRef: (uid: string) => doc(db, 'users', uid) as unknown as import('@/lib/user-doc-store').DocRef,
     onSnapshot: (ref, onNext, onError) =>
       onSnapshot(
-        ref as unknown as Parameters<typeof onSnapshot>[0],
-        onNext as Parameters<typeof onSnapshot>[1],
+        ref as unknown as DocumentReference,
+        (snap: DocumentSnapshot) =>
+          onNext(snap as unknown as import('@/lib/user-doc-store').DocSnapshot),
         onError,
       ),
   };
