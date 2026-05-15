@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/verdify/backend/auth"
 	"github.com/verdify/backend/config"
@@ -89,11 +90,17 @@ func main() {
 
 	port := cfg.Port
 
-	// Gemini / Vertex health check
+	// Gemini / Vertex health check — async with a bounded timeout so a slow
+	// or unreachable Vertex endpoint can't block the listener and trip Cloud
+	// Run's startup probe. Result is informational only.
 	if gr, ok := app.Ranker.(*ranker.GeminiRanker); ok && gr.Enabled {
-		if _, err := gr.Ping(context.Background()); err != nil {
-			log.Printf("genkit ping failed, fallback mode active: %v", err)
-		}
+		go func() {
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+			if _, err := gr.Ping(ctx); err != nil {
+				log.Printf("genkit ping failed, fallback mode active: %v", err)
+			}
+		}()
 	}
 
 	log.Printf("verdify backend listening on :%s", port)
