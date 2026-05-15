@@ -197,7 +197,7 @@ function IdentityCard() {
       // Build patch with only changed fields.
       const patch: UserPatch = {};
       if (nameChanged) patch.displayName = trimmedName;
-      if (avatarChanged && presetAvatar) patch.presetAvatar = presetAvatar;
+      if (avatarChanged && presetAvatar) patch.presetAvatar = presetAvatar as PresetAvatar;
 
       if (Object.keys(patch).length > 0) {
         await patchUser(user.uid, patch);
@@ -401,7 +401,8 @@ function SecurityCard() {
   const { user } = useAuth();
   const [phase, setPhase] = useState<'idle' | 'sending' | 'sent'>('idle');
 
-  const providers = user?.providerData?.map((p) => p.providerId) ?? [];
+  const fbUser = getFirebaseAuth().currentUser;
+  const providers = fbUser?.providerData?.map((p) => p.providerId) ?? [];
   const email = user?.email ?? '';
   const state = getSecurityCardState({ providers, email });
 

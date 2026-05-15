@@ -68,7 +68,7 @@ test('isFinalStep: step beyond total is treated as final (clamped behaviour)', (
 
 // ── flusher ───────────────────────────────────────────────────────────────────
 
-test('flusher: schedule arms and fires patch after debounce', (t, done) => {
+test('flusher: schedule arms and fires patch after debounce', (_t, done) => {
   const calls: number[] = [];
   const f = createProgressFlusher({ patch: (i) => calls.push(i), debounceMs: 20 });
   f.schedule(3);
@@ -78,7 +78,7 @@ test('flusher: schedule arms and fires patch after debounce', (t, done) => {
   }, 50);
 });
 
-test('flusher: second schedule replaces first, only one patch fires', (t, done) => {
+test('flusher: second schedule replaces first, only one patch fires', (_t, done) => {
   const calls: number[] = [];
   const f = createProgressFlusher({ patch: (i) => calls.push(i), debounceMs: 20 });
   f.schedule(1);
@@ -97,7 +97,7 @@ test('flusher: flush cancels timer and calls patch immediately', () => {
   assert.deepEqual(calls, [5]);
 });
 
-test('flusher: cancel aborts without sending', (t, done) => {
+test('flusher: cancel aborts without sending', (_t, done) => {
   const calls: number[] = [];
   const f = createProgressFlusher({ patch: (i) => calls.push(i), debounceMs: 20 });
   f.schedule(7);
@@ -108,7 +108,7 @@ test('flusher: cancel aborts without sending', (t, done) => {
   }, 50);
 });
 
-test('flusher: multiple schedules in one debounce window yield exactly one patch', (t, done) => {
+test('flusher: multiple schedules in one debounce window yield exactly one patch', (_t, done) => {
   const calls: number[] = [];
   const f = createProgressFlusher({ patch: (i) => calls.push(i), debounceMs: 30 });
   f.schedule(1);
