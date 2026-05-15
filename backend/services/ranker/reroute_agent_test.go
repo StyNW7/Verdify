@@ -124,7 +124,7 @@ func TestRerouteAgent_Fallback_BookingNotFound(t *testing.T) {
 
 func TestBuildResult_UnknownAction_DowngradesToAbort(t *testing.T) {
 	a := &RerouteAgent{}
-	r := a.buildResult(&agentDecision{Action: "teleport", UserMessage: "beam me up"}, nil, "gemini")
+	r := a.buildResult(&agentDecision{Action: "teleport", UserMessage: "beam me up"}, nil, "gemini", nil)
 	if r.Action != "abort" {
 		t.Errorf("action = %q want abort", r.Action)
 	}
@@ -134,7 +134,7 @@ func TestBuildResult_UnknownAction_DowngradesToAbort(t *testing.T) {
 
 func TestBuildResult_RerouteNilCandidate_DowngradesToAbort(t *testing.T) {
 	a := &RerouteAgent{}
-	r := a.buildResult(&agentDecision{Action: "reroute", UserMessage: "take this route"}, nil, "gemini")
+	r := a.buildResult(&agentDecision{Action: "reroute", UserMessage: "take this route"}, nil, "gemini", nil)
 	if r.Action != "abort" {
 		t.Errorf("action = %q want abort (no candidate to attach)", r.Action)
 	}
@@ -148,7 +148,7 @@ func TestBuildResult_RerouteNilCandidate_DowngradesToAbort(t *testing.T) {
 func TestBuildResult_Reroute_AttachesCandidate(t *testing.T) {
 	a := &RerouteAgent{}
 	cand := stubCandidate()
-	r := a.buildResult(&agentDecision{Action: "reroute", UserMessage: "new route ready"}, cand, "gemini")
+	r := a.buildResult(&agentDecision{Action: "reroute", UserMessage: "new route ready"}, cand, "gemini", nil)
 	if r.Action != "reroute" {
 		t.Errorf("action = %q want reroute", r.Action)
 	}
@@ -165,7 +165,7 @@ func TestBuildResult_Reroute_AttachesCandidate(t *testing.T) {
 func TestBuildResult_TruncatesUserMessageAt160(t *testing.T) {
 	a := &RerouteAgent{}
 	long := strings.Repeat("a", 200)
-	r := a.buildResult(&agentDecision{Action: "abort", UserMessage: long}, nil, "gemini")
+	r := a.buildResult(&agentDecision{Action: "abort", UserMessage: long}, nil, "gemini", nil)
 	if len(r.UserMessage) != 160 {
 		t.Errorf("userMessage len = %d want 160", len(r.UserMessage))
 	}
@@ -187,7 +187,7 @@ func TestBuildResult_EmptyMessage_UsesDefault(t *testing.T) {
 		if tc.action == "reroute" {
 			cand = stubCandidate()
 		}
-		r := a.buildResult(&agentDecision{Action: tc.action, UserMessage: ""}, cand, "gemini")
+		r := a.buildResult(&agentDecision{Action: tc.action, UserMessage: ""}, cand, "gemini", nil)
 		if r.UserMessage == "" {
 			t.Errorf("action=%s: userMessage must not be empty when input is blank", tc.action)
 		}

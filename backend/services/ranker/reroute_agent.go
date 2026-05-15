@@ -72,8 +72,10 @@ type RerouteAgent struct {
 // the existing GeminiRanker (so we only call genkit.Init once).
 func NewRerouteAgent(cfg config.Config, r *GeminiRanker, store BookingReader, rc RouteRecomputer) *RerouteAgent {
 	if !r.Enabled {
+		log.Printf("event=reroute_agent_init enabled=false vertex_project=%q reason=ranker_disabled", cfg.VertexProjectID)
 		return &RerouteAgent{Enabled: false, routes: rc, store: store}
 	}
+	log.Printf("event=reroute_agent_init enabled=true vertex_project=%q model=%s", cfg.VertexProjectID, cfg.GeminiAgentModel)
 	return &RerouteAgent{
 		Enabled: true,
 		g:       r.g,
@@ -185,11 +187,19 @@ Output ONLY valid JSON: {"action":"reroute|wait_and_continue|abort","userMessage
 		return nil, fmt.Errorf("gemini agent: %w", err)
 	}
 
-	return a.buildResult(out, recomputedCandidate, "gemini"), nil
+	// Diagnostic: log the raw decision so we can see if Gemini is returning
+	// degenerate output ("." reasoning, empty userMessage, etc.) — those are
+	// the most common "is the model actually thinking?" failure modes.
+	log.Printf("event=reroute_agent_decision model=%s action=%q userMessage_len=%d reasoning=%q",
+		a.model, out.Action, len(out.UserMessage), out.Reasoning)
+
+	return a.buildResult(out, recomputedCandidate, "gemini", b.RouteSnapshot.Steps), nil
 }
 
 // buildResult validates the decision and attaches the candidate if needed.
-func (a *RerouteAgent) buildResult(d *agentDecision, cand *models.RouteCandidate, source string) *RerouteResult {
+// `originalSteps` lets the templated-reasoning fallback cite concrete numbers
+// when Gemini emits useless reasoning ("." / empty).
+func (a *RerouteAgent) buildResult(d *agentDecision, cand *models.RouteCandidate, source string, originalSteps []models.TransportSegment) *RerouteResult {
 	switch d.Action {
 	case "reroute", "wait_and_continue", "abort":
 	default:
@@ -207,6 +217,15 @@ func (a *RerouteAgent) buildResult(d *agentDecision, cand *models.RouteCandidate
 	reasoning := strings.TrimSpace(d.Reasoning)
 	if len(reasoning) > 500 {
 		reasoning = reasoning[:500]
+	}
+	// Gemini sometimes emits degenerate reasoning ("." or empty) under the
+	// structured-output schema, especially with smaller flash models. If the
+	// reasoning is shorter than ~20 chars OR contains no letters at all,
+	// substitute a deterministic explanation derived from the decision inputs.
+	// The substitution is clearly marked so it can't be mistaken for genuine
+	// model thinking on inspection.
+	if isDegenerateReasoning(reasoning) {
+		reasoning = templatedReasoning(d.Action, cand, originalSteps) + " [templated; model reasoning was degenerate]"
 	}
 	d.Reasoning = reasoning
 
@@ -230,6 +249,55 @@ func (a *RerouteAgent) buildResult(d *agentDecision, cand *models.RouteCandidate
 	}
 }
 
+// isDegenerateReasoning returns true when Gemini's reasoning is too short to
+// be a real explanation or contains no alphabetic characters (e.g. just ".").
+func isDegenerateReasoning(s string) bool {
+	if len(s) < 20 {
+		return true
+	}
+	for _, r := range s {
+		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') {
+			return false
+		}
+	}
+	return true
+}
+
+// templatedReasoning builds a deterministic explanation citing the concrete
+// candidate / step inputs the agent considered. Used when Gemini's own
+// reasoning came back degenerate; clearly marked at the call site.
+func templatedReasoning(action string, cand *models.RouteCandidate, steps []models.TransportSegment) string {
+	switch action {
+	case "reroute":
+		if cand != nil {
+			return fmt.Sprintf(
+				"Chose reroute: a %s-mode candidate from the user's current location to the original destination covers %.1f km in %d min, and no remaining step had an imminent (≤5 min) departure annotation worth waiting for.",
+				cand.Mode, cand.TotalDistance, cand.TotalDuration,
+			)
+		}
+		return "Chose reroute: original next leg was irrecoverable."
+	case "wait_and_continue":
+		// Find the soonest departure to cite.
+		soonest := -1
+		for _, s := range steps {
+			mins := int(time.Until(s.Departure).Minutes())
+			if mins > 0 && mins < 60 && (soonest < 0 || mins < soonest) {
+				soonest = mins
+			}
+		}
+		if soonest >= 0 {
+			return fmt.Sprintf(
+				"Chose wait: the next leg departs in %d min — well under the 5-min threshold, so waiting avoids an unnecessary reroute and a transfer.",
+				soonest,
+			)
+		}
+		return "Chose wait: a near-term departure on the current route is preferable to recomputing."
+	case "abort":
+		return "Chose abort: no recomputed candidate was available and no remaining step had a usable departure annotation."
+	}
+	return "No specific reasoning available."
+}
+
 // fallback is the deterministic path when Vertex is disabled or the agent errors.
 func (a *RerouteAgent) fallback(ctx context.Context, in RerouteInput) (*RerouteResult, error) {
 	b, ok, err := a.store.GetBooking(ctx, in.BookingID)
@@ -240,6 +308,7 @@ func (a *RerouteAgent) fallback(ctx context.Context, in RerouteInput) (*RerouteR
 		return &RerouteResult{
 			Action:      "abort",
 			UserMessage: "We couldn't find your booking. Please contact support.",
+			Reasoning:   "Fallback path: booking lookup returned no result.",
 			Source:      "fallback",
 		}, nil
 	}
@@ -254,6 +323,7 @@ func (a *RerouteAgent) fallback(ctx context.Context, in RerouteInput) (*RerouteR
 		return &RerouteResult{
 			Action:      "abort",
 			UserMessage: "We couldn't plan a new route. Please contact support.",
+			Reasoning:   "Fallback path: Vertex disabled or agent errored, and Routes Recompute returned no candidate from the user's current location to the snapshot destination.",
 			Source:      "fallback",
 		}, nil
 	}
@@ -261,7 +331,11 @@ func (a *RerouteAgent) fallback(ctx context.Context, in RerouteInput) (*RerouteR
 		Action:       "reroute",
 		UserMessage:  "Updated route from your current location.",
 		NewCandidate: cand,
-		Source:       "fallback",
+		Reasoning: fmt.Sprintf(
+			"Fallback path: Vertex disabled or agent errored. Deterministic Recompute returned a %s-mode candidate covering %.1f km in %d min from the user's current location to the original destination.",
+			cand.Mode, cand.TotalDistance, cand.TotalDuration,
+		),
+		Source: "fallback",
 	}, nil
 }
 

@@ -5,12 +5,9 @@ import {
   AlertCircle,
   AlertTriangle,
   ArrowRight,
-<<<<<<< HEAD
   Bus,
   Car,
-=======
   ChevronDown,
->>>>>>> cf1b885 (feat: Now shows gemini reasoning in Raw JSON to 'missed my stop' feature)
   CircleCheck,
   Footprints,
   Leaf,
@@ -1100,6 +1097,17 @@ function JourneyPane({
     total === 0 ? 0 : Math.min(persistedStep, total - 1),
   );
 
+  // Debounced PATCH flusher for journey-progress updates. Must be declared
+  // BEFORE the resync effect below — that effect references `flusher` in its
+  // dependency array, which is evaluated synchronously at render. If flusher
+  // is declared afterward we hit the TDZ and the component throws on first
+  // render.
+  const [flusher] = useState(() =>
+    createProgressFlusher({
+      patch: (idx, keepalive) => { updateBookingProgress(booking.bookingId, idx, { keepalive }).catch(() => {}); },
+    }),
+  );
+
   // Re-sync the optimistic mirror whenever the server-persisted value changes
   // (e.g. after a reroute resets the booking prop with a new routeSnapshot and
   // journeyProgress.currentStepIndex = 0). JourneyPane does not unmount on
@@ -1109,12 +1117,6 @@ function JourneyPane({
     flusher.cancel();
     setCurrentStep(total === 0 ? 0 : Math.min(serverStep, total - 1));
   }, [serverStep, total, flusher]);
-
-  const [flusher] = useState(() =>
-    createProgressFlusher({
-      patch: (idx, keepalive) => { updateBookingProgress(booking.bookingId, idx, { keepalive }).catch(() => {}); },
-    }),
-  );
 
   useEffect(() => {
     const beforeUnload = () => flusher.flush(true);
