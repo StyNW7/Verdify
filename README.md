@@ -1,4 +1,4 @@
-<div align="center">
+<div align="center"> 
     <div>
         <img height="150px" src="./images/logo-nobg.png" alt="Verdify Logo"/>
     </div>
