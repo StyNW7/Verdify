@@ -16,7 +16,7 @@ export default function LoginPage() {
   const navigateAfterSignIn = usePostSignInNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  // const [isGoogleLoading, setIsGoogleLoading] = useState(false); // Disabled for demo
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false); // Disabled for demo
   const [formData, setFormData] = useState({
     email: '',
     password: '',

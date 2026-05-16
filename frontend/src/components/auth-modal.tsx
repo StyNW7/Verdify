@@ -515,8 +515,6 @@ function Field({
   );
 }
 
-// Google sign-in disabled for demo
-/*
 function SocialRow({
   onGoogle,
   disabled,
@@ -606,7 +604,6 @@ function GoogleGlyph() {
     </svg>
   );
 }
-*/
 
 
 function useSubmittable() {
@@ -1010,8 +1007,7 @@ function RegisterForm({
   );
 }
 
-// Divider only used by the now-disabled Google sign-in block
-/*
+
 function Divider({ label }: { label: string }) {
   return (
     <div className="relative flex items-center justify-center py-1">
@@ -1032,4 +1028,3 @@ function Divider({ label }: { label: string }) {
     </div>
   );
 }
-*/
