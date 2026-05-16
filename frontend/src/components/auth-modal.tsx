@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { useSearchParams } from 'react-router';
 
-import { signInWithGoogle } from '@/lib/auth-actions';
+// import { signInWithGoogle } from '@/lib/auth-actions'; // Disabled for demo
 import { syncAuthProfile } from '@/lib/api';
 import { getFirebaseAuth } from '@/lib/firebase';
 import { usePostSignInNavigate } from '@/hooks/usePostSignInNavigate';
@@ -515,6 +515,8 @@ function Field({
   );
 }
 
+// Google sign-in disabled for demo
+/*
 function SocialRow({
   onGoogle,
   disabled,
@@ -604,6 +606,7 @@ function GoogleGlyph() {
     </svg>
   );
 }
+*/
 
 
 function useSubmittable() {
@@ -655,20 +658,21 @@ function LoginForm({
     }
   };
 
-  const handleGoogle = async () => {
-    setLoading(true);
-    try {
-      const cred = await signInWithGoogle();
-      if (!cred) return; // redirect flow; the page will reload
-      const idToken = await cred.user.getIdToken();
-      await syncAuthProfile(idToken);
-      navigateAfterSignIn(cred.user.uid);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Google sign-in failed.';
-      toast.error(message);
-      setLoading(false);
-    }
-  };
+  // Google sign-in disabled for demo
+  // const handleGoogle = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const cred = await signInWithGoogle();
+  //     if (!cred) return; // redirect flow; the page will reload
+  //     const idToken = await cred.user.getIdToken();
+  //     await syncAuthProfile(idToken);
+  //     navigateAfterSignIn(cred.user.uid);
+  //   } catch (err) {
+  //     const message = err instanceof Error ? err.message : 'Google sign-in failed.';
+  //     toast.error(message);
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-6">
@@ -747,9 +751,11 @@ function LoginForm({
           )}
         </button>
 
+        {/* Google sign-in disabled for demo
         <Divider label="or" />
 
         <SocialRow onGoogle={handleGoogle} disabled={loading} />
+        */}
       </div>
 
       <p
@@ -832,20 +838,21 @@ function RegisterForm({
     }
   };
 
-  const handleGoogle = async () => {
-    setLoading(true);
-    try {
-      const cred = await signInWithGoogle();
-      if (!cred) return;
-      const idToken = await cred.user.getIdToken();
-      await syncAuthProfile(idToken);
-      navigateAfterSignIn(cred.user.uid);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Google sign-in failed.';
-      toast.error(message);
-      setLoading(false);
-    }
-  };
+  // Google sign-in disabled for demo
+  // const handleGoogle = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const cred = await signInWithGoogle();
+  //     if (!cred) return;
+  //     const idToken = await cred.user.getIdToken();
+  //     await syncAuthProfile(idToken);
+  //     navigateAfterSignIn(cred.user.uid);
+  //   } catch (err) {
+  //     const message = err instanceof Error ? err.message : 'Google sign-in failed.';
+  //     toast.error(message);
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-5">
@@ -980,9 +987,11 @@ function RegisterForm({
           )}
         </button>
 
+        {/* Google sign-in disabled for demo
         <Divider label="or" />
 
         <SocialRow onGoogle={handleGoogle} disabled={loading} />
+        */}
       </div>
 
       <p
@@ -1003,6 +1012,8 @@ function RegisterForm({
   );
 }
 
+// Divider only used by the now-disabled Google sign-in block
+/*
 function Divider({ label }: { label: string }) {
   return (
     <div className="relative flex items-center justify-center py-1">
@@ -1023,3 +1034,4 @@ function Divider({ label }: { label: string }) {
     </div>
   );
 }
+*/

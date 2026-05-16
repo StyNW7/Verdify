@@ -10,6 +10,15 @@ const config: CapacitorConfig = {
   appId: 'com.verdify.app',
   appName: 'Verdify',
   webDir: 'dist',
+  plugins: {
+    // Route fetch/XHR through native HTTP so requests bypass WebView CORS.
+    // Required for the Android build to call the deployed Go backend without
+    // adding capacitor://localhost / https://localhost to the backend's
+    // CORS allowlist. Web builds ignore this block entirely.
+    CapacitorHttp: {
+      enabled: true,
+    },
+  },
   ...(devServerUrl
     ? {
         server: {
