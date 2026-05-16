@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { useSearchParams } from 'react-router';
 
-// import { signInWithGoogle } from '@/lib/auth-actions'; // Disabled for demo
+import { signInWithGoogle } from '@/lib/auth-actions'; // Disabled for demo
 import { syncAuthProfile } from '@/lib/api';
 import { getFirebaseAuth } from '@/lib/firebase';
 import { usePostSignInNavigate } from '@/hooks/usePostSignInNavigate';
@@ -659,20 +659,20 @@ function LoginForm({
   };
 
   // Google sign-in disabled for demo
-  // const handleGoogle = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const cred = await signInWithGoogle();
-  //     if (!cred) return; // redirect flow; the page will reload
-  //     const idToken = await cred.user.getIdToken();
-  //     await syncAuthProfile(idToken);
-  //     navigateAfterSignIn(cred.user.uid);
-  //   } catch (err) {
-  //     const message = err instanceof Error ? err.message : 'Google sign-in failed.';
-  //     toast.error(message);
-  //     setLoading(false);
-  //   }
-  // };
+  const handleGoogle = async () => {
+    setLoading(true);
+    try {
+      const cred = await signInWithGoogle();
+      if (!cred) return; // redirect flow; the page will reload
+      const idToken = await cred.user.getIdToken();
+      await syncAuthProfile(idToken);
+      navigateAfterSignIn(cred.user.uid);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Google sign-in failed.';
+      toast.error(message);
+      setLoading(false);
+    }
+  };
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-6">
@@ -751,11 +751,10 @@ function LoginForm({
           )}
         </button>
 
-        {/* Google sign-in disabled for demo
         <Divider label="or" />
 
         <SocialRow onGoogle={handleGoogle} disabled={loading} />
-        */}
+        
       </div>
 
       <p
@@ -839,20 +838,20 @@ function RegisterForm({
   };
 
   // Google sign-in disabled for demo
-  // const handleGoogle = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const cred = await signInWithGoogle();
-  //     if (!cred) return;
-  //     const idToken = await cred.user.getIdToken();
-  //     await syncAuthProfile(idToken);
-  //     navigateAfterSignIn(cred.user.uid);
-  //   } catch (err) {
-  //     const message = err instanceof Error ? err.message : 'Google sign-in failed.';
-  //     toast.error(message);
-  //     setLoading(false);
-  //   }
-  // };
+  const handleGoogle = async () => {
+    setLoading(true);
+    try {
+      const cred = await signInWithGoogle();
+      if (!cred) return;
+      const idToken = await cred.user.getIdToken();
+    await syncAuthProfile(idToken);
+      navigateAfterSignIn(cred.user.uid);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Google sign-in failed.';
+      toast.error(message);
+      setLoading(false);
+    }
+  };
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-5">
@@ -987,11 +986,10 @@ function RegisterForm({
           )}
         </button>
 
-        {/* Google sign-in disabled for demo
         <Divider label="or" />
 
         <SocialRow onGoogle={handleGoogle} disabled={loading} />
-        */}
+        
       </div>
 
       <p
