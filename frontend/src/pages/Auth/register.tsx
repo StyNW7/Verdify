@@ -15,7 +15,7 @@ import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 
 import { getFirebaseAuth } from '@/lib/firebase';
 import { syncAuthProfile } from '@/lib/api';
-import { signInWithGoogle } from '@/lib/auth-actions';
+// import { signInWithGoogle } from '@/lib/auth-actions'; // Disabled for demo
 import { usePostSignInNavigate } from '@/hooks/usePostSignInNavigate';
 
 export default function RegisterPage() {
@@ -24,7 +24,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  // const [isGoogleLoading, setIsGoogleLoading] = useState(false); // Disabled for demo
   const [formData, setFormData] = useState({
     displayName: '',
     email: '',
@@ -38,21 +38,22 @@ export default function RegisterPage() {
     confirmPassword: '',
   });
 
-  const handleGoogleSignIn = async () => {
-    setIsGoogleLoading(true);
-    try {
-      const cred = await signInWithGoogle();
-      if (!cred) return; // redirect path — page is navigating away
-      const idToken = await cred.user.getIdToken();
-      await syncAuthProfile(idToken);
-      navigateAfterSignIn(cred.user.uid);
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : 'Unable to sign in with Google. Please try again.';
-      toast.error(message);
-      setIsGoogleLoading(false);
-    }
-  };
+  // Google sign-in disabled for demo
+  // const handleGoogleSignIn = async () => {
+  //   setIsGoogleLoading(true);
+  //   try {
+  //     const cred = await signInWithGoogle();
+  //     if (!cred) return; // redirect path — page is navigating away
+  //     const idToken = await cred.user.getIdToken();
+  //     await syncAuthProfile(idToken);
+  //     navigateAfterSignIn(cred.user.uid);
+  //   } catch (error) {
+  //     const message =
+  //       error instanceof Error ? error.message : 'Unable to sign in with Google. Please try again.';
+  //     toast.error(message);
+  //     setIsGoogleLoading(false);
+  //   }
+  // };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -157,6 +158,7 @@ export default function RegisterPage() {
         </p>
       </div>
 
+      {/* Google sign-in disabled for demo
       <motion.button
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
@@ -187,6 +189,7 @@ export default function RegisterPage() {
           <span className="px-4 bg-white text-gray-500">or sign up with email</span>
         </div>
       </div>
+      */}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
